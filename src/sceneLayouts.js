@@ -15,7 +15,7 @@ const cube = (name, position, rgba, size = [0.025, 0.025, 0.025]) => ({
   condim: 4,
 });
 
-const fixedBox = (name, size, position, rgba) => ({
+export const fixedBox = (name, size, position, rgba) => ({
   name,
   type: 'box',
   size,
@@ -36,7 +36,7 @@ function attachmentFrames(model, body, poses) {
     .join('');
 }
 
-const FRANKA_HOME = [1.707, -1.754, 0.003, -2.702, 0.003, 0.951, 2.49, 0];
+export const FRANKA_HOME = [1.707, -1.754, 0.003, -2.702, 0.003, 0.951, 2.49, 0];
 
 export const FRANKA_LAYOUT = {
   instanceCount: 4,

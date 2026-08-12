@@ -49,7 +49,7 @@ The current blocky upright tool becomes a recognizable cordless driver with a ro
 
 ### Hammer
 
-A movable claw hammer is added on its own tool mat. It has a steel striking face, head, neck, split curved claw, and faceted non-slip handle. Its initial pose is horizontal and supported, avoiding a top-heavy standing configuration.
+A movable claw hammer is added on its own low tool shelf. It has a steel striking face, head, neck, split curved claw, and faceted non-slip handle. Its initial pose is horizontal and fully supported, avoiding a top-heavy standing configuration while keeping the third tool visible beside the right-hand arm.
 
 ## Franka Assembly2: External RoboTwin Tool Assets
 
@@ -59,9 +59,9 @@ Assembly2 reuses the shared detailed frame and interfaces but replaces the three
 - `assets/objects/030_drill/visual/base6.glb`
 - `assets/objects/020_hammer/visual/base0.glb`
 
-The selected drill variant is the compact `base6` model, whose scaled envelope is approximately `0.046 × 0.156 × 0.131 m`, appropriate for Panda grasping and the existing tool zone.
+The selected drill variant is the compact `base6` model. Its RoboTwin task scale gives an envelope of approximately `0.046 × 0.156 × 0.131 m`; the web workcell enlarges it to approximately `0.056 × 0.199 × 0.165 m` so its cordless-driver silhouette reads clearly beside a full-size Panda while remaining graspable.
 
-MuJoCo WASM does not load GLB directly. The chosen visual and collision GLBs are converted once into repository-owned OBJ assets. Each tool body uses a non-colliding visual mesh and either the converted RoboTwin collision mesh or a conservative primitive collision proxy when the source collision decomposition is unsuitable. Source scale metadata from each `model_data*.json` is applied exactly once.
+MuJoCo WASM does not load GLB directly. The chosen visual GLBs are converted once into repository-owned OBJ assets with UV coordinates, and their embedded base-color textures are extracted as PNG. Each tool body uses a non-colliding textured visual mesh plus a conservative primitive collision proxy. RoboTwin scale metadata is the baseline; the drill and hammer receive one documented display-scale adjustment for realistic workcell proportions.
 
 Assembly2 uses a local Vite public asset root containing the required Franka files plus the converted tool meshes. A third-party notice records the upstream RoboTwin MIT license and source paths. No large dataset, unused object variant, or original GLB archive is committed.
 

@@ -1,11 +1,14 @@
 import type { SceneConfig } from 'mujoco-react';
 
 import {
-  FRANKA_ASSEMBLY_LAYOUT,
   FRANKA_LAYOUT,
   SO101_LAYOUT,
   XLEROBOT_LAYOUT,
 } from './sceneLayouts.js';
+import {
+  FRANKA_ASSEMBLY1_LAYOUT,
+  FRANKA_ASSEMBLY2_LAYOUT,
+} from './frankaAssemblyLayouts.js';
 import {
   createFrankaTargets,
   createSO101Targets,
@@ -25,6 +28,9 @@ export interface RobotEntry {
 
 const XLEROBOT_BASE =
   'https://raw.githubusercontent.com/Vector-Wangel/MuJoCo-GS-Web/main/assets/robots/xlerobot/';
+const FRANKA_REMOTE_BASE =
+  'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/';
+const FRANKA_ASSEMBLY2_BASE = `${import.meta.env.BASE_URL}assets/franka-assembly2/`;
 
 export const XLEROBOT_HOME_JOINTS = XLEROBOT_LAYOUT.homeJoints.slice(0, 16);
 
@@ -33,7 +39,7 @@ export const robots: Record<string, RobotEntry> = {
     label: 'Franka Panda',
     controlFamily: 'franka',
     config: {
-      src: 'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/',
+      src: FRANKA_REMOTE_BASE,
       sceneFile: 'scene.xml',
       homeJoints: FRANKA_LAYOUT.homeJoints,
       xmlPatches: FRANKA_LAYOUT.xmlPatches,
@@ -75,18 +81,33 @@ export const robots: Record<string, RobotEntry> = {
     controlTargets: createXLeRobotTargets(),
   },
 
-  frankaAssembly: {
-    label: 'Franka Assembly',
+  frankaAssembly1: {
+    label: 'Franka Assembly1',
     controlFamily: 'franka',
     config: {
-      src: 'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/',
+      src: FRANKA_REMOTE_BASE,
       sceneFile: 'scene.xml',
-      homeJoints: FRANKA_ASSEMBLY_LAYOUT.homeJoints,
-      xmlPatches: FRANKA_ASSEMBLY_LAYOUT.xmlPatches,
-      sceneObjects: FRANKA_ASSEMBLY_LAYOUT.sceneObjects,
+      homeJoints: FRANKA_ASSEMBLY1_LAYOUT.homeJoints,
+      xmlPatches: FRANKA_ASSEMBLY1_LAYOUT.xmlPatches,
+      sceneObjects: FRANKA_ASSEMBLY1_LAYOUT.sceneObjects,
     },
-    camera: FRANKA_ASSEMBLY_LAYOUT.camera,
-    orbitTarget: FRANKA_ASSEMBLY_LAYOUT.orbitTarget,
+    camera: FRANKA_ASSEMBLY1_LAYOUT.camera,
+    orbitTarget: FRANKA_ASSEMBLY1_LAYOUT.orbitTarget,
+    controlTargets: createFrankaTargets(),
+  },
+
+  frankaAssembly2: {
+    label: 'Franka Assembly2',
+    controlFamily: 'franka',
+    config: {
+      src: FRANKA_ASSEMBLY2_BASE,
+      sceneFile: 'scene.xml',
+      homeJoints: FRANKA_ASSEMBLY2_LAYOUT.homeJoints,
+      xmlPatches: FRANKA_ASSEMBLY2_LAYOUT.xmlPatches,
+      sceneObjects: FRANKA_ASSEMBLY2_LAYOUT.sceneObjects,
+    },
+    camera: FRANKA_ASSEMBLY2_LAYOUT.camera,
+    orbitTarget: FRANKA_ASSEMBLY2_LAYOUT.orbitTarget,
     controlTargets: createFrankaTargets(),
   },
 };

@@ -32,8 +32,16 @@ const scenes = [
     ik: false,
   },
   {
-    key: 'frankaAssembly',
-    label: 'Franka Assembly',
+    key: 'frankaAssembly1',
+    label: 'Franka Assembly1',
+    targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'],
+    blockSize: 8,
+    keyCode: 'KeyV',
+    ik: true,
+  },
+  {
+    key: 'frankaAssembly2',
+    label: 'Franka Assembly2',
     targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'],
     blockSize: 8,
     keyCode: 'KeyV',

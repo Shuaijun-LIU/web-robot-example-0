@@ -2,6 +2,7 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+docs/assets/franka-assembly2/
 *.local
 count.txt
 .env

@@ -22,7 +22,7 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
       parts: [-0.56, 0.42, 0.125],
       poweredTool: [0.53, -0.42, 0.135],
       manualTool: [-0.53, -0.42, 0.13],
-      hammer: [0.65, 0, 0.145],
+      hammer: [0.65, 0, 0.229],
       fasteners: [0.56, 0.42, 0.125],
       handover: [0, -0.48, 0.112],
     });

@@ -11,10 +11,16 @@ const allScenes = [
   { key: 'so101', label: 'SO101', instances: 4 },
   { key: 'xlerobot', label: 'XLeRobot', instances: 2 },
   {
-    key: 'frankaAssembly',
-    label: 'Franka Assembly',
+    key: 'frankaAssembly1',
+    label: 'Franka Assembly1',
     instances: 4,
-    screenshotName: 'franka-assembly',
+    screenshotName: 'franka-assembly1',
+  },
+  {
+    key: 'frankaAssembly2',
+    label: 'Franka Assembly2',
+    instances: 4,
+    screenshotName: 'franka-assembly2',
   },
 ];
 const requestedKeys = new Set(

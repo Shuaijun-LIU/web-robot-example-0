@@ -3,12 +3,15 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import {
-  FRANKA_ASSEMBLY_LAYOUT,
   FRANKA_LAYOUT,
   SO101_LAYOUT,
   XLEROBOT_LAYOUT,
   repeatPose,
 } from '../src/sceneLayouts.js';
+import {
+  FRANKA_ASSEMBLY1_LAYOUT,
+  FRANKA_ASSEMBLY2_LAYOUT,
+} from '../src/frankaAssemblyLayouts.js';
 
 test('repeatPose creates one actuator home block for every robot', () => {
   assert.deepEqual(repeatPose([1, 2], 3), [1, 2, 1, 2, 1, 2]);
@@ -26,11 +29,13 @@ test('arm layouts replicate four robots inward around one center', () => {
 
 test('Franka assembly scene enlarges only the new four-arm ring while remaining reachable', () => {
   assert.equal(FRANKA_LAYOUT.ringRadius, 0.72);
-  assert.equal(FRANKA_ASSEMBLY_LAYOUT.instanceCount, 4);
-  assert.equal(FRANKA_ASSEMBLY_LAYOUT.ringRadius, 0.9);
-  assert.equal(FRANKA_ASSEMBLY_LAYOUT.homeJoints.length, 32);
+  for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
+    assert.equal(layout.instanceCount, 4);
+    assert.equal(layout.ringRadius, 0.9);
+    assert.equal(layout.homeJoints.length, 32);
+  }
 
-  const attachmentXml = FRANKA_ASSEMBLY_LAYOUT.xmlPatches
+  const attachmentXml = FRANKA_ASSEMBLY1_LAYOUT.xmlPatches
     .flatMap((patch) => patch.replace?.[1] ?? [])
     .join('\n');
   assert.match(attachmentXml, /<frame pos="0 -0\.9 0\.1">/);
@@ -40,40 +45,52 @@ test('Franka assembly scene enlarges only the new four-arm ring while remaining 
 });
 
 test('Franka assembly scene stages a frame, installable parts, separated tools, and handover area', () => {
-  assert.deepEqual(FRANKA_ASSEMBLY_LAYOUT.taskStations, {
+  const expectedStations = {
     frame: [0, 0, 0.275],
     parts: [-0.56, 0.42, 0.125],
     poweredTool: [0.53, -0.42, 0.135],
     manualTool: [-0.53, -0.42, 0.13],
+    hammer: [0.65, 0, 0.229],
     fasteners: [0.56, 0.42, 0.125],
     handover: [0, -0.48, 0.112],
-  });
+  };
 
-  const sceneNames = FRANKA_ASSEMBLY_LAYOUT.sceneObjects.map(({ name }) => name);
-  assert.ok(sceneNames.includes('assembly_platform'));
-  assert.ok(sceneNames.includes('handover_pad'));
-  assert.equal(sceneNames.some((name) => name.endsWith('_cube')), false);
+  for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
+    assert.deepEqual(layout.taskStations, expectedStations);
+    const sceneNames = layout.sceneObjects.map(({ name }) => name);
+    assert.ok(sceneNames.includes('assembly_platform'));
+    assert.ok(sceneNames.includes('handover_pad'));
+    assert.ok(sceneNames.includes('tool_mat_hammer'));
+    assert.equal(sceneNames.some((name) => name.endsWith('_cube')), false);
 
-  const workcellXml = FRANKA_ASSEMBLY_LAYOUT.xmlPatches
-    .map((patch) => patch.replace?.[1] ?? '')
-    .join('\n');
-  for (const name of [
-    'assembly_frame',
-    'cross_member',
-    'mounting_plate',
-    'torque_driver',
-    'manual_screwdriver',
-    'parts_tray',
-    'fastener_tray',
-    'fastener_1',
-  ]) {
-    assert.match(workcellXml, new RegExp(`name="${name}"`));
+    const workcellXml = layout.xmlPatches
+      .map((patch) => patch.replace?.[1] ?? '')
+      .join('\n');
+    for (const name of [
+      'assembly_frame',
+      'cross_member',
+      'mounting_plate',
+      'torque_driver',
+      'manual_screwdriver',
+      'claw_hammer',
+      'parts_tray',
+      'fastener_tray',
+      'fastener_1',
+    ]) {
+      assert.match(workcellXml, new RegExp(`name="${name}"`));
+    }
+    assert.match(workcellXml, /<body name="assembly_frame"[^>]*>\s*<freejoint\/>/);
   }
-  assert.match(workcellXml, /<body name="assembly_frame"[^>]*>\s*<freejoint\/>/);
 });
 
 test('each attachment uses an oriented physical frame in parent-scene degrees', () => {
-  for (const layout of [FRANKA_LAYOUT, SO101_LAYOUT, XLEROBOT_LAYOUT]) {
+  for (const layout of [
+    FRANKA_LAYOUT,
+    FRANKA_ASSEMBLY1_LAYOUT,
+    FRANKA_ASSEMBLY2_LAYOUT,
+    SO101_LAYOUT,
+    XLEROBOT_LAYOUT,
+  ]) {
     const replacements = layout.xmlPatches
       .filter((patch) => patch.replace)
       .map((patch) => patch.replace[1])
@@ -99,15 +116,17 @@ test('XLeRobot uses two opposing robots and an arm-height table', () => {
   );
 });
 
-test('runtime configs consume all four shared layout definitions', async () => {
+test('runtime configs consume all five shared layout definitions', async () => {
   const source = await readFile(new URL('../src/configs.ts', import.meta.url), 'utf8');
 
   assert.match(source, /FRANKA_LAYOUT\.xmlPatches/);
-  assert.match(source, /FRANKA_ASSEMBLY_LAYOUT\.xmlPatches/);
+  assert.match(source, /FRANKA_ASSEMBLY1_LAYOUT\.xmlPatches/);
+  assert.match(source, /FRANKA_ASSEMBLY2_LAYOUT\.xmlPatches/);
   assert.match(source, /SO101_LAYOUT\.xmlPatches/);
   assert.match(source, /XLEROBOT_LAYOUT\.xmlPatches/);
   assert.match(source, /controlTargets:\s*createFrankaTargets\(\)/);
-  assert.match(source, /frankaAssembly:[\s\S]*controlFamily:\s*'franka'/);
+  assert.match(source, /frankaAssembly1:[\s\S]*controlFamily:\s*'franka'/);
+  assert.match(source, /frankaAssembly2:[\s\S]*controlFamily:\s*'franka'/);
   assert.match(source, /controlTargets:\s*createSO101Targets\(\)/);
   assert.match(source, /controlTargets:\s*createXLeRobotTargets\(\)/);
 });

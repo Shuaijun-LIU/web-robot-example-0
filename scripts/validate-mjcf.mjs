@@ -4,23 +4,27 @@ import { dirname, join, relative } from 'node:path';
 import loadMujoco from 'mujoco-js';
 
 import {
-  FRANKA_ASSEMBLY_LAYOUT,
   FRANKA_LAYOUT,
   SO101_LAYOUT,
   XLEROBOT_LAYOUT,
 } from '../src/sceneLayouts.js';
+import {
+  FRANKA_ASSEMBLY1_LAYOUT,
+  FRANKA_ASSEMBLY2_LAYOUT,
+} from '../src/frankaAssemblyLayouts.js';
 
 const definitions = {
   franka: { layout: FRANKA_LAYOUT, sceneFile: 'scene.xml' },
   so101: { layout: SO101_LAYOUT, sceneFile: 'objects_SO101.xml' },
   xlerobot: { layout: XLEROBOT_LAYOUT, sceneFile: 'objects.xml' },
-  frankaAssembly: { layout: FRANKA_ASSEMBLY_LAYOUT, sceneFile: 'scene.xml' },
+  frankaAssembly1: { layout: FRANKA_ASSEMBLY1_LAYOUT, sceneFile: 'scene.xml' },
+  frankaAssembly2: { layout: FRANKA_ASSEMBLY2_LAYOUT, sceneFile: 'scene.xml' },
 };
 const [sceneKey, assetDirectory] = process.argv.slice(2);
 const definition = definitions[sceneKey];
 
 if (!definition || !assetDirectory) {
-  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly> <asset-directory>');
+  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly1|frankaAssembly2> <asset-directory>');
 }
 
 const mujoco = await loadMujoco({ printErr: (message) => console.error(`MuJoCo: ${message}`) });
@@ -142,7 +146,8 @@ if (process.env.POSE_REPORT === '1') {
   mujoco.mj_forward(model, data);
   const rootName = {
     franka: 'link0',
-    frankaAssembly: 'link0',
+    frankaAssembly1: 'link0',
+    frankaAssembly2: 'link0',
     so101: 'Base',
     xlerobot: 'chassis',
   }[sceneKey];

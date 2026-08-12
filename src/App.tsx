@@ -153,7 +153,8 @@ const robotOptions = Object.fromEntries(
 
 const replicatedRootPatterns: Record<string, RegExp> = {
   franka: /^r\d+_link0$/,
-  frankaAssembly: /^r\d+_link0$/,
+  frankaAssembly1: /^r\d+_link0$/,
+  frankaAssembly2: /^r\d+_link0$/,
   so101: /^r\d+_Base$/,
   xlerobot: /^r\d+_chassis$/,
 };

@@ -20,6 +20,14 @@ export interface SceneLayout {
 }
 
 export function repeatPose(pose: number[], count: number): number[];
+export function fixedBox(
+  name: string,
+  size: [number, number, number],
+  position: [number, number, number],
+  rgba: [number, number, number, number],
+): SceneObject;
+
+export const FRANKA_HOME: number[];
 
 export const FRANKA_LAYOUT: SceneLayout & {
   ringRadius: number;
