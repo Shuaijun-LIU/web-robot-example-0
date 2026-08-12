@@ -10,6 +10,7 @@ const allScenes = [
   { key: 'franka', label: 'Franka Panda', instances: 4 },
   { key: 'so101', label: 'SO101', instances: 4 },
   { key: 'xlerobot', label: 'XLeRobot', instances: 2 },
+  { key: 'frankaAssembly', label: 'Franka Assembly', instances: 4 },
 ];
 const requestedKeys = new Set(
   (process.env.SCENES ?? allScenes.map(({ key }) => key).join(','))

@@ -1,6 +1,11 @@
 import type { SceneConfig } from 'mujoco-react';
 
-import { FRANKA_LAYOUT, SO101_LAYOUT, XLEROBOT_LAYOUT } from './sceneLayouts.js';
+import {
+  FRANKA_ASSEMBLY_LAYOUT,
+  FRANKA_LAYOUT,
+  SO101_LAYOUT,
+  XLEROBOT_LAYOUT,
+} from './sceneLayouts.js';
 import {
   createFrankaTargets,
   createSO101Targets,
@@ -10,6 +15,7 @@ import type { ControlTarget } from './controlTargets.js';
 
 export interface RobotEntry {
   label: string;
+  controlFamily: 'franka' | 'so101' | 'xlerobot';
   config: SceneConfig;
   camera: { position: [number, number, number]; fov: number };
   orbitTarget: [number, number, number];
@@ -25,6 +31,7 @@ export const XLEROBOT_HOME_JOINTS = XLEROBOT_LAYOUT.homeJoints.slice(0, 16);
 export const robots: Record<string, RobotEntry> = {
   franka: {
     label: 'Franka Panda',
+    controlFamily: 'franka',
     config: {
       src: 'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/',
       sceneFile: 'scene.xml',
@@ -39,6 +46,7 @@ export const robots: Record<string, RobotEntry> = {
 
   so101: {
     label: 'SO101',
+    controlFamily: 'so101',
     config: {
       src: XLEROBOT_BASE,
       sceneFile: 'objects_SO101.xml',
@@ -54,6 +62,7 @@ export const robots: Record<string, RobotEntry> = {
 
   xlerobot: {
     label: 'XLeRobot',
+    controlFamily: 'xlerobot',
     config: {
       src: XLEROBOT_BASE,
       sceneFile: 'objects.xml',
@@ -64,5 +73,20 @@ export const robots: Record<string, RobotEntry> = {
     camera: XLEROBOT_LAYOUT.camera,
     orbitTarget: XLEROBOT_LAYOUT.orbitTarget,
     controlTargets: createXLeRobotTargets(),
+  },
+
+  frankaAssembly: {
+    label: 'Franka Assembly',
+    controlFamily: 'franka',
+    config: {
+      src: 'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/',
+      sceneFile: 'scene.xml',
+      homeJoints: FRANKA_ASSEMBLY_LAYOUT.homeJoints,
+      xmlPatches: FRANKA_ASSEMBLY_LAYOUT.xmlPatches,
+      sceneObjects: FRANKA_ASSEMBLY_LAYOUT.sceneObjects,
+    },
+    camera: FRANKA_ASSEMBLY_LAYOUT.camera,
+    orbitTarget: FRANKA_ASSEMBLY_LAYOUT.orbitTarget,
+    controlTargets: createFrankaTargets(),
   },
 };

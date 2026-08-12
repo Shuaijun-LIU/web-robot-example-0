@@ -72,13 +72,13 @@ function ClickSelectOverlay() {
 
 /** Selection-aware IK and keyboard controllers for the active physical instance. */
 function SceneChildren({
-  robotKey,
+  controlFamily,
   target,
   resetGeneration,
   showGizmo,
   gizmoScale,
 }: {
-  robotKey: string;
+  controlFamily: 'franka' | 'so101' | 'xlerobot';
   target: ControlTarget;
   resetGeneration: number;
   showGizmo: boolean;
@@ -134,13 +134,13 @@ function SceneChildren({
         />
       )}
 
-      {robotKey === 'franka' && (
+      {controlFamily === 'franka' && (
         <FrankaController key={`franka-${target.key}`} target={target} />
       )}
-      {robotKey === 'so101' && (
+      {controlFamily === 'so101' && (
         <SO101Controller key={`so101-${target.key}`} target={target} ik={ik} />
       )}
-      {robotKey === 'xlerobot' && (
+      {controlFamily === 'xlerobot' && (
         <XLeRobotController key={`xlerobot-${target.key}`} target={target} ik={ik} />
       )}
     </>
@@ -153,6 +153,7 @@ const robotOptions = Object.fromEntries(
 
 const replicatedRootPatterns: Record<string, RegExp> = {
   franka: /^r\d+_link0$/,
+  frankaAssembly: /^r\d+_link0$/,
   so101: /^r\d+_Base$/,
   xlerobot: /^r\d+_chassis$/,
 };
@@ -263,7 +264,7 @@ export function App() {
 
         {/* IK + per-robot controllers */}
         <SceneChildren
-          robotKey={robotKey}
+          controlFamily={entry.controlFamily}
           target={controlTarget}
           resetGeneration={resetGeneration}
           showGizmo={sim.gizmo}
@@ -301,7 +302,7 @@ export function App() {
       >
         <span className="performance-stats__label">Scene performance</span>
       </div>
-      <KeyboardHelp robotKey={robotKey} controlTargetLabel={controlTarget.label} />
+      <KeyboardHelp robotKey={entry.controlFamily} controlTargetLabel={controlTarget.label} />
       <GitHubLink />
     </MujocoProvider>
   );
