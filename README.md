@@ -16,7 +16,7 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 | SO101 | Four 6-actuator arms at 90° intervals, facing the center | One table with a `0.800 m` top and three graspable cubes |
 | XLeRobot | Two complete dual-arm mobile robots, facing one another | One four-leg table; its top is exactly `0.775 m`, matching the arm mounting height |
 
-The app starts paused so the requested layout remains stable for inspection. Uncheck **paused** to run physics. The IK gizmo is available from the control panel but starts hidden for an unobstructed overview.
+The app starts running with the IK gizmo visible, matching the original interactive example. Use **Control target** to select an individual Franka/SO101 arm or one complete XLeRobot without reloading the shared scene.
 
 ## Run locally
 
@@ -32,9 +32,9 @@ Open `http://localhost:3000`. The robot mesh files are loaded from their upstrea
 
 ## Controls
 
-The current milestone keeps keyboard and IK control on the primary instance (`r0_`) while every displayed robot remains an independent MuJoCo model with its own bodies, joints, actuators, tendons, and collision geometry.
+Keyboard and IK controls now work on every physical instance. Franka and SO101 offer `Arm 1–4`; XLeRobot offers `Robot 1–2`, with each selected robot retaining its original base, head, and two-arm key map. Only the selected control block is written, so switching targets preserves the other robots' poses.
 
-| Key | Franka | SO101 | XLeRobot primary instance |
+| Key | Franka selected arm | SO101 selected arm | Selected XLeRobot |
 |---|---|---|---|
 | WASD | — | End-effector forward/back/up/down | Drive base |
 | Q/E | — | End-effector left/right | — |
@@ -45,13 +45,13 @@ The current milestone keeps keyboard and IK control on the primary instance (`r0
 | 7–0, Y/U/I/O | — | — | Left arm |
 | H–L, N–/ | — | — | Right arm |
 
-The panel also provides pause, speed, gravity compensation, reset, IK gizmo, contacts, sites, and joints controls. Double-click selects a body; Ctrl/Cmd-click drags a body.
+The panel also provides pause, speed, gravity compensation, reset, IK gizmo, contacts, sites, and joints controls. The gizmo follows only the selected Franka/SO101 TCP. Double-click selection and Ctrl/Cmd-click body dragging remain scene-wide. The top-left FPS/time/memory panels report whole-scene performance, not one robot.
 
 ## Implementation
 
 The layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
 
-Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Browser smoke tests read the compiled model through the simulation API and reject a scene unless it contains exactly 4 Franka roots, 4 SO101 roots, or 2 XLeRobot roots.
+Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Target namespaces and control offsets are defined in [`src/controlTargets.js`](src/controlTargets.js); the selected-instance IK controller resolves explicit joint addresses and actuator indices instead of assuming the first block. Browser smoke tests reject a scene unless it contains exactly 4 Franka roots, 4 SO101 roots, or 2 XLeRobot roots.
 
 ## Verification
 
@@ -66,9 +66,10 @@ For reproducible screenshots, run the Vite server and then:
 
 ```bash
 npm run capture:scenes
+npm run verify:controls
 ```
 
-`FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point the capture script at local copies of the upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`.
+`verify:controls` selects all four Franka arms, all four SO101 arms, and both XLeRobots, then checks that keyboard and IK input change only the selected actuator block. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`.
 
 ## GitHub Pages
 

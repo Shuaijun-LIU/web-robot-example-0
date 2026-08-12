@@ -28,5 +28,6 @@ test('README documents and displays all three verified layouts', async () => {
   assert.match(readme, /artifacts\/screenshots\/so101\.png/);
   assert.match(readme, /artifacts\/screenshots\/xlerobot\.png/);
   assert.match(readme, /0\.775 m/);
-  assert.match(readme, /primary instance/i);
+  assert.match(readme, /Control target/);
+  assert.match(readme, /every physical instance/i);
 });

@@ -58,4 +58,5 @@ test('scene starts running with IK gizmo visible for immediate interaction', asy
   assert.match(source, /paused:\s*false/);
   assert.match(source, /gizmo:\s*\{\s*value:\s*true/);
   assert.match(source, /label:\s*'Control target'/);
+  assert.match(source, /rootWidth:\s*'320px'/);
 });

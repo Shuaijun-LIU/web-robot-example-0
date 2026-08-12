@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { OrbitControls, Html, Stats, Environment } from '@react-three/drei';
-import { useControls, button } from 'leva';
+import { Leva, useControls, button } from 'leva';
 import {
   MujocoProvider,
   MujocoCanvas,
@@ -229,6 +229,9 @@ export function App() {
 
   return (
     <MujocoProvider>
+      <Leva
+        theme={{ sizes: { rootWidth: '320px', controlWidth: '185px' } }}
+      />
       <MujocoCanvas
         key={canvasKey}
         ref={apiRef}

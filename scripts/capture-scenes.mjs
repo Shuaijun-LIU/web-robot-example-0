@@ -7,9 +7,9 @@ const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const sceneTimeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
 const outputDirectory = resolve('artifacts/screenshots');
 const allScenes = [
-  { key: 'franka', label: 'Franka Panda · 4 arms', instances: 4 },
-  { key: 'so101', label: 'SO101 · 4 arms', instances: 4 },
-  { key: 'xlerobot', label: 'XLeRobot · 2 robots', instances: 2 },
+  { key: 'franka', label: 'Franka Panda', instances: 4 },
+  { key: 'so101', label: 'SO101', instances: 4 },
+  { key: 'xlerobot', label: 'XLeRobot', instances: 2 },
 ];
 const requestedKeys = new Set(
   (process.env.SCENES ?? allScenes.map(({ key }) => key).join(','))
