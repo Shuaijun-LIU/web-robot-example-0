@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, type RefObject } from 'react';
 import { OrbitControls, Html, Stats, Environment } from '@react-three/drei';
 import { useControls, button } from 'leva';
 import {
@@ -101,6 +101,9 @@ const robotOptions = Object.fromEntries(
 
 export function App() {
   const apiRef = useRef<MujocoSimAPI>(null);
+  const performanceStatsRef = useRef<HTMLDivElement>(null!);
+  // Drei's Stats type omits the null state that every DOM ref has before mount.
+  const performanceStatsParentRef = performanceStatsRef as unknown as RefObject<HTMLElement>;
 
   const { robot: robotKey } = useControls({
     robot: { value: 'franka', options: robotOptions, label: 'Robot' },
@@ -181,10 +184,17 @@ export function App() {
           rotation={[Math.PI / 2, 0, 0]}
           position={[0, 0, 0.001]}
         />
-        <Stats />
+        <Stats parent={performanceStatsParentRef} showPanel={0} />
+        <Stats parent={performanceStatsParentRef} showPanel={1} />
+        <Stats parent={performanceStatsParentRef} showPanel={2} />
       </MujocoCanvas>
 
       {/* HTML overlay — outside R3F canvas */}
+      <div
+        ref={performanceStatsRef}
+        className="performance-stats"
+        aria-label="Performance statistics: frames per second, frame time, and memory"
+      />
       <KeyboardHelp robotKey={robotKey} />
       <GitHubLink />
     </MujocoProvider>

@@ -1,7 +1,7 @@
 export function GitHubLink() {
   return (
     <a
-      href="https://github.com/noah-wardlow/mujoco-react"
+      href="https://github.com/Shuaijun-LIU/web-robot-example-0"
       target="_blank"
       rel="noopener noreferrer"
       style={{
