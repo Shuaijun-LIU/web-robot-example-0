@@ -4,3 +4,4 @@
 - 2026-08-13 02:00 CST — Add a fourth `Franka Assembly` scene while preserving the existing three scene entries unchanged.
 - 2026-08-13 02:00 CST — Use compound MuJoCo primitives for the first assembly workcell so every visible task object is represented in physics and GitHub Pages remains self-contained.
 - 2026-08-13 02:00 CST — Increase the Franka ring radius from 0.72 m in the original scene to 0.90 m only in the fourth scene.
+- 2026-08-13 03:15 CST — Split the assembly comparison into `Franka Assembly1` (procedural physical detail) and `Franka Assembly2` (converted RoboTwin tool meshes) while keeping one shared frame/interface contract.
