@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --test test/*.test.mjs",
     "dev": "vite --port 3000",
     "build": "vite build",
     "build:pages": "vite build --base=/web-robot-example-0/ --outDir docs",
