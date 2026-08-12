@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, type RefObject } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { OrbitControls, Html, Stats, Environment } from '@react-three/drei';
 import { useControls, button } from 'leva';
 import {
   MujocoProvider,
   MujocoCanvas,
-  useIkController,
   IkGizmo,
   DragInteraction,
   ContactMarkers,
@@ -13,11 +12,13 @@ import {
   useMujoco,
   useGravityCompensation,
 } from 'mujoco-react';
-import type { MujocoSimAPI, IkConfig } from 'mujoco-react';
+import type { MujocoSimAPI } from 'mujoco-react';
 import { robots } from './configs';
+import type { ControlTarget } from './controlTargets.js';
 import { FrankaController } from './controllers/FrankaController';
 import { SO101Controller } from './controllers/SO101Controller';
 import { XLeRobotController } from './controllers/XLeRobotController';
+import { useSelectedIkController } from './controllers/useSelectedIkController';
 import { useClickSelect } from './useClickSelect';
 import { KeyboardHelp } from './KeyboardHelp';
 import { GitHubLink } from './GitHubLink';
@@ -69,28 +70,79 @@ function ClickSelectOverlay() {
   return null;
 }
 
-/** Scene children that need hooks (useIkController) */
+/** Selection-aware IK and keyboard controllers for the active physical instance. */
 function SceneChildren({
   robotKey,
-  ikConfig,
+  target,
+  resetGeneration,
   showGizmo,
   gizmoScale,
 }: {
   robotKey: string;
-  ikConfig: IkConfig | null;
+  target: ControlTarget;
+  resetGeneration: number;
   showGizmo: boolean;
   gizmoScale?: number;
 }) {
-  const ik = useIkController(ikConfig);
+  const simulation = useMujoco();
+  const { controller: ik, resolvedSiteName } = useSelectedIkController(target, resetGeneration);
+
+  useEffect(() => {
+    document.documentElement.dataset.controlTarget = target.key;
+    if (resolvedSiteName) {
+      document.documentElement.dataset.ikSite = resolvedSiteName;
+    } else {
+      delete document.documentElement.dataset.ikSite;
+    }
+  }, [target.key, resolvedSiteName]);
+
+  useEffect(() => {
+    if (simulation.status !== 'ready') return;
+    const diagnostics = {
+      getCtrl: () => Array.from(simulation.api.getCtrl()),
+      getQpos: () => Array.from(simulation.api.getQpos()),
+      reset: () => {
+        simulation.api.reset();
+        ik?.setIkEnabled(false);
+        ik?.syncTargetToSite();
+      },
+      moveIkTargetBy: (x: number, y: number, z: number) => {
+        if (!ik) return false;
+        ik.syncTargetToSite();
+        const nextTarget = ik.ikTargetRef.current.position.clone();
+        nextTarget.x += x;
+        nextTarget.y += y;
+        nextTarget.z += z;
+        ik.moveTarget(nextTarget);
+        return true;
+      },
+    };
+    window.robotDemo = diagnostics;
+    return () => {
+      if (window.robotDemo === diagnostics) delete window.robotDemo;
+    };
+  }, [simulation, ik, target.key]);
 
   return (
     <>
-      {ik && showGizmo && <IkGizmo controller={ik} scale={gizmoScale} />}
+      {ik && showGizmo && (
+        <IkGizmo
+          key={`gizmo-${target.key}`}
+          controller={ik}
+          siteName={target.ik?.siteName}
+          scale={gizmoScale}
+        />
+      )}
 
-      {/* Per-robot controllers — swap in your own */}
-      {robotKey === 'franka' && <FrankaController />}
-      {robotKey === 'so101' && <SO101Controller ik={ik} />}
-      {robotKey === 'xlerobot' && <XLeRobotController ik={ik} />}
+      {robotKey === 'franka' && (
+        <FrankaController key={`franka-${target.key}`} target={target} />
+      )}
+      {robotKey === 'so101' && (
+        <SO101Controller key={`so101-${target.key}`} target={target} ik={ik} />
+      )}
+      {robotKey === 'xlerobot' && (
+        <XLeRobotController key={`xlerobot-${target.key}`} target={target} ik={ik} />
+      )}
     </>
   );
 }
@@ -107,6 +159,7 @@ const replicatedRootPatterns: Record<string, RegExp> = {
 
 export function App() {
   const apiRef = useRef<MujocoSimAPI>(null);
+  const [resetGeneration, setResetGeneration] = useState(0);
   const performanceStatsRef = useRef<HTMLDivElement>(null!);
   // Drei's Stats type omits the null state that every DOM ref has before mount.
   const performanceStatsParentRef = performanceStatsRef as unknown as RefObject<HTMLElement>;
@@ -116,6 +169,19 @@ export function App() {
   });
 
   const entry = robots[robotKey];
+  const controlTargetOptions = useMemo(
+    () => Object.fromEntries(entry.controlTargets.map((target) => [target.label, target.key])),
+    [entry],
+  );
+  const { controlTarget: controlTargetKey } = useControls({
+    controlTarget: {
+      value: entry.controlTargets[0].key,
+      options: controlTargetOptions,
+      label: 'Control target',
+    },
+  }, [robotKey]);
+  const controlTarget = entry.controlTargets.find(({ key }) => key === controlTargetKey)
+    ?? entry.controlTargets[0];
 
   useEffect(() => {
     document.documentElement.dataset.sceneStatus = 'loading';
@@ -123,6 +189,8 @@ export function App() {
     delete document.documentElement.dataset.sceneBodies;
     delete document.documentElement.dataset.sceneInstances;
     delete document.documentElement.dataset.sceneError;
+    delete document.documentElement.dataset.controlTarget;
+    delete document.documentElement.dataset.ikSite;
   }, [robotKey]);
 
   const handleSceneReady = useCallback((api: MujocoSimAPI) => {
@@ -141,11 +209,14 @@ export function App() {
   }, [robotKey]);
 
   const sim = useControls('Simulation', {
-    paused: true,
+    paused: false,
     speed: { value: 1.0, min: 0.1, max: 3.0, step: 0.1 },
     gravityCompensation: { value: false, label: 'gravity compensation' },
-    gizmo: { value: false, label: 'IK gizmo' },
-    reset: button(() => apiRef.current?.reset()),
+    gizmo: { value: true, label: 'IK gizmo' },
+    reset: button(() => {
+      apiRef.current?.reset();
+      setResetGeneration((generation) => generation + 1);
+    }),
   });
 
   const debug = useControls('Debug', {
@@ -155,8 +226,6 @@ export function App() {
   });
 
   const canvasKey = useMemo(() => robotKey, [robotKey]);
-
-  const ikConfig = entry.hasIk && entry.ikConfig ? entry.ikConfig : null;
 
   return (
     <MujocoProvider>
@@ -192,7 +261,8 @@ export function App() {
         {/* IK + per-robot controllers */}
         <SceneChildren
           robotKey={robotKey}
-          ikConfig={ikConfig}
+          target={controlTarget}
+          resetGeneration={resetGeneration}
           showGizmo={sim.gizmo}
           gizmoScale={entry.gizmoScale}
         />
@@ -225,8 +295,10 @@ export function App() {
         ref={performanceStatsRef}
         className="performance-stats"
         aria-label="Performance statistics: frames per second, frame time, and memory"
-      />
-      <KeyboardHelp robotKey={robotKey} />
+      >
+        <span className="performance-stats__label">Scene performance</span>
+      </div>
+      <KeyboardHelp robotKey={robotKey} controlTargetLabel={controlTarget.label} />
       <GitHubLink />
     </MujocoProvider>
   );

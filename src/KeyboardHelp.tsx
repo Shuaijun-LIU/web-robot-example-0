@@ -30,15 +30,22 @@ const HELP: Record<string, string[]> = {
   ],
 };
 
-export function KeyboardHelp({ robotKey }: { robotKey: string }) {
+export function KeyboardHelp({
+  robotKey,
+  controlTargetLabel,
+}: {
+  robotKey: string;
+  controlTargetLabel: string;
+}) {
   const lines = HELP[robotKey];
   if (!lines) return null;
 
   return (
-    <div className="pointer-events-none fixed bottom-4 left-4 rounded-lg bg-black/60 px-4 py-3 font-mono text-xs text-slate-300 backdrop-blur-sm">
-      <div className="mb-1 font-semibold text-slate-100">Keyboard</div>
+    <div className="keyboard-help">
+      <div className="keyboard-help__title">Keyboard</div>
+      <div className="keyboard-help__target">Controls: {controlTargetLabel}</div>
       {lines.map((l) => (
-        <div key={l}>{l}</div>
+        <div className="keyboard-help__line" key={l}>{l}</div>
       ))}
     </div>
   );

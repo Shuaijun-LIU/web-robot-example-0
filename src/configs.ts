@@ -13,8 +13,6 @@ export interface RobotEntry {
   config: SceneConfig;
   camera: { position: [number, number, number]; fov: number };
   orbitTarget: [number, number, number];
-  hasIk: boolean;
-  ikConfig?: { siteName: string; numJoints: number };
   gizmoScale?: number;
   controlTargets: ControlTarget[];
 }
@@ -36,8 +34,6 @@ export const robots: Record<string, RobotEntry> = {
     },
     camera: FRANKA_LAYOUT.camera,
     orbitTarget: FRANKA_LAYOUT.orbitTarget,
-    hasIk: true,
-    ikConfig: { siteName: FRANKA_LAYOUT.primaryTcpSite, numJoints: 7 },
     controlTargets: createFrankaTargets(),
   },
 
@@ -52,8 +48,6 @@ export const robots: Record<string, RobotEntry> = {
     },
     camera: SO101_LAYOUT.camera,
     orbitTarget: SO101_LAYOUT.orbitTarget,
-    hasIk: true,
-    ikConfig: { siteName: SO101_LAYOUT.primaryTcpSite, numJoints: 5 },
     gizmoScale: 0.08,
     controlTargets: createSO101Targets(),
   },
@@ -69,7 +63,6 @@ export const robots: Record<string, RobotEntry> = {
     },
     camera: XLEROBOT_LAYOUT.camera,
     orbitTarget: XLEROBOT_LAYOUT.orbitTarget,
-    hasIk: false,
     controlTargets: createXLeRobotTargets(),
   },
 };

@@ -7,6 +7,11 @@ import {
   createXLeRobotTargets,
   shiftIndices,
 } from '../src/controlTargets.js';
+import {
+  createSO101ControllerConfig,
+  createXLeRobotControllerConfig,
+  getFrankaGripperBinding,
+} from '../src/controllers/controllerConfigs.js';
 
 test('Franka exposes four namespaced arm targets with independent control blocks', () => {
   const targets = createFrankaTargets();
@@ -47,4 +52,29 @@ test('XLeRobot selects either complete sixteen-actuator robot', () => {
 test('shiftIndices moves an existing controller into a selected actuator block', () => {
   assert.deepEqual(shiftIndices([0, 2, 5], 6), [6, 8, 11]);
   assert.deepEqual(shiftIndices([2, 3, 4], 16), [18, 19, 20]);
+});
+
+test('Franka gripper binding follows the selected namespace', () => {
+  const target = createFrankaTargets()[2];
+
+  assert.deepEqual(getFrankaGripperBinding(target), {
+    v: { actuator: 'r2_gripper', toggle: [0, 255] },
+  });
+});
+
+test('SO101 keyboard controller writes only the selected six-actuator block', () => {
+  const config = createSO101ControllerConfig(12);
+
+  assert.equal(config.numActuators, 24);
+  assert.deepEqual(config.arms[0].indices, [12, 13, 14, 15, 16, 17]);
+});
+
+test('XLeRobot keyboard controller shifts base, arms, and head together', () => {
+  const config = createXLeRobotControllerConfig(16);
+
+  assert.equal(config.numActuators, 32);
+  assert.deepEqual(config.base.indices, [16, 17]);
+  assert.deepEqual(config.arms[0].indices, [18, 19, 20, 21, 22, 23]);
+  assert.deepEqual(config.arms[1].indices, [24, 25, 26, 27, 28, 29]);
+  assert.deepEqual(config.head.indices, [30, 31]);
 });

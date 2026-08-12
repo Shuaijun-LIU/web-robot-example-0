@@ -62,6 +62,46 @@ const DEFAULT_GRIPPER_OPEN = 1.5;
 const DEFAULT_GRIPPER_CLOSED = -0.25;
 const INITIAL_EE = [0.162, 0.118] satisfies [number, number];
 
+function createArmStates(config: ArmControllerConfig) {
+  return config.arms.map((arm) => {
+    const targetJoints = new Float64Array(arm.indices.length);
+    const gripperClosed = arm.gripperClosed ?? DEFAULT_GRIPPER_CLOSED;
+    let eePos = [INITIAL_EE[0], INITIAL_EE[1]];
+    let pitch = 0;
+
+    if (arm.initialJoints) {
+      for (let joint = 0; joint < Math.min(arm.initialJoints.length, targetJoints.length); joint++) {
+        targetJoints[joint] = arm.initialJoints[joint];
+      }
+      if (arm.initialJoints.length >= 3) {
+        const [x, y] = forwardKinematics2Link(arm.initialJoints[1], arm.initialJoints[2], arm.linkage);
+        eePos = [x, y];
+      }
+      if (arm.initialJoints.length >= 4) {
+        pitch = arm.initialJoints[3] - arm.initialJoints[1] + arm.initialJoints[2];
+      }
+    } else {
+      const [joint2, joint3] = inverseKinematics2Link(INITIAL_EE[0], INITIAL_EE[1], arm.linkage);
+      targetJoints[0] = arm.initialRotation ?? 0;
+      targetJoints[1] = joint2;
+      targetJoints[2] = joint3;
+      targetJoints[3] = joint2 - joint3;
+      targetJoints[4] = arm.initialRoll ?? 0;
+      targetJoints[5] = gripperClosed;
+    }
+
+    return {
+      targetJoints,
+      eePos,
+      pitch,
+      gripperOpen: false,
+      gripperKeyWasDown: false,
+      controlActive: false,
+      ikWasEnabled: false,
+    };
+  });
+}
+
 /**
  * Generic arm controller hook — configure arms, base, head via a single config.
  * Handles IK, gripper toggles, base velocity, and head pan/tilt.
@@ -72,40 +112,17 @@ const INITIAL_EE = [0.162, 0.118] satisfies [number, number];
 export function useArmController(config: ArmControllerConfig, ik?: IkContextValue | null) {
   const keys = useRef<Record<string, boolean>>({});
 
-  const armStates = useRef(
-    config.arms.map((arm) => {
-      const targetJoints = new Float64Array(arm.indices.length);
-      const gripperClosed = arm.gripperClosed ?? DEFAULT_GRIPPER_CLOSED;
-      let eePos = [INITIAL_EE[0], INITIAL_EE[1]];
-      let pitch = 0;
-
-      if (arm.initialJoints) {
-        for (let j = 0; j < Math.min(arm.initialJoints.length, targetJoints.length); j++) {
-          targetJoints[j] = arm.initialJoints[j];
-        }
-        if (arm.initialJoints.length >= 3) {
-          const [x, y] = forwardKinematics2Link(arm.initialJoints[1], arm.initialJoints[2], arm.linkage);
-          eePos = [x, y];
-        }
-        if (arm.initialJoints.length >= 4) {
-          pitch = arm.initialJoints[3] - arm.initialJoints[1] + arm.initialJoints[2];
-        }
-      } else {
-        const [j2, j3] = inverseKinematics2Link(INITIAL_EE[0], INITIAL_EE[1], arm.linkage);
-        targetJoints[0] = arm.initialRotation ?? 0;
-        targetJoints[1] = j2;
-        targetJoints[2] = j3;
-        targetJoints[3] = j2 - j3;
-        targetJoints[4] = arm.initialRoll ?? 0;
-        targetJoints[5] = gripperClosed;
-      }
-
-      return { targetJoints, eePos, pitch, gripperOpen: false, gripperKeyWasDown: false, controlActive: false, ikWasEnabled: false };
-    }),
-  );
+  const armStates = useRef(createArmStates(config));
 
   const baseState = useRef({ prevActive: [false, false] });
   const headState = useRef(new Float64Array(2));
+
+  useEffect(() => {
+    keys.current = {};
+    armStates.current = createArmStates(config);
+    baseState.current = { prevActive: [false, false] };
+    headState.current = new Float64Array(2);
+  }, [config]);
 
   // Keyboard listeners
   useEffect(() => {

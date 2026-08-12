@@ -56,14 +56,7 @@ test('runtime configs consume the three shared layout definitions', async () => 
   assert.match(source, /FRANKA_LAYOUT\.xmlPatches/);
   assert.match(source, /SO101_LAYOUT\.xmlPatches/);
   assert.match(source, /XLEROBOT_LAYOUT\.xmlPatches/);
-  assert.match(source, /siteName:\s*FRANKA_LAYOUT\.primaryTcpSite/);
-});
-
-test('Franka keyboard control targets the primary replicated gripper', async () => {
-  const source = await readFile(
-    new URL('../src/controllers/FrankaController.tsx', import.meta.url),
-    'utf8',
-  );
-
-  assert.match(source, /FRANKA_LAYOUT\.primaryGripperActuator/);
+  assert.match(source, /controlTargets:\s*createFrankaTargets\(\)/);
+  assert.match(source, /controlTargets:\s*createSO101Targets\(\)/);
+  assert.match(source, /controlTargets:\s*createXLeRobotTargets\(\)/);
 });

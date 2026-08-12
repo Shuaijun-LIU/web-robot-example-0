@@ -1,13 +1,12 @@
 import { useKeyboardTeleop } from 'mujoco-react';
 
-import { FRANKA_LAYOUT } from '../sceneLayouts.js';
+import type { ControlTarget } from '../controlTargets.js';
+import { getFrankaGripperBinding } from './controllerConfigs.js';
 
 /** Franka gripper toggle — V key opens/closes the gripper. */
-export function FrankaController() {
+export function FrankaController({ target }: { target: ControlTarget }) {
   useKeyboardTeleop({
-    bindings: {
-      v: { actuator: FRANKA_LAYOUT.primaryGripperActuator, toggle: [0, 255] },
-    },
+    bindings: getFrankaGripperBinding(target),
   });
   return null;
 }

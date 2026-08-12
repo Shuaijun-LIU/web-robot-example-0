@@ -1,17 +1,20 @@
+import { useMemo } from 'react';
 import { useArmController } from './useArmController';
-import type { ArmControllerConfig } from './useArmController';
 import type { IkContextValue } from 'mujoco-react';
+import type { ControlTarget } from '../controlTargets.js';
+import { createSO101ControllerConfig } from './controllerConfigs.js';
 
-const config: ArmControllerConfig = {
-  numActuators: 6,
-  arms: [{
-    indices: [0, 1, 2, 3, 4, 5],
-    keys: ['KeyD', 'KeyA', 'KeyW', 'KeyS', 'KeyQ', 'KeyE', 'KeyR', 'KeyF', 'KeyZ', 'KeyC', 'KeyV'],
-    initialJoints: [0.0158, 2.052, 2.1307, -0.0845, 1.5857, -0.3745],
-  }],
-};
-
-export function SO101Controller({ ik }: { ik?: IkContextValue | null }) {
+export function SO101Controller({
+  target,
+  ik,
+}: {
+  target: ControlTarget;
+  ik?: IkContextValue | null;
+}) {
+  const config = useMemo(
+    () => createSO101ControllerConfig(target.actuatorOffset),
+    [target.actuatorOffset],
+  );
   useArmController(config, ik);
   return null;
 }
