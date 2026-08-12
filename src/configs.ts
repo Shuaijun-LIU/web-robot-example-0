@@ -1,6 +1,12 @@
 import type { SceneConfig } from 'mujoco-react';
 
 import { FRANKA_LAYOUT, SO101_LAYOUT, XLEROBOT_LAYOUT } from './sceneLayouts.js';
+import {
+  createFrankaTargets,
+  createSO101Targets,
+  createXLeRobotTargets,
+} from './controlTargets.js';
+import type { ControlTarget } from './controlTargets.js';
 
 export interface RobotEntry {
   label: string;
@@ -10,17 +16,17 @@ export interface RobotEntry {
   hasIk: boolean;
   ikConfig?: { siteName: string; numJoints: number };
   gizmoScale?: number;
+  controlTargets: ControlTarget[];
 }
 
 const XLEROBOT_BASE =
   'https://raw.githubusercontent.com/Vector-Wangel/MuJoCo-GS-Web/main/assets/robots/xlerobot/';
 
-// The XLeRobot controller intentionally operates the first physical robot.
 export const XLEROBOT_HOME_JOINTS = XLEROBOT_LAYOUT.homeJoints.slice(0, 16);
 
 export const robots: Record<string, RobotEntry> = {
   franka: {
-    label: 'Franka Panda · 4 arms',
+    label: 'Franka Panda',
     config: {
       src: 'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/',
       sceneFile: 'scene.xml',
@@ -32,10 +38,11 @@ export const robots: Record<string, RobotEntry> = {
     orbitTarget: FRANKA_LAYOUT.orbitTarget,
     hasIk: true,
     ikConfig: { siteName: FRANKA_LAYOUT.primaryTcpSite, numJoints: 7 },
+    controlTargets: createFrankaTargets(),
   },
 
   so101: {
-    label: 'SO101 · 4 arms',
+    label: 'SO101',
     config: {
       src: XLEROBOT_BASE,
       sceneFile: 'objects_SO101.xml',
@@ -48,10 +55,11 @@ export const robots: Record<string, RobotEntry> = {
     hasIk: true,
     ikConfig: { siteName: SO101_LAYOUT.primaryTcpSite, numJoints: 5 },
     gizmoScale: 0.08,
+    controlTargets: createSO101Targets(),
   },
 
   xlerobot: {
-    label: 'XLeRobot · 2 robots',
+    label: 'XLeRobot',
     config: {
       src: XLEROBOT_BASE,
       sceneFile: 'objects.xml',
@@ -62,5 +70,6 @@ export const robots: Record<string, RobotEntry> = {
     camera: XLEROBOT_LAYOUT.camera,
     orbitTarget: XLEROBOT_LAYOUT.orbitTarget,
     hasIk: false,
+    controlTargets: createXLeRobotTargets(),
   },
 };
