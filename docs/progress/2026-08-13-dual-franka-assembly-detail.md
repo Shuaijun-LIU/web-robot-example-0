@@ -46,6 +46,7 @@
   - Assembly1: four keyboard + IK targets;
   - Assembly2: four keyboard + IK targets.
 - Each control check changed only its selected actuator block.
+- The deployed GitHub Pages URL was opened in a fresh headless browser; online `Franka Assembly2` loaded four physical Panda roots and 66 bodies successfully. Remote smoke scripts now allow up to 120 seconds for the 12 MB application bundle to reach `DOMContentLoaded` on slower links.
 
 ## Publication state
 

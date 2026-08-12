@@ -94,7 +94,10 @@ function assertSelectedBlock(indices, blockStart, blockSize, context) {
 }
 
 try {
-  await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  await page.goto(baseUrl, {
+    waitUntil: 'domcontentloaded',
+    timeout: Math.min(timeout, 120_000),
+  });
   const robotSelector = page.locator('select').nth(0);
   const targetSelector = page.locator('select').nth(1);
 

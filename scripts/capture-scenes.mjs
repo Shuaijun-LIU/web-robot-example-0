@@ -75,7 +75,10 @@ await routeLocalAssets(
 );
 
 try {
-  await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  await page.goto(baseUrl, {
+    waitUntil: 'domcontentloaded',
+    timeout: Math.min(sceneTimeout, 120_000),
+  });
   const selector = page.locator('select').first();
 
   for (const scene of scenes) {
