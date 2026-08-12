@@ -1,9 +1,9 @@
 # Next Actions
 
 ## Top priorities
-1. Complete deterministic Pages build and final verification.
-2. Push `main` through the personal SSH alias.
-3. Verify the deployed page and asset hashes.
+1. Await user review of the fourth-scene layout.
+2. Preserve this static scene as the baseline for any later motion-demo work.
+3. Apply future feedback only to `Franka Assembly` unless explicitly requested otherwise.
 
 ## Blocked
 - None.
