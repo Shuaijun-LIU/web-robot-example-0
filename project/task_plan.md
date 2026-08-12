@@ -7,12 +7,12 @@
 
 ## Phases
 - [x] Phase 1: Scope, local asset audit, and scene design
-- [ ] Phase 2: Test-first scene contract
-- [ ] Phase 3: Static assembly workcell implementation
-- [ ] Phase 4: Browser, physics, and visual verification
+- [x] Phase 2: Test-first scene contract
+- [x] Phase 3: Static assembly workcell implementation
+- [x] Phase 4: Browser, physics, and visual verification
 - [ ] Phase 5: Documentation and GitHub Pages deployment
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 2
+- Current phase: Phase 5
 - Blockers: none

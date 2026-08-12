@@ -31,6 +31,14 @@ const scenes = [
     keyCode: 'KeyR',
     ik: false,
   },
+  {
+    key: 'frankaAssembly',
+    label: 'Franka Assembly',
+    targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'],
+    blockSize: 8,
+    keyCode: 'KeyV',
+    ik: true,
+  },
 ];
 
 const browser = await chromium.launch({ headless: true });

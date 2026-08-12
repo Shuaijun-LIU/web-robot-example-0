@@ -69,6 +69,7 @@ test('Franka assembly scene stages a frame, installable parts, separated tools, 
   ]) {
     assert.match(workcellXml, new RegExp(`name="${name}"`));
   }
+  assert.match(workcellXml, /<body name="assembly_frame"[^>]*>\s*<freejoint\/>/);
 });
 
 test('each attachment uses an oriented physical frame in parent-scene degrees', () => {

@@ -10,7 +10,12 @@ const allScenes = [
   { key: 'franka', label: 'Franka Panda', instances: 4 },
   { key: 'so101', label: 'SO101', instances: 4 },
   { key: 'xlerobot', label: 'XLeRobot', instances: 2 },
-  { key: 'frankaAssembly', label: 'Franka Assembly', instances: 4 },
+  {
+    key: 'frankaAssembly',
+    label: 'Franka Assembly',
+    instances: 4,
+    screenshotName: 'franka-assembly',
+  },
 ];
 const requestedKeys = new Set(
   (process.env.SCENES ?? allScenes.map(({ key }) => key).join(','))
@@ -92,7 +97,7 @@ try {
 
     await page.waitForTimeout(2_000);
     await page.screenshot({
-      path: resolve(outputDirectory, `${scene.key}.png`),
+      path: resolve(outputDirectory, `${scene.screenshotName ?? scene.key}.png`),
       fullPage: true,
     });
     console.log(

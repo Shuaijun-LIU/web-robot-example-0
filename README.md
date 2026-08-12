@@ -1,6 +1,6 @@
 # Multi-Robot MuJoCo Web Example
 
-An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The three selectable scenes use independent physical robot instances—not visual-only clones.
+An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The four selectable scenes use independent physical robot instances—not visual-only clones.
 
 [Open the live demo](https://shuaijun-liu.github.io/web-robot-example-0/)
 
@@ -10,11 +10,18 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 |---|---|---|
 | [![Four Franka Panda arms around graspable cubes](artifacts/screenshots/franka.png)](artifacts/screenshots/franka.png) | [![Four SO101 arms on a shared work table](artifacts/screenshots/so101.png)](artifacts/screenshots/so101.png) | [![Two XLeRobots facing across an arm-height table](artifacts/screenshots/xlerobot.png)](artifacts/screenshots/xlerobot.png) |
 
+### Franka Assembly — fourth scene
+
+[![Four Franka Panda arms around a collaborative frame-assembly workcell](artifacts/screenshots/franka-assembly.png)](artifacts/screenshots/franka-assembly.png)
+
+This fourth scene is an independent static staging area for a future collaborative assembly demo. Its Panda ring grows from `0.72 m` to `0.90 m`. The center contains a supported, movable aluminum frame; different sides hold a loose cross-member, mounting plate, four fasteners, powered torque driver, manual screwdriver, and a clear handover pad. It does not run any automatic task motion yet.
+
 | Scene | Physical layout | Shared workspace |
 |---|---|---|
 | Franka Panda | Four 7-DOF arms at 90° intervals, facing the center | Three free-joint, graspable cubes |
 | SO101 | Four 6-actuator arms at 90° intervals, facing the center | One table with a `0.800 m` top and three graspable cubes |
 | XLeRobot | Two complete dual-arm mobile robots, facing one another | One four-leg table; its top is exactly `0.775 m`, matching the arm mounting height |
+| Franka Assembly | Four 7-DOF arms on a larger `0.900 m` ring | Physical frame, installable parts, fastener/tool stations, and handover area |
 
 The app starts running with the IK gizmo visible, matching the original interactive example. Use **Control target** to select an individual Franka/SO101 arm or one complete XLeRobot without reloading the shared scene.
 
@@ -51,7 +58,7 @@ The panel also provides pause, speed, gravity compensation, reset, IK gizmo, con
 
 The layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
 
-Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Target namespaces and control offsets are defined in [`src/controlTargets.js`](src/controlTargets.js); the selected-instance IK controller resolves explicit joint addresses and actuator indices instead of assuming the first block. Browser smoke tests reject a scene unless it contains exactly 4 Franka roots, 4 SO101 roots, or 2 XLeRobot roots.
+Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Target namespaces and control offsets are defined in [`src/controlTargets.js`](src/controlTargets.js); the selected-instance IK controller resolves explicit joint addresses and actuator indices instead of assuming the first block. Browser smoke tests reject a scene unless it contains exactly 4 roots in either Franka scene, 4 SO101 roots, or 2 XLeRobot roots.
 
 ## Verification
 
@@ -69,7 +76,7 @@ npm run capture:scenes
 npm run verify:controls
 ```
 
-`verify:controls` selects all four Franka arms, all four SO101 arms, and both XLeRobots, then checks that keyboard and IK input change only the selected actuator block. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`.
+`verify:controls` selects all four arms in both Franka scenes, all four SO101 arms, and both XLeRobots, then checks that keyboard and IK input change only the selected actuator block. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`.
 
 ## GitHub Pages
 
@@ -79,3 +86,5 @@ Every push to `main` runs [`.github/workflows/pages.yml`](.github/workflows/page
 
 - Franka Panda: [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main/franka_emika_panda)
 - SO101 and XLeRobot: [MuJoCo-GS-Web](https://github.com/Vector-Wangel/MuJoCo-GS-Web/tree/main/assets/robots/xlerobot)
+
+Local RoboTwin tool assets and their grasp/contact metadata informed the workcell proportions. The current fourth-scene tools use compound MuJoCo geometry so visual and physical representations remain aligned in the browser build.

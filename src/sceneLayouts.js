@@ -105,6 +105,7 @@ const FRANKA_ASSEMBLY_WORKCELL_XML = `
     </body>
 
     <body name="assembly_frame" pos="0 0 0.235">
+      <freejoint/>
       <geom name="frame_rail_north" type="box" pos="0 0.23 0" size="0.34 0.025 0.025" rgba="0.56 0.58 0.59 1"/>
       <geom name="frame_rail_south" type="box" pos="0 -0.23 0" size="0.34 0.025 0.025" rgba="0.56 0.58 0.59 1"/>
       <geom name="frame_rail_west" type="box" pos="-0.315 0 0" size="0.025 0.205 0.025" rgba="0.56 0.58 0.59 1"/>

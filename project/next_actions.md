@@ -1,9 +1,9 @@
 # Next Actions
 
 ## Top priorities
-1. Add and run failing structural tests for `Franka Assembly`.
-2. Implement the larger ring, central frame, parts, tools, trays, and fourth config entry.
-3. Compile and visually inspect the fourth scene before publishing it.
+1. Complete deterministic Pages build and final verification.
+2. Push `main` through the personal SSH alias.
+3. Verify the deployed page and asset hashes.
 
 ## Blocked
 - None.
