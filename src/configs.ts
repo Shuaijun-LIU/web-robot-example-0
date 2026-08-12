@@ -1,5 +1,7 @@
 import type { SceneConfig } from 'mujoco-react';
 
+import { FRANKA_LAYOUT, SO101_LAYOUT, XLEROBOT_LAYOUT } from './sceneLayouts.js';
+
 export interface RobotEntry {
   label: string;
   config: SceneConfig;
@@ -13,210 +15,52 @@ export interface RobotEntry {
 const XLEROBOT_BASE =
   'https://raw.githubusercontent.com/Vector-Wangel/MuJoCo-GS-Web/main/assets/robots/xlerobot/';
 
-export const XLEROBOT_HOME_JOINTS = [
-  0, 0,
-  1.5708, 1.5785, 1.5777, 0.0008, 1.57, -0.25,
-  -1.5708, 1.5785, 1.5777, 0.0008, 1.57, -0.25,
-  0, 0,
-];
+// The XLeRobot controller intentionally operates the first physical robot.
+export const XLEROBOT_HOME_JOINTS = XLEROBOT_LAYOUT.homeJoints.slice(0, 16);
 
 export const robots: Record<string, RobotEntry> = {
   franka: {
-    label: 'Franka Panda',
+    label: 'Franka Panda · 4 arms',
     config: {
       src: 'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/',
       sceneFile: 'scene.xml',
-      homeJoints: [1.707, -1.754, 0.003, -2.702, 0.003, 0.951, 2.49],
-      xmlPatches: [
-        {
-          target: 'panda.xml',
-          replace: ['name="actuator8"', 'name="gripper"'],
-          inject:
-            '<site name="tcp" pos="0 0 0.1" size="0.01" rgba="1 0 0 0.5" group="1"/>',
-          injectAfter: '<body name="hand"',
-        },
-      ],
-      sceneObjects: [
-        {
-          name: 'red_cube',
-          type: 'box',
-          size: [0.025, 0.025, 0.025],
-          position: [0.0, 0.4, 0.025],
-          rgba: [0.9, 0.2, 0.15, 1],
-          mass: 0.05,
-          freejoint: true,
-          friction: '1.5 0.3 0.1',
-          solref: '0.01 1',
-          solimp: '0.95 0.99 0.001 0.5 2',
-          condim: 4,
-        },
-        {
-          name: 'green_cube',
-          type: 'box',
-          size: [0.025, 0.025, 0.025],
-          position: [-0.1, 0.35, 0.025],
-          rgba: [0.15, 0.8, 0.3, 1],
-          mass: 0.05,
-          freejoint: true,
-          friction: '1.5 0.3 0.1',
-          solref: '0.01 1',
-          solimp: '0.95 0.99 0.001 0.5 2',
-          condim: 4,
-        },
-        {
-          name: 'blue_cube',
-          type: 'box',
-          size: [0.025, 0.025, 0.025],
-          position: [0.1, 0.45, 0.025],
-          rgba: [0.15, 0.4, 0.9, 1],
-          mass: 0.05,
-          freejoint: true,
-          friction: '1.5 0.3 0.1',
-          solref: '0.01 1',
-          solimp: '0.95 0.99 0.001 0.5 2',
-          condim: 4,
-        },
-      ],
+      homeJoints: FRANKA_LAYOUT.homeJoints,
+      xmlPatches: FRANKA_LAYOUT.xmlPatches,
+      sceneObjects: FRANKA_LAYOUT.sceneObjects,
     },
-    camera: { position: [2, -1.5, 2.5], fov: 45 },
-    orbitTarget: [0, 0, 0.4],
+    camera: FRANKA_LAYOUT.camera,
+    orbitTarget: FRANKA_LAYOUT.orbitTarget,
     hasIk: true,
-    ikConfig: { siteName: 'tcp', numJoints: 7 },
+    ikConfig: { siteName: FRANKA_LAYOUT.primaryTcpSite, numJoints: 7 },
   },
 
   so101: {
-    label: 'SO101',
+    label: 'SO101 · 4 arms',
     config: {
       src: XLEROBOT_BASE,
       sceneFile: 'SO101.xml',
-      homeJoints: [0.0158, 2.052, 2.1307, -0.0845, 1.5857, -0.3745],
-      xmlPatches: [
-        {
-          target: 'SO101.xml',
-          inject:
-            '<site name="tcp" pos="0 -0.04 -0.01" size="0.005" rgba="0 1 0 0.5" group="1"/>',
-          injectAfter: '<body name="Fixed_Jaw"',
-        },
-      ],
-      sceneObjects: [
-        {
-          name: 'floor',
-          type: 'box',
-          size: [2, 2, 0.005],
-          position: [0, 0, -0.005],
-          rgba: [0.15, 0.15, 0.2, 1],
-        },
-        {
-          name: 'table',
-          type: 'box',
-          size: [0.4, 0.4, 0.4],
-          position: [0.35, -0.3, 0.4],
-          rgba: [0.35, 0.3, 0.28, 1],
-        },
-        {
-          name: 'red_cube',
-          type: 'box',
-          size: [0.015, 0.015, 0.015],
-          position: [0.3, -0.65, 0.815],
-          rgba: [0.9, 0.2, 0.15, 1],
-          mass: 0.02,
-          freejoint: true,
-          friction: '2 0.3 0.1',
-          solref: '0.01 1',
-          solimp: '0.95 0.99 0.001 0.5 2',
-          condim: 4,
-        },
-        {
-          name: 'blue_cube',
-          type: 'box',
-          size: [0.012, 0.012, 0.015],
-          position: [0.38, -0.65, 0.815],
-          rgba: [0.15, 0.4, 0.9, 1],
-          mass: 0.02,
-          freejoint: true,
-          friction: '2 0.3 0.1',
-          condim: 4,
-        },
-      ],
+      homeJoints: SO101_LAYOUT.homeJoints,
+      xmlPatches: SO101_LAYOUT.xmlPatches,
+      sceneObjects: SO101_LAYOUT.sceneObjects,
     },
-    camera: { position: [1.2, -1.2, 1.6], fov: 45 },
-    orbitTarget: [0.35, -0.3, 0.8],
+    camera: SO101_LAYOUT.camera,
+    orbitTarget: SO101_LAYOUT.orbitTarget,
     hasIk: true,
-    ikConfig: { siteName: 'tcp', numJoints: 5 },
+    ikConfig: { siteName: SO101_LAYOUT.primaryTcpSite, numJoints: 5 },
     gizmoScale: 0.08,
   },
 
   xlerobot: {
-    label: 'XLeRobot',
+    label: 'XLeRobot · 2 robots',
     config: {
       src: XLEROBOT_BASE,
       sceneFile: 'xlerobot.xml',
-      // 16 actuators: [forward, turn, L_rot, L_pitch, L_elbow, L_wristP, L_wristR, L_jaw,
-      //                R_rot, R_pitch, R_elbow, R_wristP, R_wristR, R_jaw, head_pan, head_tilt]
-      homeJoints: XLEROBOT_HOME_JOINTS,
-      xmlPatches: [
-        {
-          target: 'xlerobot.xml',
-          // Rotate root chassis by 180deg at startup so robot faces the camera.
-          replace: ['<body name="chassis" pos="0 0 0.38"', '<body name="chassis" pos="0 0 0.38" euler="0 0 3.14159"'],
-        },
-      ],
-      sceneObjects: [
-        {
-          name: 'floor',
-          type: 'box',
-          size: [5, 5, 0.005],
-          position: [0, 0, -0.005],
-          rgba: [0.15, 0.15, 0.2, 1],
-        },
-        {
-          name: 'red_cube',
-          type: 'box',
-          size: [0.02, 0.02, 0.02],
-          position: [0.25, 0, 0.42],
-          rgba: [0.9, 0.2, 0.15, 1],
-          mass: 0.03,
-          freejoint: true,
-          friction: '2 0.3 0.1',
-          condim: 4,
-        },
-        {
-          name: 'green_cube',
-          type: 'box',
-          size: [0.02, 0.02, 0.02],
-          position: [0.22, -0.1, 0.42],
-          rgba: [0.15, 0.8, 0.3, 1],
-          mass: 0.03,
-          freejoint: true,
-          friction: '2 0.3 0.1',
-          condim: 4,
-        },
-        {
-          name: 'blue_cube',
-          type: 'box',
-          size: [0.02, 0.02, 0.02],
-          position: [0.22, 0.1, 0.42],
-          rgba: [0.15, 0.4, 0.9, 1],
-          mass: 0.03,
-          freejoint: true,
-          friction: '2 0.3 0.1',
-          condim: 4,
-        },
-        {
-          name: 'yellow_sphere',
-          type: 'sphere',
-          size: [0.025, 0.025, 0.025],
-          position: [0.28, 0.08, 0.42],
-          rgba: [0.9, 0.8, 0.1, 1],
-          mass: 0.02,
-          freejoint: true,
-          friction: '2 0.3 0.1',
-          condim: 4,
-        },
-      ],
+      homeJoints: XLEROBOT_LAYOUT.homeJoints,
+      xmlPatches: XLEROBOT_LAYOUT.xmlPatches,
+      sceneObjects: XLEROBOT_LAYOUT.sceneObjects,
     },
-    camera: { position: [1.5, -1.5, 1.2], fov: 45 },
-    orbitTarget: [0.15, 0, 0.4],
+    camera: XLEROBOT_LAYOUT.camera,
+    orbitTarget: XLEROBOT_LAYOUT.orbitTarget,
     hasIk: false,
   },
 };

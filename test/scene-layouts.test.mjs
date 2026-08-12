@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import {
@@ -31,4 +32,22 @@ test('XLeRobot uses two opposing robots and an arm-height table', () => {
     XLEROBOT_LAYOUT.tableObjects.filter((object) => object.name.startsWith('table_leg_')).length,
     4,
   );
+});
+
+test('runtime configs consume the three shared layout definitions', async () => {
+  const source = await readFile(new URL('../src/configs.ts', import.meta.url), 'utf8');
+
+  assert.match(source, /FRANKA_LAYOUT\.xmlPatches/);
+  assert.match(source, /SO101_LAYOUT\.xmlPatches/);
+  assert.match(source, /XLEROBOT_LAYOUT\.xmlPatches/);
+  assert.match(source, /siteName:\s*FRANKA_LAYOUT\.primaryTcpSite/);
+});
+
+test('Franka keyboard control targets the primary replicated gripper', async () => {
+  const source = await readFile(
+    new URL('../src/controllers/FrankaController.tsx', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(source, /FRANKA_LAYOUT\.primaryGripperActuator/);
 });
