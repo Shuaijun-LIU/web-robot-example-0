@@ -1,194 +1,80 @@
-# mujoco-react example
+# Multi-Robot MuJoCo Web Example
 
-Interactive example app for [mujoco-react](https://www.npmjs.com/package/mujoco-react) — showcasing composable robot simulation with multiple robots, controllers, and debug tools.
+An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The three selectable scenes use independent physical robot instances—not visual-only clones.
 
-## Robots
+[Open the live demo](https://shuaijun-liu.github.io/web-robot-example-0/)
 
-| Robot | Controller | Features |
-|-------|-----------|----------|
-| **Franka Panda** | IK gizmo + gripper toggle (V) | 7-DOF arm, gizmo drag, click-to-select, graspable cubes |
-| **SO101** | Keyboard IK + gizmo | 2-link IK (WASD/QE), wrist (R/F, Z/C), gripper (V) |
-| **XLeRobot** | Keyboard + dual arms | Mobile base (WASD), dual-arm IK, head pan/tilt, grippers (V/B) |
+## Verified scenes
 
-## Getting Started
+| Franka Panda — 4 arms | SO101 — 4 arms | XLeRobot — 2 robots |
+|---|---|---|
+| [![Four Franka Panda arms around graspable cubes](artifacts/screenshots/franka.png)](artifacts/screenshots/franka.png) | [![Four SO101 arms on a shared work table](artifacts/screenshots/so101.png)](artifacts/screenshots/so101.png) | [![Two XLeRobots facing across an arm-height table](artifacts/screenshots/xlerobot.png)](artifacts/screenshots/xlerobot.png) |
+
+| Scene | Physical layout | Shared workspace |
+|---|---|---|
+| Franka Panda | Four 7-DOF arms at 90° intervals, facing the center | Three free-joint, graspable cubes |
+| SO101 | Four 6-actuator arms at 90° intervals, facing the center | One table with a `0.800 m` top and three graspable cubes |
+| XLeRobot | Two complete dual-arm mobile robots, facing one another | One four-leg table; its top is exactly `0.775 m`, matching the arm mounting height |
+
+The app starts paused so the requested layout remains stable for inspection. Uncheck **paused** to run physics. The IK gizmo is available from the control panel but starts hidden for an unobstructed overview.
+
+## Run locally
+
+Node.js 22 is recommended and is also used by the deployment workflow.
 
 ```bash
-npm install
+nvm use
+npm ci
 npm run dev
 ```
 
-## Architecture
+Open `http://localhost:3000`. The robot mesh files are loaded from their upstream model repositories, so the first visit may take longer than later cached visits.
 
-The app demonstrates the **composable children** pattern — each feature is an independent R3F child you drop in or remove:
+## Controls
 
-```tsx
-<MujocoProvider>
-  <MujocoCanvas config={entry.config} paused={sim.paused} speed={sim.speed}>
-    <OrbitControls />
-    <SceneRenderer />
+The current milestone keeps keyboard and IK control on the primary instance (`r0_`) while every displayed robot remains an independent MuJoCo model with its own bodies, joints, actuators, tendons, and collision geometry.
 
-    {/* Opt-in IK controller plugin — wraps IkGizmo */}
-    {entry.hasIk && sim.gizmo && (
-      <IkController config={{ siteName: entry.config.tcpSiteName!, numJoints: entry.config.numArmJoints! }}>
-        <IkGizmo scale={entry.gizmoScale} />
-      </IkController>
-    )}
-    <DragInteraction />
-    <ClickSelectOverlay />
+| Key | Franka | SO101 | XLeRobot primary instance |
+|---|---|---|---|
+| WASD | — | End-effector forward/back/up/down | Drive base |
+| Q/E | — | End-effector left/right | — |
+| R/F | — | Wrist pitch | Head pan |
+| Z/C | — | Wrist roll | — |
+| V | Toggle gripper | Toggle gripper | Left gripper |
+| B | — | — | Right gripper |
+| 7–0, Y/U/I/O | — | — | Left arm |
+| H–L, N–/ | — | — | Right arm |
 
-    {/* Per-robot controllers — swap in your own */}
-    {robotKey === 'franka' && <FrankaController />}
-    {robotKey === 'so101' && <SO101Controller />}
-    {robotKey === 'xlerobot' && <XLeRobotController />}
+The panel also provides pause, speed, gravity compensation, reset, IK gizmo, contacts, sites, and joints controls. Double-click selects a body; Ctrl/Cmd-click drags a body.
 
-    {/* Debug overlays */}
-    <ContactMarkers visible={debug.contacts} />
-    <Debug showSites={debug.sites} showJoints={debug.joints} />
+## Implementation
 
-    {/* Scene decoration */}
-    <ambientLight />
-    <directionalLight castShadow />
-  </MujocoCanvas>
-</MujocoProvider>
-```
+The layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
 
-## Controllers
+Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Browser smoke tests read the compiled model through the simulation API and reject a scene unless it contains exactly 4 Franka roots, 4 SO101 roots, or 2 XLeRobot roots.
 
-Controllers are thin wrappers around library hooks. Each robot's controller is a static config object passed to a generic hook — no per-robot logic.
-
-### FrankaController
-
-The simplest possible controller — one `useKeyboardTeleop` call:
-
-```tsx
-import { useKeyboardTeleop } from 'mujoco-react';
-
-export function FrankaController() {
-  useKeyboardTeleop({
-    bindings: { v: { actuator: 'gripper', toggle: [0, 255] } },
-  });
-  return null;
-}
-```
-
-Arm positioning comes from `<IkGizmo />` inside `<IkController>` — the controller only adds the gripper toggle.
-
-### SO101Controller / XLeRobotController
-
-Pure config objects passed to `useArmController`:
-
-```tsx
-import { useArmController } from './useArmController';
-
-const config: ArmControllerConfig = {
-  numActuators: 6,
-  arms: [{
-    indices: [0, 1, 2, 3, 4, 5],
-    keys: ['KeyD', 'KeyA', 'KeyW', 'KeyS', 'KeyQ', 'KeyE',
-           'KeyR', 'KeyF', 'KeyZ', 'KeyC', 'KeyV'],
-    initialJoints: [0.0158, 2.052, 2.1307, -0.0845, 1.5857, -0.3745],
-  }],
-};
-
-export function SO101Controller() {
-  useArmController(config);
-  return null;
-}
-```
-
-### useArmController
-
-Generic hook for keyboard-driven arm control with 2-link IK. Accepts a static config:
-
-```ts
-interface ArmControllerConfig {
-  numActuators: number;
-  base?: BaseConfig;     // Mobile base (WASD drive)
-  arms: ArmConfig[];     // One or more arms with IK
-  head?: HeadConfig;     // Pan/tilt head
-}
-
-interface ArmConfig {
-  indices: number[];       // Actuator indices
-  keys: string[];          // 11 key bindings (rotation, EE, pitch, roll, gripper)
-  initialJoints?: number[];  // Start position (uses FK to sync IK state)
-  initialRotation?: number;
-  initialRoll?: number;
-}
-```
-
-Features:
-- **Gizmo coexistence** — uses `useIk({ optional: true })` to detect if an IkController is active. When arm keys are pressed, automatically disables the library's IK and syncs from the current arm position so there's no jump
-- **Per-arm IK** — each arm has independent 2-link IK state
-- **Config-driven** — swap robots by changing the config object, no code changes
-
-### Click-to-Select
-
-A hook + component pattern:
-
-```tsx
-function ClickSelectOverlay() {
-  const selectedBodyId = useClickSelect(); // double-click raycasting hook
-  return <SelectionHighlight bodyId={selectedBodyId} />;
-}
-```
-
-## Graspable Objects
-
-For objects that need to be picked up by grippers, set these MuJoCo contact parameters:
-
-```tsx
-sceneObjects: [{
-  name: 'cube',
-  type: 'box',
-  size: [0.025, 0.025, 0.025],
-  position: [0.4, 0, 0.025],
-  rgba: [0.9, 0.2, 0.15, 1],
-  mass: 0.05,
-  freejoint: true,
-  friction: '1.5 0.3 0.1',            // high static friction
-  solref: '0.01 1',                    // stiff contact solver
-  solimp: '0.95 0.99 0.001 0.5 2',    // tight impedance
-  condim: 4,                           // 4D contact (friction cone)
-}]
-```
-
-Without `condim: 4` and high friction, blocks will slide out of the gripper when lifted.
-
-## Control Panel
-
-The [Leva](https://github.com/pmndrs/leva) panel provides runtime controls:
-
-- **Robot** — switch between Franka, SO101, XLeRobot
-- **Simulation** — pause, speed, gravity compensation, IK gizmo toggle, reset
-- **Debug** — contacts, sites, joints visualization
-
-## Key Bindings
-
-| Key | Franka | SO101 | XLeRobot |
-|-----|--------|-------|----------|
-| WASD | -- | EE forward/back/up/down | Base drive |
-| Q/E | -- | EE left/right | -- |
-| R/F | -- | Wrist pitch | Head pan |
-| Z/C | -- | Wrist roll | -- |
-| V | Gripper toggle | Gripper toggle | Left gripper |
-| B | -- | -- | Right gripper |
-| 7-0, Y/U/I/O | -- | -- | Left arm |
-| H-L, N-/ | -- | -- | Right arm |
-
-## Building
+## Verification
 
 ```bash
-npm run build     # Production build
-npx tsc --noEmit  # Type check
-```
-
-## GitHub Pages
-
-Build the static site for this repository's GitHub Pages URL:
-
-```bash
+npm test
+npx tsc --noEmit
+npm run build
 npm run build:pages
 ```
 
-Commit the generated `docs/` directory. In GitHub, open **Settings → Pages** and set the source to **Deploy from a branch**, with branch **main** and folder **/docs**. The site will be available at `https://shuaijun-liu.github.io/web-robot-example-0/`.
+For reproducible screenshots, run the Vite server and then:
+
+```bash
+npm run capture:scenes
+```
+
+`FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point the capture script at local copies of the upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`.
+
+## GitHub Pages
+
+Every push to `main` runs [`.github/workflows/pages.yml`](.github/workflows/pages.yml), executes tests and type checking, builds with the `/web-robot-example-0/` base path, and deploys the generated site through GitHub Pages Actions.
+
+## Model sources
+
+- Franka Panda: [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main/franka_emika_panda)
+- SO101 and XLeRobot: [MuJoCo-GS-Web](https://github.com/Vector-Wangel/MuJoCo-GS-Web/tree/main/assets/robots/xlerobot)
