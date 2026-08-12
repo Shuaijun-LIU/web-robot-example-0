@@ -23,6 +23,22 @@ test('arm layouts replicate four robots inward around one center', () => {
   assert.equal(SO101_LAYOUT.yawStepDegrees, 90);
 });
 
+test('each attachment uses an oriented physical frame in parent-scene degrees', () => {
+  for (const layout of [FRANKA_LAYOUT, SO101_LAYOUT, XLEROBOT_LAYOUT]) {
+    const replacements = layout.xmlPatches
+      .filter((patch) => patch.replace)
+      .map((patch) => patch.replace[1])
+      .join('\n');
+    assert.match(replacements, /<frame pos=/);
+    assert.match(replacements, /<attach model=/);
+  }
+  const frankaXml = FRANKA_LAYOUT.xmlPatches.map((patch) => patch.replace?.[1] ?? '').join('\n');
+  const xlerobotXml = XLEROBOT_LAYOUT.xmlPatches.map((patch) => patch.replace?.[1] ?? '').join('\n');
+  assert.match(frankaXml, /euler="0 0 90"/);
+  assert.match(xlerobotXml, /<frame pos="-0\.85 0 0" euler="0 0 180">/);
+  assert.match(xlerobotXml, /<frame pos="0\.85 0 0"><attach/);
+});
+
 test('XLeRobot uses two opposing robots and an arm-height table', () => {
   assert.equal(XLEROBOT_LAYOUT.instanceCount, 2);
   assert.equal(XLEROBOT_LAYOUT.yawStepDegrees, 180);

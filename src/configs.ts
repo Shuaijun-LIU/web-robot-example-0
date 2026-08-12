@@ -38,7 +38,7 @@ export const robots: Record<string, RobotEntry> = {
     label: 'SO101 · 4 arms',
     config: {
       src: XLEROBOT_BASE,
-      sceneFile: 'SO101.xml',
+      sceneFile: 'objects_SO101.xml',
       homeJoints: SO101_LAYOUT.homeJoints,
       xmlPatches: SO101_LAYOUT.xmlPatches,
       sceneObjects: SO101_LAYOUT.sceneObjects,
@@ -54,7 +54,7 @@ export const robots: Record<string, RobotEntry> = {
     label: 'XLeRobot · 2 robots',
     config: {
       src: XLEROBOT_BASE,
-      sceneFile: 'xlerobot.xml',
+      sceneFile: 'objects.xml',
       homeJoints: XLEROBOT_LAYOUT.homeJoints,
       xmlPatches: XLEROBOT_LAYOUT.xmlPatches,
       sceneObjects: XLEROBOT_LAYOUT.sceneObjects,

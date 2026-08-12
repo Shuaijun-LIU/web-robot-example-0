@@ -25,3 +25,20 @@ test('performance panels stay visible in one vertical column', async () => {
   assert.match(styles, /\.performance-stats\s*\{[\s\S]*flex-direction:\s*column/);
   assert.match(styles, /\.performance-stats > div\s*\{[\s\S]*position:\s*static !important/);
 });
+
+test('scene lifecycle is exposed for deterministic browser smoke tests', async () => {
+  const source = await readFile(appPath, 'utf8');
+
+  assert.match(source, /dataset\.sceneStatus = 'loading'/);
+  assert.match(source, /dataset\.sceneStatus = 'ready'/);
+  assert.match(source, /dataset\.sceneStatus = 'error'/);
+  assert.match(source, /dataset\.sceneBodies/);
+  assert.match(source, /dataset\.sceneInstances/);
+});
+
+test('scene starts paused with IK gizmo hidden for a stable overview', async () => {
+  const source = await readFile(appPath, 'utf8');
+
+  assert.match(source, /paused:\s*true/);
+  assert.match(source, /gizmo:\s*\{\s*value:\s*false/);
+});

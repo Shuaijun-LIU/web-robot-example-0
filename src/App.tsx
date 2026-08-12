@@ -1,4 +1,4 @@
-import { useRef, useMemo, type RefObject } from 'react';
+import { useCallback, useEffect, useMemo, useRef, type RefObject } from 'react';
 import { OrbitControls, Html, Stats, Environment } from '@react-three/drei';
 import { useControls, button } from 'leva';
 import {
@@ -99,6 +99,12 @@ const robotOptions = Object.fromEntries(
   Object.entries(robots).map(([key, r]) => [r.label, key])
 );
 
+const replicatedRootPatterns: Record<string, RegExp> = {
+  franka: /^r\d+_link0$/,
+  so101: /^r\d+_Base$/,
+  xlerobot: /^r\d+_chassis$/,
+};
+
 export function App() {
   const apiRef = useRef<MujocoSimAPI>(null);
   const performanceStatsRef = useRef<HTMLDivElement>(null!);
@@ -111,11 +117,34 @@ export function App() {
 
   const entry = robots[robotKey];
 
+  useEffect(() => {
+    document.documentElement.dataset.sceneStatus = 'loading';
+    document.documentElement.dataset.sceneKey = robotKey;
+    delete document.documentElement.dataset.sceneBodies;
+    delete document.documentElement.dataset.sceneInstances;
+    delete document.documentElement.dataset.sceneError;
+  }, [robotKey]);
+
+  const handleSceneReady = useCallback((api: MujocoSimAPI) => {
+    const bodies = api.getBodies();
+    const instanceCount = bodies.filter(({ name }) => replicatedRootPatterns[robotKey].test(name)).length;
+    document.documentElement.dataset.sceneStatus = 'ready';
+    document.documentElement.dataset.sceneBodies = String(bodies.length);
+    document.documentElement.dataset.sceneInstances = String(instanceCount);
+    console.info(`[scene] ${robotKey} ready with ${instanceCount} instances and ${bodies.length} bodies`);
+  }, [robotKey]);
+
+  const handleSceneError = useCallback((error: Error) => {
+    document.documentElement.dataset.sceneStatus = 'error';
+    document.documentElement.dataset.sceneError = error.message;
+    console.error(`[scene] ${robotKey} failed: ${error.message}`);
+  }, [robotKey]);
+
   const sim = useControls('Simulation', {
-    paused: false,
+    paused: true,
     speed: { value: 1.0, min: 0.1, max: 3.0, step: 0.1 },
     gravityCompensation: { value: false, label: 'gravity compensation' },
-    gizmo: { value: true, label: 'IK gizmo' },
+    gizmo: { value: false, label: 'IK gizmo' },
     reset: button(() => apiRef.current?.reset()),
   });
 
@@ -135,6 +164,8 @@ export function App() {
         key={canvasKey}
         ref={apiRef}
         config={entry.config}
+        onReady={handleSceneReady}
+        onError={handleSceneError}
         camera={{
           position: entry.camera.position,
           up: [0, 0, 1] satisfies [number, number, number],

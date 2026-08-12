@@ -1,5 +1,5 @@
-const QUARTER_TURN = Math.PI / 2;
-const HALF_TURN = Math.PI;
+const QUARTER_TURN_DEGREES = 90;
+const HALF_TURN_DEGREES = 180;
 
 const cube = (name, position, rgba, size = [0.025, 0.025, 0.025]) => ({
   name,
@@ -27,14 +27,23 @@ export function repeatPose(pose, count) {
   return Array.from({ length: count }, () => [...pose]).flat();
 }
 
+function attachmentFrames(model, body, poses) {
+  return poses
+    .map(({ position, yaw }, index) => {
+      const euler = yaw === 0 ? '' : ` euler="0 0 ${yaw}"`;
+      return `<frame pos="${position.join(' ')}"${euler}><attach model="${model}" body="${body}" prefix="r${index}_"/></frame>`;
+    })
+    .join('');
+}
+
 const FRANKA_HOME = [1.707, -1.754, 0.003, -2.702, 0.003, 0.951, 2.49, 0];
 
 export const FRANKA_LAYOUT = {
   instanceCount: 4,
   yawStepDegrees: 90,
   ringRadius: 0.72,
-  primaryTcpSite: 'tcp_0',
-  primaryGripperActuator: 'gripper_0',
+  primaryTcpSite: 'r0_tcp',
+  primaryGripperActuator: 'r0_gripper',
   homeJoints: repeatPose(FRANKA_HOME, 4),
   xmlPatches: [
     {
@@ -48,17 +57,22 @@ export const FRANKA_LAYOUT = {
       injectAfter: '<body name="hand"',
     },
     {
-      target: 'panda.xml',
+      target: 'scene.xml',
       replace: [
-        '<body name="link0" childclass="panda">',
-        `<replicate count="4" euler="0 0 ${QUARTER_TURN}" sep="_"><frame pos="0 -0.72 0"><body name="link0" childclass="panda">`,
+        '  <include file="panda.xml"/>',
+        '  <asset><model name="panda_model" file="panda.xml"/></asset>',
       ],
     },
     {
-      target: 'panda.xml',
+      target: 'scene.xml',
       replace: [
-        '\n  </worldbody>',
-        '\n      </frame>\n    </replicate>\n  </worldbody>',
+        '  <worldbody>',
+        `  <worldbody>${attachmentFrames('panda_model', 'link0', [
+          { position: [0, -0.72, 0], yaw: 0 },
+          { position: [0.72, 0, 0], yaw: QUARTER_TURN_DEGREES },
+          { position: [0, 0.72, 0], yaw: HALF_TURN_DEGREES },
+          { position: [-0.72, 0, 0], yaw: -QUARTER_TURN_DEGREES },
+        ])}`,
       ],
     },
     {
@@ -74,7 +88,7 @@ export const FRANKA_LAYOUT = {
     cube('green_cube', [0.07, 0, 0.025], [0.18, 0.56, 0.28, 1]),
     cube('blue_cube', [0, 0.08, 0.025], [0.18, 0.35, 0.66, 1]),
   ],
-  camera: { position: [1.75, -1.75, 2.2], fov: 45 },
+  camera: { position: [2.3, -2.3, 2.55], fov: 45 },
   orbitTarget: [0, 0, 0.42],
 };
 
@@ -82,15 +96,58 @@ const SO101_HOME = [0.0158, 2.052, 2.1307, -0.0845, 1.5857, -0.3745];
 const SO101_TABLE_TOP = 0.8;
 const SO101_TABLE_THICKNESS = 0.07;
 const SO101_TABLE_UNDERSIDE = SO101_TABLE_TOP - SO101_TABLE_THICKNESS;
+const SO101_PARENT_WORLDBODY = `  <worldbody>
+    <!-- Manipulable objects for SO101 single arm -->
+    <body name="sphere1" pos="0.55 -0.6 1">
+      <freejoint/>
+      <geom type="sphere" size="0.02" material="obj_green" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+
+    <body name="cylinder1" pos="0.45 -0.6 1">
+      <freejoint/>
+      <geom type="cylinder" size="0.02 0.06" material="obj_blue" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+
+    <body name="box2" pos="0.25 -0.6 1">
+      <freejoint/>
+      <geom type="box" size="0.015 0.015 0.03" material="obj_yellow" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+
+    <body name="sphere2" pos="0.15 -0.6 1">
+      <freejoint/>
+      <geom type="sphere" size="0.025" material="obj_red" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+  </worldbody>`;
 
 export const SO101_LAYOUT = {
   instanceCount: 4,
   yawStepDegrees: 90,
   ringRadius: 0.34,
   workSurfaceHeight: SO101_TABLE_TOP,
-  primaryTcpSite: 'tcp_0',
+  primaryTcpSite: 'r0_tcp',
   homeJoints: repeatPose(SO101_HOME, 4),
   xmlPatches: [
+    {
+      target: 'objects_SO101.xml',
+      inject: '<model name="so101_model" file="SO101.xml"/>',
+      injectAfter: '<asset>',
+    },
+    {
+      target: 'objects_SO101.xml',
+      replace: [
+        SO101_PARENT_WORLDBODY,
+        `  <worldbody>${attachmentFrames('so101_model', 'Base', [
+          { position: [0, 0.34, 0.8], yaw: 0 },
+          { position: [0.34, 0, 0.8], yaw: -QUARTER_TURN_DEGREES },
+          { position: [0, -0.34, 0.8], yaw: HALF_TURN_DEGREES },
+          { position: [-0.34, 0, 0.8], yaw: QUARTER_TURN_DEGREES },
+        ])}</worldbody>`,
+      ],
+    },
     {
       target: 'SO101.xml',
       inject:
@@ -101,14 +158,7 @@ export const SO101_LAYOUT = {
       target: 'SO101.xml',
       replace: [
         '<body name="Base" pos="0.35 -0.3 0.8" euler="0 0 0">',
-        `<replicate count="4" euler="0 0 ${QUARTER_TURN}" sep="_"><frame pos="0 0.34 0.8"><body name="Base" pos="0 0 0" euler="0 0 0">`,
-      ],
-    },
-    {
-      target: 'SO101.xml',
-      replace: [
-        '\n  </worldbody>',
-        '\n      </frame>\n    </replicate>\n  </worldbody>',
+        '<body name="Base" pos="0 0 0" euler="0 0 0">',
       ],
     },
     {
@@ -135,7 +185,7 @@ export const SO101_LAYOUT = {
     cube('blue_cube', [0.055, 0, 0.815], [0.18, 0.35, 0.66, 1], [0.015, 0.015, 0.015]),
     cube('green_cube', [0, 0.06, 0.815], [0.18, 0.56, 0.28, 1], [0.015, 0.015, 0.015]),
   ],
-  camera: { position: [1.25, -1.25, 1.65], fov: 45 },
+  camera: { position: [1.6, -1.6, 1.9], fov: 45 },
   orbitTarget: [0, 0, 0.78],
 };
 
@@ -160,6 +210,38 @@ const XLEROBOT_HOME = [
 const XLEROBOT_ARM_BASE_HEIGHT = 0.775;
 const XLEROBOT_TABLE_HALF_HEIGHT = 0.025;
 const XLEROBOT_TABLE_UNDERSIDE = XLEROBOT_ARM_BASE_HEIGHT - 2 * XLEROBOT_TABLE_HALF_HEIGHT;
+const XLEROBOT_PARENT_WORLDBODY = `  <worldbody>
+    <!-- Manipulable objects with freejoint for physics simulation -->
+    <body name="box1" pos="0.1 -0.4 1">
+      <freejoint/>
+      <geom type="box" size="0.015 0.02 0.05" material="obj_red" mass="0.1"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4" group="3"/>
+    </body>
+
+    <body name="sphere1" pos="0.5 -0.4 1">
+      <freejoint/>
+      <geom type="sphere" size="0.02" material="obj_green" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+
+    <body name="cylinder1" pos="0.4 -0.4 1">
+      <freejoint/>
+      <geom type="cylinder" size="0.02 0.06" material="obj_blue" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+
+    <body name="box2" pos="0.3 -0.4 1">
+      <freejoint/>
+      <geom type="box" size="0.04 0.04 0.04" material="obj_yellow" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+
+    <body name="sphere2" pos="0.2 -0.4 1">
+      <freejoint/>
+      <geom type="sphere" size="0.025" material="obj_red" mass="0.04"
+            contype="1" conaffinity="1" friction="1.2 0.05 0.01" condim="4"/>
+    </body>
+  </worldbody>`;
 
 const xlerobotTableObjects = [
   fixedBox(
@@ -183,17 +265,18 @@ export const XLEROBOT_LAYOUT = {
   homeJoints: repeatPose(XLEROBOT_HOME, 2),
   xmlPatches: [
     {
-      target: 'xlerobot.xml',
-      replace: [
-        '<body name="chassis" pos="0 0 0.38">',
-        `<replicate count="2" euler="0 0 ${HALF_TURN}" sep="_"><frame pos="0.85 0 0"><body name="chassis" pos="0 0 0.38">`,
-      ],
+      target: 'objects.xml',
+      inject: '<model name="xlerobot_model" file="xlerobot.xml"/>',
+      injectAfter: '<asset>',
     },
     {
-      target: 'xlerobot.xml',
+      target: 'objects.xml',
       replace: [
-        '\n  </worldbody>',
-        '\n      </frame>\n    </replicate>\n  </worldbody>',
+        XLEROBOT_PARENT_WORLDBODY,
+        `  <worldbody>${attachmentFrames('xlerobot_model', 'chassis', [
+          { position: [-0.85, 0, 0], yaw: HALF_TURN_DEGREES },
+          { position: [0.85, 0, 0], yaw: 0 },
+        ])}</worldbody>`,
       ],
     },
   ],
