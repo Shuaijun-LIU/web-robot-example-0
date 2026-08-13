@@ -622,16 +622,19 @@ const XLEROBOT_HOME_ENVIRONMENT_XML = `
       <geom name="kitchen_east_wall_art_2_accent" type="cylinder" pos="-0.03 0.02 0.02" size="0.095 0.003" euler="0 90 0" rgba="0.32 0.38 0.35 1" contype="0" conaffinity="0"/>
     </body>
 
-    <body name="kitchen_side_cabinet" pos="1.74 -0.1 0">
-      <geom name="kitchen_side_cabinet_case" type="box" pos="0 0 0.79" size="0.34 0.37 0.79" rgba="0.48 0.41 0.34 1"/>
-      <geom name="kitchen_side_cabinet_top" type="box" pos="0 0 1.61" size="0.36 0.39 0.03" rgba="0.34 0.31 0.27 1"/>
-      <geom name="kitchen_side_cabinet_toe_kick" type="box" pos="-0.31 0 0.08" size="0.035 0.32 0.08" rgba="0.24 0.22 0.2 1"/>
-      <geom name="kitchen_side_cabinet_door_upper" type="box" pos="-0.347 0 1.16" size="0.007 0.34 0.35" rgba="0.6 0.53 0.44 1"/>
-      <geom name="kitchen_side_cabinet_drawer_middle" type="box" pos="-0.347 0 0.68" size="0.007 0.34 0.105" rgba="0.61 0.54 0.45 1"/>
-      <geom name="kitchen_side_cabinet_drawer_lower" type="box" pos="-0.347 0 0.38" size="0.007 0.34 0.15" rgba="0.61 0.54 0.45 1"/>
-      <geom name="kitchen_side_cabinet_handle_upper" type="capsule" fromto="-0.362 -0.22 0.95 -0.362 -0.22 1.34" size="0.011" rgba="0.22 0.23 0.22 1"/>
-      <geom name="kitchen_side_cabinet_handle_middle" type="capsule" fromto="-0.362 -0.13 0.68 -0.362 0.13 0.68" size="0.009" rgba="0.22 0.23 0.22 1"/>
-      <geom name="kitchen_side_cabinet_handle_lower" type="capsule" fromto="-0.362 -0.13 0.38 -0.362 0.13 0.38" size="0.009" rgba="0.22 0.23 0.22 1"/>
+    <body name="kitchen_refrigerator" pos="1.74 -0.1 0">
+      <geom name="refrigerator_case" type="box" pos="0 0 0.84" size="0.34 0.37 0.84" rgba="0.82 0.87 0.86 1"/>
+      <geom name="refrigerator_top" type="box" pos="0 0 1.705" size="0.355 0.385 0.025" rgba="0.76 0.82 0.81 1"/>
+      <geom name="refrigerator_toe_kick" type="box" pos="-0.337 0 0.07" size="0.018 0.315 0.07" rgba="0.49 0.54 0.54 1"/>
+      <geom name="refrigerator_upper_door" type="box" pos="-0.354 0 1.18" size="0.014 0.345 0.405" rgba="0.9 0.93 0.9 1"/>
+      <geom name="refrigerator_freezer_drawer" type="box" pos="-0.354 0 0.46" size="0.014 0.345 0.255" rgba="0.86 0.91 0.9 1"/>
+      <geom name="refrigerator_door_seam" type="box" pos="-0.371 0 0.835" size="0.004 0.337 0.012" rgba="0.62 0.68 0.67 1" contype="0" conaffinity="0"/>
+      <geom name="refrigerator_upper_handle" type="capsule" fromto="-0.382 0.235 0.98 -0.382 0.235 1.39" size="0.012" rgba="0.56 0.63 0.63 1"/>
+      <geom name="refrigerator_freezer_handle" type="capsule" fromto="-0.382 -0.18 0.61 -0.382 0.18 0.61" size="0.011" rgba="0.56 0.63 0.63 1"/>
+      <geom name="refrigerator_water_dispenser_frame" type="box" pos="-0.374 -0.13 1.17" size="0.006 0.105 0.14" rgba="0.58 0.65 0.64 1" contype="0" conaffinity="0"/>
+      <geom name="refrigerator_water_dispenser" type="box" pos="-0.381 -0.13 1.16" size="0.003 0.083 0.108" rgba="0.24 0.32 0.33 1" contype="0" conaffinity="0"/>
+      <geom name="refrigerator_dispenser_nozzle" type="box" pos="-0.386 -0.13 1.225" size="0.004 0.025 0.018" rgba="0.68 0.74 0.73 1" contype="0" conaffinity="0"/>
+      <geom name="refrigerator_brand_badge" type="box" pos="-0.383 0.22 1.535" size="0.003 0.052 0.013" rgba="0.53 0.59 0.59 1" contype="0" conaffinity="0"/>
     </body>
 
     <body name="kitchen_sink_cabinet" pos="-0.85 1.47 0">
@@ -751,55 +754,55 @@ const XLEROBOT_HOME_ENVIRONMENT_XML = `
     </body>
 
     <body name="produce_table_scale" pos="0.1 -1.45 0.762">
-      <geom name="produce_scale_base" type="box" size="0.14 0.105 0.012" rgba="0.27 0.29 0.29 1"/>
-      <geom name="produce_scale_platform" type="box" pos="0 0 0.022" size="0.12 0.085 0.008" rgba="0.53 0.54 0.52 1"/>
-      <geom name="produce_scale_display_housing" type="box" pos="0 -0.112 0.034" size="0.06 0.016 0.026" euler="18 0 0" rgba="0.2 0.22 0.22 1"/>
-      <geom name="produce_scale_display" type="box" pos="0 -0.128 0.041" size="0.043 0.002 0.012" euler="18 0 0" rgba="0.44 0.56 0.5 1" contype="0" conaffinity="0"/>
-      <geom name="produce_scale_button_left" type="cylinder" pos="-0.075 -0.108 0.032" size="0.009 0.002" euler="90 0 0" rgba="0.56 0.5 0.38 1" contype="0" conaffinity="0"/>
-      <geom name="produce_scale_button_right" type="cylinder" pos="0.075 -0.108 0.032" size="0.009 0.002" euler="90 0 0" rgba="0.56 0.5 0.38 1" contype="0" conaffinity="0"/>
+      <geom name="produce_scale_base" type="box" size="0.14 0.105 0.012" rgba="0.73 0.78 0.76 1"/>
+      <geom name="produce_scale_platform" type="box" pos="0 0 0.022" size="0.12 0.085 0.008" rgba="0.86 0.88 0.84 1"/>
+      <geom name="produce_scale_display_housing" type="box" pos="0 -0.112 0.034" size="0.06 0.016 0.026" euler="18 0 0" rgba="0.65 0.72 0.7 1"/>
+      <geom name="produce_scale_display" type="box" pos="0 -0.128 0.041" size="0.043 0.002 0.012" euler="18 0 0" rgba="0.38 0.61 0.54 1" contype="0" conaffinity="0"/>
+      <geom name="produce_scale_button_left" type="cylinder" pos="-0.075 -0.108 0.032" size="0.009 0.002" euler="90 0 0" rgba="0.82 0.72 0.5 1" contype="0" conaffinity="0"/>
+      <geom name="produce_scale_button_right" type="cylinder" pos="0.075 -0.108 0.032" size="0.009 0.002" euler="90 0 0" rgba="0.82 0.72 0.5 1" contype="0" conaffinity="0"/>
     </body>
     <body name="produce_prep_bowl" pos="0.43 -1.42 0.767">
-      <geom name="prep_bowl_bottom" type="cylinder" size="0.085 0.006" rgba="0.47 0.5 0.49 1"/>
-      ${annularGeometry('prep_bowl_wall', 0.075, 0.105, 0.045, '0.53 0.56 0.55 1', 0.2, [0, 0, 0.043])}
-      ${annularGeometry('prep_bowl_rim', 0.072, 0.112, 0.004, '0.68 0.69 0.66 1', 0.04, [0, 0, 0.088])}
-      <geom name="prep_bowl_inner_bottom" type="cylinder" pos="0 0 0.008" size="0.074 0.0015" rgba="0.28 0.3 0.29 1" contype="0" conaffinity="0"/>
+      <geom name="prep_bowl_bottom" type="cylinder" size="0.085 0.006" rgba="0.76 0.82 0.8 1"/>
+      ${annularGeometry('prep_bowl_wall', 0.075, 0.105, 0.045, '0.8 0.86 0.84 1', 0.2, [0, 0, 0.043])}
+      ${annularGeometry('prep_bowl_rim', 0.072, 0.112, 0.004, '0.9 0.91 0.86 1', 0.04, [0, 0, 0.088])}
+      <geom name="prep_bowl_inner_bottom" type="cylinder" pos="0 0 0.008" size="0.074 0.0015" rgba="0.61 0.69 0.67 1" contype="0" conaffinity="0"/>
     </body>
 
-    <body name="kitchen_trash_bin" pos="1.55 -1.25 0">
-      <geom name="trash_bin_base" type="box" pos="0 0 0.025" size="0.18 0.14 0.025" rgba="0.17 0.18 0.18 1"/>
-      <geom name="trash_bin_wall_west" type="box" pos="-0.17 0 0.34" size="0.01 0.14 0.29" rgba="0.27 0.29 0.29 1"/>
-      <geom name="trash_bin_wall_east" type="box" pos="0.17 0 0.34" size="0.01 0.14 0.29" rgba="0.27 0.29 0.29 1"/>
-      <geom name="trash_bin_wall_north" type="box" pos="0 0.13 0.34" size="0.16 0.01 0.29" rgba="0.25 0.27 0.27 1"/>
-      <geom name="trash_bin_wall_south" type="box" pos="0 -0.13 0.34" size="0.16 0.01 0.29" rgba="0.29 0.31 0.31 1"/>
-      <geom name="trash_bin_rim_west" type="box" pos="-0.17 0 0.64" size="0.014 0.15 0.018" rgba="0.15 0.16 0.16 1"/>
-      <geom name="trash_bin_rim_east" type="box" pos="0.17 0 0.64" size="0.014 0.15 0.018" rgba="0.15 0.16 0.16 1"/>
-      <geom name="trash_bin_rim_north" type="box" pos="0 0.14 0.64" size="0.156 0.014 0.018" rgba="0.15 0.16 0.16 1"/>
-      <geom name="trash_bin_rim_south" type="box" pos="0 -0.14 0.64" size="0.156 0.014 0.018" rgba="0.15 0.16 0.16 1"/>
+    <body name="kitchen_trash_bin" pos="1.55 -1.25 0" euler="0 0 -90">
+      <geom name="trash_bin_base" type="box" pos="0 0 0.025" size="0.18 0.14 0.025" rgba="0.45 0.49 0.48 1"/>
+      <geom name="trash_bin_wall_west" type="box" pos="-0.17 0 0.34" size="0.01 0.14 0.29" rgba="0.66 0.7 0.68 1"/>
+      <geom name="trash_bin_wall_east" type="box" pos="0.17 0 0.34" size="0.01 0.14 0.29" rgba="0.66 0.7 0.68 1"/>
+      <geom name="trash_bin_wall_north" type="box" pos="0 0.13 0.34" size="0.16 0.01 0.29" rgba="0.63 0.67 0.65 1"/>
+      <geom name="trash_bin_wall_south" type="box" pos="0 -0.13 0.34" size="0.16 0.01 0.29" rgba="0.7 0.74 0.71 1"/>
+      <geom name="trash_bin_rim_west" type="box" pos="-0.17 0 0.64" size="0.014 0.15 0.018" rgba="0.42 0.46 0.45 1"/>
+      <geom name="trash_bin_rim_east" type="box" pos="0.17 0 0.64" size="0.014 0.15 0.018" rgba="0.42 0.46 0.45 1"/>
+      <geom name="trash_bin_rim_north" type="box" pos="0 0.14 0.64" size="0.156 0.014 0.018" rgba="0.42 0.46 0.45 1"/>
+      <geom name="trash_bin_rim_south" type="box" pos="0 -0.14 0.64" size="0.156 0.014 0.018" rgba="0.42 0.46 0.45 1"/>
       <geom name="trash_bin_opening" type="box" pos="0 0 0.61" size="0.15 0.115 0.004" rgba="0.055 0.06 0.06 1" contype="0" conaffinity="0"/>
-      <geom name="trash_bin_lid_hinge" type="cylinder" pos="0 0.145 0.69" size="0.025 0.175" euler="0 90 0" rgba="0.12 0.13 0.13 1"/>
-      <geom name="trash_bin_lid" type="box" pos="0 0.105 0.775" size="0.18 0.14 0.022" euler="-32 0 0" rgba="0.22 0.24 0.24 1"/>
-      <geom name="trash_bin_foot_pedal" type="box" pos="0 -0.18 0.035" size="0.07 0.05 0.015" rgba="0.42 0.43 0.41 1"/>
-      <geom name="trash_bin_front_badge" type="box" pos="0 -0.141 0.39" size="0.045 0.002 0.018" rgba="0.48 0.47 0.42 1" contype="0" conaffinity="0"/>
+      <geom name="trash_bin_lid_hinge" type="cylinder" pos="0 0.145 0.69" size="0.025 0.175" euler="0 90 0" rgba="0.34 0.38 0.37 1"/>
+      <geom name="trash_bin_lid" type="box" pos="0 0.07 0.81" size="0.18 0.14 0.022" euler="-58 0 0" rgba="0.73 0.77 0.74 1"/>
+      <geom name="trash_bin_foot_pedal" type="box" pos="0 -0.18 0.035" size="0.07 0.05 0.015" rgba="0.67 0.69 0.65 1"/>
+      <geom name="trash_bin_front_badge" type="box" pos="0 -0.141 0.39" size="0.045 0.002 0.018" rgba="0.72 0.7 0.62 1" contype="0" conaffinity="0"/>
     </body>
 
-    <body name="storage_shelf" pos="-1.65 0.15 0">
-      <geom name="storage_shelf_back" type="box" pos="-0.17 0 0.75" size="0.018 0.28 0.75" rgba="0.35 0.29 0.23 1"/>
-      <geom name="storage_shelf_post_front" type="box" pos="0.15 -0.25 0.75" size="0.025 0.025 0.75" rgba="0.27 0.23 0.19 1"/>
-      <geom name="storage_shelf_post_back" type="box" pos="0.15 0.25 0.75" size="0.025 0.025 0.75" rgba="0.27 0.23 0.19 1"/>
-      <geom name="storage_shelf_level_1" type="box" pos="0 0 0.18" size="0.18 0.28 0.025" rgba="0.46 0.39 0.31 1"/>
-      <geom name="storage_shelf_level_2" type="box" pos="0 0 0.58" size="0.18 0.28 0.025" rgba="0.46 0.39 0.31 1"/>
-      <geom name="storage_shelf_level_3" type="box" pos="0 0 0.98" size="0.18 0.28 0.025" rgba="0.46 0.39 0.31 1"/>
-      <geom name="storage_shelf_level_4" type="box" pos="0 0 1.38" size="0.18 0.28 0.025" rgba="0.46 0.39 0.31 1"/>
+    <body name="storage_shelf" pos="-1.92 -0.4 0">
+      <geom name="storage_shelf_back" type="box" pos="-0.17 0 0.75" size="0.018 0.28 0.75" rgba="0.58 0.5 0.41 1"/>
+      <geom name="storage_shelf_post_front" type="box" pos="0.15 -0.25 0.75" size="0.025 0.025 0.75" rgba="0.48 0.42 0.35 1"/>
+      <geom name="storage_shelf_post_back" type="box" pos="0.15 0.25 0.75" size="0.025 0.025 0.75" rgba="0.48 0.42 0.35 1"/>
+      <geom name="storage_shelf_level_1" type="box" pos="0 0 0.18" size="0.18 0.28 0.025" rgba="0.68 0.59 0.48 1"/>
+      <geom name="storage_shelf_level_2" type="box" pos="0 0 0.58" size="0.18 0.28 0.025" rgba="0.68 0.59 0.48 1"/>
+      <geom name="storage_shelf_level_3" type="box" pos="0 0 0.98" size="0.18 0.28 0.025" rgba="0.68 0.59 0.48 1"/>
+      <geom name="storage_shelf_level_4" type="box" pos="0 0 1.38" size="0.18 0.28 0.025" rgba="0.68 0.59 0.48 1"/>
       <body name="storage_bin_1" pos="0 -0.12 0.25">
-        <geom name="storage_bin_1_body" type="box" size="0.14 0.11 0.055" rgba="0.34 0.38 0.37 1"/>
-        <geom name="storage_bin_1_label" type="box" pos="0 -0.112 0" size="0.06 0.002 0.025" rgba="0.69 0.66 0.56 1" contype="0" conaffinity="0"/>
+        <geom name="storage_bin_1_body" type="box" size="0.14 0.11 0.055" rgba="0.64 0.72 0.69 1"/>
+        <geom name="storage_bin_1_label" type="box" pos="0 -0.112 0" size="0.06 0.002 0.025" rgba="0.88 0.84 0.7 1" contype="0" conaffinity="0"/>
       </body>
       <body name="storage_bin_2" pos="0 0.1 0.65">
-        <geom name="storage_bin_2_body" type="box" size="0.14 0.11 0.055" rgba="0.39 0.35 0.3 1"/>
+        <geom name="storage_bin_2_body" type="box" size="0.14 0.11 0.055" rgba="0.72 0.65 0.55 1"/>
       </body>
       <body name="storage_bin_3" pos="0 -0.1 1.05">
-        <geom name="storage_bin_3_body" type="box" size="0.14 0.11 0.055" rgba="0.32 0.36 0.38 1"/>
-        <geom name="storage_bin_3_label" type="box" pos="0 -0.112 0" size="0.06 0.002 0.025" rgba="0.69 0.66 0.56 1" contype="0" conaffinity="0"/>
+        <geom name="storage_bin_3_body" type="box" size="0.14 0.11 0.055" rgba="0.62 0.69 0.73 1"/>
+        <geom name="storage_bin_3_label" type="box" pos="0 -0.112 0" size="0.06 0.002 0.025" rgba="0.88 0.84 0.7 1" contype="0" conaffinity="0"/>
       </body>
     </body>`;
 

@@ -57,3 +57,26 @@ runtime GitHub downloads.
 
 Both checkpoints were captured at 1440 × 900 after successful browser-side
 MJCF loading.
+
+## XLeRobot visual follow-up
+
+The subsequent kitchen pass separates the west storage shelf from the window:
+the shelf now sits immediately south of the window with its back against the
+west wall. The former east-wall cabinet is replaced by a pale refrigerator
+with a distinct upper door, freezer drawer, handles, water dispenser, toe kick,
+door seam, and badge.
+
+The southeast trash bin is rotated 90 degrees so its front and pedal face west
+toward the room. Its lid now opens approximately 58 degrees from the wall-side
+hinge. The bin, refrigerator, shelf containers, digital produce scale, and open
+preparation bowl use a lighter palette to improve silhouette and part
+legibility.
+
+Follow-up verification:
+
+- XLeRobot Kitting MJCF: 101 bodies, 429 geoms, 32 actuators, 123 qpos;
+  0 initial penetrating contacts.
+- Focused collaboration-scene tests: 18/18 passed.
+- TypeScript and production Vite build passed.
+- Both XLeRobot keyboard-control blocks passed browser checks.
+- Refreshed checkpoint: `artifacts/screenshots/xlerobot-kitting.png`.

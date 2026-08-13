@@ -314,6 +314,36 @@ test('XLeRobot Kitting has a connected faucet and recognizable kitchen support p
   });
 });
 
+test('XLeRobot Kitting separates the west shelf, uses a pale refrigerator, and opens the bin westward', () => {
+  const xml = patchText(XLEROBOT_KITTING_LAYOUT);
+
+  assert.match(xml, /<body name="storage_shelf" pos="-1\.92 -0\.4 0">/);
+  assert.match(xml, /<body name="kitchen_refrigerator" pos="1\.74 -0\.1 0">/);
+  for (const name of [
+    'refrigerator_upper_door',
+    'refrigerator_freezer_drawer',
+    'refrigerator_water_dispenser',
+    'refrigerator_upper_handle',
+    'refrigerator_freezer_handle',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"`));
+  }
+  assert.match(
+    xml,
+    /name="refrigerator_upper_door"[^>]*rgba="0\.9 0\.93 0\.9 1"/,
+  );
+  assert.doesNotMatch(xml, /name="kitchen_side_cabinet"/);
+
+  assert.match(xml, /<body name="kitchen_trash_bin" pos="1\.55 -1\.25 0" euler="0 0 -90">/);
+  assert.match(
+    xml,
+    /name="trash_bin_lid"[^>]*pos="0 0\.07 0\.81"[^>]*euler="-58 0 0"/,
+  );
+
+  assert.match(xml, /name="produce_scale_platform"[^>]*rgba="0\.86 0\.88 0\.84 1"/);
+  assert.match(xml, /name="prep_bowl_bottom"[^>]*rgba="0\.76 0\.82 0\.8 1"/);
+});
+
 test('XLeRobot Kitting is enclosed by three detailed walls while keeping the south side open', () => {
   const xml = patchText(XLEROBOT_KITTING_LAYOUT);
   assert.deepEqual(XLEROBOT_KITTING_LAYOUT.roomBounds, {
@@ -336,9 +366,9 @@ test('XLeRobot Kitting is enclosed by three detailed walls while keeping the sou
     'kitchen_west_window_frame_horizontal',
     'kitchen_east_wall_art_1',
     'kitchen_east_wall_art_2',
-    'kitchen_side_cabinet',
-    'kitchen_side_cabinet_door_upper',
-    'kitchen_side_cabinet_drawer_lower',
+    'kitchen_refrigerator',
+    'refrigerator_upper_door',
+    'refrigerator_freezer_drawer',
   ]) {
     assert.match(xml, new RegExp(`name="${name}"`));
   }
