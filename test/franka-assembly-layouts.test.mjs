@@ -62,12 +62,16 @@ test('Assembly1 exposes stable faceted hand tools with recognizable detail', () 
   );
   assert.match(xml, /name="torque_driver_trigger"/);
   assert.match(xml, /name="torque_driver_vent_/);
-  assert.match(xml, /<body name="claw_hammer"/);
+  assert.match(xml, /<body name="claw_hammer"[^>]*euler="0 0 180"/);
   assert.match(xml, /name="hammer_eye"/);
   assert.match(xml, /name="hammer_cheek"/);
   assert.match(xml, /name="hammer_striking_face" type="cylinder"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
-  assert.match(xml, /name="hammer_claw_left" type="capsule"[^>]*fromto="\.064 \.065 -\.002 \.050 \.112 -\.018"/);
-  assert.match(xml, /name="hammer_claw_right" type="capsule"[^>]*fromto="\.086 \.065 -\.002 \.100 \.112 -\.018"/);
+  assert.match(xml, /mesh="hammer_claw_left_plate"/);
+  assert.match(xml, /mesh="hammer_claw_right_plate"/);
+  assert.match(xml, /name="hammer_claw_left" type="mesh"[^>]*contype="0"[^>]*conaffinity="0"/);
+  assert.match(xml, /name="hammer_claw_right" type="mesh"[^>]*contype="0"[^>]*conaffinity="0"/);
+  assert.match(xml, /name="hammer_claw_collision" type="box"[^>]*rgba="0 0 0 0"/);
+  assert.doesNotMatch(xml, /name="hammer_claw_[^"]*" type="capsule"/);
 });
 
 test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geometry', async () => {

@@ -167,7 +167,7 @@ export function App() {
   const performanceStatsParentRef = performanceStatsRef as unknown as RefObject<HTMLElement>;
 
   const { robot: robotKey } = useControls({
-    robot: { value: 'franka', options: robotOptions, label: 'Robot' },
+    robot: { value: 'frankaAssembly1', options: robotOptions, label: 'Robot' },
   });
 
   const entry = robots[robotKey];

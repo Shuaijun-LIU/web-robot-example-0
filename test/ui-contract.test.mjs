@@ -60,3 +60,9 @@ test('scene starts running with IK gizmo visible for immediate interaction', asy
   assert.match(source, /label:\s*'Control target'/);
   assert.match(source, /rootWidth:\s*'320px'/);
 });
+
+test('Assembly1 is the initial scene shown on page entry', async () => {
+  const source = await readFile(appPath, 'utf8');
+
+  assert.match(source, /robot:\s*\{\s*value:\s*'frankaAssembly1'/);
+});
