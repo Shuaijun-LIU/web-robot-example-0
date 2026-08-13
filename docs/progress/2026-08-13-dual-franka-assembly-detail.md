@@ -60,4 +60,4 @@
 
 ## Publication state
 
-The implementation, generated Pages bundle, source attribution, and comparison screenshots are ready for the final commit and push through the configured personal GitHub SSH remote.
+The implementation, generated Pages bundle, source attribution, and comparison screenshots were published to `main` through the configured personal GitHub SSH remote in implementation commit `6d31a75`.

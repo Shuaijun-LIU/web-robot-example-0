@@ -78,4 +78,4 @@
 - [x] Capture only Assembly1 and Assembly2 and inspect both images.
 - [x] Run all eight Assembly1/2 keyboard and IK control-isolation checks.
 - [x] Record root causes and evidence in the progress log.
-- [ ] Commit, push `main` through `github-Shuaijun-LIU`, and monitor Pages CI.
+- [x] Commit, push `main` through `github-Shuaijun-LIU`, and monitor Pages CI.
