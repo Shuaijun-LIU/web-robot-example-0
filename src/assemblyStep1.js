@@ -1,34 +1,46 @@
 export const ASSEMBLY1_STEP1_PHASE_DURATION = 1.5;
+export const ASSEMBLY1_STEP1_SETTLE_DURATION = 3;
 export const ASSEMBLY1_GRIPPER_OPEN = 255;
+export const ASSEMBLY1_STEP1_IK_VERSION = 'grasp-ready-v2';
+
+export function topDownTcpQuaternion(closingAxisYawDegrees) {
+  const halfTurn = (closingAxisYawDegrees + 90) * Math.PI / 360;
+  return [Math.cos(halfTurn), Math.sin(halfTurn), 0, 0]
+    .map((value) => (Math.abs(value) < 1e-12 ? 0 : value));
+}
 
 const roles = [
   {
-    role: 'south frame grip',
-    highWaypoint: [0, -0.36, 0.50],
-    finalWaypoint: [0, -0.31, 0.34],
-    highJointTargets: [1.820193, -0.069366, -0.242346, -1.970456, -0.01791, 1.907045, 2.366129],
-    finalJointTargets: [1.80813, 0.228846, -0.247302, -2.025619, 0.070489, 2.250253, 2.304969],
+    role: 'south frame rail',
+    highWaypoint: [0, -0.23, 0.50],
+    finalWaypoint: [0, -0.23, 0.33],
+    closingAxisYawDegrees: 90,
+    highJointTargets: [-2.436612, -0.739274, -1.834062, -1.36531, -0.708778, 1.593286, -0.412203],
+    finalJointTargets: [-2.462187, -0.877127, -1.957716, -1.627588, -0.85221, 1.901325, -0.316657],
   },
   {
-    role: 'torque driver',
-    highWaypoint: [0.53, -0.42, 0.50],
-    finalWaypoint: [0.53, -0.42, 0.36],
-    highJointTargets: [0.788514, -0.345604, 1.476793, -1.887358, 0.355544, 1.840629, 2.8973],
-    finalJointTargets: [0.538023, -0.41985, 1.801701, -2.100681, 0.489855, 2.147852, 2.86118],
+    role: 'side-laid torque driver handle',
+    highWaypoint: [0.559, -0.421, 0.48],
+    finalWaypoint: [0.559, -0.421, 0.28],
+    closingAxisYawDegrees: 162,
+    highJointTargets: [2.254901, -0.053876, 0.201647, -2.005079, 0.012022, 1.954481, 0.409568],
+    finalJointTargets: [2.262258, 0.200462, 0.19843, -2.241938, -0.058834, 2.43746, 0.459226],
   },
   {
-    role: 'cross member north grip',
-    highWaypoint: [-0.49, 0.65, 0.50],
-    finalWaypoint: [-0.49, 0.65, 0.34],
-    highJointTargets: [2.405602, -1.285844, -1.140805, -1.831768, -1.164872, 1.255829, 2.006757],
-    finalJointTargets: [2.326314, -1.45842, -1.371126, -2.058079, -1.374876, 1.45049, 2.047761],
+    role: 'cross member north balance point',
+    highWaypoint: [-0.49, 0.56, 0.48],
+    finalWaypoint: [-0.49, 0.56, 0.26],
+    closingAxisYawDegrees: 0,
+    highJointTargets: [2.556337, -0.990657, -1.399648, -1.722293, -0.9717, 1.513838, -2.720657],
+    finalJointTargets: [2.576151, -1.172598, -1.716567, -1.948272, -1.241199, 1.841582, -2.619852],
   },
   {
-    role: 'west frame grip',
-    highWaypoint: [-0.48, 0, 0.50],
-    finalWaypoint: [-0.46, 0, 0.34],
-    highJointTargets: [1.771147, -0.443691, -0.173607, -2.339956, -0.078928, 1.905001, 2.421572],
-    finalJointTargets: [1.781726, -0.196218, -0.212141, -2.544417, -0.058976, 2.354537, 2.397102],
+    role: 'cross member south balance point',
+    highWaypoint: [-0.49, 0.32, 0.48],
+    finalWaypoint: [-0.49, 0.32, 0.26],
+    closingAxisYawDegrees: 0,
+    highJointTargets: [2.717062, -0.131099, -0.462315, -2.077166, -0.06344, 1.96, -0.073787],
+    finalJointTargets: [2.700314, 0.204706, -0.45956, -2.326086, 0.148119, 2.505253, -0.225722],
   },
 ];
 
@@ -39,6 +51,7 @@ export const ASSEMBLY1_STEP1_ARMS = roles.map((role, index) => {
     key: `r${index}`,
     label: `Arm ${index + 1}`,
     ...role,
+    tcpQuaternion: topDownTcpQuaternion(role.closingAxisYawDegrees),
     siteName: `${prefix}tcp`,
     jointNames: Array.from({ length: 7 }, (_, joint) => `${prefix}joint${joint + 1}`),
     actuatorIndices: Array.from({ length: 7 }, (_, joint) => actuatorOffset + joint),
@@ -56,9 +69,22 @@ export function interpolateJointTargets(from, to, progress) {
   return from.map((value, index) => value + (to[index] - value) * eased);
 }
 
+export function applyAssemblyJointGravityCompensation(applied, bias, dofAddresses) {
+  for (const address of dofAddresses) {
+    applied[address] += bias[address];
+  }
+}
+
 export function selectAssemblyStep1Phase(elapsed) {
-  if (elapsed >= ASSEMBLY1_STEP1_PHASE_DURATION * 2) {
+  const motionDuration = ASSEMBLY1_STEP1_PHASE_DURATION * 2;
+  if (elapsed >= motionDuration + ASSEMBLY1_STEP1_SETTLE_DURATION) {
     return { phase: 'complete', progress: 1 };
+  }
+  if (elapsed >= motionDuration) {
+    return {
+      phase: 'settling',
+      progress: (elapsed - motionDuration) / ASSEMBLY1_STEP1_SETTLE_DURATION,
+    };
   }
   if (elapsed >= ASSEMBLY1_STEP1_PHASE_DURATION) {
     return {

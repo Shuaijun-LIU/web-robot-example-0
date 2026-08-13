@@ -12,9 +12,11 @@ import {
   useMujoco,
   useGravityCompensation,
   findBodyByName,
+  findJointByName,
   findSiteByName,
+  getContact,
 } from 'mujoco-react';
-import type { MujocoSimAPI } from 'mujoco-react';
+import type { MujocoData, MujocoModel, MujocoSimAPI } from 'mujoco-react';
 import { robots } from './configs';
 import type { ControlTarget } from './controlTargets.js';
 import { FrankaController } from './controllers/FrankaController';
@@ -25,8 +27,15 @@ import { useClickSelect } from './useClickSelect';
 import { KeyboardHelp } from './KeyboardHelp';
 import { GitHubLink } from './GitHubLink';
 import { AssemblyStep1Controller } from './AssemblyStep1Controller';
-import { AssemblyStep1Panel } from './AssemblyStep1Panel';
+import { AssemblyStep2Controller } from './AssemblyStep2Controller';
+import { AssemblySequencePanel } from './AssemblySequencePanel';
 import type { AssemblyStep1Status } from './assemblyStep1.js';
+import { ASSEMBLY1_STEP2_ARMS } from './assemblyStep2.js';
+import type {
+  AssemblyStep1CompletionSnapshot,
+  AssemblyStep2RuntimeDiagnostics,
+  AssemblyStep2State,
+} from './assemblyStep2.js';
 
 function LoadingOverlay() {
   const sim = useMujoco();
@@ -75,6 +84,64 @@ function ClickSelectOverlay() {
   return null;
 }
 
+function modelName(model: MujocoModel, address: number) {
+  let name = '';
+  for (let index = address; model.names[index] !== 0; index += 1) {
+    name += String.fromCharCode(model.names[index]);
+  }
+  return name;
+}
+
+function captureAssemblyStep1Snapshot(
+  model: MujocoModel,
+  data: MujocoData,
+): AssemblyStep1CompletionSnapshot {
+  const objectPoses = Object.fromEntries(
+    ['assembly_frame', 'torque_driver', 'cross_member'].map((name) => {
+      const bodyId = findBodyByName(model, name);
+      if (bodyId < 0) throw new Error(`Could not capture Assembly1 body: ${name}`);
+      const positionOffset = bodyId * 3;
+      const quaternionOffset = bodyId * 4;
+      return [name, {
+        position: [
+          data.xpos[positionOffset],
+          data.xpos[positionOffset + 1],
+          data.xpos[positionOffset + 2],
+        ],
+        quaternion: [
+          data.xquat[quaternionOffset],
+          data.xquat[quaternionOffset + 1],
+          data.xquat[quaternionOffset + 2],
+          data.xquat[quaternionOffset + 3],
+        ],
+      }];
+    }),
+  ) as AssemblyStep1CompletionSnapshot['objectPoses'];
+  const tcpPositions = Object.fromEntries(ASSEMBLY1_STEP2_ARMS.map((arm) => {
+    const siteId = findSiteByName(model, arm.siteName);
+    if (siteId < 0) throw new Error(`Could not capture Assembly1 site: ${arm.siteName}`);
+    const offset = siteId * 3;
+    return [arm.siteName, [
+      data.site_xpos[offset],
+      data.site_xpos[offset + 1],
+      data.site_xpos[offset + 2],
+    ]];
+  })) as AssemblyStep1CompletionSnapshot['tcpPositions'];
+  const tcpOrientations = Object.fromEntries(ASSEMBLY1_STEP2_ARMS.map((arm) => {
+    const siteId = findSiteByName(model, arm.siteName);
+    const offset = siteId * 9;
+    return [arm.siteName, Array.from(data.site_xmat.slice(offset, offset + 9))];
+  }));
+  return {
+    tcpPositions,
+    tcpOrientations,
+    objectPoses,
+    gripperControls: ASSEMBLY1_STEP2_ARMS.map(
+      (arm) => data.ctrl[arm.gripperActuatorIndex],
+    ) as [number, number, number, number],
+  };
+}
+
 /** Selection-aware IK and keyboard controllers for the active physical instance. */
 function SceneChildren({
   robotKey,
@@ -85,8 +152,16 @@ function SceneChildren({
   gizmoScale,
   assemblyStep1RequestId,
   assemblyStep1Status,
+  assemblyStep2RequestId,
+  assemblyStep2State,
+  assemblyOwnershipRef,
+  step1SnapshotRef,
+  step2DiagnosticsRef,
   onAssemblyStep1StatusChange,
+  onAssemblyStep2StateChange,
   onRunAssemblyStep1,
+  onRunAssemblyStep2,
+  onResetAssemblySequence,
 }: {
   robotKey: string;
   controlFamily: 'franka' | 'so101' | 'xlerobot';
@@ -96,15 +171,25 @@ function SceneChildren({
   gizmoScale?: number;
   assemblyStep1RequestId: number;
   assemblyStep1Status: AssemblyStep1Status;
+  assemblyStep2RequestId: number;
+  assemblyStep2State: AssemblyStep2State;
+  assemblyOwnershipRef: React.MutableRefObject<'manual' | 'step1' | 'step2'>;
+  step1SnapshotRef: React.MutableRefObject<AssemblyStep1CompletionSnapshot | null>;
+  step2DiagnosticsRef: React.MutableRefObject<AssemblyStep2RuntimeDiagnostics | null>;
   onAssemblyStep1StatusChange: (status: AssemblyStep1Status) => void;
+  onAssemblyStep2StateChange: (state: AssemblyStep2State) => void;
   onRunAssemblyStep1: () => boolean;
+  onRunAssemblyStep2: () => boolean;
+  onResetAssemblySequence: () => void;
 }) {
   const simulation = useMujoco();
-  const automationActive = assemblyStep1Status === 'planning' || assemblyStep1Status === 'running';
+  const assemblyAutomationActive = assemblyStep1Status === 'planning'
+    || assemblyStep1Status === 'running'
+    || assemblyStep2State.phase !== 'idle';
   const { controller: ik, resolvedSiteName } = useSelectedIkController(
     target,
     resetGeneration,
-    automationActive,
+    assemblyAutomationActive,
   );
 
   useEffect(() => {
@@ -144,11 +229,41 @@ function SceneChildren({
         (name) => findSiteByName(model, name),
         data.site_xpos,
       ),
-      reset: () => {
-        simulation.api.reset();
-        ik?.setIkEnabled(false);
-        ik?.syncTargetToSite();
-      },
+      getSiteOrientations: (names: string[]) => Object.fromEntries(names.map((name) => {
+        const id = findSiteByName(model, name);
+        if (id < 0) throw new Error(`Could not resolve diagnostic orientation: ${name}`);
+        const offset = id * 9;
+        return [name, Array.from(data.site_xmat.slice(offset, offset + 9))];
+      })),
+      getBodyOrientations: (names: string[]) => Object.fromEntries(names.map((name) => {
+        const id = findBodyByName(model, name);
+        if (id < 0) throw new Error(`Could not resolve diagnostic body: ${name}`);
+        const offset = id * 4;
+        return [name, [
+          data.xquat[offset],
+          data.xquat[offset + 1],
+          data.xquat[offset + 2],
+          data.xquat[offset + 3],
+        ] as [number, number, number, number]];
+      })) as Record<string, [number, number, number, number]>,
+      getJointPositions: (names: string[]) => Object.fromEntries(names.map((name) => {
+        const id = findJointByName(model, name);
+        if (id < 0) throw new Error(`Could not resolve diagnostic joint: ${name}`);
+        return [name, data.qpos[model.jnt_qposadr[id]]];
+      })),
+      getContacts: () => Array.from({ length: data.ncon }, (_, index) => {
+        const contact = getContact(data, index);
+        if (!contact) return null;
+        const body1 = model.geom_bodyid[contact.geom1];
+        const body2 = model.geom_bodyid[contact.geom2];
+        return {
+          geom1: contact.geom1,
+          geom2: contact.geom2,
+          body1: modelName(model, model.name_bodyadr[body1]),
+          body2: modelName(model, model.name_bodyadr[body2]),
+        };
+      }).filter((contact) => contact !== null),
+      reset: onResetAssemblySequence,
       moveIkTargetBy: (x: number, y: number, z: number) => {
         if (!ik) return false;
         ik.syncTargetToSite();
@@ -160,16 +275,26 @@ function SceneChildren({
         return true;
       },
       runAssemblyStep1: onRunAssemblyStep1,
+      runAssemblyStep2: onRunAssemblyStep2,
+      getAssemblyStep2Diagnostics: () => step2DiagnosticsRef.current,
     };
     window.robotDemo = diagnostics;
     return () => {
       if (window.robotDemo === diagnostics) delete window.robotDemo;
     };
-  }, [simulation, ik, target.key, onRunAssemblyStep1]);
+  }, [
+    simulation,
+    ik,
+    target.key,
+    onResetAssemblySequence,
+    onRunAssemblyStep1,
+    onRunAssemblyStep2,
+    step2DiagnosticsRef,
+  ]);
 
   return (
     <>
-      {ik && showGizmo && (
+      {ik && showGizmo && !assemblyAutomationActive && (
         <IkGizmo
           key={`gizmo-${target.key}`}
           controller={ik}
@@ -182,7 +307,7 @@ function SceneChildren({
         <FrankaController
           key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}`}
           target={target}
-          enabled={!automationActive}
+          enabled={!assemblyAutomationActive}
           initiallyOpen={assemblyStep1Status === 'complete'}
         />
       )}
@@ -196,11 +321,24 @@ function SceneChildren({
         <AssemblyStep1Controller
           requestId={assemblyStep1RequestId}
           resetGeneration={resetGeneration}
+          ownershipRef={assemblyOwnershipRef}
           onStatusChange={onAssemblyStep1StatusChange}
-          onMotionComplete={() => {
+          onMotionComplete={(model, data) => {
+            step1SnapshotRef.current = captureAssemblyStep1Snapshot(model, data);
             ik?.syncTargetToSite();
             ik?.setIkEnabled(false);
           }}
+        />
+      )}
+      {robotKey === 'frankaAssembly1' && (
+        <AssemblyStep2Controller
+          requestId={assemblyStep2RequestId}
+          resetGeneration={resetGeneration}
+          step1Complete={assemblyStep1Status === 'complete'}
+          step1SnapshotRef={step1SnapshotRef}
+          ownershipRef={assemblyOwnershipRef}
+          diagnosticsRef={step2DiagnosticsRef}
+          onStateChange={onAssemblyStep2StateChange}
         />
       )}
     </>
@@ -226,6 +364,14 @@ export function App() {
   const [resetGeneration, setResetGeneration] = useState(0);
   const [assemblyStep1RequestId, setAssemblyStep1RequestId] = useState(0);
   const [assemblyStep1Status, setAssemblyStep1Status] = useState<AssemblyStep1Status>('idle');
+  const [assemblyStep2RequestId, setAssemblyStep2RequestId] = useState(0);
+  const [assemblyStep2State, setAssemblyStep2State] = useState<AssemblyStep2State>({
+    phase: 'idle',
+    failure: null,
+  });
+  const assemblyOwnershipRef = useRef<'manual' | 'step1' | 'step2'>('manual');
+  const step1SnapshotRef = useRef<AssemblyStep1CompletionSnapshot | null>(null);
+  const step2DiagnosticsRef = useRef<AssemblyStep2RuntimeDiagnostics | null>(null);
   const performanceStatsRef = useRef<HTMLDivElement>(null!);
   // Drei's Stats type omits the null state that every DOM ref has before mount.
   const performanceStatsParentRef = performanceStatsRef as unknown as RefObject<HTMLElement>;
@@ -248,6 +394,9 @@ export function App() {
   }, [robotKey]);
   const controlTarget = entry.controlTargets.find(({ key }) => key === controlTargetKey)
     ?? entry.controlTargets[0];
+  const assemblyAutomationActive = assemblyStep1Status === 'planning'
+    || assemblyStep1Status === 'running'
+    || assemblyStep2State.phase !== 'idle';
 
   const handleRunAssemblyStep1 = useCallback(() => {
     if (robotKey !== 'frankaAssembly1' || assemblyStep1Status !== 'idle') return false;
@@ -255,6 +404,28 @@ export function App() {
     setAssemblyStep1RequestId((requestId) => requestId + 1);
     return true;
   }, [assemblyStep1Status, robotKey]);
+
+  const handleRunAssemblyStep2 = useCallback(() => {
+    if (
+      robotKey !== 'frankaAssembly1'
+      || assemblyStep1Status !== 'complete'
+      || assemblyStep2State.phase !== 'idle'
+      || !step1SnapshotRef.current
+    ) return false;
+    setAssemblyStep2State({ phase: 'planning', failure: null });
+    setAssemblyStep2RequestId((requestId) => requestId + 1);
+    return true;
+  }, [assemblyStep1Status, assemblyStep2State.phase, robotKey]);
+
+  const handleResetAssemblySequence = useCallback(() => {
+    apiRef.current?.reset();
+    assemblyOwnershipRef.current = 'manual';
+    step1SnapshotRef.current = null;
+    step2DiagnosticsRef.current = null;
+    setAssemblyStep1Status('idle');
+    setAssemblyStep2State({ phase: 'idle', failure: null });
+    setResetGeneration((generation) => generation + 1);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.sceneStatus = 'loading';
@@ -264,7 +435,11 @@ export function App() {
     delete document.documentElement.dataset.sceneError;
     delete document.documentElement.dataset.controlTarget;
     delete document.documentElement.dataset.ikSite;
+    assemblyOwnershipRef.current = 'manual';
+    step1SnapshotRef.current = null;
+    step2DiagnosticsRef.current = null;
     setAssemblyStep1Status('idle');
+    setAssemblyStep2State({ phase: 'idle', failure: null });
   }, [robotKey]);
 
   useEffect(() => {
@@ -274,6 +449,14 @@ export function App() {
       delete document.documentElement.dataset.assemblyStep1Status;
     }
   }, [assemblyStep1Status, robotKey]);
+
+  useEffect(() => {
+    if (robotKey === 'frankaAssembly1') {
+      document.documentElement.dataset.assemblyStep2Status = assemblyStep2State.phase;
+    } else {
+      delete document.documentElement.dataset.assemblyStep2Status;
+    }
+  }, [assemblyStep2State.phase, robotKey]);
 
   const handleSceneReady = useCallback((api: MujocoSimAPI) => {
     const bodies = api.getBodies();
@@ -295,11 +478,7 @@ export function App() {
     speed: { value: 1.0, min: 0.1, max: 3.0, step: 0.1 },
     gravityCompensation: { value: false, label: 'gravity compensation' },
     gizmo: { value: true, label: 'IK gizmo' },
-    reset: button(() => {
-      apiRef.current?.reset();
-      setAssemblyStep1Status('idle');
-      setResetGeneration((generation) => generation + 1);
-    }),
+    reset: button(handleResetAssemblySequence),
   });
 
   const debug = useControls('Debug', {
@@ -354,12 +533,20 @@ export function App() {
           gizmoScale={entry.gizmoScale}
           assemblyStep1RequestId={assemblyStep1RequestId}
           assemblyStep1Status={assemblyStep1Status}
+          assemblyStep2RequestId={assemblyStep2RequestId}
+          assemblyStep2State={assemblyStep2State}
+          assemblyOwnershipRef={assemblyOwnershipRef}
+          step1SnapshotRef={step1SnapshotRef}
+          step2DiagnosticsRef={step2DiagnosticsRef}
           onAssemblyStep1StatusChange={setAssemblyStep1Status}
+          onAssemblyStep2StateChange={setAssemblyStep2State}
           onRunAssemblyStep1={handleRunAssemblyStep1}
+          onRunAssemblyStep2={handleRunAssemblyStep2}
+          onResetAssemblySequence={handleResetAssemblySequence}
         />
 
         {/* Opt-in interaction */}
-        <DragInteraction />
+        {!assemblyAutomationActive && <DragInteraction />}
         <ClickSelectOverlay />
 
         {/* Debug overlays */}
@@ -390,9 +577,16 @@ export function App() {
         <span className="performance-stats__label">Scene performance</span>
       </div>
       {robotKey === 'frankaAssembly1' && (
-        <AssemblyStep1Panel
-          status={assemblyStep1Status}
-          onRun={handleRunAssemblyStep1}
+        <AssemblySequencePanel
+          step1Status={assemblyStep1Status}
+          step2State={assemblyStep2State}
+          canRunStep2={
+            assemblyStep1Status === 'complete'
+            && assemblyStep2State.phase === 'idle'
+            && Boolean(step1SnapshotRef.current)
+          }
+          onRunStep1={handleRunAssemblyStep1}
+          onRunStep2={handleRunAssemblyStep2}
         />
       )}
       <KeyboardHelp robotKey={entry.controlFamily} controlTargetLabel={controlTarget.label} />

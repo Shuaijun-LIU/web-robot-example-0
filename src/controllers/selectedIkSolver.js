@@ -7,6 +7,17 @@ const DEFAULTS = {
   rotationWeight: 0.3,
 };
 
+export function fitJointAngleToRange(value, minimum, maximum) {
+  const fullTurn = Math.PI * 2;
+  const minimumTurns = Math.ceil((minimum - value) / fullTurn);
+  const maximumTurns = Math.floor((maximum - value) / fullTurn);
+  if (minimumTurns <= maximumTurns) {
+    const turns = Math.max(minimumTurns, Math.min(maximumTurns, 0));
+    return value + turns * fullTurn;
+  }
+  return Math.max(minimum, Math.min(maximum, value));
+}
+
 function quaternionToMatrix(quaternion) {
   const { x, y, z, w } = quaternion;
   const xx = x * x;

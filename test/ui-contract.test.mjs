@@ -6,6 +6,7 @@ const appPath = new URL('../src/App.tsx', import.meta.url);
 const githubLinkPath = new URL('../src/GitHubLink.tsx', import.meta.url);
 const stylesPath = new URL('../src/styles.css', import.meta.url);
 const keyboardHelpPath = new URL('../src/KeyboardHelp.tsx', import.meta.url);
+const assemblySequencePanelPath = new URL('../src/AssemblySequencePanel.tsx', import.meta.url);
 
 test('GitHub link points to this project repository', async () => {
   const source = await readFile(githubLinkPath, 'utf8');
@@ -65,4 +66,21 @@ test('Assembly1 is the initial scene shown on page entry', async () => {
   const source = await readFile(appPath, 'utf8');
 
   assert.match(source, /robot:\s*\{\s*value:\s*'frankaAssembly1'/);
+});
+
+test('Assembly1 exposes one two-step sequence panel and deterministic Step 2 diagnostics', async () => {
+  const [appSource, panelSource] = await Promise.all([
+    readFile(appPath, 'utf8'),
+    readFile(assemblySequencePanelPath, 'utf8').catch(() => ''),
+  ]);
+
+  assert.match(appSource, /AssemblySequencePanel/);
+  assert.match(appSource, /dataset\.assemblyStep2Status/);
+  assert.match(appSource, /runAssemblyStep2/);
+  assert.match(appSource, /getAssemblyStep2Diagnostics/);
+  assert.match(appSource, /assemblyAutomationActive/);
+  assert.match(panelSource, /执行第二步：下降并物理夹持/);
+  assert.match(panelSource, /第一步已完成/);
+  assert.match(panelSource, /第二步已完成：四处物理夹持已建立/);
+  assert.match(panelSource, /请 Reset 后重试/);
 });

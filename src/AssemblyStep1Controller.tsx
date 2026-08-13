@@ -1,15 +1,17 @@
 import { useEffect, useRef } from 'react';
+import type { MutableRefObject } from 'react';
 import {
   findJointByName,
   findSiteByName,
   useBeforePhysicsStep,
   useMujoco,
 } from 'mujoco-react';
-import type { MujocoModel } from 'mujoco-react';
+import type { MujocoData, MujocoModel } from 'mujoco-react';
 
 import {
   ASSEMBLY1_GRIPPER_OPEN,
   ASSEMBLY1_STEP1_ARMS,
+  applyAssemblyJointGravityCompensation,
   interpolateJointTargets,
   isCompleteAssemblyStep1Plan,
   selectAssemblyStep1Phase,
@@ -19,13 +21,15 @@ import type { AssemblyStep1ArmPlan, AssemblyStep1Status } from './assemblyStep1.
 interface RuntimeArmPlan extends AssemblyStep1ArmPlan {
   actuatorIndices: number[];
   gripperActuatorIndex: number;
+  dofAddresses: number[];
 }
 
 interface AssemblyStep1ControllerProps {
   requestId: number;
   resetGeneration: number;
+  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2'>;
   onStatusChange: (status: AssemblyStep1Status) => void;
-  onMotionComplete: () => void;
+  onMotionComplete: (model: MujocoModel, data: MujocoData) => void;
 }
 
 function solutionIsWithinLimits(model: MujocoModel, jointIds: number[], solution: number[]) {
@@ -80,17 +84,20 @@ function createArmPlan({
     final,
     actuatorIndices: [...arm.actuatorIndices],
     gripperActuatorIndex: arm.gripperActuatorIndex,
+    dofAddresses: jointIds.map((jointId) => model.jnt_dofadr[jointId]),
   };
 }
 
 export function AssemblyStep1Controller({
   requestId,
   resetGeneration,
+  ownershipRef,
   onStatusChange,
   onMotionComplete,
 }: AssemblyStep1ControllerProps) {
   const simulation = useMujoco();
   const planRef = useRef<RuntimeArmPlan[] | null>(null);
+  const compensatedDofAddressesRef = useRef<number[]>([]);
   const startTimeRef = useRef<number | null>(null);
   const completedRequestRef = useRef(0);
   const onStatusChangeRef = useRef(onStatusChange);
@@ -100,10 +107,12 @@ export function AssemblyStep1Controller({
 
   useEffect(() => {
     planRef.current = null;
+    compensatedDofAddressesRef.current = [];
     startTimeRef.current = null;
     completedRequestRef.current = requestId;
+    if (ownershipRef.current === 'step1') ownershipRef.current = 'manual';
     onStatusChangeRef.current('idle');
-  }, [resetGeneration]);
+  }, [ownershipRef, resetGeneration]);
 
   useEffect(() => {
     if (requestId <= 0 || requestId <= completedRequestRef.current) return;
@@ -121,18 +130,28 @@ export function AssemblyStep1Controller({
     if (!isCompleteAssemblyStep1Plan(plans)) {
       completedRequestRef.current = requestId;
       planRef.current = null;
+      compensatedDofAddressesRef.current = [];
+      if (ownershipRef.current === 'step1') ownershipRef.current = 'manual';
       console.error('[assembly-step1] one or more pre-grasp targets are unreachable');
       onStatusChangeRef.current('error');
       return;
     }
 
     planRef.current = plans as RuntimeArmPlan[];
+    compensatedDofAddressesRef.current = plans.flatMap((plan) => plan?.dofAddresses ?? []);
+    ownershipRef.current = 'step1';
     startTimeRef.current = null;
     completedRequestRef.current = requestId;
     onStatusChangeRef.current('running');
-  }, [requestId, simulation]);
+  }, [ownershipRef, requestId, simulation]);
 
-  useBeforePhysicsStep((_model, data) => {
+  useBeforePhysicsStep((model, data) => {
+    if (ownershipRef.current !== 'step1') return;
+    applyAssemblyJointGravityCompensation(
+      data.qfrc_applied,
+      data.qfrc_bias,
+      compensatedDofAddressesRef.current,
+    );
     const plans = planRef.current;
     if (!plans) return;
     if (startTimeRef.current === null) startTimeRef.current = data.time;
@@ -154,7 +173,7 @@ export function AssemblyStep1Controller({
     if (phase === 'complete') {
       planRef.current = null;
       startTimeRef.current = null;
-      onMotionCompleteRef.current();
+      onMotionCompleteRef.current(model, data);
       onStatusChangeRef.current('complete');
     }
   });

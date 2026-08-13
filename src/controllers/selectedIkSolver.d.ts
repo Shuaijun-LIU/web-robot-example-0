@@ -19,3 +19,8 @@ export interface SelectedIkInput {
 }
 
 export function solveSelectedIk(input: SelectedIkInput): number[] | null;
+export function fitJointAngleToRange(
+  value: number,
+  minimum: number,
+  maximum: number,
+): number;

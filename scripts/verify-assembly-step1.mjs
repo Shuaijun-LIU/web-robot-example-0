@@ -5,7 +5,7 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
-const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step1.png');
+const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step1-grasp-ready.png');
 const taskBodies = [
   'assembly_frame',
   'cross_member',
@@ -19,19 +19,29 @@ const taskBodies = [
   'fastener_4',
 ];
 const tcpTargets = {
-  r0_tcp: [0, -0.31, 0.34],
-  r1_tcp: [0.53, -0.42, 0.36],
-  r2_tcp: [-0.49, 0.65, 0.34],
-  r3_tcp: [-0.46, 0, 0.34],
+  r0_tcp: { position: [0, -0.23, 0.33], closingAxis: [0, 1, 0] },
+  r1_tcp: { position: [0.559, -0.421, 0.28], closingAxis: [-0.951057, 0.309017, 0] },
+  r2_tcp: { position: [-0.49, 0.56, 0.26], closingAxis: [1, 0, 0] },
+  r3_tcp: { position: [-0.49, 0.32, 0.26], closingAxis: [1, 0, 0] },
 };
 
 function distance(a, b) {
   return Math.hypot(...a.map((value, index) => value - b[index]));
 }
 
+function axisErrorDegrees(actual, target, signSymmetric = false) {
+  const denominator = Math.hypot(...actual) * Math.hypot(...target);
+  if (denominator === 0) return Number.POSITIVE_INFINITY;
+  const rawDot = actual.reduce((sum, value, index) => sum + value * target[index], 0)
+    / denominator;
+  const cosine = Math.max(-1, Math.min(1, signSymmetric ? Math.abs(rawDot) : rawDot));
+  return Math.acos(cosine) * 180 / Math.PI;
+}
+
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const failures = [];
+const validationFailures = [];
 page.on('pageerror', (error) => failures.push(`page error: ${error.message}`));
 page.on('console', (message) => {
   if (message.type() === 'error') failures.push(`console error: ${message.text()}`);
@@ -60,7 +70,7 @@ try {
     null,
     { timeout },
   );
-  await page.waitForTimeout(1_000);
+  await page.waitForTimeout(1_500);
 
   const button = page.locator('.assembly-step1-panel button');
   try {
@@ -101,6 +111,7 @@ try {
     ctrl: window.robotDemo.getCtrl(),
     bodies: window.robotDemo.getBodyPositions(bodyNames),
     sites: window.robotDemo.getSitePositions(siteNames),
+    orientations: window.robotDemo.getSiteOrientations(siteNames),
   }), { bodyNames: taskBodies, siteNames: Object.keys(tcpTargets) });
 
   for (let arm = 0; arm < 4; arm += 1) {
@@ -115,13 +126,42 @@ try {
     }
   }
 
+  const poseErrors = {};
   for (const [siteName, target] of Object.entries(tcpTargets)) {
-    const error = distance(after.sites[siteName], target);
-    if (error > 0.03) throw new Error(`${siteName} final error ${error.toFixed(4)}m exceeds 0.03m`);
+    const positionError = distance(after.sites[siteName], target.position);
+    const matrix = after.orientations[siteName];
+    const closingAxis = [matrix[1], matrix[4], matrix[7]];
+    const approachAxis = [matrix[2], matrix[5], matrix[8]];
+    const closingAxisErrorDegrees = axisErrorDegrees(closingAxis, target.closingAxis, true);
+    const approachAxisErrorDegrees = axisErrorDegrees(approachAxis, [0, 0, -1]);
+    poseErrors[siteName] = {
+      positionError,
+      closingAxisErrorDegrees,
+      approachAxisErrorDegrees,
+    };
+    if (positionError > 0.03) {
+      validationFailures.push(
+        `${siteName} final error ${positionError.toFixed(4)}m exceeds 0.03m`,
+      );
+    }
+    if (closingAxisErrorDegrees > 8 || approachAxisErrorDegrees > 8) {
+      validationFailures.push(
+        `${siteName} orientation errors ${closingAxisErrorDegrees.toFixed(2)}°/`
+        + `${approachAxisErrorDegrees.toFixed(2)}° exceed 8°`,
+      );
+    }
   }
+  const taskBodyDrifts = {};
   for (const bodyName of taskBodies) {
     const drift = distance(after.bodies[bodyName], before.bodies[bodyName]);
-    if (drift > 0.03) throw new Error(`${bodyName} drifted ${drift.toFixed(4)}m during staging`);
+    taskBodyDrifts[bodyName] = drift;
+    if (drift > 0.003) {
+      validationFailures.push(`${bodyName} drifted ${drift.toFixed(4)}m during staging`);
+    }
+  }
+  if (validationFailures.length > 0) {
+    console.error(JSON.stringify({ poseErrors, validationFailures }, null, 2));
+    throw new Error(validationFailures.join('\n'));
   }
   if (!(await button.isDisabled())) throw new Error('Completed Step 1 button must stay disabled');
 
@@ -143,7 +183,9 @@ try {
   console.log(JSON.stringify({
     status: 'PASS',
     tcpPositions: after.sites,
+    tcpPoseErrors: poseErrors,
     taskBodyPositions: after.bodies,
+    taskBodyDrifts,
     screenshot: screenshotPath,
   }, null, 2));
 

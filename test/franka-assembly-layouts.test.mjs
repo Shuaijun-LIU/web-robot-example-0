@@ -62,6 +62,23 @@ test('Assembly1 exposes stable faceted hand tools with recognizable detail', () 
   );
   assert.match(xml, /name="torque_driver_trigger"/);
   assert.match(xml, /name="torque_driver_vent_/);
+  assert.match(
+    xml,
+    /<body name="torque_driver" pos="\.53 -\.42 \.166" euler="90 0 0">/,
+  );
+  assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
+    ({ name }) => name === 'torque_driver_cradle_south',
+  ));
+  assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
+    ({ name }) => name === 'torque_driver_cradle_north',
+  ));
+  assert.ok(!FRANKA_ASSEMBLY2_LAYOUT.sceneObjects.some(
+    ({ name }) => name.startsWith('torque_driver_cradle_'),
+  ));
+  assert.doesNotMatch(
+    layoutXml(FRANKA_ASSEMBLY2_LAYOUT),
+    /<body name="torque_driver" pos="\.53 -\.42 \.166" euler="90 0 0">/,
+  );
   assert.match(xml, /<body name="double_face_hammer"[^>]*euler="0 0 180"/);
   assert.match(xml, /name="hammer_eye"/);
   assert.match(xml, /name="hammer_cheek"/);

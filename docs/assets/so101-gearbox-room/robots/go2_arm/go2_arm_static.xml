@@ -1,0 +1,291 @@
+<mujoco model="go2_arm_static_room_display">
+  <compiler angle="radian" meshdir="." autolimits="true"/>
+
+
+  <option iterations="1" ls_iterations="5" timestep="0.004" integrator="Euler">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <custom>
+    <numeric data="30" name="max_contact_points"/>
+    <numeric data="12" name="max_geom_pairs"/>
+  </custom>
+
+  <default>
+    <default class="obj_visual">
+      <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+    </default>
+    <default class="obj_collision">
+      <geom group="3" contype="1" conaffinity="1"/>
+    </default>
+
+    <default class="airbot_play">
+      <position inheritrange="1" kp="35" forcerange="-18 18"/>
+      <default class="joint1">
+      </default>
+      <default class="joint2">
+      </default>
+      <default class="joint3">
+      </default>
+      <default class="joint4">
+        <position forcerange="-8 8"/>
+      </default>
+      <default class="joint5">
+        <position forcerange="-8 8"/>
+      </default>
+      <default class="joint6">
+        <position forcerange="-8 8"/>
+      </default>
+    </default>
+
+    <default class="go2">
+      <geom friction="0.6" margin="0.001" condim="1"/>
+      <general forcerange="-24 24" biastype="affine" gainprm="50 0 0" biasprm="0 -50 -0.5"/>
+
+      <default class="abduction">
+        <general ctrlrange="-0.9472 0.9472"/>
+      </default>
+      <default class="hip">
+        <general ctrlrange="-1.4 2.5"/>
+      </default>
+      <default class="knee">
+        <general ctrlrange="-2.6227 -0.84776"/>
+      </default>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2"/>
+      </default>
+      <default class="go2foot">
+        <site pos="0 0 -0.213" type="sphere" size="0.023" group="5"/>
+        <geom rgba="0.231373 0.380392 0.705882 1"/>
+      </default>
+      <default class="collision">
+        <geom group="3"/>
+        <default class="foot">
+          <geom size="0.022" pos="-0.002 0 -0.213" priority="1" solimp="0.015 1 0.022" condim="6" friction="0.8 0.02 0.01"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <material name="metal" rgba=".9 .95 .95 1"/>
+    <material name="black" rgba="0 0 0 1"/>
+    <material name="white" rgba="1 1 1 1"/>
+    <material name="gray" rgba="0.671705 0.692426 0.774270 1"/>
+    <material name="Paint_Matte_Black" specular="0.5" shininess="0.5" rgba="0.00111266039 0.00111266039 0.00111266039 1.0"/>
+    <material name="Paint_Metallic_Cool_Grey" specular="0.5" shininess="0.5" rgba="0.928523183 0.928523183 0.928523123 1.0"/>
+    <material name="Paint_Metallic_White" specular="0.5" shininess="0.5" rgba="0.928523183 0.928523183 0.928523123 1.0"/>
+    <material name="Gree_Light_Base" specular="0.5" shininess="0.5" rgba="0.6 1 1 1"/>
+    <material name="default_material" rgba="0.7 0.7 0.7 1" />
+    <mesh name="arm_base_0" file="assets/arm_base_0.obj"/>
+    <mesh name="arm_base_1" file="assets/arm_base_1.obj"/>
+    <mesh name="link1" file="assets/link1.obj"/>
+    <mesh name="link2_0" file="assets/link2_0.obj"/>
+    <mesh name="link2_1" file="assets/link2_1.obj"/>
+    <mesh name="link3_0" file="assets/link3_0.obj"/>
+    <mesh name="link3_1" file="assets/link3_1.obj"/>
+    <mesh name="link4" file="assets/link4.obj"/>
+    <mesh name="link5_0" file="assets/link5_0.obj"/>
+    <mesh name="link5_1" file="assets/link5_1.obj"/>
+    <mesh name="link6" file="assets/link6.obj"/>
+    <mesh name="left" file="assets/left.obj"/>
+    <mesh name="right" file="assets/right.obj"/>
+    <mesh file="assets/slider_base_link_0.STL" />
+    <mesh name="base_link_base_link" file="assets/new_base_link.STL" />
+
+    <mesh name="base_0" file="assets/go2/base_0.obj"/>
+    <mesh name="base_1" file="assets/go2/base_1.obj"/>
+    <mesh name="base_2" file="assets/go2/base_2.obj"/>
+    <mesh name="base_3" file="assets/go2/base_3.obj"/>
+    <mesh name="base_4" file="assets/go2/base_4.obj"/>
+    <mesh name="hip_0" file="assets/go2/hip_0.obj"/>
+    <mesh name="hip_1" file="assets/go2/hip_1.obj"/>
+    <mesh name="thigh_0" file="assets/go2/thigh_0.obj"/>
+    <mesh name="thigh_1" file="assets/go2/thigh_1.obj"/>
+    <mesh name="thigh_mirror_0" file="assets/go2/thigh_mirror_0.obj"/>
+    <mesh name="thigh_mirror_1" file="assets/go2/thigh_mirror_1.obj"/>
+    <mesh name="calf_0" file="assets/go2/calf_0.obj"/>
+    <mesh name="calf_1" file="assets/go2/calf_1.obj"/>
+    <mesh name="calf_mirror_0" file="assets/go2/calf_mirror_0.obj"/>
+    <mesh name="calf_mirror_1" file="assets/go2/calf_mirror_1.obj"/>
+    <mesh name="foot" file="assets/go2/foot.obj"/>
+  </asset>
+
+  <worldbody>
+    <body name="base" pos="0 0 0.445" childclass="go2">
+      <camera name="track" pos="0.846 -1.465 0.916" xyaxes="0.866 0.500 0.000 -0.171 0.296 0.940" mode="trackcom"/>
+      <inertial pos="0.021112 0 -0.005366" quat="-0.000543471 0.713435 -0.00173769 0.700719" mass="6.921"
+        diaginertia="0.107027 0.0980771 0.0244531"/>
+      <geom mesh="base_0" material="black" class="visual"/>
+      <geom mesh="base_1" material="black" class="visual"/>
+      <geom mesh="base_2" material="black" class="visual"/>
+      <geom mesh="base_3" material="white" class="visual"/>
+      <geom mesh="base_4" material="gray" class="visual"/>
+      <site name="base_site"/>
+      <site name="imu" pos="-0.02557 0 0.04232"/>
+      <body name="slider_base_link" pos="-0.03 0 0.08">
+        <inertial pos="-0.000148259796543093 5.14853659705494E-10 0.000282430035707958" mass="0.0789580723155737" diaginertia="2.26581866682277e-06 0.000187384565036367 0.000188161998720563" />
+        <geom mesh="slider_base_link_0" material="gray" class="visual" />
+      </body>
+      <body name="FL_hip" pos="0.1934 0.0465 0">
+        <inertial pos="-0.0054 0.00194 -0.000105" quat="0.497014 0.499245 0.505462 0.498237" mass="0.678"
+          diaginertia="0.00088403 0.000596003 0.000479967"/>
+        <geom mesh="hip_0" material="metal" class="visual"/>
+        <geom mesh="hip_1" material="gray" class="visual"/>
+        <body name="FL_thigh" pos="0 0.0955 0">
+          <inertial pos="-0.00374 -0.0223 -0.0327" quat="0.829533 0.0847635 -0.0200632 0.551623" mass="1.152"
+            diaginertia="0.00594973 0.00584149 0.000878787"/>
+          <geom mesh="thigh_0" material="metal" class="visual"/>
+          <geom mesh="thigh_1" material="gray" class="visual"/>
+          <body name="FL_calf" pos="0 0 -0.213">
+            <inertial pos="0.00629595 -0.000622121 -0.141417" quat="0.710672 0.00154099 -0.00450087 0.703508"
+              mass="0.241352" diaginertia="0.0014901 0.00146356 5.31397e-05"/>
+            <geom mesh="calf_0" material="gray" class="visual"/>
+            <geom mesh="calf_1" material="black" class="visual"/>
+            <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
+            <site name="FL" class="go2foot"/>
+          </body>
+        </body>
+      </body>
+      <body name="FR_hip" pos="0.1934 -0.0465 0">
+        <inertial pos="-0.0054 -0.00194 -0.000105" quat="0.498237 0.505462 0.499245 0.497014" mass="0.678"
+          diaginertia="0.00088403 0.000596003 0.000479967"/>
+        <geom mesh="hip_0" material="metal" class="visual" quat="4.63268e-05 1 0 0"/>
+        <geom mesh="hip_1" material="gray" class="visual" quat="4.63268e-05 1 0 0"/>
+        <body name="FR_thigh" pos="0 -0.0955 0">
+          <inertial pos="-0.00374 0.0223 -0.0327" quat="0.551623 -0.0200632 0.0847635 0.829533" mass="1.152"
+            diaginertia="0.00594973 0.00584149 0.000878787"/>
+          <geom mesh="thigh_mirror_0" material="metal" class="visual"/>
+          <geom mesh="thigh_mirror_1" material="gray" class="visual"/>
+          <body name="FR_calf" pos="0 0 -0.213">
+            <inertial pos="0.00629595 0.000622121 -0.141417" quat="0.703508 -0.00450087 0.00154099 0.710672"
+              mass="0.241352" diaginertia="0.0014901 0.00146356 5.31397e-05"/>
+            <geom mesh="calf_mirror_0" material="gray" class="visual"/>
+            <geom mesh="calf_mirror_1" material="black" class="visual"/>
+            <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
+            <site name="FR" class="go2foot"/>
+          </body>
+        </body>
+      </body>
+      <body name="RL_hip" pos="-0.1934 0.0465 0">
+        <inertial pos="0.0054 0.00194 -0.000105" quat="0.505462 0.498237 0.497014 0.499245" mass="0.678"
+          diaginertia="0.00088403 0.000596003 0.000479967"/>
+        <geom mesh="hip_0" material="metal" class="visual" quat="4.63268e-05 0 1 0"/>
+        <geom mesh="hip_1" material="gray" class="visual" quat="4.63268e-05 0 1 0"/>
+        <body name="RL_thigh" pos="0 0.0955 0">
+          <inertial pos="-0.00374 -0.0223 -0.0327" quat="0.829533 0.0847635 -0.0200632 0.551623" mass="1.152"
+            diaginertia="0.00594973 0.00584149 0.000878787"/>
+          <geom mesh="thigh_0" material="metal" class="visual"/>
+          <geom mesh="thigh_1" material="gray" class="visual"/>
+          <body name="RL_calf" pos="0 0 -0.213">
+            <inertial pos="0.00629595 -0.000622121 -0.141417" quat="0.710672 0.00154099 -0.00450087 0.703508"
+              mass="0.241352" diaginertia="0.0014901 0.00146356 5.31397e-05"/>
+            <geom mesh="calf_0" material="gray" class="visual"/>
+            <geom mesh="calf_1" material="black" class="visual"/>
+            <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
+            <site name="RL" class="go2foot"/>
+          </body>
+        </body>
+      </body>
+      <body name="RR_hip" pos="-0.1934 -0.0465 0">
+        <inertial pos="0.0054 -0.00194 -0.000105" quat="0.499245 0.497014 0.498237 0.505462" mass="0.678"
+          diaginertia="0.00088403 0.000596003 0.000479967"/>
+        <geom mesh="hip_0" material="metal" class="visual" quat="2.14617e-09 4.63268e-05 4.63268e-05 -1"/>
+        <geom mesh="hip_1" material="gray" class="visual" quat="2.14617e-09 4.63268e-05 4.63268e-05 -1"/>
+        <body name="RR_thigh" pos="0 -0.0955 0">
+          <inertial pos="-0.00374 0.0223 -0.0327" quat="0.551623 -0.0200632 0.0847635 0.829533" mass="1.152"
+            diaginertia="0.00594973 0.00584149 0.000878787"/>
+          <geom mesh="thigh_mirror_0" material="metal" class="visual"/>
+          <geom mesh="thigh_mirror_1" material="gray" class="visual"/>
+          <body name="RR_calf" pos="0 0 -0.213">
+            <inertial pos="0.00629595 0.000622121 -0.141417" quat="0.703508 -0.00450087 0.00154099 0.710672"
+              mass="0.241352" diaginertia="0.0014901 0.00146356 5.31397e-05"/>
+            <geom mesh="calf_mirror_0" material="gray" class="visual"/>
+            <geom mesh="calf_mirror_1" material="black" class="visual"/>
+            <geom pos="0 0 -0.213" mesh="foot" class="visual" material="black"/>
+            <site name="RR" class="go2foot"/>
+          </body>
+        </body>
+      </body>
+
+
+
+      <body name="arm_base_on_go2" pos="0.0045 0 0.0945">
+        <body name="arm_base" childclass="airbot_play">
+          <site name="armbasepoint" pos="0 0 0" euler="0 0 0" size="0.01" type="sphere" rgba="1 0 0 1"/>
+          <inertial pos="-0.0262913514073823 -0.0151414731978384 0.0260741549397302" mass="0.735520547128483" diaginertia="0.000798907222818606 0.000995609340418481 0.001483737681037"/>
+
+          <geom name="base_link_visual" type="mesh" mesh="base_link_base_link" material="Paint_Matte_Black" class="obj_visual" />
+          <site name="touch_site_base" pos="-0.015 0 0.045" size="0.001" type="sphere" group="3"/>
+          <body name="link1" pos="0 0 0.1172">
+            <inertial pos="7.9126e-05 -0.002527 -0.0041359" quat="0.696716 0.716558 0.0238919 -0.0236876" mass="0.54639" diaginertia="0.000346294 0.000325437 0.000286269"/>
+            <geom name="link1_visual" type="mesh" mesh="link1" material="Paint_Matte_Black" class="obj_visual"/>
+            <site name="touch_site_link1" pos="0 0 0" size="0.001" type="sphere" group="3"/>
+            <body name="link2" quat="0.135866 0.135867 -0.69393 0.693932">
+              <inertial pos="0.22493 0.0047721 0.008023" quat="-0.210875 0.632473 -0.273056 0.693506" mass="0.64621" diaginertia="0.00516535 0.00505042 0.000418626"/>
+              <geom name="link2_0_visual" type="mesh" mesh="link2_0" material="Paint_Matte_Black" class="obj_visual"/>
+              <geom name="link2_1_visual" type="mesh" mesh="link2_1" material="Paint_Metallic_White" class="obj_visual"/>
+              <site name="touch_site_link2" pos="0.15 0 0" size="0.001" type="sphere" group="3"/>
+              <body name="link3" pos="0.27009 0 0" quat="0.192144 0 0 -0.981367">
+                <inertial pos="0.16813 -5.5576e-05 0.0031184" quat="0.511278 0.488423 0.489191 0.510617" mass="0.26829" diaginertia="0.0031527 0.0030951 0.000239403"/>
+                <geom name="link3_0_visual" type="mesh" mesh="link3_0" material="Paint_Matte_Black" class="obj_visual"/>
+                <geom name="link3_1_visual" type="mesh" mesh="link3_1" material="Paint_Metallic_White" class="obj_visual"/>
+                <site name="touch_site_link3" pos="0.13 0 0" size="0.001" type="sphere" group="3"/>
+                <body name="link4" pos="0.29015 0 0" quat="-2.59734e-06 0.707105 2.59735e-06 0.707108">
+                  <inertial pos="5.2436e-06 0.00040412 -0.03228" quat="0.999969 -0.000174762 -0.00792041 -6.98144e-05" mass="0.34876" diaginertia="0.000423574 0.000412 0.000126826"/>
+                  <geom name="link4_visual" type="mesh" mesh="link4" material="Paint_Matte_Black" class="obj_visual"/>
+                  <site name="touch_site_link4" pos="0 0 0" size="0.001" type="sphere" group="3"/>
+                  <body name="link5" quat="0.707105 0.707108 0 0">
+                    <inertial pos="8.3328e-06 0.026148 0.002525" quat="0.531568 0.4663 0.4663 0.531568" mass="0.36132" diaginertia="0.0004677 0.000432922 0.000178178"/>
+                    <geom name="link5_0_visual" type="mesh" mesh="link5_0" material="Paint_Matte_Black" class="obj_visual"/>
+                    <geom name="link5_1_visual" type="mesh" mesh="link5_1" material="Paint_Metallic_White" class="obj_visual"/>
+                    <site name="touch_site_link5" pos="0 0.06 0" size="0.001" type="sphere" group="3"/>
+                    <body name="link6" pos="0 0.23645 0" quat="0.499998 -0.5 0.5 0.500002">
+                      <body pos="-0.105 0 -0.12" euler="3.1416 0 1.5708">
+                        <camera name="eye_arm" mode="fixed" euler="-0.5236 0 0" fovy="72.5376526571421"/>
+                      </body>
+                      <inertial pos="-0.0047053 7.3857e-05 -0.12293" mass="0.53855" diaginertia="5e-05 5e-05 3.85e-05"/>
+                      <geom name="link6_visual" type="mesh" mesh="link6" material="Paint_Matte_Black" class="obj_visual"/>
+                      <site name="endpoint" pos="0 0 0.015" euler="0 -1.5708 0" size="0.01" type="sphere" rgba="0 1 0 1"/>
+                      <site name="touch_site_link6" pos="0 0 -0.07" size="0.001" type="sphere" group="3"/>
+                      <body name="eef_connect_base_link">
+                        <site name="touch_site_eef" pos="0 0 0.015" size="0.001" type="sphere" group="3"/>
+                        <body name="g2_base_link">
+                          <site name="touch_site_g2base" pos="0 0 -0.07" size="0.001" type="sphere" group="3"/>
+                          <body name="g2_left_link">
+                            <inertial pos="-0.048742 0.0096369 0.00044322" quat="0.757393 0.0415116 0.0313705 0.650883" mass="0.0626" diaginertia="2.79281e-05 1.90181e-05 1.21737e-05"/>
+                            <geom name="g2_left_link_visual" type="mesh" mesh="right" material="Paint_Matte_Black" class="obj_visual"/>
+                          </body>
+                          <body name="g2_right_link">
+                            <inertial pos="-0.049039 -0.0096764 0.00038868" quat="0.650491 0.0296695 0.0398251 0.757889" mass="0.061803" diaginertia="2.74809e-05 1.88104e-05 1.19127e-05"/>
+                            <geom name="g2_right_link_visual" type="mesh" mesh="left" material="Paint_Matte_Black" class="obj_visual"/>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </worldbody>
+</mujoco>

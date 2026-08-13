@@ -12,3 +12,10 @@
 - 2026-08-13 05:19 UTC
   - What: Implemented and browser-verified Assembly1 Step 1: four Panda arms move through offline-validated IK joint waypoints to distinct pre-grasp stations; all grippers remain open and task objects are not scripted.
   - Next: User visually reviews artifacts/screenshots/franka-assembly1-step1.png before any Step 2 grasp/contact behavior is designed.
+- 2026-08-13 07:57 UTC
+  - What: Rebuilt Assembly1 Step 1 around real grasp regions, laid the torque driver on a dedicated cradle, assigned two balanced cross-member grasps, generated eight position-and-orientation IK targets, and added robot-joint-only gravity compensation plus a settling phase.
+  - Verified: Production-browser maximum TCP position error 0.01461 m, maximum axis error 1.513 degrees, and maximum task-body drift 0.0000222 m; all four grippers remained open and keyboard gripper regression passed.
+  - Next: Review artifacts/screenshots/franka-assembly1-step1-grasp-ready.png before physical descent and gripper closure.
+- 2026-08-13 08:09 UTC
+  - What: Started Assembly1 Step 2 design: verified all four physical contact centers are IK-reachable within Panda joint limits; selected staged physical clamp scope with no lift, weld, magnet, or scripted object following.
+  - Next: Review and approve the staged contact-and-clamp design before writing the implementation spec and plan.

@@ -29,7 +29,7 @@
   left: auto !important;
 }
 
-.assembly-step1-panel {
+.assembly-sequence-panel {
   position: fixed;
   top: 11.75rem;
   left: 0.75rem;
@@ -42,21 +42,37 @@
   color: #d7dce2;
   font-family: system-ui, sans-serif;
   backdrop-filter: blur(6px);
+  display: grid;
+  gap: 0.55rem;
 }
 
-.assembly-step1-panel__title {
+.assembly-sequence-panel__title {
   color: #f1f3f5;
   font-size: 0.78rem;
   font-weight: 700;
 }
 
-.assembly-step1-panel__status {
-  margin: 0.25rem 0 0.65rem;
-  color: #b9c0c8;
-  font-size: 0.7rem;
+.assembly-sequence-panel__step {
+  display: grid;
+  gap: 0.42rem;
 }
 
-.assembly-step1-panel button {
+.assembly-sequence-panel__step + .assembly-sequence-panel__step {
+  padding-top: 0.55rem;
+  border-top: 1px solid rgb(148 163 184 / 14%);
+}
+
+.assembly-sequence-panel__status {
+  color: #b9c0c8;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.assembly-sequence-panel__status--error {
+  color: #e3aaa3;
+}
+
+.assembly-sequence-panel button {
   width: 100%;
   padding: 0.55rem 0.7rem;
   border: 1px solid rgb(148 163 184 / 28%);
@@ -68,11 +84,11 @@
   cursor: pointer;
 }
 
-.assembly-step1-panel button:hover:not(:disabled) {
+.assembly-sequence-panel button:hover:not(:disabled) {
   background: #55616c;
 }
 
-.assembly-step1-panel button:disabled {
+.assembly-sequence-panel button:disabled {
   cursor: default;
   opacity: 0.68;
 }

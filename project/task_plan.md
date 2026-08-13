@@ -19,9 +19,11 @@
 - [x] Phase 10: Double-face hammer, XLeRobot rack collision, and physical-grasp repair
 - [x] Phase 11: SO101 and XLeRobot next-scene concepts
 - [x] Phase 12: Assembly1 Step 1 four-arm coordinated pre-grasp staging
-- [ ] Phase 13: Review Step 1 result and define the first real contact/grasp transition
+- [x] Phase 13: Redesign Step 1 around grasp-ready geometry, dual-arm cross-member handling, and gravity-stable final poses
+- [x] Phase 14: Review the grasp-ready result and define the first real contact/grasp transition
+- [ ] Phase 15: Implement and production-verify Step 2 physical contact and clamped hold
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 12 complete; awaiting user visual review before Step 2 design
-- Blockers: Step 2 intentionally gated on review of `artifacts/screenshots/franka-assembly1-step1.png`
+- Current phase: Phase 14 design complete; awaiting written-spec review before the Step 2 implementation plan
+- Blockers: Step 2 implementation is gated on review of `docs/superpowers/specs/2026-08-13-assembly1-step2-physical-clamp-design.md`

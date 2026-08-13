@@ -6,7 +6,10 @@ import * as THREE from 'three';
 
 import { ASSEMBLY1_STEP1_ARMS } from '../src/assemblyStep1.js';
 import { FRANKA_HOME } from '../src/sceneLayouts.js';
-import { solveSelectedIk } from '../src/controllers/selectedIkSolver.js';
+import {
+  fitJointAngleToRange,
+  solveSelectedIk,
+} from '../src/controllers/selectedIkSolver.js';
 
 const defaultAssetDirectory = resolve(
   '..',
@@ -67,16 +70,42 @@ function worldToRobot(point, frame) {
   ];
 }
 
-function positionError(mujoco, model, data, siteId, qposAddresses, solution, target) {
+function siteQuaternion(data, siteId) {
+  const offset = siteId * 9;
+  const rotation = new THREE.Matrix4().set(
+    data.site_xmat[offset], data.site_xmat[offset + 1], data.site_xmat[offset + 2], 0,
+    data.site_xmat[offset + 3], data.site_xmat[offset + 4], data.site_xmat[offset + 5], 0,
+    data.site_xmat[offset + 6], data.site_xmat[offset + 7], data.site_xmat[offset + 8], 0,
+    0, 0, 0, 1,
+  );
+  return new THREE.Quaternion().setFromRotationMatrix(rotation).normalize();
+}
+
+function poseError({
+  mujoco,
+  model,
+  data,
+  siteId,
+  qposAddresses,
+  solution,
+  targetPosition,
+  targetQuaternion,
+}) {
   for (let index = 0; index < qposAddresses.length; index += 1) {
     data.qpos[qposAddresses[index]] = solution[index];
   }
   mujoco.mj_forward(model, data);
-  return Math.hypot(
-    data.site_xpos[siteId * 3] - target[0],
-    data.site_xpos[siteId * 3 + 1] - target[1],
-    data.site_xpos[siteId * 3 + 2] - target[2],
+  const positionErrorValue = Math.hypot(
+    data.site_xpos[siteId * 3] - targetPosition[0],
+    data.site_xpos[siteId * 3 + 1] - targetPosition[1],
+    data.site_xpos[siteId * 3 + 2] - targetPosition[2],
   );
+  const actualQuaternion = siteQuaternion(data, siteId);
+  const dot = Math.min(1, Math.abs(actualQuaternion.dot(targetQuaternion)));
+  return {
+    position: positionErrorValue,
+    orientationDegrees: THREE.MathUtils.radToDeg(2 * Math.acos(dot)),
+  };
 }
 
 const mujoco = await loadMujoco({
@@ -119,16 +148,15 @@ for (let index = 0; index < qposAddresses.length; index += 1) {
 }
 mujoco.mj_forward(model, data);
 
-const rotation = new THREE.Matrix4().set(
-  data.site_xmat[siteId * 9], data.site_xmat[siteId * 9 + 1], data.site_xmat[siteId * 9 + 2], 0,
-  data.site_xmat[siteId * 9 + 3], data.site_xmat[siteId * 9 + 4], data.site_xmat[siteId * 9 + 5], 0,
-  data.site_xmat[siteId * 9 + 6], data.site_xmat[siteId * 9 + 7], data.site_xmat[siteId * 9 + 8], 0,
-  0, 0, 0, 1,
-);
-const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(rotation);
 const results = [];
 
 for (const [index, arm] of ASSEMBLY1_STEP1_ARMS.entries()) {
+  const worldQuaternion = new THREE.Quaternion(...arm.tcpQuaternion).normalize();
+  const baseQuaternion = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(0, 0, 1),
+    attachmentFrames[index].yaw,
+  );
+  const targetQuaternion = baseQuaternion.clone().invert().multiply(worldQuaternion).normalize();
   const highTarget = worldToRobot(arm.highWaypoint, attachmentFrames[index]);
   const finalTarget = worldToRobot(arm.finalWaypoint, attachmentFrames[index]);
   const currentQ = FRANKA_HOME.slice(0, 7);
@@ -137,37 +165,75 @@ for (const [index, arm] of ASSEMBLY1_STEP1_ARMS.entries()) {
     ...shared,
     currentQ,
     targetPosition: new THREE.Vector3(...highTarget),
-    maxIterations: 100,
+    maxIterations: 250,
   });
   if (!high) throw new Error(`${arm.key} high waypoint did not produce a solution`);
   const limits = jointIds.map((jointId) => [
     model.jnt_range[jointId * 2],
     model.jnt_range[jointId * 2 + 1],
   ]);
-  const boundedHigh = high.map((value, joint) => Math.max(
+  const boundedHigh = high.map((value, joint) => fitJointAngleToRange(
+    value,
     limits[joint][0],
-    Math.min(limits[joint][1], value),
+    limits[joint][1],
   ));
-  const highError = positionError(
-    mujoco, model, data, siteId, qposAddresses, boundedHigh, highTarget,
-  );
+  const highError = poseError({
+    mujoco,
+    model,
+    data,
+    siteId,
+    qposAddresses,
+    solution: boundedHigh,
+    targetPosition: highTarget,
+    targetQuaternion,
+  });
   const final = solveSelectedIk({
     ...shared,
     currentQ: boundedHigh,
     targetPosition: new THREE.Vector3(...finalTarget),
-    maxIterations: 100,
+    maxIterations: 250,
   });
   if (!final) throw new Error(`${arm.key} final waypoint did not produce a solution`);
-  const boundedFinal = final.map((value, joint) => Math.max(
+  const boundedFinal = final.map((value, joint) => fitJointAngleToRange(
+    value,
     limits[joint][0],
-    Math.min(limits[joint][1], value),
+    limits[joint][1],
   ));
-  const finalError = positionError(
-    mujoco, model, data, siteId, qposAddresses, boundedFinal, finalTarget,
-  );
-  if (highError > 0.03 || finalError > 0.03) {
+  const finalError = poseError({
+    mujoco,
+    model,
+    data,
+    siteId,
+    qposAddresses,
+    solution: boundedFinal,
+    targetPosition: finalTarget,
+    targetQuaternion,
+  });
+  if (
+    highError.position > 0.03
+    || finalError.position > 0.03
+    || highError.orientationDegrees > 8
+    || finalError.orientationDegrees > 8
+  ) {
+    if (process.env.IK_DIAGNOSTICS === '1') {
+      console.error(JSON.stringify({
+        key: arm.key,
+        highTarget,
+        finalTarget,
+        targetQuaternion: targetQuaternion.toArray(),
+        rawHigh: high,
+        boundedHigh,
+        rawFinal: final,
+        boundedFinal,
+        highError,
+        finalError,
+        limits,
+      }, null, 2));
+    }
     throw new Error(
-      `${arm.key} exceeds the 3 cm TCP tolerance (high=${highError}, final=${finalError})`,
+      `${arm.key} exceeds pose tolerance `
+      + `(high=${highError.position}m/${highError.orientationDegrees}deg, `
+      + `final=${finalError.position}m/${finalError.orientationDegrees}deg)`,
     );
   }
   results.push({
@@ -176,8 +242,10 @@ for (const [index, arm] of ASSEMBLY1_STEP1_ARMS.entries()) {
     finalTarget,
     high: boundedHigh.map((value) => Number(value.toFixed(6))),
     final: boundedFinal.map((value) => Number(value.toFixed(6))),
-    highError: Number(highError.toFixed(6)),
-    finalError: Number(finalError.toFixed(6)),
+    highPositionError: Number(highError.position.toFixed(6)),
+    finalPositionError: Number(finalError.position.toFixed(6)),
+    highOrientationErrorDegrees: Number(highError.orientationDegrees.toFixed(6)),
+    finalOrientationErrorDegrees: Number(finalError.orientationDegrees.toFixed(6)),
     withinLimits: [...boundedHigh, ...boundedFinal].every((value, joint) => {
       const [minimum, maximum] = limits[joint % 7];
       return value >= minimum && value <= maximum;

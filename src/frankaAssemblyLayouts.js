@@ -173,7 +173,7 @@ const ASSEMBLY1_TOOL_XML = `
       <geom name="manual_screwdriver_tip" type="box" pos=".199 0 0" size=".012 .004 .002" rgba=".2 .21 .22 1" mass=".005"/>
     </body>
 
-    <body name="torque_driver" pos=".53 -.42 .212">
+    <body name="torque_driver" pos=".53 -.42 .166" euler="90 0 0">
       <freejoint/>
       <geom name="torque_driver_housing" type="capsule" fromto="-.045 0 .064 .055 0 .064" size=".038" rgba=".42 .22 .07 1" mass=".2" friction="1.3 .2 .02"/>
       <geom name="torque_driver_rear_cap" type="box" pos=".055 0 .064" size=".018 .035 .033" rgba=".14 .15 .16 1" mass=".03"/>
@@ -250,7 +250,7 @@ const ASSEMBLY2_TOOL_XML = `
       <geom name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"/>
     </body>`;
 
-const sceneObjects = () => [
+const sceneObjects = (includeTorqueDriverCradle = false) => [
   fixedBox('assembly_platform', [1.15, 1.15, .05], [0, 0, .05], [.25, .27, .29, 1]),
   fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
   fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
@@ -259,6 +259,10 @@ const sceneObjects = () => [
   fixedBox('tool_mat_hammer', [.16, .2, .01], [.65, 0, .19], [.27, .25, .22, 1]),
   fixedBox('hammer_shelf_support_north', [.025, .035, .037], [.65, .15, .143], [.17, .18, .19, 1]),
   fixedBox('hammer_shelf_support_south', [.025, .035, .037], [.65, -.15, .143], [.17, .18, .19, 1]),
+  ...(includeTorqueDriverCradle ? [
+    fixedBox('torque_driver_cradle_south', [.20, .008, .012], [.53, -.54, .130], [.17, .18, .19, 1]),
+    fixedBox('torque_driver_cradle_north', [.20, .008, .012], [.53, -.30, .130], [.17, .18, .19, 1]),
+  ] : []),
 ];
 
 function createPatches(toolAssetXml, toolXml) {
@@ -302,7 +306,7 @@ function createPatches(toolAssetXml, toolXml) {
   ];
 }
 
-function createLayout(toolAssetXml, toolXml) {
+function createLayout(toolAssetXml, toolXml, includeTorqueDriverCradle = false) {
   return {
     instanceCount: 4,
     yawStepDegrees: 90,
@@ -313,11 +317,15 @@ function createLayout(toolAssetXml, toolXml) {
     homeJoints: repeatPose(FRANKA_HOME, 4),
     taskStations: { ...TASK_STATIONS },
     xmlPatches: createPatches(toolAssetXml, toolXml),
-    sceneObjects: sceneObjects(),
+    sceneObjects: sceneObjects(includeTorqueDriverCradle),
     camera: { position: [2.85, -2.85, 3.05], fov: 45 },
     orbitTarget: [0, 0, .32],
   };
 }
 
-export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(ASSEMBLY1_ASSET_XML, ASSEMBLY1_TOOL_XML);
+export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
+  ASSEMBLY1_ASSET_XML,
+  ASSEMBLY1_TOOL_XML,
+  true,
+);
 export const FRANKA_ASSEMBLY2_LAYOUT = createLayout(ASSEMBLY2_ASSET_XML, ASSEMBLY2_TOOL_XML);

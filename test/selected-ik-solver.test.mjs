@@ -3,7 +3,9 @@ import test from 'node:test';
 import loadMujoco from 'mujoco-js';
 import * as THREE from 'three';
 
-import { solveSelectedIk } from '../src/controllers/selectedIkSolver.js';
+import * as selectedIkSolver from '../src/controllers/selectedIkSolver.js';
+
+const { fitJointAngleToRange, solveSelectedIk } = selectedIkSolver;
 
 const XML = `
 <mujoco model="selected_ik_test">
@@ -34,6 +36,15 @@ function getName(model, address) {
   }
   return name;
 }
+
+test('joint-limit fitting preserves an equivalent revolute pose before clamping', () => {
+  assert.equal(typeof fitJointAngleToRange, 'function');
+  assert.ok(Math.abs(
+    fitJointAngleToRange(3.8465730529, -2.8973, 2.8973) - (-2.4366122543),
+  ) < 1e-9);
+  assert.equal(fitJointAngleToRange(1.2, -2.8973, 2.8973), 1.2);
+  assert.equal(fitJointAngleToRange(8, -1, 1), 1);
+});
 
 test('selected IK perturbs the selected qpos address and restores the full model state', async () => {
   const mujoco = await loadMujoco();

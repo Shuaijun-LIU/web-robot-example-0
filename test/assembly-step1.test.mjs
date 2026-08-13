@@ -1,39 +1,73 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import {
+import * as assemblyStep1 from '../src/assemblyStep1.js';
+
+const {
   ASSEMBLY1_GRIPPER_OPEN,
   ASSEMBLY1_STEP1_ARMS,
   ASSEMBLY1_STEP1_PHASE_DURATION,
+  ASSEMBLY1_STEP1_SETTLE_DURATION,
+  applyAssemblyJointGravityCompensation,
   interpolateJointTargets,
   isCompleteAssemblyStep1Plan,
   selectAssemblyStep1Phase,
   smoothstep01,
-} from '../src/assemblyStep1.js';
+  topDownTcpQuaternion,
+} = assemblyStep1;
 
-test('Assembly1 Step 1 assigns all four arms distinct namespaced pre-grasp jobs', () => {
+test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () => {
+  assert.equal(typeof topDownTcpQuaternion, 'function');
   assert.equal(ASSEMBLY1_STEP1_PHASE_DURATION, 1.5);
   assert.equal(ASSEMBLY1_GRIPPER_OPEN, 255);
   assert.deepEqual(
-    ASSEMBLY1_STEP1_ARMS.map(({ key, label, role }) => ({ key, label, role })),
-    [
-      { key: 'r0', label: 'Arm 1', role: 'south frame grip' },
-      { key: 'r1', label: 'Arm 2', role: 'torque driver' },
-      { key: 'r2', label: 'Arm 3', role: 'cross member north grip' },
-      { key: 'r3', label: 'Arm 4', role: 'west frame grip' },
-    ],
-  );
-  assert.deepEqual(
-    ASSEMBLY1_STEP1_ARMS.map(({ highWaypoint, finalWaypoint }) => ({
+    ASSEMBLY1_STEP1_ARMS.map(({
+      role,
       highWaypoint,
       finalWaypoint,
+      closingAxisYawDegrees,
+    }) => ({
+      role,
+      highWaypoint,
+      finalWaypoint,
+      closingAxisYawDegrees,
     })),
     [
-      { highWaypoint: [0, -0.36, 0.50], finalWaypoint: [0, -0.31, 0.34] },
-      { highWaypoint: [0.53, -0.42, 0.50], finalWaypoint: [0.53, -0.42, 0.36] },
-      { highWaypoint: [-0.49, 0.65, 0.50], finalWaypoint: [-0.49, 0.65, 0.34] },
-      { highWaypoint: [-0.48, 0, 0.50], finalWaypoint: [-0.46, 0, 0.34] },
+      {
+        role: 'south frame rail',
+        highWaypoint: [0, -0.23, 0.50],
+        finalWaypoint: [0, -0.23, 0.33],
+        closingAxisYawDegrees: 90,
+      },
+      {
+        role: 'side-laid torque driver handle',
+        highWaypoint: [0.559, -0.421, 0.48],
+        finalWaypoint: [0.559, -0.421, 0.28],
+        closingAxisYawDegrees: 162,
+      },
+      {
+        role: 'cross member north balance point',
+        highWaypoint: [-0.49, 0.56, 0.48],
+        finalWaypoint: [-0.49, 0.56, 0.26],
+        closingAxisYawDegrees: 0,
+      },
+      {
+        role: 'cross member south balance point',
+        highWaypoint: [-0.49, 0.32, 0.48],
+        finalWaypoint: [-0.49, 0.32, 0.26],
+        closingAxisYawDegrees: 0,
+      },
     ],
+  );
+  assert.ok(Math.abs(
+    ASSEMBLY1_STEP1_ARMS[2].finalWaypoint[1]
+    - ASSEMBLY1_STEP1_ARMS[3].finalWaypoint[1],
+  ) >= 0.21);
+
+  assert.deepEqual(topDownTcpQuaternion(90), [0, 1, 0, 0]);
+  assert.deepEqual(
+    topDownTcpQuaternion(0).map((value) => Number(value.toFixed(6))),
+    [0.707107, 0.707107, 0, 0],
   );
 
   for (const [index, arm] of ASSEMBLY1_STEP1_ARMS.entries()) {
@@ -52,12 +86,17 @@ test('Assembly1 Step 1 assigns all four arms distinct namespaced pre-grasp jobs'
     assert.ok(arm.finalJointTargets.every(Number.isFinite));
   }
 
-  assert.deepEqual(ASSEMBLY1_STEP1_ARMS[0].highJointTargets, [
-    1.820193, -0.069366, -0.242346, -1.970456, -0.01791, 1.907045, 2.366129,
-  ]);
-  assert.deepEqual(ASSEMBLY1_STEP1_ARMS[1].finalJointTargets, [
-    0.538023, -0.41985, 1.801701, -2.100681, 0.489855, 2.147852, 2.86118,
-  ]);
+  for (const arm of ASSEMBLY1_STEP1_ARMS) {
+    assert.deepEqual(arm.tcpQuaternion, topDownTcpQuaternion(arm.closingAxisYawDegrees));
+  }
+});
+
+test('Assembly1 Step 1 uses the verified grasp-ready IK generation', () => {
+  assert.equal(assemblyStep1.ASSEMBLY1_STEP1_IK_VERSION, 'grasp-ready-v2');
+  for (const arm of ASSEMBLY1_STEP1_ARMS) {
+    assert.equal(arm.highJointTargets.length, 7);
+    assert.equal(arm.finalJointTargets.length, 7);
+  }
 });
 
 test('Assembly1 Step 1 joint interpolation clamps and eases phase progress', () => {
@@ -72,12 +111,23 @@ test('Assembly1 Step 1 joint interpolation clamps and eases phase progress', () 
   assert.deepEqual(interpolateJointTargets([0, 10], [10, 20], 2), [10, 20]);
 });
 
-test('Assembly1 Step 1 selects two phases and accepts only an atomic four-arm plan', () => {
+test('Assembly1 Step 1 compensates only the commanded robot joint DOFs', () => {
+  assert.equal(typeof applyAssemblyJointGravityCompensation, 'function');
+  const applied = new Float64Array([0, 0.5, 0, -0.5, 0]);
+  const bias = new Float64Array([10, 20, 30, 40, 50]);
+  applyAssemblyJointGravityCompensation(applied, bias, [1, 3]);
+  assert.deepEqual(Array.from(applied), [0, 20.5, 0, 39.5, 0]);
+});
+
+test('Assembly1 Step 1 stages motion, settles, and accepts only an atomic four-arm plan', () => {
+  assert.equal(ASSEMBLY1_STEP1_SETTLE_DURATION, 3);
   assert.deepEqual(selectAssemblyStep1Phase(0), { phase: 'high', progress: 0 });
   assert.deepEqual(selectAssemblyStep1Phase(0.75), { phase: 'high', progress: 0.5 });
   assert.deepEqual(selectAssemblyStep1Phase(1.5), { phase: 'final', progress: 0 });
   assert.deepEqual(selectAssemblyStep1Phase(2.25), { phase: 'final', progress: 0.5 });
-  assert.deepEqual(selectAssemblyStep1Phase(3), { phase: 'complete', progress: 1 });
+  assert.deepEqual(selectAssemblyStep1Phase(3), { phase: 'settling', progress: 0 });
+  assert.deepEqual(selectAssemblyStep1Phase(4.5), { phase: 'settling', progress: 0.5 });
+  assert.deepEqual(selectAssemblyStep1Phase(6), { phase: 'complete', progress: 1 });
 
   const completePlan = Array.from({ length: 4 }, (_, arm) => ({
     armKey: `r${arm}`,
