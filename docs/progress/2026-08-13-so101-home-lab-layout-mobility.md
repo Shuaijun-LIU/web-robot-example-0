@@ -13,14 +13,19 @@ Date: 2026-08-13
   `[-2.25, -1.85]`, preserving all relative arm/task geometry.
 - Added MuJoCo-backed X/Y/yaw mobility for G1 and Go2-with-arm. Both appear in
   the existing control-target selector and use W/S plus A/D after selection.
+- Removed the former G1 display pad and Go2 charging pad so both mobile robots
+  now stand directly on the room floor.
+- Rebuilt the corner service cart undercarriage with four floor-contacting
+  wheels; each wheel center is at 0.075 m with a 0.075 m radius.
 
 ## Verification evidence
 
-- MuJoCo 3.3.8: 150 bodies, 621 geoms, 30 actuators, 121 qpos.
+- MuJoCo 3.3.8: 148 bodies, 614 geoms, 30 actuators, 121 qpos.
 - Initial penetration: 0 / 0 contacts.
 - Four SO101 roots compile around the translated center and retain their TCP
   positions relative to the task island.
-- G1 and Go2 + Arm browser W/S movement checks: PASS.
+- G1 and Go2 + Arm browser W/S translation and A/D yaw checks: PASS.
+- Full regression: 76 / 76 tests passed; TypeScript and production build passed.
 - Screenshot: `artifacts/screenshots/so101-home-lab.png`.
 
 The mobility layer is simulated planar whole-body motion for the fixed-pose

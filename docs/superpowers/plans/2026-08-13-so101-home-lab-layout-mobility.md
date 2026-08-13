@@ -9,6 +9,8 @@ Date: 2026-08-13
   velocity math.
 - [x] Rebuild the sofa and move the side table, coffee table, TV console,
   screen, speakers, rug, and floor lamp to preserve visible clearances.
+- [x] Remove both under-robot pads and rebuild the service cart with four
+  floor-contacting wheels.
 - [x] Translate the four SO101 arms, complete gearbox task, table, and task
   metadata together to `[-2.25, -1.85]`.
 - [x] Add scene-specific grid size/division configuration and set Home Lab to
