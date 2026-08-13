@@ -16,7 +16,7 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 |---|---|
 | [![Four Panda arms around Assembly1 with procedural tools](artifacts/screenshots/franka-assembly1.png)](artifacts/screenshots/franka-assembly1.png) | [![Four Panda arms around Assembly2 with RoboTwin tool meshes](artifacts/screenshots/franka-assembly2.png)](artifacts/screenshots/franka-assembly2.png) |
 
-These are two independently selectable implementations of the same static four-arm assembly staging area. Both use a `0.90 m` Panda ring, slotted aluminum frame, loose perforated cross-member, mounting plate, four fasteners, three tool stations, and handover pad. The four cross-member holes have named target sites that exactly match four recessed frame receivers at the planned installation pose. Assembly1 uses stable procedural geometry, including a grooved octagonal screwdriver, detailed cordless torque driver, and claw hammer. Assembly2 keeps the same task geometry while using converted and textured RoboTwin tool meshes with simple collision proxies. Neither scene runs scripted task motion yet.
+These are two independently selectable implementations of the same static four-arm assembly staging area. Both use a `0.90 m` Panda ring, slotted aluminum frame, loose perforated cross-member, mounting plate, four fasteners, three tool stations, and handover pad. The four cross-member holes have named target sites that exactly match four recessed frame receivers at the planned installation pose. Assembly1 uses stable procedural geometry, including a grooved octagonal screwdriver with a flat collision proxy, detailed cordless torque driver, and correctly oriented claw hammer. Assembly2 keeps the same task geometry while using converted RoboTwin tool meshes with palette-baked color regions and simple collision proxies. Neither scene runs scripted task motion yet.
 
 | Scene | Physical layout | Shared workspace |
 |---|---|---|
@@ -24,7 +24,7 @@ These are two independently selectable implementations of the same static four-a
 | SO101 | Four 6-actuator arms at 90° intervals, facing the center | One table with a `0.800 m` top and three graspable cubes |
 | XLeRobot | Two complete dual-arm mobile robots, facing one another | One four-leg table; its top is exactly `0.775 m`, matching the arm mounting height |
 | Franka Assembly1 | Four 7-DOF arms on a larger `0.900 m` ring | Detailed procedural tools and explicit frame/cross-member interfaces |
-| Franka Assembly2 | Same robot and task layout as Assembly1 | Textured RoboTwin tool meshes with stable collision proxies |
+| Franka Assembly2 | Same robot and task layout as Assembly1 | Multi-color RoboTwin tool meshes with stable collision proxies |
 
 The app starts running with the IK gizmo visible, matching the original interactive example. Use **Control target** to select an individual Franka/SO101 arm or one complete XLeRobot without reloading the shared scene.
 
@@ -91,4 +91,4 @@ Every push to `main` runs [`.github/workflows/pages.yml`](.github/workflows/page
 - SO101 and XLeRobot: [MuJoCo-GS-Web](https://github.com/Vector-Wangel/MuJoCo-GS-Web/tree/main/assets/robots/xlerobot)
 - Assembly2 screwdriver, drill, and hammer: [RoboTwin](https://github.com/RoboTwin-Platform/RoboTwin) (MIT; converted locally from selected GLB assets)
 
-Assembly2 ships only the three selected converted OBJ meshes and their base-color textures. Exact source paths, licenses, and conversion details are recorded in [`public/assets/franka-assembly2/THIRD_PARTY_NOTICES.md`](public/assets/franka-assembly2/THIRD_PARTY_NOTICES.md).
+Assembly2 ships only the three selected converted tool meshes, their palette partitions, and source base-color textures. Exact source paths, licenses, and conversion details are recorded in [`public/assets/franka-assembly2/THIRD_PARTY_NOTICES.md`](public/assets/franka-assembly2/THIRD_PARTY_NOTICES.md).

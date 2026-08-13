@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import {
@@ -50,18 +51,45 @@ test('cross-member target pose aligns all four installation holes with frame rec
 test('Assembly1 exposes stable faceted hand tools with recognizable detail', () => {
   const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
   assert.match(xml, /mesh="manual_screwdriver_octagonal_handle"/);
+  assert.match(xml, /<joint name="manual_screwdriver_free" type="free" damping="\.08"\/>/);
+  assert.match(
+    xml,
+    /name="manual_screwdriver_handle"[^>]*contype="0"[^>]*conaffinity="0"/,
+  );
+  assert.match(
+    xml,
+    /name="manual_screwdriver_handle_collision" type="box"[^>]*size="\.072 \.022 \.022"/,
+  );
   assert.match(xml, /name="torque_driver_trigger"/);
   assert.match(xml, /name="torque_driver_vent_/);
   assert.match(xml, /<body name="claw_hammer"/);
-  assert.match(xml, /name="hammer_claw_left"/);
-  assert.match(xml, /name="hammer_claw_right"/);
+  assert.match(xml, /name="hammer_eye"/);
+  assert.match(xml, /name="hammer_cheek"/);
+  assert.match(xml, /name="hammer_striking_face" type="cylinder"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
+  assert.match(xml, /name="hammer_claw_left" type="capsule"[^>]*fromto="\.064 \.065 -\.002 \.050 \.112 -\.018"/);
+  assert.match(xml, /name="hammer_claw_right" type="capsule"[^>]*fromto="\.086 \.065 -\.002 \.100 \.112 -\.018"/);
 });
 
-test('Assembly2 uses converted RoboTwin visual meshes and explicit collision geometry', () => {
+test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geometry', async () => {
   const xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
   for (const tool of ['screwdriver', 'drill', 'hammer']) {
-    assert.match(xml, new RegExp(`mesh="robotwin_${tool}_visual"`));
     assert.match(xml, new RegExp(`name="robotwin_${tool}_collision"`));
+    const colors = [];
+    for (const role of ['primary', 'dark', 'metal']) {
+      assert.match(xml, new RegExp(`mesh="robotwin_${tool}_${role}"`));
+      const material = new RegExp(
+        `name="robotwin_${tool}_${role}_material"[^>]*rgba="([^"]+)"`,
+      ).exec(xml);
+      assert.ok(material, `${tool}/${role} material is missing`);
+      colors.push(material[1]);
+
+      const asset = await readFile(
+        new URL(`../public/assets/franka-assembly2/tools/robotwin-${tool}-${role}.obj`, import.meta.url),
+        'utf8',
+      );
+      assert.match(asset, /^f \d+ \d+ \d+$/m);
+    }
+    assert.equal(new Set(colors).size, 3, `${tool} must expose three visible colors`);
   }
 });
 

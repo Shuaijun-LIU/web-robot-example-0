@@ -15,9 +15,11 @@ three converted tool meshes from RoboTwin.
 
 The matching PNG files are the base-color textures embedded in those same GLB
 files. `scripts/convert-robotwin-tools.py` applies GLB node transforms, rotates
-the authored +Y tool axis onto local +X, centers each mesh, exports OBJ geometry
-with UV coordinates, and extracts only the selected base-color texture. The
-drill and hammer are enlarged slightly from RoboTwin's task scale to match a
+the authored +Y tool axis onto local +X, centers each mesh, exports the complete
+OBJ geometry and source texture, then classifies its textured triangles into
+`primary`, `dark`, and `metal` OBJ partitions. These partitions preserve visible
+color blocking in the current web renderer, which does not consume mesh UVs.
+The drill and hammer are enlarged slightly from RoboTwin's task scale to match a
 realistic Panda workcell tool envelope; MuJoCo collision uses documented simple
 primitive proxies rather than these high-detail visual meshes.
 

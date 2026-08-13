@@ -7,14 +7,38 @@ build remains reproducible on machines without Blender or trimesh.
 
 from pathlib import Path
 import json
+import math
 import struct
 import sys
+import zlib
 
 
 TOOLS = {
     "robotwin-screwdriver.obj": "032_screwdriver/visual/base0.glb",
     "robotwin-drill.obj": "030_drill/visual/base6.glb",
     "robotwin-hammer.obj": "020_hammer/visual/base0.glb",
+}
+
+# The current mujoco-react geometry builder consumes mesh positions and faces,
+# but not MuJoCo texture coordinates.  Partitioning textured source triangles
+# into a small material palette preserves the tools' readable color blocking in
+# the web renderer without replacing their original RoboTwin geometry.
+PALETTE_CENTERS = {
+    "robotwin-screwdriver.obj": {
+        "primary": (232, 181, 42),
+        "dark": (35, 34, 32),
+        "metal": (190, 190, 185),
+    },
+    "robotwin-drill.obj": {
+        "primary": (96, 91, 86),
+        "dark": (37, 36, 35),
+        "metal": (185, 185, 180),
+    },
+    "robotwin-hammer.obj": {
+        "primary": (220, 181, 28),
+        "dark": (25, 24, 22),
+        "metal": (177, 178, 175),
+    },
 }
 
 COMPONENTS = {
@@ -163,6 +187,115 @@ def write_obj(path, vertices, texcoords, faces):
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def paeth(left, above, upper_left):
+    estimate = left + above - upper_left
+    distances = [abs(estimate - value) for value in (left, above, upper_left)]
+    return (left, above, upper_left)[distances.index(min(distances))]
+
+
+def decode_png_rgb(data):
+    """Decode the non-interlaced 8-bit RGB PNGs embedded in selected GLBs."""
+    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("Expected an embedded PNG texture")
+    offset = 8
+    compressed = []
+    width = height = None
+    while offset < len(data):
+        length = struct.unpack_from(">I", data, offset)[0]
+        chunk_type = data[offset + 4:offset + 8]
+        chunk = data[offset + 8:offset + 8 + length]
+        offset += length + 12
+        if chunk_type == b"IHDR":
+            width, height, bit_depth, color_type, compression, filtering, interlace = struct.unpack(
+                ">IIBBBBB", chunk,
+            )
+            if (bit_depth, color_type, compression, filtering, interlace) != (8, 2, 0, 0, 0):
+                raise ValueError("Only non-interlaced 8-bit RGB PNG textures are supported")
+        elif chunk_type == b"IDAT":
+            compressed.append(chunk)
+        elif chunk_type == b"IEND":
+            break
+    if width is None or height is None:
+        raise ValueError("PNG is missing IHDR")
+
+    raw = zlib.decompress(b"".join(compressed))
+    stride = width * 3
+    rows = []
+    cursor = 0
+    previous = bytearray(stride)
+    for _ in range(height):
+        filter_type = raw[cursor]
+        cursor += 1
+        encoded = raw[cursor:cursor + stride]
+        cursor += stride
+        decoded = bytearray(stride)
+        for index, value in enumerate(encoded):
+            left = decoded[index - 3] if index >= 3 else 0
+            above = previous[index]
+            upper_left = previous[index - 3] if index >= 3 else 0
+            predictor = {
+                0: 0,
+                1: left,
+                2: above,
+                3: (left + above) // 2,
+                4: paeth(left, above, upper_left),
+            }.get(filter_type)
+            if predictor is None:
+                raise ValueError(f"Unsupported PNG filter type: {filter_type}")
+            decoded[index] = (value + predictor) & 0xff
+        rows.append(bytes(decoded))
+        previous = decoded
+    return width, height, b"".join(rows)
+
+
+def sample_texture(texture, texcoord):
+    width, height, pixels = texture
+    # GLB samplers repeat by default. texcoords were flipped to PNG's top-left
+    # row convention in extract_mesh.
+    u = texcoord[0] % 1
+    v = texcoord[1] % 1
+    x = min(width - 1, int(u * width))
+    y = min(height - 1, int(v * height))
+    start = (y * width + x) * 3
+    return pixels[start:start + 3]
+
+
+def face_color(texture, texcoords, face):
+    coordinates = [texcoords[index] for index in face]
+    coordinates.append(tuple(sum(uv[axis] for uv in coordinates) / 3 for axis in range(2)))
+    samples = [sample_texture(texture, uv) for uv in coordinates]
+    return tuple(sum(sample[channel] for sample in samples) / len(samples) for channel in range(3))
+
+
+def partition_faces(output_name, texcoords, faces, image_bytes):
+    texture = decode_png_rgb(image_bytes)
+    palette = PALETTE_CENTERS[output_name]
+    partitions = {role: [] for role in palette}
+    for face in faces:
+        color = face_color(texture, texcoords, face)
+        role = min(
+            palette,
+            key=lambda candidate: math.dist(color, palette[candidate]),
+        )
+        partitions[role].append(face)
+    if any(not grouped_faces for grouped_faces in partitions.values()):
+        counts = {role: len(grouped_faces) for role, grouped_faces in partitions.items()}
+        raise ValueError(f"Texture palette produced an empty mesh partition: {counts}")
+    return partitions
+
+
+def write_partition_obj(path, vertices, faces):
+    used_indices = sorted({index for face in faces for index in face})
+    remap = {source: target + 1 for target, source in enumerate(used_indices)}
+    lines = ["# Palette-baked from RoboTwin texture for mujoco-react"]
+    lines.extend(
+        "v " + " ".join(f"{value:.8g}" for value in vertices[index])
+        for index in used_indices
+    )
+    lines.extend("f " + " ".join(str(remap[index]) for index in face) for face in faces)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main():
     if len(sys.argv) != 3:
         raise SystemExit("usage: convert-robotwin-tools.py <robotwin-objects-dir> <output-dir>")
@@ -173,11 +306,16 @@ def main():
         vertices, texcoords, faces, image_bytes, mime_type = extract_mesh(source_root / relative_source)
         vertices, extents = normalize(vertices)
         write_obj(output_root / output_name, vertices, texcoords, faces)
+        partitions = partition_faces(output_name, texcoords, faces, image_bytes)
+        for role, grouped_faces in partitions.items():
+            partition_path = output_root / output_name.replace(".obj", f"-{role}.obj")
+            write_partition_obj(partition_path, vertices, grouped_faces)
         extension = {"image/png": ".png", "image/jpeg": ".jpg"}.get(mime_type)
         if extension is None:
             raise ValueError(f"Unsupported base-color texture type: {mime_type}")
         (output_root / Path(output_name).with_suffix(extension)).write_bytes(image_bytes)
-        print(f"{output_name}: {len(vertices)} vertices, {len(faces)} faces, extents={extents}")
+        counts = ", ".join(f"{role}={len(grouped)}" for role, grouped in partitions.items())
+        print(f"{output_name}: {len(vertices)} vertices, {len(faces)} faces, {counts}, extents={extents}")
 
 
 if __name__ == "__main__":

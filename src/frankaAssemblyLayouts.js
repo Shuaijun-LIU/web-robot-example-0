@@ -165,8 +165,9 @@ const ASSEMBLY1_ASSET_XML = `<mesh name="manual_screwdriver_octagonal_handle" ${
 
 const ASSEMBLY1_TOOL_XML = `
     <body name="manual_screwdriver" pos="-.53 -.42 .145">
-      <freejoint/>
-      <geom name="manual_screwdriver_handle" type="mesh" mesh="manual_screwdriver_octagonal_handle" rgba=".48 .19 .07 1" mass=".11" friction="1.6 .25 .03"/>
+      <joint name="manual_screwdriver_free" type="free" damping=".08"/>
+      <geom name="manual_screwdriver_handle" type="mesh" mesh="manual_screwdriver_octagonal_handle" rgba=".48 .19 .07 1" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="manual_screwdriver_handle_collision" type="box" pos="-.033 0 0" size=".072 .022 .022" rgba="0 0 0 0" mass=".109" friction="1.6 .25 .03"/>
       <geom name="manual_screwdriver_collar" type="cylinder" fromto=".039 0 0 .066 0 0" size=".015" rgba=".16 .17 .18 1" mass=".02"/>
       <geom name="manual_screwdriver_shaft" type="cylinder" fromto=".066 0 0 .19 0 0" size=".006" rgba=".5 .51 .52 1" mass=".035"/>
       <geom name="manual_screwdriver_tip" type="box" pos=".199 0 0" size=".012 .004 .002" rgba=".2 .21 .22 1" mass=".005"/>
@@ -192,42 +193,61 @@ const ASSEMBLY1_TOOL_XML = `
 
     <body name="claw_hammer" pos=".65 0 .229" euler="0 0 90">
       <freejoint/>
-      <geom name="hammer_handle_core" type="box" pos="-.055 0 -.008" size=".118 .017 .018" rgba=".34 .15 .055 1" mass=".16" friction="1.4 .22 .03"/>
-      <geom name="hammer_handle_grip" type="box" pos="-.082 0 -.008" size=".07 .022 .022" rgba=".11 .12 .13 1" mass=".07"/>
-      <geom name="hammer_head" type="box" pos=".075 0 0" size=".048 .027 .026" rgba=".31 .32 .33 1" mass=".28"/>
-      <geom name="hammer_face" type="cylinder" fromto=".075 -.027 0 .075 -.057 0" size=".025" rgba=".45 .46 .47 1" mass=".06"/>
-      <geom name="hammer_claw_left" type="box" pos=".105 .045 .006" size=".045 .008 .008" euler="0 -12 18" rgba=".33 .34 .35 1" mass=".035"/>
-      <geom name="hammer_claw_right" type="box" pos=".105 .045 -.012" size=".045 .008 .008" euler="0 12 18" rgba=".33 .34 .35 1" mass=".035"/>
+      <geom name="hammer_handle_core" type="box" pos="-.045 0 -.005" size=".105 .014 .014" rgba=".43 .22 .08 1" mass=".1" friction="1.4 .22 .03"/>
+      <geom name="hammer_handle_grip" type="box" pos="-.083 0 -.005" size=".073 .021 .018" rgba=".11 .12 .13 1" mass=".12"/>
+      <geom name="hammer_eye" type="cylinder" fromto=".048 0 0 .102 0 0" size=".021" rgba=".18 .19 .2 1" mass=".08"/>
+      <geom name="hammer_cheek" type="box" pos=".075 0 0" size=".032 .03 .025" rgba=".32 .33 .34 1" mass=".18"/>
+      <geom name="hammer_face_neck" type="cylinder" fromto=".075 -.030 0 .075 -.053 0" size=".019" rgba=".36 .37 .38 1" mass=".04"/>
+      <geom name="hammer_striking_face" type="cylinder" fromto=".075 -.053 0 .075 -.073 0" size=".027" rgba=".5 .51 .52 1" mass=".08"/>
+      <geom name="hammer_claw_left_root" type="capsule" fromto=".068 .025 .006 .064 .065 -.002" size=".009" rgba=".35 .36 .37 1" mass=".025"/>
+      <geom name="hammer_claw_left" type="capsule" fromto=".064 .065 -.002 .050 .112 -.018" size=".007" rgba=".35 .36 .37 1" mass=".025"/>
+      <geom name="hammer_claw_right_root" type="capsule" fromto=".082 .025 .006 .086 .065 -.002" size=".009" rgba=".35 .36 .37 1" mass=".025"/>
+      <geom name="hammer_claw_right" type="capsule" fromto=".086 .065 -.002 .100 .112 -.018" size=".007" rgba=".35 .36 .37 1" mass=".025"/>
     </body>`;
 
 const ASSEMBLY2_ASSET_XML = `
-      <texture name="robotwin_screwdriver_texture" type="2d" file="tools/robotwin-screwdriver.png"/>
-      <texture name="robotwin_drill_texture" type="2d" file="tools/robotwin-drill.png"/>
-      <texture name="robotwin_hammer_texture" type="2d" file="tools/robotwin-hammer.png"/>
-      <material name="robotwin_screwdriver_material" texture="robotwin_screwdriver_texture" rgba=".58 .22 .07 1" specular=".25" shininess=".2"/>
-      <material name="robotwin_drill_material" texture="robotwin_drill_texture" rgba=".17 .31 .23 1" specular=".25" shininess=".2"/>
-      <material name="robotwin_hammer_material" texture="robotwin_hammer_texture" rgba=".34 .22 .11 1" specular=".3" shininess=".25"/>
-      <mesh name="robotwin_screwdriver_visual" file="tools/robotwin-screwdriver.obj" scale=".095 .095 .095"/>
-      <mesh name="robotwin_drill_visual" file="tools/robotwin-drill.obj" scale=".105 .105 .105"/>
-      <mesh name="robotwin_hammer_visual" file="tools/robotwin-hammer.obj" scale=".11 .11 .11"/>`;
+      <material name="robotwin_screwdriver_primary_material" rgba=".90 .55 .06 1" specular=".2" shininess=".18"/>
+      <material name="robotwin_screwdriver_dark_material" rgba=".08 .09 .10 1" specular=".16" shininess=".12"/>
+      <material name="robotwin_screwdriver_metal_material" rgba=".58 .60 .62 1" specular=".55" shininess=".42"/>
+      <material name="robotwin_drill_primary_material" rgba=".34 .32 .29 1" specular=".18" shininess=".15"/>
+      <material name="robotwin_drill_dark_material" rgba=".07 .08 .09 1" specular=".18" shininess=".14"/>
+      <material name="robotwin_drill_metal_material" rgba=".62 .64 .65 1" specular=".58" shininess=".45"/>
+      <material name="robotwin_hammer_primary_material" rgba=".84 .55 .04 1" specular=".16" shininess=".12"/>
+      <material name="robotwin_hammer_dark_material" rgba=".07 .08 .09 1" specular=".16" shininess=".12"/>
+      <material name="robotwin_hammer_metal_material" rgba=".60 .62 .63 1" specular=".6" shininess=".48"/>
+      <mesh name="robotwin_screwdriver_primary" file="tools/robotwin-screwdriver-primary.obj" scale=".095 .095 .095"/>
+      <mesh name="robotwin_screwdriver_dark" file="tools/robotwin-screwdriver-dark.obj" scale=".095 .095 .095"/>
+      <mesh name="robotwin_screwdriver_metal" file="tools/robotwin-screwdriver-metal.obj" scale=".095 .095 .095"/>
+      <mesh name="robotwin_drill_primary" file="tools/robotwin-drill-primary.obj" scale=".105 .105 .105"/>
+      <mesh name="robotwin_drill_dark" file="tools/robotwin-drill-dark.obj" scale=".105 .105 .105"/>
+      <mesh name="robotwin_drill_metal" file="tools/robotwin-drill-metal.obj" scale=".105 .105 .105"/>
+      <mesh name="robotwin_hammer_primary" file="tools/robotwin-hammer-primary.obj" scale=".11 .11 .11"/>
+      <mesh name="robotwin_hammer_dark" file="tools/robotwin-hammer-dark.obj" scale=".11 .11 .11"/>
+      <mesh name="robotwin_hammer_metal" file="tools/robotwin-hammer-metal.obj" scale=".11 .11 .11"/>`;
 
 const ASSEMBLY2_TOOL_XML = `
     <body name="manual_screwdriver" pos="-.53 -.42 .145">
       <freejoint/>
-      <geom name="robotwin_screwdriver_visual_geom" type="mesh" mesh="robotwin_screwdriver_visual" material="robotwin_screwdriver_material" pos="0 0 -.012" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_screwdriver_primary_visual_geom" type="mesh" mesh="robotwin_screwdriver_primary" material="robotwin_screwdriver_primary_material" pos="0 0 -.012" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_screwdriver_dark_visual_geom" type="mesh" mesh="robotwin_screwdriver_dark" material="robotwin_screwdriver_dark_material" pos="0 0 -.012" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_screwdriver_metal_visual_geom" type="mesh" mesh="robotwin_screwdriver_metal" material="robotwin_screwdriver_metal_material" pos="0 0 -.012" contype="0" conaffinity="0" mass=".001"/>
       <geom name="robotwin_screwdriver_collision" type="capsule" fromto="-.09 0 0 .04 0 0" size=".025" rgba="0 0 0 0" mass=".1" friction="1.5 .25 .03"/>
       <geom name="robotwin_screwdriver_shaft_collision" type="capsule" fromto=".04 0 0 .19 0 0" size=".006" rgba="0 0 0 0" mass=".03"/>
     </body>
     <body name="torque_driver" pos=".53 -.42 .222">
       <freejoint/>
-      <geom name="robotwin_drill_visual_geom" type="mesh" mesh="robotwin_drill_visual" material="robotwin_drill_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_drill_primary_visual_geom" type="mesh" mesh="robotwin_drill_primary" material="robotwin_drill_primary_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_drill_dark_visual_geom" type="mesh" mesh="robotwin_drill_dark" material="robotwin_drill_dark_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_drill_metal_visual_geom" type="mesh" mesh="robotwin_drill_metal" material="robotwin_drill_metal_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
       <geom name="robotwin_drill_collision" type="box" pos="0 0 .045" size=".09 .04 .055" rgba="0 0 0 0" mass=".28" friction="1.3 .2 .02"/>
       <geom name="robotwin_drill_grip_collision" type="capsule" fromto=".02 0 .02 .04 0 -.065" size=".026" rgba="0 0 0 0" mass=".12"/>
       <geom name="robotwin_drill_battery_collision" type="box" pos=".04 0 -.088" size=".055 .045 .015" rgba="0 0 0 0" mass=".12"/>
     </body>
     <body name="claw_hammer" pos=".65 0 .229">
       <freejoint/>
-      <geom name="robotwin_hammer_visual_geom" type="mesh" mesh="robotwin_hammer_visual" material="robotwin_hammer_material" pos="0 0 -.008" euler="90 0 0" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_hammer_primary_visual_geom" type="mesh" mesh="robotwin_hammer_primary" material="robotwin_hammer_primary_material" pos="0 0 -.008" euler="90 0 0" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_hammer_dark_visual_geom" type="mesh" mesh="robotwin_hammer_dark" material="robotwin_hammer_dark_material" pos="0 0 -.008" euler="90 0 0" contype="0" conaffinity="0" mass=".001"/>
+      <geom name="robotwin_hammer_metal_visual_geom" type="mesh" mesh="robotwin_hammer_metal" material="robotwin_hammer_metal_material" pos="0 0 -.008" euler="90 0 0" contype="0" conaffinity="0" mass=".001"/>
       <geom name="robotwin_hammer_collision" type="capsule" fromto="-.14 0 -.008 .06 0 -.008" size=".02" rgba="0 0 0 0" mass=".16" friction="1.4 .22 .03"/>
       <geom name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"/>
     </body>`;
