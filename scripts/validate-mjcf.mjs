@@ -182,6 +182,47 @@ if (process.env.POSE_REPORT === '1') {
   }
   data.delete();
 }
+if (process.env.INITIAL_CONTACT_REPORT === '1') {
+  const data = new mujoco.MjData(model);
+  for (let index = 0; index < Math.min(model.nu, definition.layout.homeJoints.length); index += 1) {
+    const home = definition.layout.homeJoints[index];
+    data.ctrl[index] = home;
+    const transmissionType = model.actuator_trntype[index];
+    const jointId = model.actuator_trnid[index * 2];
+    if ((transmissionType === 0 || transmissionType === 1) && jointId >= 0) {
+      const jointType = model.jnt_type[jointId];
+      if (jointType === 2 || jointType === 3) {
+        data.qpos[model.jnt_qposadr[jointId]] = home;
+      }
+    }
+  }
+  mujoco.mj_forward(model, data);
+
+  const penetratingContacts = [];
+  for (let index = 0; index < data.ncon; index += 1) {
+    const contact = data.contact.get(index);
+    if (!contact || contact.dist >= -1e-4) continue;
+    const body1 = model.geom_bodyid[contact.geom1];
+    const body2 = model.geom_bodyid[contact.geom2];
+    penetratingContacts.push({
+      distance: contact.dist,
+      pair: `${getName(model.name_bodyadr[body1])}/${getName(model.name_geomadr[contact.geom1])}`
+        + ` <-> ${getName(model.name_bodyadr[body2])}/${getName(model.name_geomadr[contact.geom2])}`,
+    });
+  }
+  penetratingContacts.sort((left, right) => left.distance - right.distance);
+  console.log(`initial penetrating contacts: ${penetratingContacts.length}/${data.ncon}`);
+  for (const { distance, pair } of penetratingContacts.slice(0, 30)) {
+    console.log(`  ${distance.toFixed(6)}m ${pair}`);
+  }
+  if (
+    process.env.INITIAL_CONTACT_STRICT === '1'
+    && penetratingContacts.some(({ distance }) => distance < -0.005)
+  ) {
+    throw new Error('Initial scene penetration exceeds 5mm');
+  }
+  data.delete();
+}
 if (process.env.GRASP_REPORT === '1') {
   if (!sceneKey.startsWith('frankaAssembly')) {
     throw new Error('GRASP_REPORT is only supported for Franka Assembly scenes');

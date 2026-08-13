@@ -38,6 +38,8 @@ test('offline compiler knows both collaboration layouts and root body types', as
   assert.match(source, /xlerobotKitting:\s*{\s*layout:\s*XLEROBOT_KITTING_LAYOUT/);
   assert.match(source, /so101Gearbox:\s*'Base'/);
   assert.match(source, /xlerobotKitting:\s*'chassis'/);
+  assert.match(source, /INITIAL_CONTACT_REPORT/);
+  assert.match(source, /initial penetrating contacts:/);
 });
 
 test('browser capture and per-device control checks include both new scenes', async () => {
@@ -48,4 +50,5 @@ test('browser capture and per-device control checks include both new scenes', as
   assert.match(capture, /key:\s*'xlerobotKitting',[\s\S]*?label:\s*'XLeRobot Kitting',[\s\S]*?instances:\s*2/);
   assert.match(controls, /key:\s*'so101Gearbox',[\s\S]*?targets:\s*\['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'\]/);
   assert.match(controls, /key:\s*'xlerobotKitting',[\s\S]*?targets:\s*\['Robot 1', 'Robot 2'\]/);
+  assert.match(controls, /process\.env\.SCENES/);
 });

@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
 const failures = [];
-const scenes = [
+const allScenes = [
   {
     key: 'franka',
     label: 'Franka Panda',
@@ -64,6 +64,12 @@ const scenes = [
     ik: true,
   },
 ];
+const requestedKeys = new Set(
+  (process.env.SCENES ?? allScenes.map(({ key }) => key).join(','))
+    .split(',')
+    .map((key) => key.trim()),
+);
+const scenes = allScenes.filter(({ key }) => requestedKeys.has(key));
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });

@@ -25,7 +25,7 @@ test('new collaboration layouts do not mutate the original SO101 and XLeRobot sc
 test('SO101 Gearbox keeps four independently controllable arms around exact task stations', () => {
   assert.equal(SO101_GEARBOX_LAYOUT.instanceCount, 4);
   assert.equal(SO101_GEARBOX_LAYOUT.homeJoints.length, 24);
-  assert.equal(SO101_GEARBOX_LAYOUT.ringRadius, 0.34);
+  assert.equal(SO101_GEARBOX_LAYOUT.ringRadius, 0.42);
   assert.equal(SO101_GEARBOX_LAYOUT.workSurfaceHeight, 0.8);
   assert.deepEqual(SO101_GEARBOX_LAYOUT.taskStations, {
     fixture: [0, 0, 0.81],
@@ -34,12 +34,40 @@ test('SO101 Gearbox keeps four independently controllable arms around exact task
     gears: [0, -0.21, 0.814],
     coverAndPins: [-0.21, 0, 0.809],
   });
+  assert.deepEqual(SO101_GEARBOX_LAYOUT.reachEnvelope, {
+    baseRadius: 0.42,
+    nominalChainReach: 0.455,
+    nearestStationDistance: 0.21,
+    homeTcpRadius: 0.1366,
+  });
 
   const xml = patchText(SO101_GEARBOX_LAYOUT);
-  assert.match(xml, /<frame pos="0 0\.34 0\.8">/);
-  assert.match(xml, /<frame pos="0\.34 0 0\.8" euler="0 0 -90">/);
-  assert.match(xml, /<frame pos="0 -0\.34 0\.8" euler="0 0 180">/);
-  assert.match(xml, /<frame pos="-0\.34 0 0\.8" euler="0 0 90">/);
+  assert.match(xml, /<frame pos="0 0\.42 0\.8">/);
+  assert.match(xml, /<frame pos="0\.42 0 0\.8" euler="0 0 -90">/);
+  assert.match(xml, /<frame pos="0 -0\.42 0\.8" euler="0 0 180">/);
+  assert.match(xml, /<frame pos="-0\.42 0 0\.8" euler="0 0 90">/);
+
+  const assignedBases = [
+    [0, 0.42],
+    [0.42, 0],
+    [0, -0.42],
+    [-0.42, 0],
+  ];
+  const assignedStations = [
+    SO101_GEARBOX_LAYOUT.taskStations.housing,
+    SO101_GEARBOX_LAYOUT.taskStations.shaftsAndSpacers,
+    SO101_GEARBOX_LAYOUT.taskStations.gears,
+    SO101_GEARBOX_LAYOUT.taskStations.coverAndPins,
+  ];
+  const assignedDistances = assignedBases.map(([baseX, baseY], index) => {
+    const [stationX, stationY] = assignedStations[index];
+    return Math.hypot(stationX - baseX, stationY - baseY);
+  });
+  assert.ok(Math.max(...assignedDistances) <= 0.21);
+  assert.equal(Math.hypot(...assignedBases[0]), 0.42);
+
+  const fixedNames = SO101_GEARBOX_LAYOUT.sceneObjects.map(({ name }) => name);
+  assert.equal(new Set(fixedNames).size, fixedNames.length);
 });
 
 test('SO101 Gearbox contains a future-usable housing, cover, shafts, open gears and press pins', () => {
@@ -93,35 +121,71 @@ test('SO101 Gearbox contains a future-usable housing, cover, shafts, open gears 
   ]) {
     assert.match(xml, new RegExp(`site name="${siteName}"`));
   }
+
+  for (const name of [
+    'housing_input_bearing_seat_segment_0',
+    'housing_intermediate_bearing_seat_segment_0',
+    'cover_input_bearing_seat_segment_0',
+    'cover_intermediate_bearing_seat_segment_0',
+    'input_shaft_key',
+    'intermediate_shaft_key',
+    'housing_rib_north_1',
+    'housing_rib_south_2',
+    'cover_pin_socket_1',
+    'cover_pin_socket_4',
+    'gear_large_keyway_site',
+    'gear_medium_keyway_site',
+    'gear_small_keyway_site',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"`));
+  }
+  for (const spacer of ['input', 'intermediate']) {
+    assert.match(xml, new RegExp(`name="spacer_${spacer}_ring_segment_0"`));
+    assert.doesNotMatch(xml, new RegExp(`name="spacer_${spacer}_body"[^>]*type="cylinder"`));
+  }
 });
 
 test('XLeRobot Kitting uses two complete opposing robots and an arm-height narrow table', () => {
   assert.equal(XLEROBOT_KITTING_LAYOUT.instanceCount, 2);
   assert.equal(XLEROBOT_KITTING_LAYOUT.homeJoints.length, 32);
-  assert.equal(XLEROBOT_KITTING_LAYOUT.spacing, 2.2);
+  assert.equal(XLEROBOT_KITTING_LAYOUT.spacing, 1);
   assert.equal(XLEROBOT_KITTING_LAYOUT.armBaseHeight, 0.775);
   assert.equal(XLEROBOT_KITTING_LAYOUT.tableTopHeight, 0.775);
   assert.deepEqual(XLEROBOT_KITTING_LAYOUT.taskStations, {
-    sourceTote: [-0.18, -0.3, 0.781],
-    handoffSouth: [0, -0.09, 0.787],
-    handoffNorth: [0, 0.09, 0.787],
-    scannerDock: [0.22, 0, 0.787],
-    orderTray: [0.1, 0.32, 0.781],
+    sourceTote: [-0.15, -0.36, 0.781],
+    handoffSouth: [0, -0.1, 0.787],
+    handoffNorth: [0, 0.1, 0.787],
+    scannerDock: [0.16, 0, 0.787],
+    orderTray: [0.1, 0.36, 0.781],
+  });
+  assert.deepEqual(XLEROBOT_KITTING_LAYOUT.reachEnvelope, {
+    chassisTableClearance: 0.05,
+    inwardArmBaseToCenter: 0.41,
+    nominalArmReach: 0.413,
   });
 
   const xml = patchText(XLEROBOT_KITTING_LAYOUT);
-  assert.match(xml, /<frame pos="-1\.1 0 0" euler="0 0 180">/);
-  assert.match(xml, /<frame pos="1\.1 0 0"><attach/);
+  assert.match(xml, /<frame pos="-0\.5 0 0" euler="0 0 180">/);
+  assert.match(xml, /<frame pos="0\.5 0 0"><attach/);
   assert.match(xml, /name="chassis_rack_collision"/);
   assert.match(xml, /name="payload_deck"/);
   assert.match(xml, /name="payload_deck_left_rail"/);
   assert.match(xml, /name="payload_deck_right_rail"/);
+  assert.match(xml, /<body name="payload_deck" pos="0\.255 0 0\.405">/);
 
-  const table = XLEROBOT_KITTING_LAYOUT.sceneObjects.find(
-    ({ name }) => name === 'kitting_table_top',
+  const sceneObjects = Object.fromEntries(
+    XLEROBOT_KITTING_LAYOUT.sceneObjects.map((object) => [object.name, object]),
   );
-  assert.deepEqual(table?.size, [0.36, 0.5, 0.025]);
-  assert.deepEqual(table?.position, [0, 0, 0.75]);
+  assert.deepEqual(sceneObjects.kitting_table_spine?.size, [0.24, 0.5, 0.025]);
+  assert.deepEqual(sceneObjects.kitting_table_spine?.position, [0, 0, 0.75]);
+  assert.deepEqual(sceneObjects.kitting_table_north_wing?.size, [0.36, 0.115, 0.025]);
+  assert.deepEqual(sceneObjects.kitting_table_north_wing?.position, [0, 0.385, 0.75]);
+  assert.deepEqual(sceneObjects.kitting_table_south_wing?.position, [0, -0.385, 0.75]);
+
+  const tableClearance = 0.5 - 0.21 - sceneObjects.kitting_table_spine.size[0];
+  const centerReach = 0.5 - 0.09;
+  assert.ok(tableClearance >= 0.05 - Number.EPSILON);
+  assert.ok(centerReach <= 0.413);
 });
 
 test('XLeRobot Kitting stages physical goods, scanner, handoff cradles and a divided tray', () => {
@@ -155,9 +219,63 @@ test('XLeRobot Kitting stages physical goods, scanner, handoff cradles and a div
     'tea_box_barcode_site',
     'drink_carton_barcode_site',
     'water_bottle_barcode_site',
+    'source_tote_rib_west_1',
+    'source_tote_divider',
+    'source_tote_label_plate',
+    'pill_bottle_label',
+    'tea_box_top_flap',
+    'drink_carton_side_label',
+    'water_bottle_label_band',
+    'scanner_status_button',
+    'scanner_speaker_slot_1',
+    'scanner_battery_seam',
+    'order_tray_corner_bumper_nw',
+    'order_tray_corner_bumper_se',
   ]) {
     assert.match(xml, new RegExp(`name="${name}"`));
   }
+});
+
+test('XLeRobot Kitting is an open-plan kitchen with clear mobile circulation', () => {
+  const xml = patchText(XLEROBOT_KITTING_LAYOUT);
+  for (const name of [
+    'kitchen_back_wall',
+    'kitchen_sink_cabinet',
+    'kitchen_sink_basin',
+    'kitchen_faucet_spout',
+    'kitchen_prep_cabinet',
+    'kitchen_cutting_board',
+    'kitchen_stove',
+    'kitchen_burner_front_left',
+    'kitchen_oven',
+    'kitchen_pantry',
+    'dining_table',
+    'storage_shelf',
+    'storage_bin_1',
+    'storage_bin_3',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"`));
+  }
+
+  for (const bodyName of ['produce_crate', 'tomato', 'cucumber', 'bell_pepper']) {
+    assert.match(xml, new RegExp(`<body name="${bodyName}"[^>]*>\\s*<freejoint\/>`));
+  }
+  for (const detailName of [
+    'produce_crate_slatted_side',
+    'tomato_stem',
+    'cucumber_tip',
+    'bell_pepper_lobe_4',
+  ]) {
+    assert.match(xml, new RegExp(`name="${detailName}"`));
+  }
+
+  assert.deepEqual(XLEROBOT_KITTING_LAYOUT.navigationClearances, {
+    north: 0.65,
+    south: 0.65,
+    west: 1.11,
+  });
+  assert.ok(XLEROBOT_KITTING_LAYOUT.navigationClearances.north >= 0.65);
+  assert.ok(XLEROBOT_KITTING_LAYOUT.navigationClearances.south >= 0.65);
 });
 
 test('neither new layout contains an object-carrying shortcut', () => {

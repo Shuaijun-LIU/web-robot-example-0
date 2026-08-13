@@ -13,6 +13,12 @@ export const SO101_GEARBOX_LAYOUT: SceneLayout & {
     gears: [number, number, number];
     coverAndPins: [number, number, number];
   };
+  reachEnvelope: {
+    baseRadius: number;
+    nominalChainReach: number;
+    nearestStationDistance: number;
+    homeTcpRadius: number;
+  };
 };
 
 export const XLEROBOT_KITTING_LAYOUT: SceneLayout & {
@@ -27,5 +33,15 @@ export const XLEROBOT_KITTING_LAYOUT: SceneLayout & {
     handoffNorth: [number, number, number];
     scannerDock: [number, number, number];
     orderTray: [number, number, number];
+  };
+  reachEnvelope: {
+    chassisTableClearance: number;
+    inwardArmBaseToCenter: number;
+    nominalArmReach: number;
+  };
+  navigationClearances: {
+    north: number;
+    south: number;
+    west: number;
   };
 };
