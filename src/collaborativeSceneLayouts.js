@@ -240,169 +240,48 @@ const SO101_GEARBOX_WORKCELL_XML = `
       <geom name="press_pin_${index + 1}_grip" type="cylinder" pos="0 0 0.012" size="0.0042 0.004" rgba="0.25 0.27 0.28 1" mass="0.003"/>
     </body>`).join('')}`;
 
-const SO101_GEARBOX_ROOM_XML = `
-    <body name="gearbox_room_back_wall" pos="0 3.56 1.35">
-      <geom name="gearbox_room_back_wall_panel" type="box" size="4.52 0.04 1.35" rgba="0.66 0.64 0.59 1"/>
-      <geom name="gearbox_room_back_wall_baseboard" type="box" pos="0 -0.045 -1.25" size="4.48 0.022 0.1" rgba="0.38 0.35 0.31 1"/>
-    </body>
-    <body name="gearbox_room_west_wall" pos="-4.56 0 1.35">
-      <geom name="gearbox_room_west_wall_panel" type="box" size="0.04 3.52 1.35" rgba="0.66 0.64 0.59 1"/>
-      <geom name="gearbox_room_west_wall_baseboard" type="box" pos="0.045 0 -1.25" size="0.022 3.48 0.1" rgba="0.38 0.35 0.31 1"/>
-    </body>
-    <body name="gearbox_room_east_wall" pos="4.56 0 1.35">
-      <geom name="gearbox_room_east_wall_panel" type="box" size="0.04 3.52 1.35" rgba="0.66 0.64 0.59 1"/>
-      <geom name="gearbox_room_east_wall_baseboard" type="box" pos="-0.045 0 -1.25" size="0.022 3.48 0.1" rgba="0.38 0.35 0.31 1"/>
-    </body>
+const SO101_ARM_FRAMES_XML = attachmentFrames('so101_model', 'Base', [
+  { position: [0, 0.42, 0.8], yaw: 0 },
+  { position: [0.42, 0, 0.8], yaw: -QUARTER_TURN_DEGREES },
+  { position: [0, -0.42, 0.8], yaw: HALF_TURN_DEGREES },
+  { position: [-0.42, 0, 0.8], yaw: QUARTER_TURN_DEGREES },
+]);
 
-    <body name="gearbox_lounge_rug" pos="-2.65 -1.15 0.012">
-      <geom name="gearbox_lounge_rug_surface" type="box" size="1.25 1.22 0.012" rgba="0.35 0.32 0.27 1" contype="0" conaffinity="0"/>
-      <geom name="gearbox_lounge_rug_inset" type="box" pos="0 0 0.014" size="1.08 1.05 0.003" rgba="0.48 0.43 0.35 1" contype="0" conaffinity="0"/>
-    </body>
-    <body name="gearbox_sofa" pos="-3.35 -1.15 0">
-      <geom name="gearbox_sofa_base" type="box" pos="0 0 0.24" size="0.42 0.92 0.22" rgba="0.25 0.29 0.29 1"/>
-      <geom name="gearbox_sofa_seat" type="box" pos="0.07 0 0.48" size="0.36 0.76 0.12" rgba="0.39 0.43 0.42 1"/>
-      <geom name="gearbox_sofa_back" type="box" pos="-0.34 0 0.8" size="0.12 0.92 0.44" euler="0 -8 0" rgba="0.34 0.38 0.38 1"/>
-      <geom name="gearbox_sofa_arm_north" type="box" pos="0.02 0.84 0.55" size="0.4 0.08 0.31" rgba="0.31 0.35 0.35 1"/>
-      <geom name="gearbox_sofa_arm_south" type="box" pos="0.02 -0.84 0.55" size="0.4 0.08 0.31" rgba="0.31 0.35 0.35 1"/>
-      <geom name="gearbox_sofa_cushion_north" type="box" pos="0.1 0.39 0.63" size="0.28 0.34 0.16" euler="0 -6 0" rgba="0.44 0.47 0.45 1"/>
-      <geom name="gearbox_sofa_cushion_south" type="box" pos="0.1 -0.39 0.63" size="0.28 0.34 0.16" euler="0 -6 0" rgba="0.42 0.45 0.43 1"/>
-      <geom name="gearbox_sofa_leg_nw" type="box" pos="-0.27 0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
-      <geom name="gearbox_sofa_leg_ne" type="box" pos="0.27 0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
-      <geom name="gearbox_sofa_leg_sw" type="box" pos="-0.27 -0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
-      <geom name="gearbox_sofa_leg_se" type="box" pos="0.27 -0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
-    </body>
-    <body name="gearbox_tv_console" pos="-1.82 -1.15 0">
-      <geom name="gearbox_tv_console_case" type="box" pos="0 0 0.32" size="0.18 0.72 0.32" rgba="0.36 0.3 0.24 1"/>
-      <geom name="gearbox_tv_console_top" type="box" pos="0 0 0.67" size="0.2 0.75 0.035" rgba="0.25 0.23 0.21 1"/>
-      <geom name="gearbox_tv_console_door_north" type="box" pos="-0.187 0.35 0.36" size="0.008 0.31 0.24" rgba="0.46 0.39 0.31 1"/>
-      <geom name="gearbox_tv_console_door_south" type="box" pos="-0.187 -0.35 0.36" size="0.008 0.31 0.24" rgba="0.46 0.39 0.31 1"/>
-      <geom name="gearbox_tv_console_handle_north" type="capsule" fromto="-0.202 0.18 0.38 -0.202 0.52 0.38" size="0.009" rgba="0.16 0.17 0.17 1"/>
-      <geom name="gearbox_tv_console_handle_south" type="capsule" fromto="-0.202 -0.52 0.38 -0.202 -0.18 0.38" size="0.009" rgba="0.16 0.17 0.17 1"/>
-    </body>
-    <body name="gearbox_tv" pos="-2.03 -1.15 1.16">
-      <geom name="gearbox_tv_panel" type="box" size="0.045 0.69 0.42" rgba="0.08 0.09 0.09 1"/>
-      <geom name="gearbox_tv_screen" type="box" pos="-0.048 0 0.01" size="0.006 0.63 0.355" rgba="0.16 0.23 0.25 1" contype="0" conaffinity="0"/>
-      <geom name="gearbox_tv_screen_glow" type="box" pos="-0.055 0 0.01" size="0.002 0.53 0.27" rgba="0.29 0.38 0.39 1" contype="0" conaffinity="0"/>
-      <geom name="gearbox_tv_stand" type="box" pos="0 0 -0.46" size="0.09 0.2 0.04" rgba="0.12 0.13 0.13 1"/>
-      <geom name="gearbox_tv_neck" type="box" pos="0 0 -0.41" size="0.035 0.035 0.08" rgba="0.12 0.13 0.13 1"/>
-    </body>
-    <body name="gearbox_side_table" pos="-3.58 -2.55 0">
-      <geom name="gearbox_side_table_top" type="cylinder" pos="0 0 0.54" size="0.32 0.035" rgba="0.42 0.34 0.26 1"/>
-      <geom name="gearbox_side_table_post" type="cylinder" pos="0 0 0.28" size="0.045 0.26" rgba="0.24 0.22 0.2 1"/>
-      <geom name="gearbox_side_table_foot" type="cylinder" pos="0 0 0.03" size="0.22 0.03" rgba="0.2 0.19 0.18 1"/>
-    </body>
-    <body name="gearbox_floor_lamp" pos="-4.02 -2.45 0">
-      <geom name="gearbox_floor_lamp_base" type="cylinder" pos="0 0 0.035" size="0.18 0.035" rgba="0.2 0.2 0.19 1"/>
-      <geom name="gearbox_floor_lamp_pole" type="capsule" fromto="0 0 0.06 0 0 1.55" size="0.025" rgba="0.3 0.3 0.28 1"/>
-      <geom name="gearbox_floor_lamp_shade" type="cylinder" pos="0 0 1.58" size="0.23 0.22" rgba="0.57 0.52 0.42 1"/>
-      <geom name="gearbox_floor_lamp_diffuser" type="cylinder" pos="0 0 1.36" size="0.17 0.012" rgba="0.75 0.69 0.54 1" contype="0" conaffinity="0"/>
-    </body>
+const SO101_TASK_STATIONS = {
+  fixture: [0, 0, 0.81],
+  housing: [0, 0.21, 0.805],
+  shaftsAndSpacers: [0.21, 0, 0.82],
+  gears: [0, -0.21, 0.814],
+  coverAndPins: [-0.21, 0, 0.809],
+};
 
-    <body name="gearbox_desk" pos="2.8 2.65 0">
-      <geom name="gearbox_desk_top" type="box" pos="0 0 0.77" size="1.05 0.38 0.045" rgba="0.42 0.34 0.26 1"/>
-      <geom name="gearbox_desk_leg_nw" type="box" pos="-0.91 0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
-      <geom name="gearbox_desk_leg_ne" type="box" pos="0.91 0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
-      <geom name="gearbox_desk_leg_sw" type="box" pos="-0.91 -0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
-      <geom name="gearbox_desk_leg_se" type="box" pos="0.91 -0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
-      <geom name="gearbox_keyboard" type="box" pos="0 -0.17 0.83" size="0.34 0.11 0.018" rgba="0.16 0.17 0.17 1"/>
-      <geom name="gearbox_keyboard_keybed" type="box" pos="0 -0.18 0.851" size="0.3 0.09 0.005" rgba="0.28 0.29 0.28 1" contype="0" conaffinity="0"/>
-      <body name="gearbox_monitor_left" pos="-0.43 -0.04 1.18">
-        <geom name="gearbox_monitor_left_panel" type="box" size="0.35 0.035 0.25" rgba="0.09 0.1 0.1 1"/>
-        <geom name="gearbox_monitor_left_screen" type="box" pos="0 -0.039 0.01" size="0.31 0.006 0.21" rgba="0.24 0.34 0.36 1" contype="0" conaffinity="0"/>
-        <geom name="gearbox_monitor_left_neck" type="box" pos="0 0 -0.3" size="0.035 0.035 0.08" rgba="0.15 0.16 0.16 1"/>
-        <geom name="gearbox_monitor_left_foot" type="box" pos="0 0 -0.38" size="0.18 0.13 0.025" rgba="0.15 0.16 0.16 1"/>
-      </body>
-      <body name="gearbox_monitor_right" pos="0.43 -0.04 1.18">
-        <geom name="gearbox_monitor_right_panel" type="box" size="0.35 0.035 0.25" rgba="0.09 0.1 0.1 1"/>
-        <geom name="gearbox_monitor_right_screen" type="box" pos="0 -0.039 0.01" size="0.31 0.006 0.21" rgba="0.3 0.31 0.27 1" contype="0" conaffinity="0"/>
-        <geom name="gearbox_monitor_right_neck" type="box" pos="0 0 -0.3" size="0.035 0.035 0.08" rgba="0.15 0.16 0.16 1"/>
-        <geom name="gearbox_monitor_right_foot" type="box" pos="0 0 -0.38" size="0.18 0.13 0.025" rgba="0.15 0.16 0.16 1"/>
-      </body>
-      <body name="gearbox_desk_lamp" pos="0.83 -0.03 0.84">
-        <geom name="gearbox_desk_lamp_base" type="cylinder" size="0.12 0.025" rgba="0.19 0.2 0.2 1"/>
-        <geom name="gearbox_desk_lamp_arm" type="capsule" fromto="0 0 0.02 -0.05 0 0.42" size="0.018" rgba="0.27 0.28 0.27 1"/>
-        <geom name="gearbox_desk_lamp_shade" type="cylinder" pos="-0.09 -0.02 0.47" size="0.11 0.12" euler="70 0 0" rgba="0.43 0.4 0.34 1"/>
-      </body>
-    </body>
-    <body name="gearbox_office_chair" pos="2.8 1.72 0">
-      <geom name="gearbox_office_chair_base" type="cylinder" pos="0 0 0.08" size="0.28 0.035" rgba="0.16 0.17 0.17 1"/>
-      <geom name="gearbox_office_chair_post" type="cylinder" pos="0 0 0.3" size="0.04 0.2" rgba="0.24 0.25 0.24 1"/>
-      <geom name="gearbox_office_chair_seat" type="box" pos="0 0 0.52" size="0.36 0.34 0.07" rgba="0.28 0.32 0.32 1"/>
-      <geom name="gearbox_office_chair_back" type="box" pos="0 0.29 0.9" size="0.36 0.07 0.36" euler="-8 0 0" rgba="0.25 0.29 0.29 1"/>
-      <geom name="gearbox_office_chair_arm_left" type="capsule" fromto="-0.32 0 0.62 -0.32 0 0.78" size="0.025" rgba="0.19 0.2 0.2 1"/>
-      <geom name="gearbox_office_chair_arm_right" type="capsule" fromto="0.32 0 0.62 0.32 0 0.78" size="0.025" rgba="0.19 0.2 0.2 1"/>
-    </body>
+const SO101_REACH_ENVELOPE = {
+  baseRadius: 0.42,
+  nominalChainReach: 0.455,
+  nearestStationDistance: 0.21,
+  homeTcpRadius: 0.1366,
+};
 
-    <body name="gearbox_room_art_1" pos="-2.85 3.505 1.78">
-      <geom name="gearbox_room_art_1_frame" type="box" size="0.58 0.012 0.39" rgba="0.25 0.21 0.18 1" contype="0" conaffinity="0"/>
-      <geom name="gearbox_room_art_1_canvas" type="box" pos="0 -0.016 0" size="0.51 0.006 0.32" rgba="0.37 0.43 0.39 1" contype="0" conaffinity="0"/>
-      <geom name="gearbox_room_art_1_accent" type="box" pos="0.12 -0.024 -0.04" size="0.24 0.003 0.08" euler="0 0 18" rgba="0.61 0.49 0.35 1" contype="0" conaffinity="0"/>
-    </body>
-    <body name="gearbox_room_art_2" pos="-0.9 3.505 1.7">
-      <geom name="gearbox_room_art_2_frame" type="box" size="0.42 0.012 0.48" rgba="0.24 0.21 0.19 1" contype="0" conaffinity="0"/>
-      <geom name="gearbox_room_art_2_canvas" type="box" pos="0 -0.016 0" size="0.35 0.006 0.41" rgba="0.48 0.4 0.33 1" contype="0" conaffinity="0"/>
-      <geom name="gearbox_room_art_2_circle" type="cylinder" pos="0 -0.024 0.06" size="0.15 0.003" euler="90 0 0" rgba="0.28 0.35 0.35 1" contype="0" conaffinity="0"/>
-    </body>`;
+function so101GearboxPatches({ includeHomeLab = false } = {}) {
+  const roomAssets = includeHomeLab
+    ? '<model name="g1_room_model" file="robots/g1/g1_static.xml"/>'
+      + '<model name="go2_arm_room_model" file="robots/go2_arm/go2_arm_static.xml"/>'
+    : '';
+  const roomWorld = includeHomeLab
+    ? SO101_HOME_LAB_ROOM_XML + SO101_HOME_LAB_STATIC_ROBOTS_XML
+    : '';
 
-const SO101_GEARBOX_STATIC_ROBOTS_XML =
-  '<frame pos="0.9 2.25 0" euler="0 0 -112"><attach model="g1_room_model" body="pelvis" prefix="room_g1_"/></frame>'
-  + '<frame pos="2.7 -1.5 0" euler="0 0 150"><attach model="go2_arm_room_model" body="base" prefix="room_go2_"/></frame>';
-
-export const SO101_GEARBOX_LAYOUT = {
-  instanceCount: 4,
-  yawStepDegrees: 90,
-  ringRadius: 0.42,
-  workSurfaceHeight: WORK_SURFACE_HEIGHT,
-  roomBounds: {
-    halfWidth: 4.6,
-    halfDepth: 3.6,
-    wallHeight: 2.7,
-    openSide: 'south',
-  },
-  protectedWorkcellRadius: 1.4,
-  roomZones: {
-    lounge: [-3.35, -1.15],
-    office: [2.8, 2.65],
-    g1: [0.9, 2.25],
-    go2Arm: [2.7, -1.5],
-  },
-  staticRobots: {
-    g1: { rootBody: 'room_g1_pelvis', controlled: false },
-    go2Arm: { rootBody: 'room_go2_base', controlled: false },
-  },
-  primaryTcpSite: 'r0_tcp',
-  homeJoints: repeatPose(SO101_HOME, 4),
-  taskStations: {
-    fixture: [0, 0, 0.81],
-    housing: [0, 0.21, 0.805],
-    shaftsAndSpacers: [0.21, 0, 0.82],
-    gears: [0, -0.21, 0.814],
-    coverAndPins: [-0.21, 0, 0.809],
-  },
-  reachEnvelope: {
-    baseRadius: 0.42,
-    nominalChainReach: 0.455,
-    nearestStationDistance: 0.21,
-    homeTcpRadius: 0.1366,
-  },
-  xmlPatches: [
+  return [
     {
       target: 'objects_SO101.xml',
-      inject: '<model name="so101_model" file="SO101.xml"/>'
-        + '<model name="g1_room_model" file="robots/g1/g1_static.xml"/>'
-        + '<model name="go2_arm_room_model" file="robots/go2_arm/go2_arm_static.xml"/>',
+      inject: '<model name="so101_model" file="SO101.xml"/>' + roomAssets,
       injectAfter: '<asset>',
     },
     {
       target: 'objects_SO101.xml',
       replace: [
         SO101_PARENT_WORLDBODY,
-        `  <worldbody>${attachmentFrames('so101_model', 'Base', [
-          { position: [0, 0.42, 0.8], yaw: 0 },
-          { position: [0.42, 0, 0.8], yaw: -QUARTER_TURN_DEGREES },
-          { position: [0, -0.42, 0.8], yaw: HALF_TURN_DEGREES },
-          { position: [-0.42, 0, 0.8], yaw: QUARTER_TURN_DEGREES },
-        ])}${SO101_GEARBOX_WORKCELL_XML}${SO101_GEARBOX_ROOM_XML}${SO101_GEARBOX_STATIC_ROBOTS_XML}\n  </worldbody>`,
+        `  <worldbody>${SO101_ARM_FRAMES_XML}${SO101_GEARBOX_WORKCELL_XML}${roomWorld}\n  </worldbody>`,
       ],
     },
     {
@@ -424,16 +303,61 @@ export const SO101_GEARBOX_LAYOUT = {
         '',
       ],
     },
-  ],
-  sceneObjects: [
-    fixedBox('gearbox_floor', [4.6, 3.6, 0.005], [0, 0, -0.005], [0.16, 0.15, 0.14, 1]),
+  ];
+}
+
+function so101GearboxSceneObjects(floorHalfSize, floorRgba) {
+  return [
+    fixedBox('gearbox_floor', [...floorHalfSize, 0.005], [0, 0, -0.005], floorRgba),
     fixedBox('gearbox_work_surface', [0.52, 0.52, 0.035], [0, 0, 0.765], [0.31, 0.29, 0.25, 1]),
     fixedBox('gearbox_table_leg_a', [0.035, 0.035, 0.365], [-0.44, -0.44, 0.365], [0.18, 0.18, 0.17, 1]),
     fixedBox('gearbox_table_leg_b', [0.035, 0.035, 0.365], [0.44, -0.44, 0.365], [0.18, 0.18, 0.17, 1]),
     fixedBox('gearbox_table_leg_c', [0.035, 0.035, 0.365], [-0.44, 0.44, 0.365], [0.18, 0.18, 0.17, 1]),
     fixedBox('gearbox_table_leg_d', [0.035, 0.035, 0.365], [0.44, 0.44, 0.365], [0.18, 0.18, 0.17, 1]),
-  ],
-  camera: { position: [0, -8.4, 4.2], fov: 47 },
+  ];
+}
+
+const SO101_GEARBOX_SHARED = {
+  instanceCount: 4,
+  yawStepDegrees: 90,
+  ringRadius: 0.42,
+  workSurfaceHeight: WORK_SURFACE_HEIGHT,
+  primaryTcpSite: 'r0_tcp',
+  homeJoints: repeatPose(SO101_HOME, 4),
+  taskStations: SO101_TASK_STATIONS,
+  reachEnvelope: SO101_REACH_ENVELOPE,
+};
+
+export const SO101_GEARBOX_LAYOUT = {
+  ...SO101_GEARBOX_SHARED,
+  xmlPatches: so101GearboxPatches(),
+  sceneObjects: so101GearboxSceneObjects([2, 2], [0.1, 0.11, 0.12, 1]),
+  camera: { position: [1.15, -1.15, 1.28], fov: 40 },
+  orbitTarget: [0, 0, 0.81],
+};
+
+export const SO101_HOME_LAB_LAYOUT = {
+  ...SO101_GEARBOX_SHARED,
+  roomBounds: {
+    halfWidth: 5,
+    halfDepth: 4.2,
+    wallHeight: 2.7,
+    openSide: 'south',
+  },
+  protectedWorkcellRadius: 1.6,
+  roomZones: {
+    lounge: [-3.55, 1.55],
+    office: [2.65, 3.35],
+    g1: [2.45, -0.9],
+    go2Arm: [3.55, -2.35],
+  },
+  staticRobots: {
+    g1: { rootBody: 'room_g1_pelvis', controlled: false },
+    go2Arm: { rootBody: 'room_go2_base', controlled: false },
+  },
+  xmlPatches: so101GearboxPatches({ includeHomeLab: true }),
+  sceneObjects: so101GearboxSceneObjects([5, 4.2], [0.16, 0.15, 0.14, 1]),
+  camera: { position: [0, -9.2, 4.8], fov: 48 },
   orbitTarget: [0, 0.15, 1.05],
 };
 
@@ -884,3 +808,7 @@ export const XLEROBOT_KITTING_LAYOUT = {
   camera: { position: [0, -4.8, 2.75], fov: 48 },
   orbitTarget: [0, 0.08, 0.72],
 };
+import {
+  SO101_HOME_LAB_ROOM_XML,
+  SO101_HOME_LAB_STATIC_ROBOTS_XML,
+} from './so101HomeLabEnvironment.js';

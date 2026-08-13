@@ -11,6 +11,7 @@ import {
 } from './frankaAssemblyLayouts.js';
 import {
   SO101_GEARBOX_LAYOUT,
+  SO101_HOME_LAB_LAYOUT,
   XLEROBOT_KITTING_LAYOUT,
 } from './collaborativeSceneLayouts.js';
 import {
@@ -98,6 +99,22 @@ export const robots: Record<string, RobotEntry> = {
     },
     camera: SO101_GEARBOX_LAYOUT.camera,
     orbitTarget: SO101_GEARBOX_LAYOUT.orbitTarget,
+    gizmoScale: 0.08,
+    controlTargets: createSO101Targets(),
+  },
+
+  so101HomeLab: {
+    label: 'SO101 Home Lab',
+    controlFamily: 'so101',
+    config: {
+      src: SO101_GEARBOX_BASE,
+      sceneFile: 'objects_SO101.xml',
+      homeJoints: SO101_HOME_LAB_LAYOUT.homeJoints,
+      xmlPatches: SO101_HOME_LAB_LAYOUT.xmlPatches,
+      sceneObjects: SO101_HOME_LAB_LAYOUT.sceneObjects,
+    },
+    camera: SO101_HOME_LAB_LAYOUT.camera,
+    orbitTarget: SO101_HOME_LAB_LAYOUT.orbitTarget,
     gizmoScale: 0.08,
     controlTargets: createSO101Targets(),
   },

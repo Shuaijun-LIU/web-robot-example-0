@@ -40,6 +40,14 @@ const allScenes = [
     ik: true,
   },
   {
+    key: 'so101HomeLab',
+    label: 'SO101 Home Lab',
+    targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'],
+    blockSize: 6,
+    keyCode: 'KeyW',
+    ik: true,
+  },
+  {
     key: 'xlerobotKitting',
     label: 'XLeRobot Kitting',
     targets: ['Robot 1', 'Robot 2'],

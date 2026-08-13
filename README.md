@@ -1,6 +1,6 @@
 # Multi-Robot MuJoCo Web Example
 
-An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The five selectable scenes use independent physical robot instances—not visual-only clones.
+An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The eight selectable scenes use independent physical robot instances—not visual-only clones.
 
 [Open the live demo](https://shuaijun-liu.github.io/web-robot-example-0/)
 
@@ -22,6 +22,14 @@ Both assembly scenes use real MuJoCo contact for grasping. Panda finger stiffnes
 
 [![XLeRobot driven forward until its blue rack stops immediately before the table](artifacts/screenshots/xlerobot-collision-stop.png)](artifacts/screenshots/xlerobot-collision-stop.png)
 
+### Collaborative task and room variants
+
+| SO101 Gearbox — compact workcell | SO101 Home Lab — complete room | XLeRobot Kitting — mobile home task |
+|---|---|---|
+| [![Compact four-arm SO101 gearbox workcell](artifacts/screenshots/so101-gearbox.png)](artifacts/screenshots/so101-gearbox.png) | [![SO101 gearbox workcell inside a furnished home lab with G1 and Go2 arm](artifacts/screenshots/so101-home-lab.png)](artifacts/screenshots/so101-home-lab.png) | [![Two mobile XLeRobots in a furnished kitchen and kitting room](artifacts/screenshots/xlerobot-kitting.png)](artifacts/screenshots/xlerobot-kitting.png) |
+
+`SO101 Gearbox` is the compact precision-assembly scene: four arms share one reachable housing, gear, shaft/spacer, cover, and press-pin workcell. `SO101 Home Lab` keeps that workcell unchanged while expanding the room to a south-open 10 m × 8.4 m layout. Its furniture remains outside a protected 1.6 m center radius and includes a detailed lounge, dual-screen office, static G1 display, static Go2-with-arm charging bay, maintenance cabinet, tool board, and service cart. `XLeRobot Kitting` places two independently drivable robots in a three-wall home kitchen for picking, scanning, handoff, and delivery tasks.
+
 | Scene | Physical layout | Shared workspace |
 |---|---|---|
 | Franka Panda | Four 7-DOF arms at 90° intervals, facing the center | Three free-joint, graspable cubes |
@@ -29,6 +37,9 @@ Both assembly scenes use real MuJoCo contact for grasping. Panda finger stiffnes
 | XLeRobot | Two complete dual-arm mobile robots, facing one another | One four-leg table; its top is exactly `0.775 m`, matching the arm mounting height |
 | Franka Assembly1 | Four 7-DOF arms on a larger `0.900 m` ring | Detailed procedural tools and explicit frame/cross-member interfaces |
 | Franka Assembly2 | Same robot and task layout as Assembly1 | Multi-color RoboTwin tool meshes with stable collision proxies |
+| SO101 Gearbox | Four SO101 arms in the original compact framing | Precision gearbox housing, gears, shafts, spacers, cover, and press pins |
+| SO101 Home Lab | Same four-arm workcell in a detailed 10 m × 8.4 m room | Lounge, office, static G1, and static Go2-with-arm service zone |
+| XLeRobot Kitting | Two mobile dual-arm robots in a three-wall home kitchen | Produce, packages, scanner, transfer tray, sink, stove, refrigerator, and storage |
 
 The app starts running with the IK gizmo visible, matching the original interactive example. Use **Control target** to select an individual Franka/SO101 arm or one complete XLeRobot without reloading the shared scene.
 
@@ -63,7 +74,7 @@ The panel also provides pause, speed, gravity compensation, reset, IK gizmo, con
 
 ## Implementation
 
-The original layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js), while both assembly variants and their shared installation contract live in [`src/frankaAssemblyLayouts.js`](src/frankaAssemblyLayouts.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
+The original layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js), while the collaborative task layouts live in [`src/collaborativeSceneLayouts.js`](src/collaborativeSceneLayouts.js). The detailed SO101 room environment is isolated in [`src/so101HomeLabEnvironment.js`](src/so101HomeLabEnvironment.js), and both Franka assembly variants share their installation contract in [`src/frankaAssemblyLayouts.js`](src/frankaAssemblyLayouts.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
 
 Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Target namespaces and control offsets are defined in [`src/controlTargets.js`](src/controlTargets.js); the selected-instance IK controller resolves explicit joint addresses and actuator indices instead of assuming the first block. Browser smoke tests reject a scene unless it contains exactly 4 roots in each Franka scene, 4 SO101 roots, or 2 XLeRobot roots.
 
@@ -83,7 +94,7 @@ npm run capture:scenes
 npm run verify:controls
 ```
 
-`verify:controls` selects all four arms in all three Franka scenes, all four SO101 arms, and both XLeRobots, then checks that keyboard and IK input change only the selected actuator block. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`. Set `GRASP_REPORT=1` and optionally `GRASP_TOOL=manual_screwdriver|torque_driver|hammer` to run an unsupported physical gravity-hold check for either Franka assembly scene.
+`verify:controls` selects every controllable instance, including all four arms in both SO101 task scenes, then checks that keyboard and IK input change only the selected actuator block. G1 and Go2 in Home Lab are intentionally static room assets and do not add control targets. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`. Set `GRASP_REPORT=1` and optionally `GRASP_TOOL=manual_screwdriver|torque_driver|hammer` to run an unsupported physical gravity-hold check for either Franka assembly scene.
 
 ## GitHub Pages
 

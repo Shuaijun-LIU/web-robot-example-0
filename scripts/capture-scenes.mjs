@@ -17,6 +17,12 @@ const allScenes = [
     screenshotName: 'so101-gearbox',
   },
   {
+    key: 'so101HomeLab',
+    label: 'SO101 Home Lab',
+    instances: 4,
+    screenshotName: 'so101-home-lab',
+  },
+  {
     key: 'xlerobotKitting',
     label: 'XLeRobot Kitting',
     instances: 2,

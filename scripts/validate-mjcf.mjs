@@ -14,6 +14,7 @@ import {
 } from '../src/frankaAssemblyLayouts.js';
 import {
   SO101_GEARBOX_LAYOUT,
+  SO101_HOME_LAB_LAYOUT,
   XLEROBOT_KITTING_LAYOUT,
 } from '../src/collaborativeSceneLayouts.js';
 
@@ -24,13 +25,14 @@ const definitions = {
   frankaAssembly1: { layout: FRANKA_ASSEMBLY1_LAYOUT, sceneFile: 'scene.xml' },
   frankaAssembly2: { layout: FRANKA_ASSEMBLY2_LAYOUT, sceneFile: 'scene.xml' },
   so101Gearbox: { layout: SO101_GEARBOX_LAYOUT, sceneFile: 'objects_SO101.xml' },
+  so101HomeLab: { layout: SO101_HOME_LAB_LAYOUT, sceneFile: 'objects_SO101.xml' },
   xlerobotKitting: { layout: XLEROBOT_KITTING_LAYOUT, sceneFile: 'objects.xml' },
 };
 const [sceneKey, assetDirectory] = process.argv.slice(2);
 const definition = definitions[sceneKey];
 
 if (!definition || !assetDirectory) {
-  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly1|frankaAssembly2|so101Gearbox|xlerobotKitting> <asset-directory>');
+  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly1|frankaAssembly2|so101Gearbox|so101HomeLab|xlerobotKitting> <asset-directory>');
 }
 
 const mujoco = await loadMujoco({ printErr: (message) => console.error(`MuJoCo: ${message}`) });
@@ -160,6 +162,7 @@ if (process.env.POSE_REPORT === '1') {
     frankaAssembly2: 'link0',
     so101: 'Base',
     so101Gearbox: 'Base',
+    so101HomeLab: 'Base',
     xlerobot: 'chassis',
     xlerobotKitting: 'chassis',
   }[sceneKey];

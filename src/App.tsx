@@ -355,6 +355,7 @@ const replicatedRootPatterns: Record<string, RegExp> = {
   frankaAssembly2: /^r\d+_link0$/,
   so101: /^r\d+_Base$/,
   so101Gearbox: /^r\d+_Base$/,
+  so101HomeLab: /^r\d+_Base$/,
   xlerobot: /^r\d+_chassis$/,
   xlerobotKitting: /^r\d+_chassis$/,
 };

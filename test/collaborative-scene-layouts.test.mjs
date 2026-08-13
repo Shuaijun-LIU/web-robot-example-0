@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import {
-  SO101_GEARBOX_LAYOUT,
-  XLEROBOT_KITTING_LAYOUT,
-} from '../src/collaborativeSceneLayouts.js';
+import * as collaborationLayouts from '../src/collaborativeSceneLayouts.js';
 import { SO101_LAYOUT, XLEROBOT_LAYOUT } from '../src/sceneLayouts.js';
+
+const {
+  SO101_GEARBOX_LAYOUT,
+  SO101_HOME_LAB_LAYOUT,
+  XLEROBOT_KITTING_LAYOUT,
+} = collaborationLayouts;
 
 function patchText(layout) {
   return layout.xmlPatches
@@ -143,6 +146,27 @@ test('SO101 Gearbox contains a future-usable housing, cover, shafts, open gears 
     assert.match(xml, new RegExp(`name="spacer_${spacer}_ring_segment_0"`));
     assert.doesNotMatch(xml, new RegExp(`name="spacer_${spacer}_body"[^>]*type="cylinder"`));
   }
+});
+
+test('SO101 Gearbox restores the compact pre-room scene while Home Lab is independent', () => {
+  const compactXml = patchText(SO101_GEARBOX_LAYOUT);
+  const compactObjects = Object.fromEntries(
+    SO101_GEARBOX_LAYOUT.sceneObjects.map((object) => [object.name, object]),
+  );
+
+  assert.deepEqual(compactObjects.gearbox_floor.size, [2, 2, 0.005]);
+  assert.deepEqual(SO101_GEARBOX_LAYOUT.camera, {
+    position: [1.15, -1.15, 1.28],
+    fov: 40,
+  });
+  assert.deepEqual(SO101_GEARBOX_LAYOUT.orbitTarget, [0, 0, 0.81]);
+  assert.doesNotMatch(compactXml, /g1_room_model|go2_arm_room_model|gearbox_room_back_wall/);
+
+  assert.ok(SO101_HOME_LAB_LAYOUT, 'SO101 Home Lab must be exported');
+  assert.notStrictEqual(SO101_HOME_LAB_LAYOUT, SO101_GEARBOX_LAYOUT);
+  assert.equal(SO101_HOME_LAB_LAYOUT.instanceCount, 4);
+  assert.equal(SO101_HOME_LAB_LAYOUT.homeJoints.length, 24);
+  assert.deepEqual(SO101_HOME_LAB_LAYOUT.taskStations, SO101_GEARBOX_LAYOUT.taskStations);
 });
 
 test('XLeRobot Kitting uses two complete opposing robots and an arm-height narrow table', () => {
@@ -374,28 +398,29 @@ test('XLeRobot Kitting is enclosed by three detailed walls while keeping the sou
   }
 });
 
-test('SO101 Gearbox expands only outside a protected central workcell', () => {
-  assert.deepEqual(SO101_GEARBOX_LAYOUT.roomBounds, {
-    halfWidth: 4.6,
-    halfDepth: 3.6,
+test('SO101 Home Lab expands only outside a protected central workcell', () => {
+  assert.ok(SO101_HOME_LAB_LAYOUT, 'SO101 Home Lab must be exported');
+  assert.deepEqual(SO101_HOME_LAB_LAYOUT.roomBounds, {
+    halfWidth: 5,
+    halfDepth: 4.2,
     wallHeight: 2.7,
     openSide: 'south',
   });
-  assert.equal(SO101_GEARBOX_LAYOUT.protectedWorkcellRadius, 1.4);
-  assert.deepEqual(SO101_GEARBOX_LAYOUT.roomZones, {
-    lounge: [-3.35, -1.15],
-    office: [2.8, 2.65],
-    g1: [0.9, 2.25],
-    go2Arm: [2.7, -1.5],
+  assert.equal(SO101_HOME_LAB_LAYOUT.protectedWorkcellRadius, 1.6);
+  assert.deepEqual(SO101_HOME_LAB_LAYOUT.roomZones, {
+    lounge: [-3.55, 1.55],
+    office: [2.65, 3.35],
+    g1: [2.45, -0.9],
+    go2Arm: [3.55, -2.35],
   });
-  for (const center of Object.values(SO101_GEARBOX_LAYOUT.roomZones)) {
+  for (const center of Object.values(SO101_HOME_LAB_LAYOUT.roomZones)) {
     assert.ok(
-      Math.hypot(...center) > SO101_GEARBOX_LAYOUT.protectedWorkcellRadius,
+      Math.hypot(...center) > SO101_HOME_LAB_LAYOUT.protectedWorkcellRadius,
       `zone ${center.join(',')} must remain outside the protected workcell`,
     );
   }
 
-  assert.deepEqual(SO101_GEARBOX_LAYOUT.taskStations, {
+  assert.deepEqual(SO101_HOME_LAB_LAYOUT.taskStations, {
     fixture: [0, 0, 0.81],
     housing: [0, 0.21, 0.805],
     shaftsAndSpacers: [0.21, 0, 0.82],
@@ -404,46 +429,92 @@ test('SO101 Gearbox expands only outside a protected central workcell', () => {
   });
 });
 
-test('SO101 Gearbox room provides a furnished lounge and dual-screen office', () => {
-  const xml = patchText(SO101_GEARBOX_LAYOUT);
+test('SO101 Home Lab provides a furnished lounge and dual-screen office', () => {
+  assert.ok(SO101_HOME_LAB_LAYOUT, 'SO101 Home Lab must be exported');
+  const xml = patchText(SO101_HOME_LAB_LAYOUT);
   for (const name of [
-    'gearbox_room_back_wall',
-    'gearbox_room_west_wall',
-    'gearbox_room_east_wall',
-    'gearbox_lounge_rug',
-    'gearbox_sofa',
-    'gearbox_sofa_seat',
-    'gearbox_sofa_back',
-    'gearbox_tv_console',
-    'gearbox_tv',
-    'gearbox_tv_screen',
-    'gearbox_side_table',
-    'gearbox_floor_lamp',
-    'gearbox_desk',
-    'gearbox_monitor_left',
-    'gearbox_monitor_right',
-    'gearbox_keyboard',
-    'gearbox_office_chair',
-    'gearbox_room_art_1',
-    'gearbox_room_art_2',
+    'home_lab_room_back_wall',
+    'home_lab_room_west_wall',
+    'home_lab_room_east_wall',
+    'home_lab_lounge_rug',
+    'home_lab_sofa',
+    'home_lab_sofa_seat',
+    'home_lab_sofa_back',
+    'home_lab_tv_console',
+    'home_lab_tv',
+    'home_lab_tv_screen',
+    'home_lab_side_table',
+    'home_lab_floor_lamp',
+    'home_lab_office_desk',
+    'home_lab_monitor_left',
+    'home_lab_monitor_right',
+    'home_lab_keyboard',
+    'home_lab_office_chair',
+    'home_lab_room_art_1',
+    'home_lab_room_art_2',
   ]) {
     assert.match(xml, new RegExp(`name="${name}"`));
   }
 
   const sceneObjects = Object.fromEntries(
-    SO101_GEARBOX_LAYOUT.sceneObjects.map((object) => [object.name, object]),
+    SO101_HOME_LAB_LAYOUT.sceneObjects.map((object) => [object.name, object]),
   );
-  assert.deepEqual(sceneObjects.gearbox_floor.size, [4.6, 3.6, 0.005]);
+  assert.deepEqual(sceneObjects.gearbox_floor.size, [5, 4.2, 0.005]);
   assert.deepEqual(sceneObjects.gearbox_work_surface.size, [0.52, 0.52, 0.035]);
   assert.deepEqual(sceneObjects.gearbox_work_surface.position, [0, 0, 0.765]);
-  assert.deepEqual(SO101_GEARBOX_LAYOUT.camera, {
-    position: [0, -8.4, 4.2],
-    fov: 47,
+  assert.deepEqual(SO101_HOME_LAB_LAYOUT.camera, {
+    position: [0, -9.2, 4.8],
+    fov: 48,
   });
 });
 
-test('SO101 Gearbox room attaches static G1 and Go2 arm models outside the workcell', () => {
-  const xml = patchText(SO101_GEARBOX_LAYOUT);
+test('SO101 Home Lab exposes detailed residential, office, and robot-service objects', () => {
+  assert.ok(SO101_HOME_LAB_LAYOUT, 'SO101 Home Lab must be exported');
+  const xml = patchText(SO101_HOME_LAB_LAYOUT);
+
+  for (const name of [
+    'home_lab_west_window',
+    'home_lab_west_window_glass',
+    'home_lab_north_window',
+    'home_lab_east_door',
+    'home_lab_east_door_handle',
+    'home_lab_ceiling_light_west',
+    'home_lab_ceiling_light_east',
+    'home_lab_coffee_table',
+    'home_lab_coffee_table_lower_shelf',
+    'home_lab_sofa_seam_1',
+    'home_lab_sofa_pillow_1',
+    'home_lab_tv_left_speaker',
+    'home_lab_tv_right_speaker',
+    'home_lab_tv_remote',
+    'home_lab_coffee_mug',
+    'home_lab_mouse',
+    'home_lab_mouse_pad',
+    'home_lab_pc_tower',
+    'home_lab_pc_vent_1',
+    'home_lab_cable_tray',
+    'home_lab_desk_book_1',
+    'home_lab_wall_organizer',
+    'home_lab_g1_display_pad',
+    'home_lab_g1_status_pedestal',
+    'home_lab_go2_charging_pad',
+    'home_lab_go2_charge_contact',
+    'home_lab_maintenance_cabinet',
+    'home_lab_maintenance_drawer_1',
+    'home_lab_tool_board',
+    'home_lab_tool_wrench',
+    'home_lab_service_cart',
+    'home_lab_robot_warning_band_1',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"`));
+  }
+
+  assert.doesNotMatch(xml, /name="gearbox_tv_console"|name="gearbox_desk"/);
+});
+
+test('SO101 Home Lab attaches static G1 and Go2 arm models outside the workcell', () => {
+  assert.ok(SO101_HOME_LAB_LAYOUT, 'SO101 Home Lab must be exported');
+  const xml = patchText(SO101_HOME_LAB_LAYOUT);
   assert.match(
     xml,
     /<model name="g1_room_model" file="robots\/g1\/g1_static\.xml"\/>/,
@@ -454,18 +525,22 @@ test('SO101 Gearbox room attaches static G1 and Go2 arm models outside the workc
   );
   assert.match(
     xml,
-    /<frame pos="0\.9 2\.25 0" euler="0 0 -112"><attach model="g1_room_model" body="pelvis" prefix="room_g1_"\/><\/frame>/,
+    /<frame pos="2\.45 -0\.9 0" euler="0 0 155"><attach model="g1_room_model" body="pelvis" prefix="room_g1_"\/><\/frame>/,
   );
   assert.match(
     xml,
-    /<frame pos="2\.7 -1\.5 0" euler="0 0 150"><attach model="go2_arm_room_model" body="base" prefix="room_go2_"\/><\/frame>/,
+    /<frame pos="3\.55 -2\.35 0" euler="0 0 150"><attach model="go2_arm_room_model" body="base" prefix="room_go2_"\/><\/frame>/,
   );
-  assert.equal(SO101_GEARBOX_LAYOUT.staticRobots.g1.controlled, false);
-  assert.equal(SO101_GEARBOX_LAYOUT.staticRobots.go2Arm.controlled, false);
+  assert.equal(SO101_HOME_LAB_LAYOUT.staticRobots.g1.controlled, false);
+  assert.equal(SO101_HOME_LAB_LAYOUT.staticRobots.go2Arm.controlled, false);
 });
 
-test('neither new layout contains an object-carrying shortcut', () => {
-  for (const layout of [SO101_GEARBOX_LAYOUT, XLEROBOT_KITTING_LAYOUT]) {
+test('no collaboration layout contains an object-carrying shortcut', () => {
+  for (const layout of [
+    SO101_GEARBOX_LAYOUT,
+    SO101_HOME_LAB_LAYOUT,
+    XLEROBOT_KITTING_LAYOUT,
+  ]) {
     const xml = patchText(layout);
     assert.doesNotMatch(xml, /<equality|<weld|magnet|auto[_-]?attach|proximity[_-]?attach/i);
   }
