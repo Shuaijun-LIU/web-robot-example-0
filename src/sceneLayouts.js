@@ -372,6 +372,7 @@ const XLEROBOT_HOME = [
   0,
 ];
 const XLEROBOT_ARM_BASE_HEIGHT = 0.775;
+const XLEROBOT_CHASSIS_COLLISION_TOP = 0.775;
 const XLEROBOT_TABLE_HALF_HEIGHT = 0.025;
 const XLEROBOT_TABLE_UNDERSIDE = XLEROBOT_ARM_BASE_HEIGHT - 2 * XLEROBOT_TABLE_HALF_HEIGHT;
 const XLEROBOT_PARENT_WORLDBODY = `  <worldbody>
@@ -426,6 +427,7 @@ export const XLEROBOT_LAYOUT = {
   spacing: 1.7,
   armBaseHeight: XLEROBOT_ARM_BASE_HEIGHT,
   tableTopHeight: XLEROBOT_ARM_BASE_HEIGHT,
+  chassisCollisionTop: XLEROBOT_CHASSIS_COLLISION_TOP,
   homeJoints: repeatPose(XLEROBOT_HOME, 2),
   xmlPatches: [
     {
@@ -441,6 +443,13 @@ export const XLEROBOT_LAYOUT = {
           { position: [-0.85, 0, 0], yaw: HALF_TURN_DEGREES },
           { position: [0.85, 0, 0], yaw: 0 },
         ])}</worldbody>`,
+      ],
+    },
+    {
+      target: 'xlerobot.xml',
+      replace: [
+        '<geom type="box" size="0.1575 0.2025 0.295" pos="0 0 0.015" class="collision" friction="1 0.005 0.0001" rgba="0.9 0.3 0.3 0.4"/>',
+        '<geom name="chassis_rack_collision" type="box" size="0.21 0.24 0.3375" pos="0 0 0.0575" class="collision" friction="1 0.005 0.0001" rgba="0 0 0 0"/>',
       ],
     },
   ],

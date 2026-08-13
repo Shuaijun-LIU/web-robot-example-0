@@ -13,6 +13,7 @@ export interface SceneLayout {
   workSurfaceHeight?: number;
   armBaseHeight?: number;
   tableTopHeight?: number;
+  chassisCollisionTop?: number;
   tableObjects?: SceneObject[];
   primaryTcpSite?: string;
   primaryGripperActuator?: string;
@@ -60,5 +61,6 @@ export const XLEROBOT_LAYOUT: SceneLayout & {
   spacing: number;
   armBaseHeight: number;
   tableTopHeight: number;
+  chassisCollisionTop: number;
   tableObjects: SceneObject[];
 };

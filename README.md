@@ -16,7 +16,11 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 |---|---|
 | [![Four Panda arms around Assembly1 with procedural tools](artifacts/screenshots/franka-assembly1.png)](artifacts/screenshots/franka-assembly1.png) | [![Four Panda arms around Assembly2 with RoboTwin tool meshes](artifacts/screenshots/franka-assembly2.png)](artifacts/screenshots/franka-assembly2.png) |
 
-These are two independently selectable implementations of the same static four-arm assembly staging area. Both use a `0.90 m` Panda ring, slotted aluminum frame, loose perforated cross-member, mounting plate, four fasteners, three tool stations, and handover pad. The four cross-member holes have named target sites that exactly match four recessed frame receivers at the planned installation pose. Assembly1 uses stable procedural geometry, including a grooved octagonal screwdriver with a flat collision proxy, detailed cordless torque driver, and correctly oriented claw hammer. Assembly2 keeps the same task geometry while using converted RoboTwin tool meshes with palette-baked color regions and simple collision proxies. Neither scene runs scripted task motion yet.
+These are two independently selectable implementations of the same static four-arm assembly staging area. Both use a `0.90 m` Panda ring, slotted aluminum frame, loose perforated cross-member, mounting plate, four fasteners, three tool stations, and handover pad. The four cross-member holes have named target sites that exactly match four recessed frame receivers at the planned installation pose. Assembly1 uses stable procedural geometry, including a grooved octagonal screwdriver with a flat collision proxy, detailed cordless torque driver, and a symmetric double-face hammer. Assembly2 keeps the same task geometry while using converted RoboTwin tool meshes with palette-baked color regions and simple collision proxies. Neither scene runs scripted task motion yet.
+
+Both assembly scenes use real MuJoCo contact for grasping. Panda finger stiffness, damping, friction, and contact dimensionality are tuned so the screwdriver, torque driver, and hammer can survive an unsupported gravity hold; there is no proximity attachment, weld, magnetic grasp, or scripted object following. The XLeRobot rack also has a collision proxy covering its complete visible height, preventing the blue chassis from entering the arm-height table.
+
+[![XLeRobot driven forward until its blue rack stops immediately before the table](artifacts/screenshots/xlerobot-collision-stop.png)](artifacts/screenshots/xlerobot-collision-stop.png)
 
 | Scene | Physical layout | Shared workspace |
 |---|---|---|
@@ -79,7 +83,7 @@ npm run capture:scenes
 npm run verify:controls
 ```
 
-`verify:controls` selects all four arms in all three Franka scenes, all four SO101 arms, and both XLeRobots, then checks that keyboard and IK input change only the selected actuator block. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`.
+`verify:controls` selects all four arms in all three Franka scenes, all four SO101 arms, and both XLeRobots, then checks that keyboard and IK input change only the selected actuator block. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`. Set `GRASP_REPORT=1` and optionally `GRASP_TOOL=manual_screwdriver|torque_driver|hammer` to run an unsupported physical gravity-hold check for either Franka assembly scene.
 
 ## GitHub Pages
 

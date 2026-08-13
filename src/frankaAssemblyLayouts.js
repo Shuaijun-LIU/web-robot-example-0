@@ -76,29 +76,6 @@ function octagonalHandleMesh() {
   return `vertex="${vertices.flat().map((value) => value.toFixed(6)).join(' ')}" face="${faces.flat().join(' ')}"`;
 }
 
-function flatClawTineMesh(crossSections) {
-  const vertices = crossSections.flatMap(([y, z, xMin, xMax, thickness]) => [
-    [xMin, y, z - thickness / 2],
-    [xMax, y, z - thickness / 2],
-    [xMax, y, z + thickness / 2],
-    [xMin, y, z + thickness / 2],
-  ]);
-  const faces = [[0, 3, 2], [0, 2, 1]];
-  for (let section = 0; section < crossSections.length - 1; section += 1) {
-    const a = section * 4;
-    const b = (section + 1) * 4;
-    faces.push(
-      [a, a + 1, b + 1], [a, b + 1, b],
-      [a + 3, b + 3, b + 2], [a + 3, b + 2, a + 2],
-      [a, b, b + 3], [a, b + 3, a + 3],
-      [a + 1, a + 2, b + 2], [a + 1, b + 2, b + 1],
-    );
-  }
-  const end = vertices.length - 4;
-  faces.push([end, end + 1, end + 2], [end, end + 2, end + 3]);
-  return `vertex="${vertices.flat().map((value) => value.toFixed(6)).join(' ')}" face="${faces.flat().join(' ')}"`;
-}
-
 const SHARED_WORKCELL_XML = `
     <!-- Four supports hold the movable frame at the same height as its installation pose. -->
     <body name="frame_supports">
@@ -184,18 +161,7 @@ const SHARED_WORKCELL_XML = `
     <body name="fastener_3" pos=".50 .48 .152"><freejoint/><geom name="fastener_3_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/><geom name="fastener_3_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/></body>
     <body name="fastener_4" pos=".60 .48 .152"><freejoint/><geom name="fastener_4_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/><geom name="fastener_4_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/></body>`;
 
-const ASSEMBLY1_ASSET_XML = `
-      <mesh name="manual_screwdriver_octagonal_handle" ${octagonalHandleMesh()}/>
-      <mesh name="hammer_claw_left_plate" ${flatClawTineMesh([
-        [.025, .006, .043, .072, .012],
-        [.073, 0, .047, .069, .010],
-        [.118, -.012, .052, .063, .006],
-      ])}/>
-      <mesh name="hammer_claw_right_plate" ${flatClawTineMesh([
-        [.025, .006, .078, .107, .012],
-        [.073, 0, .081, .103, .010],
-        [.118, -.012, .087, .098, .006],
-      ])}/>`;
+const ASSEMBLY1_ASSET_XML = `<mesh name="manual_screwdriver_octagonal_handle" ${octagonalHandleMesh()}/>`;
 
 const ASSEMBLY1_TOOL_XML = `
     <body name="manual_screwdriver" pos="-.53 -.42 .145">
@@ -225,17 +191,16 @@ const ASSEMBLY1_TOOL_XML = `
       <geom name="torque_driver_vent_right_2" type="box" pos=".048 .036 .062" size=".026 .002 .003" rgba=".05 .06 .07 1" contype="0" conaffinity="0"/>
     </body>
 
-    <body name="claw_hammer" pos=".65 0 .229" euler="0 0 180">
+    <body name="double_face_hammer" pos=".65 0 .229" euler="0 0 180">
       <freejoint/>
       <geom name="hammer_handle_core" type="box" pos="-.045 0 -.005" size=".105 .014 .014" rgba=".43 .22 .08 1" mass=".1" friction="1.4 .22 .03"/>
       <geom name="hammer_handle_grip" type="box" pos="-.083 0 -.005" size=".073 .021 .018" rgba=".11 .12 .13 1" mass=".12"/>
       <geom name="hammer_eye" type="cylinder" fromto=".048 0 0 .102 0 0" size=".021" rgba=".18 .19 .2 1" mass=".08"/>
       <geom name="hammer_cheek" type="box" pos=".075 0 0" size=".032 .03 .025" rgba=".32 .33 .34 1" mass=".18"/>
-      <geom name="hammer_face_neck" type="cylinder" fromto=".075 -.030 0 .075 -.053 0" size=".019" rgba=".36 .37 .38 1" mass=".04"/>
-      <geom name="hammer_striking_face" type="cylinder" fromto=".075 -.053 0 .075 -.073 0" size=".027" rgba=".5 .51 .52 1" mass=".08"/>
-      <geom name="hammer_claw_left" type="mesh" mesh="hammer_claw_left_plate" rgba=".39 .40 .41 1" contype="0" conaffinity="0" mass=".001"/>
-      <geom name="hammer_claw_right" type="mesh" mesh="hammer_claw_right_plate" rgba=".39 .40 .41 1" contype="0" conaffinity="0" mass=".001"/>
-      <geom name="hammer_claw_collision" type="box" pos=".075 .071 -.002" size=".033 .044 .012" rgba="0 0 0 0" mass=".098" friction="1.2 .2 .02"/>
+      <geom name="hammer_face_neck_a" type="cylinder" fromto=".075 -.030 0 .075 -.053 0" size=".019" rgba=".36 .37 .38 1" mass=".04"/>
+      <geom name="hammer_striking_face_a" type="cylinder" fromto=".075 -.053 0 .075 -.073 0" size=".027" rgba=".5 .51 .52 1" mass=".08"/>
+      <geom name="hammer_face_neck_b" type="cylinder" fromto=".075 .030 0 .075 .053 0" size=".019" rgba=".36 .37 .38 1" mass=".04"/>
+      <geom name="hammer_striking_face_b" type="cylinder" fromto=".075 .053 0 .075 .073 0" size=".027" rgba=".5 .51 .52 1" mass=".08"/>
     </body>`;
 
 const ASSEMBLY2_ASSET_XML = `
@@ -273,7 +238,7 @@ const ASSEMBLY2_TOOL_XML = `
       <geom name="robotwin_drill_dark_visual_geom" type="mesh" mesh="robotwin_drill_dark" material="robotwin_drill_dark_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
       <geom name="robotwin_drill_metal_visual_geom" type="mesh" mesh="robotwin_drill_metal" material="robotwin_drill_metal_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
       <geom name="robotwin_drill_collision" type="box" pos="0 0 .045" size=".09 .04 .055" rgba="0 0 0 0" mass=".28" friction="1.3 .2 .02"/>
-      <geom name="robotwin_drill_grip_collision" type="capsule" fromto=".02 0 .02 .04 0 -.065" size=".026" rgba="0 0 0 0" mass=".12"/>
+      <geom name="robotwin_drill_grip_collision" type="box" pos=".03 0 -.022" size=".026 .023 .045" rgba="0 0 0 0" mass=".12" friction="1.5 .25 .03"/>
       <geom name="robotwin_drill_battery_collision" type="box" pos=".04 0 -.088" size=".055 .045 .015" rgba="0 0 0 0" mass=".12"/>
     </body>
     <body name="claw_hammer" pos=".65 0 .229">
@@ -299,6 +264,20 @@ const sceneObjects = () => [
 function createPatches(toolAssetXml, toolXml) {
   return [
     { target: 'panda.xml', replace: ['name="actuator8"', 'name="gripper"'] },
+    {
+      target: 'panda.xml',
+      replace: [
+        '<general class="panda" name="gripper" tendon="split" forcerange="-100 100" ctrlrange="0 255"\n      gainprm="0.01568627451 0 0" biasprm="0 -100 -10"/>',
+        '<general class="panda" name="gripper" tendon="split" forcerange="-100 100" ctrlrange="0 255"\n      gainprm=".23529411765 0 0" biasprm="0 -1500 -40"/>',
+      ],
+    },
+    {
+      target: 'panda.xml',
+      replace: [
+        '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445"/>\n        </default>',
+        '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445" friction="3 .2 .05" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+      ],
+    },
     {
       target: 'panda.xml',
       inject: '<site name="tcp" pos="0 0 0.1" size="0.01" rgba="0.75 0.18 0.12 0.7" group="1"/>',

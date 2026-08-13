@@ -119,6 +119,10 @@ const getName = (address) => {
   }
   return name;
 };
+const findNamedIndex = (count, addresses, name) =>
+  Array.from({ length: count }, (_, index) => index).find(
+    (index) => getName(addresses[index]) === name,
+  );
 if (process.env.LIST_NAMES === '1') {
   console.log(
     'bodies:',
@@ -167,6 +171,138 @@ if (process.env.POSE_REPORT === '1') {
       ? null
       : Array.from(data.site_xpos.slice(siteId * 3, siteId * 3 + 3));
     console.log(`instance ${instance}: root=${JSON.stringify(rootPosition)} tcp=${JSON.stringify(tcpPosition)}`);
+  }
+  data.delete();
+}
+if (process.env.GRASP_REPORT === '1') {
+  if (!sceneKey.startsWith('frankaAssembly')) {
+    throw new Error('GRASP_REPORT is only supported for Franka Assembly scenes');
+  }
+  const toolName = process.env.GRASP_TOOL ?? 'manual_screwdriver';
+  const toolBodyNames = {
+    manual_screwdriver: 'manual_screwdriver',
+    torque_driver: 'torque_driver',
+    hammer: sceneKey === 'frankaAssembly1' ? 'double_face_hammer' : 'claw_hammer',
+  };
+  const toolGraspPoints = {
+    manual_screwdriver: sceneKey === 'frankaAssembly1' ? [-.033, 0, 0] : [-.025, 0, 0],
+    torque_driver: sceneKey === 'frankaAssembly1' ? [.03, 0, -.02] : [.03, 0, -.05],
+    hammer: [-.075, 0, -.006],
+  };
+  const graspLocal = process.env.GRASP_POINT
+    ? process.env.GRASP_POINT.split(',').map(Number)
+    : toolGraspPoints[toolName];
+  if (!graspLocal) {
+    throw new Error(`Unsupported GRASP_TOOL: ${toolName}`);
+  }
+  const toolBodyName = toolBodyNames[toolName];
+
+  const data = new mujoco.MjData(model);
+  for (let index = 0; index < Math.min(model.nu, definition.layout.homeJoints.length); index += 1) {
+    const home = definition.layout.homeJoints[index];
+    data.ctrl[index] = home;
+    const transmissionType = model.actuator_trntype[index];
+    const jointId = model.actuator_trnid[index * 2];
+    if ((transmissionType === 0 || transmissionType === 1) && jointId >= 0) {
+      const jointType = model.jnt_type[jointId];
+      if (jointType === 2 || jointType === 3) {
+        data.qpos[model.jnt_qposadr[jointId]] = home;
+      }
+    }
+  }
+
+  const siteId = findNamedIndex(model.nsite, model.name_siteadr, 'r0_tcp');
+  const toolBodyId = findNamedIndex(model.nbody, model.name_bodyadr, toolBodyName);
+  const namedToolJointId = findNamedIndex(model.njnt, model.name_jntadr, `${toolBodyName}_free`);
+  const toolJointId = namedToolJointId ?? (toolBodyId === undefined ? undefined : model.body_jntadr[toolBodyId]);
+  const gripperActuatorId = findNamedIndex(model.nu, model.name_actuatoradr, 'r0_gripper');
+  if ([siteId, toolBodyId, toolJointId, gripperActuatorId].some((id) => id === undefined)) {
+    throw new Error(`Missing r0_tcp, ${toolBodyName} free joint, or r0_gripper`);
+  }
+  const fingerJointIds = [];
+  for (const fingerName of ['r0_finger_joint1', 'r0_finger_joint2']) {
+    const fingerJointId = findNamedIndex(model.njnt, model.name_jntadr, fingerName);
+    if (fingerJointId === undefined) throw new Error(`Missing ${fingerName}`);
+    fingerJointIds.push(fingerJointId);
+    data.qpos[model.jnt_qposadr[fingerJointId]] = .04;
+  }
+
+  mujoco.mj_forward(model, data);
+  const rotation = Array.from(data.site_xmat.slice(siteId * 9, siteId * 9 + 9));
+  const trace = rotation[0] + rotation[4] + rotation[8];
+  const quaternion = [0, 0, 0, 0];
+  if (trace > 0) {
+    const scale = Math.sqrt(trace + 1) * 2;
+    quaternion[0] = .25 * scale;
+    quaternion[1] = (rotation[7] - rotation[5]) / scale;
+    quaternion[2] = (rotation[2] - rotation[6]) / scale;
+    quaternion[3] = (rotation[3] - rotation[1]) / scale;
+  } else if (rotation[0] > rotation[4] && rotation[0] > rotation[8]) {
+    const scale = Math.sqrt(1 + rotation[0] - rotation[4] - rotation[8]) * 2;
+    quaternion[0] = (rotation[7] - rotation[5]) / scale;
+    quaternion[1] = .25 * scale;
+    quaternion[2] = (rotation[1] + rotation[3]) / scale;
+    quaternion[3] = (rotation[2] + rotation[6]) / scale;
+  } else if (rotation[4] > rotation[8]) {
+    const scale = Math.sqrt(1 + rotation[4] - rotation[0] - rotation[8]) * 2;
+    quaternion[0] = (rotation[2] - rotation[6]) / scale;
+    quaternion[1] = (rotation[1] + rotation[3]) / scale;
+    quaternion[2] = .25 * scale;
+    quaternion[3] = (rotation[5] + rotation[7]) / scale;
+  } else {
+    const scale = Math.sqrt(1 + rotation[8] - rotation[0] - rotation[4]) * 2;
+    quaternion[0] = (rotation[3] - rotation[1]) / scale;
+    quaternion[1] = (rotation[2] + rotation[6]) / scale;
+    quaternion[2] = (rotation[5] + rotation[7]) / scale;
+    quaternion[3] = .25 * scale;
+  }
+  const rotatedGrasp = [0, 1, 2].map((row) =>
+    rotation[row * 3] * graspLocal[0]
+      + rotation[row * 3 + 1] * graspLocal[1]
+      + rotation[row * 3 + 2] * graspLocal[2],
+  );
+  const qposAddress = model.jnt_qposadr[toolJointId];
+  for (let axis = 0; axis < 3; axis += 1) {
+    data.qpos[qposAddress + axis] = data.site_xpos[siteId * 3 + axis] - rotatedGrasp[axis];
+  }
+  for (let axis = 0; axis < 4; axis += 1) {
+    data.qpos[qposAddress + 3 + axis] = quaternion[axis];
+  }
+  data.ctrl[gripperActuatorId] = 255;
+  model.opt.gravity.fill(0);
+  mujoco.mj_forward(model, data);
+  for (let step = 0; step < 100; step += 1) mujoco.mj_step(model, data);
+  data.ctrl[gripperActuatorId] = 0;
+  for (let step = 0; step < 750; step += 1) mujoco.mj_step(model, data);
+
+  const contactCount = () => {
+    let count = 0;
+    for (let index = 0; index < data.ncon; index += 1) {
+      const contact = data.contact.get(index);
+      if (
+        contact
+        && (model.geom_bodyid[contact.geom1] === toolBodyId
+          || model.geom_bodyid[contact.geom2] === toolBodyId)
+      ) count += 1;
+    }
+    return count;
+  };
+  const closedContactCount = contactCount();
+  const closedForce = data.actuator_force[gripperActuatorId];
+  const closedFingerPositions = fingerJointIds.map((jointId) => data.qpos[model.jnt_qposadr[jointId]]);
+  const toolHeightBeforeGravity = data.xpos[toolBodyId * 3 + 2];
+  model.opt.gravity[2] = -9.81;
+  for (let step = 0; step < 1_000; step += 1) mujoco.mj_step(model, data);
+  const toolHeightAfterGravity = data.xpos[toolBodyId * 3 + 2];
+  const heightLoss = toolHeightBeforeGravity - toolHeightAfterGravity;
+  console.log(
+    `grasp ${toolName}: closedContacts=${closedContactCount} `
+      + `closedForce=${closedForce.toFixed(2)}N fingers=${closedFingerPositions.map((value) => value.toFixed(4)).join(',')} `
+      + `heldContacts=${contactCount()} heldForce=${data.actuator_force[gripperActuatorId].toFixed(2)}N `
+      + `heightLoss=${heightLoss.toFixed(4)}m`,
+  );
+  if (contactCount() < 2 || heightLoss > .04) {
+    throw new Error(`Physical ${toolName} grasp did not survive the gravity hold`);
   }
   data.delete();
 }

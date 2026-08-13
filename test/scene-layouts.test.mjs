@@ -72,13 +72,16 @@ test('Franka assembly scene stages a frame, installable parts, separated tools, 
       'mounting_plate',
       'torque_driver',
       'manual_screwdriver',
-      'claw_hammer',
       'parts_tray',
       'fastener_tray',
       'fastener_1',
     ]) {
       assert.match(workcellXml, new RegExp(`name="${name}"`));
     }
+    const hammerName = layout === FRANKA_ASSEMBLY1_LAYOUT
+      ? 'double_face_hammer'
+      : 'claw_hammer';
+    assert.match(workcellXml, new RegExp(`name="${hammerName}"`));
     assert.match(workcellXml, /<body name="assembly_frame"[^>]*>\s*<freejoint\/>/);
   }
 });
@@ -110,6 +113,12 @@ test('XLeRobot uses two opposing robots and an arm-height table', () => {
   assert.equal(XLEROBOT_LAYOUT.yawStepDegrees, 180);
   assert.equal(XLEROBOT_LAYOUT.armBaseHeight, 0.775);
   assert.equal(XLEROBOT_LAYOUT.tableTopHeight, XLEROBOT_LAYOUT.armBaseHeight);
+  assert.equal(XLEROBOT_LAYOUT.chassisCollisionTop, XLEROBOT_LAYOUT.tableTopHeight);
+  const patches = XLEROBOT_LAYOUT.xmlPatches
+    .map((patch) => patch.replace?.join('\n') ?? patch.inject ?? '')
+    .join('\n');
+  assert.match(patches, /name="chassis_rack_collision"/);
+  assert.match(patches, /size="0\.21 0\.24 0\.3375" pos="0 0 0\.0575"/);
   assert.equal(
     XLEROBOT_LAYOUT.tableObjects.filter((object) => object.name.startsWith('table_leg_')).length,
     4,

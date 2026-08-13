@@ -11,12 +11,14 @@
 - [x] Phase 3: Static assembly workcell implementation
 - [x] Phase 4: Browser, physics, and visual verification
 - [x] Phase 5: Documentation and GitHub Pages deployment
-- [ ] Phase 6: Shared detailed frame and installation interfaces
-- [ ] Phase 7: Assembly1 procedural tool refinement
-- [ ] Phase 8: Assembly2 RoboTwin asset integration
-- [ ] Phase 9: Dual-scene verification and republishing
+- [x] Phase 6: Shared detailed frame and installation interfaces
+- [x] Phase 7: Assembly1 procedural tool refinement
+- [x] Phase 8: Assembly2 RoboTwin asset integration
+- [x] Phase 9: Dual-scene verification and republishing
+- [x] Phase 10: Double-face hammer, XLeRobot rack collision, and physical-grasp repair
+- [x] Phase 11: SO101 and XLeRobot next-scene concepts
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 6 design approved
+- Current phase: Phase 10–11 final verification and publication
 - Blockers: none

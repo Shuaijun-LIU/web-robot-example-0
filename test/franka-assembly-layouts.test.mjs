@@ -62,20 +62,30 @@ test('Assembly1 exposes stable faceted hand tools with recognizable detail', () 
   );
   assert.match(xml, /name="torque_driver_trigger"/);
   assert.match(xml, /name="torque_driver_vent_/);
-  assert.match(xml, /<body name="claw_hammer"[^>]*euler="0 0 180"/);
+  assert.match(xml, /<body name="double_face_hammer"[^>]*euler="0 0 180"/);
   assert.match(xml, /name="hammer_eye"/);
   assert.match(xml, /name="hammer_cheek"/);
-  assert.match(xml, /name="hammer_striking_face" type="cylinder"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
-  assert.match(xml, /mesh="hammer_claw_left_plate"/);
-  assert.match(xml, /mesh="hammer_claw_right_plate"/);
-  assert.match(xml, /name="hammer_claw_left" type="mesh"[^>]*contype="0"[^>]*conaffinity="0"/);
-  assert.match(xml, /name="hammer_claw_right" type="mesh"[^>]*contype="0"[^>]*conaffinity="0"/);
-  assert.match(xml, /name="hammer_claw_collision" type="box"[^>]*rgba="0 0 0 0"/);
-  assert.doesNotMatch(xml, /name="hammer_claw_[^"]*" type="capsule"/);
+  assert.match(xml, /name="hammer_striking_face_a" type="cylinder"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
+  assert.match(xml, /name="hammer_striking_face_a"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
+  assert.match(xml, /name="hammer_striking_face_b"[^>]*fromto="\.075 \.053 0 \.075 \.073 0"/);
+  assert.doesNotMatch(xml, /claw/i);
+});
+
+test('both Assembly layouts strengthen physical finger contact without attachment', () => {
+  for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
+    const xml = layoutXml(layout);
+    assert.match(xml, /gainprm="\.23529411765 0 0" biasprm="0 -1500 -40"/);
+    assert.match(xml, /fingertip_pad_collision_1[\s\S]*friction="3 \.2 \.05" condim="6"/);
+    assert.doesNotMatch(xml, /weld|equality[^>]*tool|attach_tool|magnet/i);
+  }
 });
 
 test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geometry', async () => {
   const xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
+  assert.match(
+    xml,
+    /name="robotwin_drill_grip_collision" type="box"[^>]*size="\.026 \.023 \.045"[^>]*friction="1\.5 \.25 \.03"/,
+  );
   for (const tool of ['screwdriver', 'drill', 'hammer']) {
     assert.match(xml, new RegExp(`name="robotwin_${tool}_collision"`));
     const colors = [];

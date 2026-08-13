@@ -82,9 +82,7 @@ try {
   const selector = page.locator('select').first();
 
   for (const scene of scenes) {
-    if (scene.key !== 'franka') {
-      await selector.selectOption({ label: scene.label });
-    }
+    await selector.selectOption({ label: scene.label });
 
     await page.waitForFunction(
       ({ key }) =>

@@ -5,6 +5,8 @@ import test from 'node:test';
 const workflowPath = new URL('../.github/workflows/pages.yml', import.meta.url);
 const readmePath = new URL('../README.md', import.meta.url);
 const packagePath = new URL('../package.json', import.meta.url);
+const captureScenesPath = new URL('../scripts/capture-scenes.mjs', import.meta.url);
+const verifyControlsPath = new URL('../scripts/verify-controls.mjs', import.meta.url);
 
 test('GitHub Actions deploys the Pages build from main', async () => {
   const workflow = await readFile(workflowPath, 'utf8');
@@ -32,4 +34,12 @@ test('README documents and displays all five verified layouts', async () => {
   assert.match(readme, /0\.775 m/);
   assert.match(readme, /Control target/);
   assert.match(readme, /every physical instance/i);
+});
+
+test('browser verification selects every requested scene independent of the page default', async () => {
+  for (const scriptPath of [captureScenesPath, verifyControlsPath]) {
+    const source = await readFile(scriptPath, 'utf8');
+    assert.doesNotMatch(source, /if \(scene(?:Index > 0|\.key !== 'franka')\)/);
+    assert.match(source, /selectOption\(\{ label: scene\.label \}\)/);
+  }
 });

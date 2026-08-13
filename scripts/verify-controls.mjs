@@ -101,8 +101,8 @@ try {
   const robotSelector = page.locator('select').nth(0);
   const targetSelector = page.locator('select').nth(1);
 
-  for (const [sceneIndex, scene] of scenes.entries()) {
-    if (sceneIndex > 0) await robotSelector.selectOption({ label: scene.label });
+  for (const scene of scenes) {
+    await robotSelector.selectOption({ label: scene.label });
     await page.waitForFunction(
       (key) => document.documentElement.dataset.sceneKey === key
         && document.documentElement.dataset.sceneStatus === 'ready',
