@@ -19,3 +19,7 @@
 - 2026-08-13 08:09 UTC
   - What: Started Assembly1 Step 2 design: verified all four physical contact centers are IK-reachable within Panda joint limits; selected staged physical clamp scope with no lift, weld, magnet, or scripted object following.
   - Next: Review and approve the staged contact-and-clamp design before writing the implementation spec and plan.
+- 2026-08-13 19:18 CST
+  - What: Reproduced Arm 2/4 post-Step-1 oscillation and the blank-scene failure independently on NVIDIA/Vulkan. Removed delayed gravity-force feedback, lengthened passive settling, relaxed only the Step 2 start-pose tolerance, and added a terminal safe-stop that releases clamp force without moving task objects by script.
+  - Verified: Focused 24-test suite and production build pass. An independent production browser reached `frame-verification`, reported the expected physical contact failure, and remained `ready` with a connected 1440×900 canvas and no console errors six seconds later. Visual evidence is under `artifacts/diagnostics/assembly-stability-fixed/`.
+  - Next: User checks Step 1 residual motion and persistent scene rendering; any later contact-geometry tuning remains a separate task.

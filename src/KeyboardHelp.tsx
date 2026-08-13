@@ -33,11 +33,19 @@ const HELP: Record<string, string[]> = {
 export function KeyboardHelp({
   robotKey,
   controlTargetLabel,
+  controlMode,
 }: {
   robotKey: string;
   controlTargetLabel: string;
+  controlMode?: 'arm' | 'planar-mobile';
 }) {
-  const lines = HELP[robotKey];
+  const lines = controlMode === 'planar-mobile'
+    ? [
+      'W/S — Move forward/back',
+      'A/D — Turn left/right',
+      'Double-click — Select body',
+    ]
+    : HELP[robotKey];
   if (!lines) return null;
 
   return (

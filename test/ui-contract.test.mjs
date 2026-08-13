@@ -62,6 +62,19 @@ test('scene starts running with IK gizmo visible for immediate interaction', asy
   assert.match(source, /rootWidth:\s*'320px'/);
 });
 
+test('Home Lab can expand the floor grid and switches keyboard help for mobile targets', async () => {
+  const [appSource, helpSource] = await Promise.all([
+    readFile(appPath, 'utf8'),
+    readFile(keyboardHelpPath, 'utf8'),
+  ]);
+
+  assert.match(appSource, /args=\{\[entry\.gridSize \?\? 4, entry\.gridDivisions \?\? 40/);
+  assert.match(appSource, /target\.controlMode === 'planar-mobile'/);
+  assert.match(helpSource, /controlMode === 'planar-mobile'/);
+  assert.match(helpSource, /W\/S — Move forward\/back/);
+  assert.match(helpSource, /A\/D — Turn left\/right/);
+});
+
 test('Assembly1 is the initial scene shown on page entry', async () => {
   const source = await readFile(appPath, 'utf8');
 

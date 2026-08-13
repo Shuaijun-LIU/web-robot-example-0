@@ -56,30 +56,32 @@ export const SO101_HOME_LAB_ROOM_XML = `
     </body>
 
     <!-- West lounge. Sofa faces a low TV wall while keeping the center clear. -->
-    <body name="home_lab_lounge_rug" pos="-3.52 1.45 0.012">
-      <geom name="home_lab_lounge_rug_surface" type="box" size="1.22 1.18 0.012" rgba="0.42 0.38 0.32 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_lounge_rug_inset" type="box" pos="0 0 0.014" size="1.06 1.02 0.003" rgba="0.57 0.51 0.41 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_lounge_rug_stripe_1" type="box" pos="0 -0.56 0.018" size="1.06 0.025 0.004" rgba="0.75 0.66 0.50 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_lounge_rug_stripe_2" type="box" pos="0 0.56 0.018" size="1.06 0.025 0.004" rgba="0.75 0.66 0.50 1" contype="0" conaffinity="0"/>
+    <body name="home_lab_lounge_rug" pos="-3.05 1.35 0.012">
+      <geom name="home_lab_lounge_rug_surface" type="box" size="1.50 1.18 0.012" rgba="0.42 0.38 0.32 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_lounge_rug_inset" type="box" pos="0 0 0.014" size="1.34 1.02 0.003" rgba="0.57 0.51 0.41 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_lounge_rug_stripe_1" type="box" pos="0 -0.56 0.018" size="1.34 0.025 0.004" rgba="0.75 0.66 0.50 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_lounge_rug_stripe_2" type="box" pos="0 0.56 0.018" size="1.34 0.025 0.004" rgba="0.75 0.66 0.50 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_sofa" pos="-4.30 1.45 0">
-      <geom name="home_lab_sofa_base" type="box" pos="0 0 0.26" size="0.42 1.00 0.23" rgba="0.28 0.34 0.33 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_seat" type="box" pos="0.12 0 0.51" size="0.34 0.82 0.12" rgba="0.43 0.50 0.47 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_back" type="box" pos="-0.34 0 0.84" size="0.12 1.00 0.44" euler="0 -7 0" rgba="0.34 0.41 0.39 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_arm_north" type="box" pos="0.03 0.91 0.57" size="0.40 0.09 0.32" rgba="0.31 0.38 0.36 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_arm_south" type="box" pos="0.03 -0.91 0.57" size="0.40 0.09 0.32" rgba="0.31 0.38 0.36 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_cushion_1" type="box" pos="0.13 -0.40 0.66" size="0.29 0.36 0.15" euler="0 -5 0" rgba="0.48 0.54 0.50 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_cushion_2" type="box" pos="0.13 0.40 0.66" size="0.29 0.36 0.15" euler="0 -5 0" rgba="0.46 0.52 0.49 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_seam_1" type="capsule" fromto="0.435 -0.78 0.67 0.435 0.78 0.67" size="0.008" rgba="0.28 0.33 0.32 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_seam_2" type="capsule" fromto="0.435 0 0.56 0.435 0 0.78" size="0.008" rgba="0.28 0.33 0.32 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_pillow_1" type="box" pos="0.18 -0.68 0.86" size="0.20 0.20 0.23" euler="9 -12 8" rgba="0.71 0.55 0.39 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_sofa_pillow_2" type="box" pos="0.17 0.67 0.84" size="0.19 0.20 0.22" euler="-7 -10 -8" rgba="0.66 0.64 0.51 1" contype="0" conaffinity="0"/>
+    <body name="home_lab_sofa" pos="-4.30 1.35 0">
+      <geom name="home_lab_sofa_base" type="box" pos="0 0 0.24" size="0.40 0.98 0.18" rgba="0.27 0.33 0.32 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_front_apron" type="box" pos="0.365 0 0.31" size="0.035 0.80 0.12" rgba="0.31 0.38 0.36 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_seat_deck" type="box" pos="0.10 0 0.44" size="0.34 0.80 0.04" rgba="0.36 0.43 0.41 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_seat" type="box" pos="0.13 -0.39 0.55" size="0.30 0.36 0.07" rgba="0.46 0.53 0.50 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_seat_2" type="box" pos="0.13 0.39 0.55" size="0.30 0.36 0.07" rgba="0.44 0.51 0.48 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_back" type="box" pos="-0.34 0 0.80" size="0.10 0.98 0.40" rgba="0.32 0.39 0.37 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_back_cushion_1" type="box" pos="-0.13 -0.39 0.82" size="0.10 0.36 0.28" rgba="0.43 0.50 0.47 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_back_cushion_2" type="box" pos="-0.13 0.39 0.82" size="0.10 0.36 0.28" rgba="0.42 0.49 0.46 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_arm_north" type="box" pos="0.03 0.90 0.56" size="0.38 0.08 0.30" rgba="0.30 0.37 0.35 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_arm_south" type="box" pos="0.03 -0.90 0.56" size="0.38 0.08 0.30" rgba="0.30 0.37 0.35 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_seam_1" type="capsule" fromto="0.435 -0.75 0.62 0.435 0.75 0.62" size="0.006" rgba="0.27 0.32 0.31 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_seam_2" type="capsule" fromto="0.435 0 0.49 0.435 0 0.61" size="0.006" rgba="0.27 0.32 0.31 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_sofa_back_seam" type="capsule" fromto="-0.02 0 0.56 -0.02 0 1.08" size="0.006" rgba="0.27 0.32 0.31 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_sofa_leg_1" type="box" pos="-0.27 -0.78 0.08" size="0.045 0.045 0.08" rgba="0.18 0.17 0.15 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_sofa_leg_2" type="box" pos="0.27 -0.78 0.08" size="0.045 0.045 0.08" rgba="0.18 0.17 0.15 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_sofa_leg_3" type="box" pos="-0.27 0.78 0.08" size="0.045 0.045 0.08" rgba="0.18 0.17 0.15 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_sofa_leg_4" type="box" pos="0.27 0.78 0.08" size="0.045 0.045 0.08" rgba="0.18 0.17 0.15 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_tv_console" pos="-2.36 1.45 0">
+    <body name="home_lab_tv_console" pos="-1.82 1.35 0">
       <geom name="home_lab_tv_console_case" type="box" pos="0 0 0.31" size="0.20 0.78 0.31" rgba="0.48 0.38 0.29 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_console_top" type="box" pos="0 0 0.65" size="0.22 0.82 0.035" rgba="0.30 0.27 0.23 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_console_door_1" type="box" pos="-0.208 -0.38 0.34" size="0.010 0.33 0.24" rgba="0.61 0.49 0.36 1" contype="0" conaffinity="0"/>
@@ -87,24 +89,24 @@ export const SO101_HOME_LAB_ROOM_XML = `
       <geom name="home_lab_tv_console_handle_1" type="capsule" fromto="-0.225 -0.54 0.35 -0.225 -0.22 0.35" size="0.008" rgba="0.18 0.19 0.18 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_console_handle_2" type="capsule" fromto="-0.225 0.22 0.35 -0.225 0.54 0.35" size="0.008" rgba="0.18 0.19 0.18 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_tv" pos="-2.58 1.45 1.17">
+    <body name="home_lab_tv" pos="-2.05 1.35 1.17">
       <geom name="home_lab_tv_panel" type="box" size="0.045 0.72 0.42" rgba="0.07 0.08 0.08 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_screen" type="box" pos="-0.050 0 0.01" size="0.007 0.66 0.355" rgba="0.18 0.26 0.29 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_screen_horizon" type="box" pos="-0.059 0 -0.08" size="0.003 0.52 0.07" rgba="0.40 0.48 0.42 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_stand" type="box" pos="0 0 -0.48" size="0.09 0.22 0.035" rgba="0.13 0.14 0.14 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_neck" type="box" pos="0 0 -0.42" size="0.035 0.035 0.08" rgba="0.13 0.14 0.14 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_tv_left_speaker" pos="-2.60 0.58 0.72">
+    <body name="home_lab_tv_left_speaker" pos="-2.08 0.48 0.72">
       <geom name="home_lab_tv_left_speaker_case" type="box" size="0.12 0.10 0.28" rgba="0.12 0.13 0.13 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_left_speaker_driver_1" type="cylinder" pos="-0.105 0 0.10" size="0.055 0.010" euler="0 90 0" rgba="0.35 0.36 0.34 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_left_speaker_driver_2" type="cylinder" pos="-0.105 0 -0.11" size="0.075 0.010" euler="0 90 0" rgba="0.27 0.28 0.27 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_tv_right_speaker" pos="-2.60 2.32 0.72">
+    <body name="home_lab_tv_right_speaker" pos="-2.08 2.22 0.72">
       <geom name="home_lab_tv_right_speaker_case" type="box" size="0.12 0.10 0.28" rgba="0.12 0.13 0.13 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_right_speaker_driver_1" type="cylinder" pos="-0.105 0 0.10" size="0.055 0.010" euler="0 90 0" rgba="0.35 0.36 0.34 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_right_speaker_driver_2" type="cylinder" pos="-0.105 0 -0.11" size="0.075 0.010" euler="0 90 0" rgba="0.27 0.28 0.27 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_coffee_table" pos="-3.42 1.45 0">
+    <body name="home_lab_coffee_table" pos="-2.95 1.35 0">
       <geom name="home_lab_coffee_table_top" type="box" pos="0 0 0.48" size="0.47 0.65 0.035" rgba="0.53 0.42 0.31 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_coffee_table_lower_shelf" type="box" pos="0 0 0.18" size="0.42 0.58 0.025" rgba="0.42 0.34 0.27 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_coffee_table_leg_1" type="box" pos="-0.38 -0.55 0.25" size="0.035 0.035 0.25" rgba="0.22 0.22 0.20 1" contype="0" conaffinity="0"/>
@@ -120,12 +122,12 @@ export const SO101_HOME_LAB_ROOM_XML = `
       <geom name="home_lab_coffee_mug_handle_side" type="capsule" fromto="-0.20 0.355 0.63 -0.20 0.355 0.57" size="0.010" rgba="0.79 0.73 0.62 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_coffee_mug_handle_bottom" type="capsule" fromto="-0.20 0.355 0.57 -0.20 0.312 0.55" size="0.010" rgba="0.79 0.73 0.62 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_side_table" pos="-4.38 2.75 0">
+    <body name="home_lab_side_table" pos="-4.30 2.85 0">
       <geom name="home_lab_side_table_top" type="cylinder" pos="0 0 0.53" size="0.30 0.035" rgba="0.52 0.42 0.32 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_side_table_post" type="cylinder" pos="0 0 0.28" size="0.042 0.25" rgba="0.23 0.22 0.20 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_side_table_foot" type="cylinder" pos="0 0 0.03" size="0.21 0.03" rgba="0.20 0.19 0.17 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_floor_lamp" pos="-4.48 3.25 0">
+    <body name="home_lab_floor_lamp" pos="-4.52 3.54 0">
       <geom name="home_lab_floor_lamp_base" type="cylinder" pos="0 0 0.035" size="0.18 0.035" rgba="0.20 0.20 0.19 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_floor_lamp_pole" type="capsule" fromto="0 0 0.06 0 0 1.54" size="0.024" rgba="0.31 0.30 0.28 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_floor_lamp_shade" type="cylinder" pos="0 0 1.60" size="0.24 0.22" rgba="0.67 0.60 0.49 1" contype="0" conaffinity="0"/>
@@ -202,25 +204,12 @@ export const SO101_HOME_LAB_ROOM_XML = `
       <geom name="home_lab_room_art_2_circle" type="cylinder" pos="0 -0.026 0.04" size="0.13 0.003" euler="90 0 0" rgba="0.31 0.42 0.42 1" contype="0" conaffinity="0"/>
     </body>
 
-    <!-- Southeast robot gallery and service area. Pads are flush with the floor. -->
-    <body name="home_lab_g1_display_pad" pos="2.45 -0.90 -0.004">
-      <geom name="home_lab_g1_display_pad_surface" type="box" size="0.62 0.62 0.004" rgba="0.37 0.43 0.40 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_g1_display_pad_border_n" type="box" pos="0 0.61 0.006" size="0.62 0.012 0.006" rgba="0.71 0.60 0.38 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_g1_display_pad_border_s" type="box" pos="0 -0.61 0.006" size="0.62 0.012 0.006" rgba="0.71 0.60 0.38 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_g1_display_pad_border_e" type="box" pos="0.61 0 0.006" size="0.012 0.60 0.006" rgba="0.71 0.60 0.38 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_g1_display_pad_border_w" type="box" pos="-0.61 0 0.006" size="0.012 0.60 0.006" rgba="0.71 0.60 0.38 1" contype="0" conaffinity="0"/>
-    </body>
+    <!-- Southeast robot service area. Mobile robots stand directly on the floor. -->
     <body name="home_lab_g1_status_pedestal" pos="1.63 -1.55 0">
       <geom name="home_lab_g1_status_pedestal_base" type="cylinder" pos="0 0 0.05" size="0.20 0.05" rgba="0.24 0.25 0.24 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_g1_status_pedestal_post" type="box" pos="0 0 0.47" size="0.08 0.08 0.38" rgba="0.34 0.36 0.34 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_g1_status_pedestal_screen" type="box" pos="0 -0.025 0.93" size="0.24 0.06 0.16" euler="-16 0 0" rgba="0.18 0.32 0.32 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_g1_status_pedestal_indicator" type="cylinder" pos="0 -0.09 0.98" size="0.025 0.008" euler="90 0 0" rgba="0.55 0.78 0.53 1" contype="0" conaffinity="0"/>
-    </body>
-    <body name="home_lab_go2_charging_pad" pos="3.55 -2.35 -0.004">
-      <geom name="home_lab_go2_charging_pad_surface" type="box" size="0.72 0.56 0.004" rgba="0.30 0.36 0.35 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_go2_charge_contact" type="box" pos="0.47 0 0.012" size="0.10 0.24 0.012" rgba="0.69 0.58 0.35 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_go2_charge_line_1" type="box" pos="-0.18 0 0.007" size="0.025 0.43 0.007" rgba="0.58 0.72 0.65 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_go2_charge_line_2" type="box" pos="0.02 0 0.007" size="0.025 0.43 0.007" rgba="0.58 0.72 0.65 1" contype="0" conaffinity="0"/>
     </body>
     <body name="home_lab_robot_warning_band_1" pos="1.45 -2.95 0.006">
       <geom name="home_lab_robot_warning_band_1_strip" type="box" size="0.60 0.025 0.006" euler="0 0 28" rgba="0.83 0.62 0.24 1" contype="0" conaffinity="0"/>
@@ -257,12 +246,36 @@ export const SO101_HOME_LAB_ROOM_XML = `
       <geom name="home_lab_service_cart_post_2" type="capsule" fromto="-0.35 0.48 0.15 -0.35 0.48 0.80" size="0.025" rgba="0.23 0.25 0.24 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_service_cart_post_3" type="capsule" fromto="0.35 -0.48 0.15 0.35 -0.48 0.80" size="0.025" rgba="0.23 0.25 0.24 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_service_cart_post_4" type="capsule" fromto="0.35 0.48 0.15 0.35 0.48 0.80" size="0.025" rgba="0.23 0.25 0.24 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_service_cart_wheel_1" type="cylinder" pos="-0.35 -0.46 0.10" size="0.08 0.025" euler="90 0 0" rgba="0.12 0.13 0.13 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_service_cart_wheel_2" type="cylinder" pos="0.35 -0.46 0.10" size="0.08 0.025" euler="90 0 0" rgba="0.12 0.13 0.13 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_service_cart_wheel_1" type="cylinder" pos="-0.35 -0.48 0.075" size="0.075 0.03" euler="90 0 0" rgba="0.10 0.11 0.11 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_service_cart_wheel_2" type="cylinder" pos="0.35 -0.48 0.075" size="0.075 0.03" euler="90 0 0" rgba="0.10 0.11 0.11 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_service_cart_wheel_3" type="cylinder" pos="-0.35 0.48 0.075" size="0.075 0.03" euler="90 0 0" rgba="0.10 0.11 0.11 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_service_cart_wheel_4" type="cylinder" pos="0.35 0.48 0.075" size="0.075 0.03" euler="90 0 0" rgba="0.10 0.11 0.11 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_service_cart_bin_1" type="box" pos="-0.20 0 0.91" size="0.16 0.22 0.08" rgba="0.68 0.58 0.39 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_service_cart_bin_2" type="box" pos="0.20 0 0.91" size="0.16 0.22 0.08" rgba="0.38 0.56 0.57 1" contype="0" conaffinity="0"/>
     </body>`;
 
-export const SO101_HOME_LAB_STATIC_ROBOTS_XML =
-  '<frame pos="2.45 -0.9 0" euler="0 0 155"><attach model="g1_room_model" body="pelvis" prefix="room_g1_"/></frame>'
-  + '<frame pos="3.55 -2.35 0" euler="0 0 150"><attach model="go2_arm_room_model" body="base" prefix="room_go2_"/></frame>';
+export const SO101_HOME_LAB_STATIC_ROBOTS_XML = `
+    <body name="home_lab_g1_mobile_root" pos="2.45 -0.9 0">
+      <inertial pos="0 0 0.4" mass="0.001" diaginertia="0.001 0.001 0.001"/>
+      <joint name="home_lab_g1_x" type="slide" axis="1 0 0" range="-6.6 1.7" damping="8"/>
+      <joint name="home_lab_g1_y" type="slide" axis="0 1 0" range="-2.5 4.2" damping="8"/>
+      <joint name="home_lab_g1_yaw" type="hinge" axis="0 0 1" range="-3.14159 3.14159" damping="4"/>
+      <frame euler="0 0 155"><attach model="g1_room_model" body="pelvis" prefix="room_g1_"/></frame>
+    </body>
+    <body name="home_lab_go2_mobile_root" pos="3.55 -2.35 0">
+      <inertial pos="0 0 0.3" mass="0.001" diaginertia="0.001 0.001 0.001"/>
+      <joint name="home_lab_go2_x" type="slide" axis="1 0 0" range="-7.7 0.6" damping="5"/>
+      <joint name="home_lab_go2_y" type="slide" axis="0 1 0" range="-1.0 5.6" damping="5"/>
+      <joint name="home_lab_go2_yaw" type="hinge" axis="0 0 1" range="-3.14159 3.14159" damping="3"/>
+      <frame euler="0 0 150"><attach model="go2_arm_room_model" body="base" prefix="room_go2_"/></frame>
+    </body>`;
+
+export const SO101_HOME_LAB_MOBILE_ACTUATORS_XML = `
+  <actuator>
+    <velocity name="home_lab_g1_velocity_x" joint="home_lab_g1_x" kv="55" ctrlrange="-0.6 0.6"/>
+    <velocity name="home_lab_g1_velocity_y" joint="home_lab_g1_y" kv="55" ctrlrange="-0.6 0.6"/>
+    <velocity name="home_lab_g1_velocity_yaw" joint="home_lab_g1_yaw" kv="35" ctrlrange="-1.0 1.0"/>
+    <velocity name="home_lab_go2_velocity_x" joint="home_lab_go2_x" kv="40" ctrlrange="-0.6 0.6"/>
+    <velocity name="home_lab_go2_velocity_y" joint="home_lab_go2_y" kv="40" ctrlrange="-0.6 0.6"/>
+    <velocity name="home_lab_go2_velocity_yaw" joint="home_lab_go2_yaw" kv="25" ctrlrange="-1.0 1.0"/>
+  </actuator>`;

@@ -16,6 +16,7 @@ import {
 } from './collaborativeSceneLayouts.js';
 import {
   createFrankaTargets,
+  createSO101HomeLabTargets,
   createSO101Targets,
   createXLeRobotTargets,
 } from './controlTargets.js';
@@ -28,6 +29,8 @@ export interface RobotEntry {
   camera: { position: [number, number, number]; fov: number };
   orbitTarget: [number, number, number];
   gizmoScale?: number;
+  gridSize?: number;
+  gridDivisions?: number;
   controlTargets: ControlTarget[];
 }
 
@@ -116,7 +119,9 @@ export const robots: Record<string, RobotEntry> = {
     camera: SO101_HOME_LAB_LAYOUT.camera,
     orbitTarget: SO101_HOME_LAB_LAYOUT.orbitTarget,
     gizmoScale: 0.08,
-    controlTargets: createSO101Targets(),
+    gridSize: 10,
+    gridDivisions: 100,
+    controlTargets: createSO101HomeLabTargets(),
   },
 
   xlerobotKitting: {

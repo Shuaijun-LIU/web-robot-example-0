@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
   createFrankaTargets,
+  createSO101HomeLabTargets,
   createSO101Targets,
   createXLeRobotTargets,
   shiftIndices,
@@ -38,6 +39,35 @@ test('SO101 exposes four namespaced arm targets with six-actuator strides', () =
     'r3_Rotation', 'r3_Pitch', 'r3_Elbow', 'r3_Wrist_Pitch', 'r3_Wrist_Roll',
   ]);
   assert.deepEqual(targets[3].ik.actuatorIndices, [18, 19, 20, 21, 22]);
+});
+
+test('SO101 Home Lab adds independently selectable G1 and Go2 planar mobility targets', () => {
+  const targets = createSO101HomeLabTargets();
+
+  assert.deepEqual(
+    targets.map(({ label }) => label),
+    ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4', 'G1', 'Go2 + Arm'],
+  );
+  assert.deepEqual(targets.slice(0, 4).map(({ actuatorOffset }) => actuatorOffset), [6, 12, 18, 24]);
+  assert.deepEqual(targets[0].ik.actuatorIndices, [6, 7, 8, 9, 10]);
+  assert.deepEqual(targets[3].ik.actuatorIndices, [24, 25, 26, 27, 28]);
+  assert.deepEqual(targets[4], {
+    key: 'g1',
+    label: 'G1',
+    prefix: 'room_g1_',
+    actuatorOffset: 0,
+    controlMode: 'planar-mobile',
+    mobility: {
+      actuatorIndices: [0, 1, 2],
+      yawJoint: 'home_lab_g1_yaw',
+      initialYawDegrees: 155,
+      linearSpeed: 0.42,
+      turnSpeed: 0.8,
+    },
+  });
+  assert.deepEqual(targets[5].mobility.actuatorIndices, [3, 4, 5]);
+  assert.equal(targets[5].mobility.yawJoint, 'home_lab_go2_yaw');
+  assert.equal(targets[5].mobility.initialYawDegrees, 150);
 });
 
 test('XLeRobot selects either complete sixteen-actuator robot', () => {

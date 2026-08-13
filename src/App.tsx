@@ -22,6 +22,7 @@ import type { ControlTarget } from './controlTargets.js';
 import { FrankaController } from './controllers/FrankaController';
 import { SO101Controller } from './controllers/SO101Controller';
 import { XLeRobotController } from './controllers/XLeRobotController';
+import { PlanarMobileController } from './controllers/PlanarMobileController';
 import { useSelectedIkController } from './controllers/useSelectedIkController';
 import { useClickSelect } from './useClickSelect';
 import { KeyboardHelp } from './KeyboardHelp';
@@ -311,7 +312,10 @@ function SceneChildren({
           initiallyOpen={assemblyStep1Status === 'complete'}
         />
       )}
-      {controlFamily === 'so101' && (
+      {target.controlMode === 'planar-mobile' && (
+        <PlanarMobileController key={`mobile-${target.key}`} target={target} />
+      )}
+      {controlFamily === 'so101' && target.controlMode !== 'planar-mobile' && (
         <SO101Controller key={`so101-${target.key}`} target={target} ik={ik} />
       )}
       {controlFamily === 'xlerobot' && (
@@ -560,7 +564,7 @@ export function App() {
         <directionalLight position={[2, -2, 5]} intensity={1.5} castShadow />
         <directionalLight position={[-1, 1, 3]} intensity={0.3} />
         <gridHelper
-          args={[4, 40, '#64748b', '#94a3b8']}
+          args={[entry.gridSize ?? 4, entry.gridDivisions ?? 40, '#64748b', '#94a3b8']}
           rotation={[Math.PI / 2, 0, 0]}
           position={[0, 0, 0.001]}
         />
@@ -590,7 +594,11 @@ export function App() {
           onRunStep2={handleRunAssemblyStep2}
         />
       )}
-      <KeyboardHelp robotKey={entry.controlFamily} controlTargetLabel={controlTarget.label} />
+      <KeyboardHelp
+        robotKey={entry.controlFamily}
+        controlTargetLabel={controlTarget.label}
+        controlMode={controlTarget.controlMode}
+      />
       <GitHubLink />
     </MujocoProvider>
   );

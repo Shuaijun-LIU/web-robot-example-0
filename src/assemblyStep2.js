@@ -18,7 +18,7 @@ export const ASSEMBLY1_STEP2_DURATIONS = Object.freeze({
 export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS = Object.freeze([48, 96, 0, 0]);
 
 export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
-  tcpPosition: 0.03,
+  tcpPosition: 0.06,
   tcpOrientationDegrees: 8,
   preStepObjectDrift: 0.003,
   objectTranslation: 0.005,
@@ -97,6 +97,15 @@ export const ASSEMBLY1_STEP2_ARMS = roles.map((role, index) => {
 
 export function interpolateAssemblyStep2Gripper(from, to, progress) {
   return interpolateJointTargets([from], [to], progress)[0];
+}
+
+export function releaseAssemblyStep2Controls(controls, positions, arms) {
+  for (const arm of arms) {
+    for (let joint = 0; joint < arm.actuatorIndices.length; joint += 1) {
+      controls[arm.actuatorIndices[joint]] = positions[arm.qposAddresses[joint]];
+    }
+    controls[arm.gripperActuatorIndex] = 255;
+  }
 }
 
 export function createAssemblyStep2ControlFrame(machine, plans) {

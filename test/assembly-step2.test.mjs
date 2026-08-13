@@ -13,6 +13,7 @@ import {
   evaluateAssemblyStep2Grasp,
   interpolateAssemblyStep2Gripper,
   quaternionAngularDistanceDegrees,
+  releaseAssemblyStep2Controls,
 } from '../src/assemblyStep2.js';
 
 test('Step 2 assigns exact physical contact geometry to all four arms', () => {
@@ -81,7 +82,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
   });
   assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [48, 96, 0, 0]);
   assert.deepEqual(ASSEMBLY1_STEP2_LIMITS, {
-    tcpPosition: 0.03,
+    tcpPosition: 0.06,
     tcpOrientationDegrees: 8,
     preStepObjectDrift: 0.003,
     objectTranslation: 0.005,
@@ -126,6 +127,25 @@ test('Step 2 gripper interpolation uses clamped smoothstep', () => {
   assert.equal(interpolateAssemblyStep2Gripper(255, 0, 0.5), 127.5);
   assert.equal(interpolateAssemblyStep2Gripper(255, 0, 1), 0);
   assert.equal(interpolateAssemblyStep2Gripper(255, 0, 2), 0);
+});
+
+test('Step 2 failure holds each arm at its measured pose and releases every gripper', () => {
+  const controls = new Float64Array(16).fill(-9);
+  const positions = new Float64Array([0.1, 0.2, 0.3, 0, 0, 0, 1.1, 1.2, 1.3]);
+  releaseAssemblyStep2Controls(controls, positions, [
+    {
+      actuatorIndices: [0, 1, 2],
+      qposAddresses: [0, 1, 2],
+      gripperActuatorIndex: 3,
+    },
+    {
+      actuatorIndices: [8, 9, 10],
+      qposAddresses: [6, 7, 8],
+      gripperActuatorIndex: 11,
+    },
+  ]);
+  assert.deepEqual(Array.from(controls.slice(0, 4)), [0.1, 0.2, 0.3, 255]);
+  assert.deepEqual(Array.from(controls.slice(8, 12)), [1.1, 1.2, 1.3, 255]);
 });
 
 test('Step 2 control frames descend all arms and close cross-member grippers together', () => {

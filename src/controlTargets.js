@@ -47,6 +47,48 @@ export function createSO101Targets() {
   });
 }
 
+export function createSO101HomeLabTargets() {
+  const arms = createSO101Targets().map((target) => ({
+    ...target,
+    actuatorOffset: target.actuatorOffset + 6,
+    ik: {
+      ...target.ik,
+      actuatorIndices: shiftIndices(target.ik.actuatorIndices, 6),
+    },
+  }));
+  return [
+    ...arms,
+    {
+      key: 'g1',
+      label: 'G1',
+      prefix: 'room_g1_',
+      actuatorOffset: 0,
+      controlMode: 'planar-mobile',
+      mobility: {
+        actuatorIndices: [0, 1, 2],
+        yawJoint: 'home_lab_g1_yaw',
+        initialYawDegrees: 155,
+        linearSpeed: 0.42,
+        turnSpeed: 0.8,
+      },
+    },
+    {
+      key: 'go2Arm',
+      label: 'Go2 + Arm',
+      prefix: 'room_go2_',
+      actuatorOffset: 3,
+      controlMode: 'planar-mobile',
+      mobility: {
+        actuatorIndices: [3, 4, 5],
+        yawJoint: 'home_lab_go2_yaw',
+        initialYawDegrees: 150,
+        linearSpeed: 0.48,
+        turnSpeed: 0.9,
+      },
+    },
+  ];
+}
+
 export function createXLeRobotTargets() {
   return Array.from({ length: 2 }, (_, index) => ({
     key: `r${index}`,

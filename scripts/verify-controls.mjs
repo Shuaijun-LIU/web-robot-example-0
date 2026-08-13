@@ -42,10 +42,17 @@ const allScenes = [
   {
     key: 'so101HomeLab',
     label: 'SO101 Home Lab',
-    targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'],
+    targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4', 'G1', 'Go2 + Arm'],
+    targetKeys: ['r0', 'r1', 'r2', 'r3', 'g1', 'go2Arm'],
+    blockStarts: [6, 12, 18, 24, 0, 3],
+    blockSizes: [6, 6, 6, 6, 3, 3],
+    mobileBodies: [null, null, null, null, 'home_lab_g1_mobile_root', 'home_lab_go2_mobile_root'],
+    mobileYawJoints: [null, null, null, null, 'home_lab_g1_yaw', 'home_lab_go2_yaw'],
+    keyHoldMs: [300, 300, 300, 300, 1500, 1500],
     blockSize: 6,
     keyCode: 'KeyW',
     ik: true,
+    ikTargetCount: 4,
   },
   {
     key: 'xlerobotKitting',
@@ -78,6 +85,9 @@ const requestedKeys = new Set(
     .map((key) => key.trim()),
 );
 const scenes = allScenes.filter(({ key }) => requestedKeys.has(key));
+const requestedTargets = new Set(
+  (process.env.TARGETS ?? '').split(',').map((label) => label.trim()).filter(Boolean),
+);
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -143,31 +153,76 @@ try {
 
     for (let targetIndex = 0; targetIndex < scene.targets.length; targetIndex += 1) {
       const targetLabel = scene.targets[targetIndex];
+      if (requestedTargets.size > 0 && !requestedTargets.has(targetLabel)) continue;
       await targetSelector.selectOption({ label: targetLabel });
-      const targetKey = `r${targetIndex}`;
+      const targetKey = scene.targetKeys?.[targetIndex] ?? `r${targetIndex}`;
+      const needsIk = scene.ik && targetIndex < (scene.ikTargetCount ?? scene.targets.length);
       await page.waitForFunction(
         ({ key, needsIk }) => document.documentElement.dataset.controlTarget === key
           && (!needsIk || document.documentElement.dataset.ikSite === `${key}_tcp`),
-        { key: targetKey, needsIk: scene.ik },
+        { key: targetKey, needsIk },
         { timeout },
       );
+      const mobileBody = scene.mobileBodies?.[targetIndex];
+      if (mobileBody) {
+        await page.waitForFunction(
+          (key) => document.documentElement.dataset.mobileController === key,
+          targetKey,
+          { timeout },
+        );
+      }
 
       await page.evaluate(() => window.robotDemo.reset());
       await page.waitForTimeout(250);
+      const beforeBody = mobileBody
+        ? await page.evaluate((name) => window.robotDemo.getBodyPositions([name])[name], mobileBody)
+        : null;
       const beforeKeyboard = await page.evaluate(() => window.robotDemo.getCtrl());
       await page.keyboard.down(scene.keyCode);
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(scene.keyHoldMs?.[targetIndex] ?? 300);
+      const duringKeyboard = await page.evaluate(() => window.robotDemo.getCtrl());
       await page.keyboard.up(scene.keyCode);
       await page.waitForTimeout(100);
-      const afterKeyboard = await page.evaluate(() => window.robotDemo.getCtrl());
+      if (process.env.CONTROL_DEBUG === '1') {
+        console.log(`${scene.key}/${targetLabel} ctrl before=${JSON.stringify(beforeKeyboard)} during=${JSON.stringify(duringKeyboard)}`);
+      }
       assertSelectedBlock(
-        changedIndices(beforeKeyboard, afterKeyboard),
-        targetIndex * scene.blockSize,
-        scene.blockSize,
+        changedIndices(beforeKeyboard, duringKeyboard),
+        scene.blockStarts?.[targetIndex] ?? targetIndex * scene.blockSize,
+        scene.blockSizes?.[targetIndex] ?? scene.blockSize,
         `${scene.key}/${targetLabel}/keyboard`,
       );
+      if (mobileBody && beforeBody) {
+        const afterBody = await page.evaluate(
+          (name) => window.robotDemo.getBodyPositions([name])[name],
+          mobileBody,
+        );
+        const travel = Math.hypot(afterBody[0] - beforeBody[0], afterBody[1] - beforeBody[1]);
+        if (travel < 0.002) {
+          throw new Error(`${scene.key}/${targetLabel}: velocity controls did not move ${mobileBody}`);
+        }
 
-      if (scene.ik) {
+        const yawJoint = scene.mobileYawJoints[targetIndex];
+        await page.evaluate(() => window.robotDemo.reset());
+        await page.waitForTimeout(250);
+        const beforeYaw = await page.evaluate(
+          (name) => window.robotDemo.getJointPositions([name])[name],
+          yawJoint,
+        );
+        await page.keyboard.down('KeyA');
+        await page.waitForTimeout(scene.keyHoldMs?.[targetIndex] ?? 300);
+        await page.keyboard.up('KeyA');
+        await page.waitForTimeout(100);
+        const afterYaw = await page.evaluate(
+          (name) => window.robotDemo.getJointPositions([name])[name],
+          yawJoint,
+        );
+        if (Math.abs(afterYaw - beforeYaw) < 0.005) {
+          throw new Error(`${scene.key}/${targetLabel}: turn control did not rotate ${yawJoint}`);
+        }
+      }
+
+      if (needsIk) {
         await page.evaluate(() => window.robotDemo.reset());
         await page.waitForTimeout(250);
         const beforeIk = await page.evaluate(() => window.robotDemo.getCtrl());
@@ -176,13 +231,13 @@ try {
         const afterIk = await page.evaluate(() => window.robotDemo.getCtrl());
         assertSelectedBlock(
           changedIndices(beforeIk, afterIk),
-          targetIndex * scene.blockSize,
-          scene.blockSize,
+          scene.blockStarts?.[targetIndex] ?? targetIndex * scene.blockSize,
+          scene.blockSizes?.[targetIndex] ?? scene.blockSize,
           `${scene.key}/${targetLabel}/IK`,
         );
       }
 
-      console.log(`${scene.key}/${targetLabel}: keyboard${scene.ik ? ' + IK' : ''} PASS`);
+      console.log(`${scene.key}/${targetLabel}: keyboard${needsIk ? ' + IK' : ''} PASS`);
     }
   }
 

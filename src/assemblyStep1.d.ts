@@ -34,10 +34,16 @@ export function topDownTcpQuaternion(
 ): [number, number, number, number];
 export function smoothstep01(value: number): number;
 export function interpolateJointTargets(from: number[], to: number[], progress: number): number[];
-export function applyAssemblyJointGravityCompensation(
-  applied: Float64Array,
-  bias: Float64Array,
-  dofAddresses: number[],
+export function holdAssemblyJointState(
+  controls: Float64Array,
+  positions: Float64Array,
+  velocities: Float64Array,
+  arms: Array<{
+    actuatorIndices: readonly number[];
+    qposAddresses: readonly number[];
+    dofAddresses: readonly number[];
+    positions: readonly number[];
+  }>,
 ): void;
 export function selectAssemblyStep1Phase(elapsed: number): {
   phase: 'high' | 'final' | 'settling' | 'complete';

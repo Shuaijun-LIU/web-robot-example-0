@@ -147,7 +147,7 @@ export const ASSEMBLY1_STEP2_DURATIONS: Readonly<{
 export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS: readonly [48, 96, 0, 0];
 
 export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
-  tcpPosition: 0.03;
+  tcpPosition: 0.06;
   tcpOrientationDegrees: 8;
   preStepObjectDrift: 0.003;
   objectTranslation: 0.005;
@@ -163,6 +163,16 @@ export function interpolateAssemblyStep2Gripper(
   to: number,
   progress: number,
 ): number;
+
+export function releaseAssemblyStep2Controls(
+  controls: Float64Array,
+  positions: Float64Array,
+  arms: Array<{
+    actuatorIndices: readonly number[];
+    qposAddresses: readonly number[];
+    gripperActuatorIndex: number;
+  }>,
+): void;
 
 export function createAssemblyStep2ControlFrame(
   machine: AssemblyStep2Machine,

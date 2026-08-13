@@ -69,9 +69,13 @@ export function interpolateJointTargets(from, to, progress) {
   return from.map((value, index) => value + (to[index] - value) * eased);
 }
 
-export function applyAssemblyJointGravityCompensation(applied, bias, dofAddresses) {
-  for (const address of dofAddresses) {
-    applied[address] += bias[address];
+export function holdAssemblyJointState(controls, positions, velocities, arms) {
+  for (const arm of arms) {
+    for (let joint = 0; joint < arm.positions.length; joint += 1) {
+      controls[arm.actuatorIndices[joint]] = arm.positions[joint];
+      positions[arm.qposAddresses[joint]] = arm.positions[joint];
+      velocities[arm.dofAddresses[joint]] = 0;
+    }
   }
 }
 

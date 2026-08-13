@@ -29,15 +29,16 @@ export const SO101_HOME_LAB_LAYOUT: typeof SO101_GEARBOX_LAYOUT & {
     openSide: 'south';
   };
   protectedWorkcellRadius: number;
+  workcellCenter: [number, number];
   roomZones: {
     lounge: [number, number];
     office: [number, number];
     g1: [number, number];
     go2Arm: [number, number];
   };
-  staticRobots: {
-    g1: { rootBody: string; controlled: false };
-    go2Arm: { rootBody: string; controlled: false };
+  mobileRobots: {
+    g1: { rootBody: string; controlled: true };
+    go2Arm: { rootBody: string; controlled: true };
   };
 };
 

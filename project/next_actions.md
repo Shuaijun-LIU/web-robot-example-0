@@ -1,9 +1,9 @@
 # Next Actions
 
 ## Top priorities
-1. Review `docs/superpowers/specs/2026-08-13-assembly1-step2-physical-clamp-design.md`.
-2. After written-spec approval, create the detailed test-first Step 2 implementation plan without changing runtime code yet.
-3. Continue SO101 Gearbox and XLeRobot Kitting work independently; do not mix their files with the Assembly1 choreography change.
+1. User verifies that Assembly1 remains visible after Step 2 frame-contact verification fails.
+2. User verifies that Arm 2/4 no longer visibly oscillate after the extended Step 1 settling interval.
+3. Treat later bilateral-contact geometry tuning as separate from this crash/stability repair.
 
 ## Blocked
-- Assembly1 Step 2 implementation is intentionally blocked until the written physical-clamp specification is reviewed.
+- None for the current crash/stability repair.

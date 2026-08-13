@@ -97,6 +97,20 @@ test('both Assembly layouts strengthen physical finger contact without attachmen
   }
 });
 
+test('Assembly automation avoids delayed per-frame gravity-force feedback', async () => {
+  const assembly1Xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
+  const assembly2Xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
+  assert.doesNotMatch(assembly1Xml, /forcerange="-220 220"/);
+  assert.doesNotMatch(assembly2Xml, /forcerange="-220 220"/);
+
+  const [step1Controller, step2Controller] = await Promise.all([
+    readFile(new URL('../src/AssemblyStep1Controller.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../src/AssemblyStep2Controller.tsx', import.meta.url), 'utf8'),
+  ]);
+  assert.doesNotMatch(step1Controller, /qfrc_applied|qfrc_bias/);
+  assert.doesNotMatch(step2Controller, /qfrc_applied|qfrc_bias/);
+});
+
 test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geometry', async () => {
   const xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
   assert.match(

@@ -8,12 +8,12 @@ const {
   ASSEMBLY1_STEP1_ARMS,
   ASSEMBLY1_STEP1_PHASE_DURATION,
   ASSEMBLY1_STEP1_SETTLE_DURATION,
-  applyAssemblyJointGravityCompensation,
   interpolateJointTargets,
   isCompleteAssemblyStep1Plan,
   selectAssemblyStep1Phase,
   smoothstep01,
   topDownTcpQuaternion,
+  holdAssemblyJointState,
 } = assemblyStep1;
 
 test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () => {
@@ -111,12 +111,19 @@ test('Assembly1 Step 1 joint interpolation clamps and eases phase progress', () 
   assert.deepEqual(interpolateJointTargets([0, 10], [10, 20], 2), [10, 20]);
 });
 
-test('Assembly1 Step 1 compensates only the commanded robot joint DOFs', () => {
-  assert.equal(typeof applyAssemblyJointGravityCompensation, 'function');
-  const applied = new Float64Array([0, 0.5, 0, -0.5, 0]);
-  const bias = new Float64Array([10, 20, 30, 40, 50]);
-  applyAssemblyJointGravityCompensation(applied, bias, [1, 3]);
-  assert.deepEqual(Array.from(applied), [0, 20.5, 0, 39.5, 0]);
+test('Assembly1 can hold only selected robot joints while waiting for Step 2', () => {
+  const controls = new Float64Array([9, 9, 9, 9]);
+  const positions = new Float64Array([1, 2, 3, 4]);
+  const velocities = new Float64Array([1, 2, 3, 4, 5]);
+  holdAssemblyJointState(controls, positions, velocities, [{
+    actuatorIndices: [0, 2],
+    qposAddresses: [1, 3],
+    dofAddresses: [1, 3],
+    positions: [2.5, 4.5],
+  }]);
+  assert.deepEqual(Array.from(controls), [2.5, 9, 4.5, 9]);
+  assert.deepEqual(Array.from(positions), [1, 2.5, 3, 4.5]);
+  assert.deepEqual(Array.from(velocities), [1, 0, 3, 0, 5]);
 });
 
 test('Assembly1 Step 1 stages motion, settles, and accepts only an atomic four-arm plan', () => {

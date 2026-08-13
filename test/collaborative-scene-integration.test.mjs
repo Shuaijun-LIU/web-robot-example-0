@@ -23,7 +23,7 @@ test('runtime registers all collaboration layouts as additional scenes', async (
   assert.match(source, /SO101_HOME_LAB_LAYOUT/);
   assert.match(source, /so101HomeLab:\s*{[\s\S]*?label:\s*'SO101 Home Lab'/);
   assert.match(source, /so101HomeLab:\s*{[\s\S]*?controlFamily:\s*'so101'/);
-  assert.match(source, /so101HomeLab:\s*{[\s\S]*?controlTargets:\s*createSO101Targets\(\)/);
+  assert.match(source, /so101HomeLab:\s*{[\s\S]*?gridSize:\s*10[\s\S]*?gridDivisions:\s*100[\s\S]*?controlTargets:\s*createSO101HomeLabTargets\(\)/);
   assert.match(source, /xlerobotKitting:\s*{[\s\S]*?label:\s*'XLeRobot Kitting'/);
   assert.match(source, /xlerobotKitting:\s*{[\s\S]*?controlFamily:\s*'xlerobot'/);
   assert.match(source, /xlerobotKitting:\s*{[\s\S]*?controlTargets:\s*createXLeRobotTargets\(\)/);
@@ -77,7 +77,7 @@ test('browser capture and per-device control checks include both new scenes', as
   assert.match(capture, /key:\s*'so101HomeLab',[\s\S]*?label:\s*'SO101 Home Lab',[\s\S]*?instances:\s*4/);
   assert.match(capture, /key:\s*'xlerobotKitting',[\s\S]*?label:\s*'XLeRobot Kitting',[\s\S]*?instances:\s*2/);
   assert.match(controls, /key:\s*'so101Gearbox',[\s\S]*?targets:\s*\['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'\]/);
-  assert.match(controls, /key:\s*'so101HomeLab',[\s\S]*?targets:\s*\['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'\]/);
+  assert.match(controls, /key:\s*'so101HomeLab',[\s\S]*?targets:\s*\['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4', 'G1', 'Go2 \+ Arm'\]/);
   assert.match(controls, /key:\s*'xlerobotKitting',[\s\S]*?targets:\s*\['Robot 1', 'Robot 2'\]/);
   assert.match(controls, /process\.env\.SCENES/);
 });

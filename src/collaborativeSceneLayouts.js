@@ -255,6 +255,15 @@ const SO101_TASK_STATIONS = {
   coverAndPins: [-0.21, 0, 0.809],
 };
 
+const SO101_HOME_LAB_WORKCELL_OFFSET = [-2.25, -1.85];
+const SO101_HOME_LAB_TASK_STATIONS = {
+  fixture: [-2.25, -1.85, 0.81],
+  housing: [-2.25, -1.64, 0.805],
+  shaftsAndSpacers: [-2.04, -1.85, 0.82],
+  gears: [-2.25, -2.06, 0.814],
+  coverAndPins: [-2.46, -1.85, 0.809],
+};
+
 const SO101_REACH_ENVELOPE = {
   baseRadius: 0.42,
   nominalChainReach: 0.455,
@@ -270,8 +279,11 @@ function so101GearboxPatches({ includeHomeLab = false } = {}) {
   const roomWorld = includeHomeLab
     ? SO101_HOME_LAB_ROOM_XML + SO101_HOME_LAB_STATIC_ROBOTS_XML
     : '';
+  const workcellWorld = includeHomeLab
+    ? `<frame pos="${SO101_HOME_LAB_WORKCELL_OFFSET.join(' ')} 0">${SO101_ARM_FRAMES_XML}${SO101_GEARBOX_WORKCELL_XML}</frame>`
+    : SO101_ARM_FRAMES_XML + SO101_GEARBOX_WORKCELL_XML;
 
-  return [
+  const patches = [
     {
       target: 'objects_SO101.xml',
       inject: '<model name="so101_model" file="SO101.xml"/>' + roomAssets,
@@ -281,7 +293,7 @@ function so101GearboxPatches({ includeHomeLab = false } = {}) {
       target: 'objects_SO101.xml',
       replace: [
         SO101_PARENT_WORLDBODY,
-        `  <worldbody>${SO101_ARM_FRAMES_XML}${SO101_GEARBOX_WORKCELL_XML}${roomWorld}\n  </worldbody>`,
+        `  <worldbody>${workcellWorld}${roomWorld}\n  </worldbody>`,
       ],
     },
     {
@@ -304,16 +316,30 @@ function so101GearboxPatches({ includeHomeLab = false } = {}) {
       ],
     },
   ];
+
+  if (includeHomeLab) {
+    patches.push({
+      target: 'objects_SO101.xml',
+      replace: [
+        '\n</mujoco>',
+        `${SO101_HOME_LAB_MOBILE_ACTUATORS_XML}\n</mujoco>`,
+      ],
+    });
+  }
+
+  return patches;
 }
 
-function so101GearboxSceneObjects(floorHalfSize, floorRgba) {
+function so101GearboxSceneObjects(floorHalfSize, floorRgba, workcellOffset = [0, 0]) {
+  const [offsetX, offsetY] = workcellOffset;
+  const shifted = ([x, y, z]) => [x + offsetX, y + offsetY, z];
   return [
     fixedBox('gearbox_floor', [...floorHalfSize, 0.005], [0, 0, -0.005], floorRgba),
-    fixedBox('gearbox_work_surface', [0.52, 0.52, 0.035], [0, 0, 0.765], [0.31, 0.29, 0.25, 1]),
-    fixedBox('gearbox_table_leg_a', [0.035, 0.035, 0.365], [-0.44, -0.44, 0.365], [0.18, 0.18, 0.17, 1]),
-    fixedBox('gearbox_table_leg_b', [0.035, 0.035, 0.365], [0.44, -0.44, 0.365], [0.18, 0.18, 0.17, 1]),
-    fixedBox('gearbox_table_leg_c', [0.035, 0.035, 0.365], [-0.44, 0.44, 0.365], [0.18, 0.18, 0.17, 1]),
-    fixedBox('gearbox_table_leg_d', [0.035, 0.035, 0.365], [0.44, 0.44, 0.365], [0.18, 0.18, 0.17, 1]),
+    fixedBox('gearbox_work_surface', [0.52, 0.52, 0.035], shifted([0, 0, 0.765]), [0.31, 0.29, 0.25, 1]),
+    fixedBox('gearbox_table_leg_a', [0.035, 0.035, 0.365], shifted([-0.44, -0.44, 0.365]), [0.18, 0.18, 0.17, 1]),
+    fixedBox('gearbox_table_leg_b', [0.035, 0.035, 0.365], shifted([0.44, -0.44, 0.365]), [0.18, 0.18, 0.17, 1]),
+    fixedBox('gearbox_table_leg_c', [0.035, 0.035, 0.365], shifted([-0.44, 0.44, 0.365]), [0.18, 0.18, 0.17, 1]),
+    fixedBox('gearbox_table_leg_d', [0.035, 0.035, 0.365], shifted([0.44, 0.44, 0.365]), [0.18, 0.18, 0.17, 1]),
   ];
 }
 
@@ -338,25 +364,32 @@ export const SO101_GEARBOX_LAYOUT = {
 
 export const SO101_HOME_LAB_LAYOUT = {
   ...SO101_GEARBOX_SHARED,
+  workcellCenter: SO101_HOME_LAB_WORKCELL_OFFSET,
+  homeJoints: [0, 0, 0, 0, 0, 0, ...repeatPose(SO101_HOME, 4)],
+  taskStations: SO101_HOME_LAB_TASK_STATIONS,
   roomBounds: {
     halfWidth: 5,
     halfDepth: 4.2,
     wallHeight: 2.7,
     openSide: 'south',
   },
-  protectedWorkcellRadius: 1.6,
+  protectedWorkcellRadius: 1.15,
   roomZones: {
     lounge: [-3.55, 1.55],
     office: [2.65, 3.35],
     g1: [2.45, -0.9],
     go2Arm: [3.55, -2.35],
   },
-  staticRobots: {
-    g1: { rootBody: 'room_g1_pelvis', controlled: false },
-    go2Arm: { rootBody: 'room_go2_base', controlled: false },
+  mobileRobots: {
+    g1: { rootBody: 'home_lab_g1_mobile_root', controlled: true },
+    go2Arm: { rootBody: 'home_lab_go2_mobile_root', controlled: true },
   },
   xmlPatches: so101GearboxPatches({ includeHomeLab: true }),
-  sceneObjects: so101GearboxSceneObjects([5, 4.2], [0.16, 0.15, 0.14, 1]),
+  sceneObjects: so101GearboxSceneObjects(
+    [5, 4.2],
+    [0.16, 0.15, 0.14, 1],
+    SO101_HOME_LAB_WORKCELL_OFFSET,
+  ),
   camera: { position: [0, -9.2, 4.8], fov: 48 },
   orbitTarget: [0, 0.15, 1.05],
 };
@@ -809,6 +842,7 @@ export const XLEROBOT_KITTING_LAYOUT = {
   orbitTarget: [0, 0.08, 0.72],
 };
 import {
+  SO101_HOME_LAB_MOBILE_ACTUATORS_XML,
   SO101_HOME_LAB_ROOM_XML,
   SO101_HOME_LAB_STATIC_ROBOTS_XML,
 } from './so101HomeLabEnvironment.js';

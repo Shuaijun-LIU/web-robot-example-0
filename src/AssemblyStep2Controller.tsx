@@ -11,7 +11,7 @@ import {
 import type { MujocoData, MujocoModel } from 'mujoco-react';
 import * as THREE from 'three';
 
-import { ASSEMBLY1_STEP1_ARMS, applyAssemblyJointGravityCompensation } from './assemblyStep1.js';
+import { ASSEMBLY1_STEP1_ARMS } from './assemblyStep1.js';
 import {
   ASSEMBLY1_STEP2_ARMS,
   ASSEMBLY1_STEP2_LIMITS,
@@ -20,6 +20,7 @@ import {
   createAssemblyStep2Machine,
   evaluateAssemblyStep2Grasp,
   quaternionAngularDistanceDegrees,
+  releaseAssemblyStep2Controls,
 } from './assemblyStep2.js';
 import type {
   AssemblyPose,
@@ -52,7 +53,7 @@ interface RuntimeArmPlan extends AssemblyStep2ArmPlan {
   actuatorIndices: number[];
   siteId: number;
   gripperActuatorIndex: number;
-  dofAddresses: number[];
+  qposAddresses: number[];
   fingerQposAddresses: [number, number];
   leftFingerBodyId: number;
   rightFingerBodyId: number;
@@ -216,7 +217,7 @@ function createRuntimePlan(
       actuatorIndices: [...arm.actuatorIndices],
       siteId,
       gripperActuatorIndex: arm.gripperActuatorIndex,
-      dofAddresses: jointIds.map((jointId) => model.jnt_dofadr[jointId]),
+      qposAddresses: jointIds.map((jointId) => model.jnt_qposadr[jointId]),
       fingerQposAddresses: [
         model.jnt_qposadr[fingerJointIds[0]],
         model.jnt_qposadr[fingerJointIds[1]],
@@ -417,16 +418,34 @@ export function AssemblyStep2Controller({
         failure: nextMachine.failure,
       });
     }
-    if (nextMachine.phase !== 'error') {
-      lastControlFrameRef.current = createAssemblyStep2ControlFrame(nextMachine, runtime.arms);
+    if (nextMachine.phase === 'error') {
+      releaseAssemblyStep2Controls(data.ctrl, data.qpos, runtime.arms);
+      diagnosticsRef.current = {
+        phase: nextMachine.phase,
+        phaseElapsed: nextMachine.phaseElapsed,
+        continuousValidSeconds: nextMachine.continuousValidSeconds,
+        failure: nextMachine.failure,
+        simulationTime: data.time,
+        arms: samples.map(({ arm, measurements, verdict }, index) => ({
+          armKey: arm.armKey,
+          targetBody: arm.targetBody,
+          ...measurements,
+          currentContactSeconds: currentContactSecondsRef.current[index],
+          maximumContactSeconds: maximumContactSecondsRef.current[index],
+          gripperControl: data.ctrl[arm.gripperActuatorIndex],
+          closureStartedAt: closureStartedAtRef.current[index],
+          verdict,
+        })),
+      };
+      ownershipRef.current = 'manual';
+      runtimeRef.current = null;
+      machineRef.current = null;
+      lastControlFrameRef.current = null;
+      return;
     }
+    lastControlFrameRef.current = createAssemblyStep2ControlFrame(nextMachine, runtime.arms);
     const controlFrame = lastControlFrameRef.current;
     if (!controlFrame) return;
-    applyAssemblyJointGravityCompensation(
-      data.qfrc_applied,
-      data.qfrc_bias,
-      runtime.arms.flatMap((arm) => arm.dofAddresses),
-    );
     for (let index = 0; index < runtime.arms.length; index += 1) {
       const arm = runtime.arms[index];
       const controls = controlFrame.arms[index];
