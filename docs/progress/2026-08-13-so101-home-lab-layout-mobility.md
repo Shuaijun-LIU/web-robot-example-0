@@ -17,15 +17,20 @@ Date: 2026-08-13
   now stand directly on the room floor.
 - Rebuilt the corner service cart undercarriage with four floor-contacting
   wheels; each wheel center is at 0.075 m with a 0.075 m radius.
+- Rebuilt both office-chair armrests with front/rear supports, longitudinal
+  rails, and separate padded tops instead of unsupported vertical sticks.
+- Widened the TV console and refitted the complete media group: the TV stand
+  and both speakers now share the 0.685 m cabinet-top support elevation, remain
+  inside the cabinet footprint, and keep 0.10 m clearance from the TV panel.
 
 ## Verification evidence
 
-- MuJoCo 3.3.8: 148 bodies, 614 geoms, 30 actuators, 121 qpos.
+- MuJoCo 3.3.8: 148 bodies, 620 geoms, 30 actuators, 121 qpos.
 - Initial penetration: 0 / 0 contacts.
 - Four SO101 roots compile around the translated center and retain their TCP
   positions relative to the task island.
 - G1 and Go2 + Arm browser W/S translation and A/D yaw checks: PASS.
-- Full regression: 76 / 76 tests passed; TypeScript and production build passed.
+- Full regression: 77 / 77 tests passed; TypeScript and production build passed.
 - Screenshot: `artifacts/screenshots/so101-home-lab.png`.
 
 The mobility layer is simulated planar whole-body motion for the fixed-pose

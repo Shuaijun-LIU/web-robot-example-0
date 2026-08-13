@@ -16,6 +16,19 @@ function patchText(layout) {
     .join('\n');
 }
 
+function namedXmlTag(xml, name) {
+  const match = xml.match(new RegExp(`<[^>]+name="${name}"[^>]*>`));
+  assert.ok(match, `missing MJCF element ${name}`);
+  return match[0];
+}
+
+function vectorAttribute(xml, name, attribute) {
+  const tag = namedXmlTag(xml, name);
+  const match = tag.match(new RegExp(`${attribute}="([^"]+)"`));
+  assert.ok(match, `missing ${attribute} on ${name}`);
+  return match[1].trim().split(/\s+/).map(Number);
+}
+
 test('new collaboration layouts do not mutate the original SO101 and XLeRobot scenes', () => {
   assert.notStrictEqual(SO101_GEARBOX_LAYOUT, SO101_LAYOUT);
   assert.notStrictEqual(XLEROBOT_KITTING_LAYOUT, XLEROBOT_LAYOUT);
@@ -540,6 +553,58 @@ test('SO101 Home Lab exposes detailed residential, office, and robot-service obj
       `service cart wheel ${wheel} must exist and touch the floor`,
     );
   }
+});
+
+test('SO101 Home Lab chair has complete armrests and media equipment sits on the console', () => {
+  const xml = patchText(SO101_HOME_LAB_LAYOUT);
+  for (const name of [
+    'home_lab_office_chair_arm_support_front_left',
+    'home_lab_office_chair_arm_support_rear_left',
+    'home_lab_office_chair_arm_support_front_right',
+    'home_lab_office_chair_arm_support_rear_right',
+    'home_lab_office_chair_arm_rail_left',
+    'home_lab_office_chair_arm_rail_right',
+    'home_lab_office_chair_arm_pad_left',
+    'home_lab_office_chair_arm_pad_right',
+  ]) {
+    namedXmlTag(xml, name);
+  }
+
+  const consolePosition = vectorAttribute(xml, 'home_lab_tv_console', 'pos');
+  const consoleTopPosition = vectorAttribute(xml, 'home_lab_tv_console_top', 'pos');
+  const consoleTopSize = vectorAttribute(xml, 'home_lab_tv_console_top', 'size');
+  const consoleTopElevation = consolePosition[2] + consoleTopPosition[2] + consoleTopSize[2];
+  const consoleX = [
+    consolePosition[0] - consoleTopSize[0],
+    consolePosition[0] + consoleTopSize[0],
+  ];
+  const consoleY = [
+    consolePosition[1] - consoleTopSize[1],
+    consolePosition[1] + consoleTopSize[1],
+  ];
+
+  const tvPosition = vectorAttribute(xml, 'home_lab_tv', 'pos');
+  const tvStandPosition = vectorAttribute(xml, 'home_lab_tv_stand', 'pos');
+  const tvStandSize = vectorAttribute(xml, 'home_lab_tv_stand', 'size');
+  const tvPanelSize = vectorAttribute(xml, 'home_lab_tv_panel', 'size');
+  const tvStandBottom = tvPosition[2] + tvStandPosition[2] - tvStandSize[2];
+  assert.ok(Math.abs(tvStandBottom - consoleTopElevation) < 1e-9);
+  assert.ok(tvPosition[0] - tvStandSize[0] >= consoleX[0]);
+  assert.ok(tvPosition[0] + tvStandSize[0] <= consoleX[1]);
+
+  const speakerRanges = ['left', 'right'].map((side) => {
+    const position = vectorAttribute(xml, `home_lab_tv_${side}_speaker`, 'pos');
+    const size = vectorAttribute(xml, `home_lab_tv_${side}_speaker_case`, 'size');
+    assert.ok(Math.abs(position[2] - size[2] - consoleTopElevation) < 1e-9);
+    assert.ok(position[0] - size[0] >= consoleX[0]);
+    assert.ok(position[0] + size[0] <= consoleX[1]);
+    assert.ok(position[1] - size[1] >= consoleY[0]);
+    assert.ok(position[1] + size[1] <= consoleY[1]);
+    return [position[1] - size[1], position[1] + size[1]];
+  });
+  const tvPanelY = [tvPosition[1] - tvPanelSize[1], tvPosition[1] + tvPanelSize[1]];
+  assert.ok(speakerRanges[0][1] < tvPanelY[0], 'left speaker must clear the TV panel');
+  assert.ok(speakerRanges[1][0] > tvPanelY[1], 'right speaker must clear the TV panel');
 });
 
 test('SO101 Home Lab attaches G1 and Go2 arm models to actuated planar mobile roots', () => {

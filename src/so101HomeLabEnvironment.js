@@ -82,26 +82,26 @@ export const SO101_HOME_LAB_ROOM_XML = `
       <geom name="home_lab_sofa_leg_4" type="box" pos="0.27 0.78 0.08" size="0.045 0.045 0.08" rgba="0.18 0.17 0.15 1" contype="0" conaffinity="0"/>
     </body>
     <body name="home_lab_tv_console" pos="-1.82 1.35 0">
-      <geom name="home_lab_tv_console_case" type="box" pos="0 0 0.31" size="0.20 0.78 0.31" rgba="0.48 0.38 0.29 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_tv_console_top" type="box" pos="0 0 0.65" size="0.22 0.82 0.035" rgba="0.30 0.27 0.23 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_tv_console_door_1" type="box" pos="-0.208 -0.38 0.34" size="0.010 0.33 0.24" rgba="0.61 0.49 0.36 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_tv_console_door_2" type="box" pos="-0.208 0.38 0.34" size="0.010 0.33 0.24" rgba="0.61 0.49 0.36 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_tv_console_handle_1" type="capsule" fromto="-0.225 -0.54 0.35 -0.225 -0.22 0.35" size="0.008" rgba="0.18 0.19 0.18 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_tv_console_handle_2" type="capsule" fromto="-0.225 0.22 0.35 -0.225 0.54 0.35" size="0.008" rgba="0.18 0.19 0.18 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_tv_console_case" type="box" pos="0 0 0.31" size="0.20 1.02 0.31" rgba="0.48 0.38 0.29 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_tv_console_top" type="box" pos="0 0 0.65" size="0.22 1.08 0.035" rgba="0.30 0.27 0.23 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_tv_console_door_1" type="box" pos="-0.208 -0.52 0.34" size="0.010 0.44 0.24" rgba="0.61 0.49 0.36 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_tv_console_door_2" type="box" pos="-0.208 0.52 0.34" size="0.010 0.44 0.24" rgba="0.61 0.49 0.36 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_tv_console_handle_1" type="capsule" fromto="-0.225 -0.76 0.35 -0.225 -0.36 0.35" size="0.008" rgba="0.18 0.19 0.18 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_tv_console_handle_2" type="capsule" fromto="-0.225 0.36 0.35 -0.225 0.76 0.35" size="0.008" rgba="0.18 0.19 0.18 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_tv" pos="-2.05 1.35 1.17">
+    <body name="home_lab_tv" pos="-1.82 1.35 1.20">
       <geom name="home_lab_tv_panel" type="box" size="0.045 0.72 0.42" rgba="0.07 0.08 0.08 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_screen" type="box" pos="-0.050 0 0.01" size="0.007 0.66 0.355" rgba="0.18 0.26 0.29 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_screen_horizon" type="box" pos="-0.059 0 -0.08" size="0.003 0.52 0.07" rgba="0.40 0.48 0.42 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_stand" type="box" pos="0 0 -0.48" size="0.09 0.22 0.035" rgba="0.13 0.14 0.14 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_neck" type="box" pos="0 0 -0.42" size="0.035 0.035 0.08" rgba="0.13 0.14 0.14 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_tv_left_speaker" pos="-2.08 0.48 0.72">
+    <body name="home_lab_tv_left_speaker" pos="-1.88 0.43 0.965">
       <geom name="home_lab_tv_left_speaker_case" type="box" size="0.12 0.10 0.28" rgba="0.12 0.13 0.13 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_left_speaker_driver_1" type="cylinder" pos="-0.105 0 0.10" size="0.055 0.010" euler="0 90 0" rgba="0.35 0.36 0.34 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_left_speaker_driver_2" type="cylinder" pos="-0.105 0 -0.11" size="0.075 0.010" euler="0 90 0" rgba="0.27 0.28 0.27 1" contype="0" conaffinity="0"/>
     </body>
-    <body name="home_lab_tv_right_speaker" pos="-2.08 2.22 0.72">
+    <body name="home_lab_tv_right_speaker" pos="-1.88 2.27 0.965">
       <geom name="home_lab_tv_right_speaker_case" type="box" size="0.12 0.10 0.28" rgba="0.12 0.13 0.13 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_right_speaker_driver_1" type="cylinder" pos="-0.105 0 0.10" size="0.055 0.010" euler="0 90 0" rgba="0.35 0.36 0.34 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_tv_right_speaker_driver_2" type="cylinder" pos="-0.105 0 -0.11" size="0.075 0.010" euler="0 90 0" rgba="0.27 0.28 0.27 1" contype="0" conaffinity="0"/>
@@ -184,8 +184,14 @@ export const SO101_HOME_LAB_ROOM_XML = `
       <geom name="home_lab_office_chair_back" type="box" pos="0 0.29 0.91" size="0.36 0.07 0.36" euler="-8 0 0" rgba="0.25 0.30 0.30 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_office_chair_mesh_1" type="capsule" fromto="-0.27 0.215 0.70 0.27 0.215 0.70" size="0.009" rgba="0.45 0.49 0.47 1" contype="0" conaffinity="0"/>
       <geom name="home_lab_office_chair_mesh_2" type="capsule" fromto="-0.27 0.225 0.90 0.27 0.225 0.90" size="0.009" rgba="0.45 0.49 0.47 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_office_chair_arm_left" type="capsule" fromto="-0.32 0 0.62 -0.32 0 0.78" size="0.025" rgba="0.19 0.20 0.20 1" contype="0" conaffinity="0"/>
-      <geom name="home_lab_office_chair_arm_right" type="capsule" fromto="0.32 0 0.62 0.32 0 0.78" size="0.025" rgba="0.19 0.20 0.20 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_support_front_left" type="capsule" fromto="-0.40 -0.20 0.59 -0.40 -0.20 0.72" size="0.022" rgba="0.19 0.20 0.20 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_support_rear_left" type="capsule" fromto="-0.40 0.12 0.59 -0.40 0.12 0.72" size="0.022" rgba="0.19 0.20 0.20 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_support_front_right" type="capsule" fromto="0.40 -0.20 0.59 0.40 -0.20 0.72" size="0.022" rgba="0.19 0.20 0.20 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_support_rear_right" type="capsule" fromto="0.40 0.12 0.59 0.40 0.12 0.72" size="0.022" rgba="0.19 0.20 0.20 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_rail_left" type="box" pos="-0.40 -0.04 0.755" size="0.055 0.22 0.035" rgba="0.18 0.20 0.20 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_rail_right" type="box" pos="0.40 -0.04 0.755" size="0.055 0.22 0.035" rgba="0.18 0.20 0.20 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_pad_left" type="box" pos="-0.40 -0.04 0.795" size="0.062 0.205 0.015" rgba="0.37 0.43 0.42 1" contype="0" conaffinity="0"/>
+      <geom name="home_lab_office_chair_arm_pad_right" type="box" pos="0.40 -0.04 0.795" size="0.062 0.205 0.015" rgba="0.37 0.43 0.42 1" contype="0" conaffinity="0"/>
     </body>
     <body name="home_lab_wall_organizer" pos="2.62 4.105 1.83">
       <geom name="home_lab_wall_organizer_board" type="box" size="0.78 0.015 0.38" rgba="0.35 0.38 0.36 1" contype="0" conaffinity="0"/>
