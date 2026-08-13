@@ -11,6 +11,18 @@ const allScenes = [
   { key: 'so101', label: 'SO101', instances: 4 },
   { key: 'xlerobot', label: 'XLeRobot', instances: 2 },
   {
+    key: 'so101Gearbox',
+    label: 'SO101 Gearbox',
+    instances: 4,
+    screenshotName: 'so101-gearbox',
+  },
+  {
+    key: 'xlerobotKitting',
+    label: 'XLeRobot Kitting',
+    instances: 2,
+    screenshotName: 'xlerobot-kitting',
+  },
+  {
     key: 'frankaAssembly1',
     label: 'Franka Assembly1',
     instances: 4,

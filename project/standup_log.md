@@ -9,3 +9,6 @@
 - 2026-08-13 10:30 CST — Implemented a symmetric double-face Assembly1 hammer, full-height XLeRobot rack collision, and contact-only Panda grip tuning. Unsupported gravity-hold checks cover screwdriver, torque driver, and hammer in both assembly variants.
 - 2026-08-13 10:30 CST — Recorded detailed next-scene plans for SO101 precision gearbox assembly and XLeRobot mobile kitting/handover.
 - 2026-08-13 10:35 CST — Browser-verified all 18 selectable control targets, drove XLeRobot Robot 1 into the table stop with 1.9 mm visible clearance, and made screenshot/control runners independent of the page's Assembly1 default.
+- 2026-08-13 05:19 UTC
+  - What: Implemented and browser-verified Assembly1 Step 1: four Panda arms move through offline-validated IK joint waypoints to distinct pre-grasp stations; all grippers remain open and task objects are not scripted.
+  - Next: User visually reviews artifacts/screenshots/franka-assembly1-step1.png before any Step 2 grasp/contact behavior is designed.

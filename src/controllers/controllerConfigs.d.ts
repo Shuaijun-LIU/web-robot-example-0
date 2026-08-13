@@ -6,6 +6,9 @@ export type GripperBinding = Record<
   { actuator: string; toggle: [number, number] }
 >;
 
-export function getFrankaGripperBinding(target: ControlTarget): GripperBinding;
+export function getFrankaGripperBinding(
+  target: ControlTarget,
+  initiallyOpen?: boolean,
+): GripperBinding;
 export function createSO101ControllerConfig(actuatorOffset: number): ArmControllerConfig;
 export function createXLeRobotControllerConfig(actuatorOffset: number): ArmControllerConfig;

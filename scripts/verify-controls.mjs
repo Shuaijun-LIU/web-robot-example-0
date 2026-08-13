@@ -32,6 +32,22 @@ const scenes = [
     ik: false,
   },
   {
+    key: 'so101Gearbox',
+    label: 'SO101 Gearbox',
+    targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'],
+    blockSize: 6,
+    keyCode: 'KeyW',
+    ik: true,
+  },
+  {
+    key: 'xlerobotKitting',
+    label: 'XLeRobot Kitting',
+    targets: ['Robot 1', 'Robot 2'],
+    blockSize: 16,
+    keyCode: 'KeyR',
+    ik: false,
+  },
+  {
     key: 'frankaAssembly1',
     label: 'Franka Assembly1',
     targets: ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'],

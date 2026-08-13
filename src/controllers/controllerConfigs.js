@@ -8,12 +8,12 @@ const XLEROBOT_HOME = [
   0, 0,
 ];
 
-export function getFrankaGripperBinding(target) {
+export function getFrankaGripperBinding(target, initiallyOpen = false) {
   if (!target.gripperActuator) {
     throw new Error(`Control target ${target.key} has no Franka gripper actuator`);
   }
   return {
-    v: { actuator: target.gripperActuator, toggle: [0, 255] },
+    v: { actuator: target.gripperActuator, toggle: initiallyOpen ? [255, 0] : [0, 255] },
   };
 }
 

@@ -44,6 +44,7 @@ export interface SelectedIkControllerResult {
 export function useSelectedIkController(
   target: ControlTarget,
   resetGeneration: number,
+  automationActive = false,
 ): SelectedIkControllerResult {
   const simulation = useMujoco();
   const { mujoco } = useMujocoWasm();
@@ -96,8 +97,16 @@ export function useSelectedIkController(
     syncTargetToSiteApi();
   }, [resetGeneration, syncTargetToSiteApi]);
 
+  useEffect(() => {
+    if (!automationActive) return;
+    ikEnabledRef.current = false;
+    ikCalculatingRef.current = false;
+  }, [automationActive]);
+
   useBeforePhysicsStep((model, data) => {
     if (
+      automationActive
+      ||
       !mujoco ||
       !target.ik ||
       !ikEnabledRef.current ||

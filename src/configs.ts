@@ -10,6 +10,10 @@ import {
   FRANKA_ASSEMBLY2_LAYOUT,
 } from './frankaAssemblyLayouts.js';
 import {
+  SO101_GEARBOX_LAYOUT,
+  XLEROBOT_KITTING_LAYOUT,
+} from './collaborativeSceneLayouts.js';
+import {
   createFrankaTargets,
   createSO101Targets,
   createXLeRobotTargets,
@@ -78,6 +82,37 @@ export const robots: Record<string, RobotEntry> = {
     },
     camera: XLEROBOT_LAYOUT.camera,
     orbitTarget: XLEROBOT_LAYOUT.orbitTarget,
+    controlTargets: createXLeRobotTargets(),
+  },
+
+  so101Gearbox: {
+    label: 'SO101 Gearbox',
+    controlFamily: 'so101',
+    config: {
+      src: XLEROBOT_BASE,
+      sceneFile: 'objects_SO101.xml',
+      homeJoints: SO101_GEARBOX_LAYOUT.homeJoints,
+      xmlPatches: SO101_GEARBOX_LAYOUT.xmlPatches,
+      sceneObjects: SO101_GEARBOX_LAYOUT.sceneObjects,
+    },
+    camera: SO101_GEARBOX_LAYOUT.camera,
+    orbitTarget: SO101_GEARBOX_LAYOUT.orbitTarget,
+    gizmoScale: 0.08,
+    controlTargets: createSO101Targets(),
+  },
+
+  xlerobotKitting: {
+    label: 'XLeRobot Kitting',
+    controlFamily: 'xlerobot',
+    config: {
+      src: XLEROBOT_BASE,
+      sceneFile: 'objects.xml',
+      homeJoints: XLEROBOT_KITTING_LAYOUT.homeJoints,
+      xmlPatches: XLEROBOT_KITTING_LAYOUT.xmlPatches,
+      sceneObjects: XLEROBOT_KITTING_LAYOUT.sceneObjects,
+    },
+    camera: XLEROBOT_KITTING_LAYOUT.camera,
+    orbitTarget: XLEROBOT_KITTING_LAYOUT.orbitTarget,
     controlTargets: createXLeRobotTargets(),
   },
 

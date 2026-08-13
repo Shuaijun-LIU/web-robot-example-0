@@ -11,6 +11,8 @@ import {
   useSelectionHighlight,
   useMujoco,
   useGravityCompensation,
+  findBodyByName,
+  findSiteByName,
 } from 'mujoco-react';
 import type { MujocoSimAPI } from 'mujoco-react';
 import { robots } from './configs';
@@ -22,6 +24,9 @@ import { useSelectedIkController } from './controllers/useSelectedIkController';
 import { useClickSelect } from './useClickSelect';
 import { KeyboardHelp } from './KeyboardHelp';
 import { GitHubLink } from './GitHubLink';
+import { AssemblyStep1Controller } from './AssemblyStep1Controller';
+import { AssemblyStep1Panel } from './AssemblyStep1Panel';
+import type { AssemblyStep1Status } from './assemblyStep1.js';
 
 function LoadingOverlay() {
   const sim = useMujoco();
@@ -72,20 +77,35 @@ function ClickSelectOverlay() {
 
 /** Selection-aware IK and keyboard controllers for the active physical instance. */
 function SceneChildren({
+  robotKey,
   controlFamily,
   target,
   resetGeneration,
   showGizmo,
   gizmoScale,
+  assemblyStep1RequestId,
+  assemblyStep1Status,
+  onAssemblyStep1StatusChange,
+  onRunAssemblyStep1,
 }: {
+  robotKey: string;
   controlFamily: 'franka' | 'so101' | 'xlerobot';
   target: ControlTarget;
   resetGeneration: number;
   showGizmo: boolean;
   gizmoScale?: number;
+  assemblyStep1RequestId: number;
+  assemblyStep1Status: AssemblyStep1Status;
+  onAssemblyStep1StatusChange: (status: AssemblyStep1Status) => void;
+  onRunAssemblyStep1: () => boolean;
 }) {
   const simulation = useMujoco();
-  const { controller: ik, resolvedSiteName } = useSelectedIkController(target, resetGeneration);
+  const automationActive = assemblyStep1Status === 'planning' || assemblyStep1Status === 'running';
+  const { controller: ik, resolvedSiteName } = useSelectedIkController(
+    target,
+    resetGeneration,
+    automationActive,
+  );
 
   useEffect(() => {
     document.documentElement.dataset.controlTarget = target.key;
@@ -98,9 +118,32 @@ function SceneChildren({
 
   useEffect(() => {
     if (simulation.status !== 'ready') return;
+    const model = simulation.mjModelRef.current;
+    const data = simulation.mjDataRef.current;
+    if (!model || !data) return;
+    const collectPositions = (
+      names: string[],
+      findId: (name: string) => number,
+      positions: Float64Array,
+    ) => Object.fromEntries(names.map((name) => {
+      const id = findId(name);
+      if (id < 0) throw new Error(`Could not resolve diagnostic position: ${name}`);
+      const offset = id * 3;
+      return [name, [positions[offset], positions[offset + 1], positions[offset + 2]]];
+    })) as Record<string, [number, number, number]>;
     const diagnostics = {
       getCtrl: () => Array.from(simulation.api.getCtrl()),
       getQpos: () => Array.from(simulation.api.getQpos()),
+      getBodyPositions: (names: string[]) => collectPositions(
+        names,
+        (name) => findBodyByName(model, name),
+        data.xpos,
+      ),
+      getSitePositions: (names: string[]) => collectPositions(
+        names,
+        (name) => findSiteByName(model, name),
+        data.site_xpos,
+      ),
       reset: () => {
         simulation.api.reset();
         ik?.setIkEnabled(false);
@@ -116,12 +159,13 @@ function SceneChildren({
         ik.moveTarget(nextTarget);
         return true;
       },
+      runAssemblyStep1: onRunAssemblyStep1,
     };
     window.robotDemo = diagnostics;
     return () => {
       if (window.robotDemo === diagnostics) delete window.robotDemo;
     };
-  }, [simulation, ik, target.key]);
+  }, [simulation, ik, target.key, onRunAssemblyStep1]);
 
   return (
     <>
@@ -135,13 +179,29 @@ function SceneChildren({
       )}
 
       {controlFamily === 'franka' && (
-        <FrankaController key={`franka-${target.key}`} target={target} />
+        <FrankaController
+          key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}`}
+          target={target}
+          enabled={!automationActive}
+          initiallyOpen={assemblyStep1Status === 'complete'}
+        />
       )}
       {controlFamily === 'so101' && (
         <SO101Controller key={`so101-${target.key}`} target={target} ik={ik} />
       )}
       {controlFamily === 'xlerobot' && (
         <XLeRobotController key={`xlerobot-${target.key}`} target={target} ik={ik} />
+      )}
+      {robotKey === 'frankaAssembly1' && (
+        <AssemblyStep1Controller
+          requestId={assemblyStep1RequestId}
+          resetGeneration={resetGeneration}
+          onStatusChange={onAssemblyStep1StatusChange}
+          onMotionComplete={() => {
+            ik?.syncTargetToSite();
+            ik?.setIkEnabled(false);
+          }}
+        />
       )}
     </>
   );
@@ -156,12 +216,16 @@ const replicatedRootPatterns: Record<string, RegExp> = {
   frankaAssembly1: /^r\d+_link0$/,
   frankaAssembly2: /^r\d+_link0$/,
   so101: /^r\d+_Base$/,
+  so101Gearbox: /^r\d+_Base$/,
   xlerobot: /^r\d+_chassis$/,
+  xlerobotKitting: /^r\d+_chassis$/,
 };
 
 export function App() {
   const apiRef = useRef<MujocoSimAPI>(null);
   const [resetGeneration, setResetGeneration] = useState(0);
+  const [assemblyStep1RequestId, setAssemblyStep1RequestId] = useState(0);
+  const [assemblyStep1Status, setAssemblyStep1Status] = useState<AssemblyStep1Status>('idle');
   const performanceStatsRef = useRef<HTMLDivElement>(null!);
   // Drei's Stats type omits the null state that every DOM ref has before mount.
   const performanceStatsParentRef = performanceStatsRef as unknown as RefObject<HTMLElement>;
@@ -185,6 +249,13 @@ export function App() {
   const controlTarget = entry.controlTargets.find(({ key }) => key === controlTargetKey)
     ?? entry.controlTargets[0];
 
+  const handleRunAssemblyStep1 = useCallback(() => {
+    if (robotKey !== 'frankaAssembly1' || assemblyStep1Status !== 'idle') return false;
+    setAssemblyStep1Status('planning');
+    setAssemblyStep1RequestId((requestId) => requestId + 1);
+    return true;
+  }, [assemblyStep1Status, robotKey]);
+
   useEffect(() => {
     document.documentElement.dataset.sceneStatus = 'loading';
     document.documentElement.dataset.sceneKey = robotKey;
@@ -193,7 +264,16 @@ export function App() {
     delete document.documentElement.dataset.sceneError;
     delete document.documentElement.dataset.controlTarget;
     delete document.documentElement.dataset.ikSite;
+    setAssemblyStep1Status('idle');
   }, [robotKey]);
+
+  useEffect(() => {
+    if (robotKey === 'frankaAssembly1') {
+      document.documentElement.dataset.assemblyStep1Status = assemblyStep1Status;
+    } else {
+      delete document.documentElement.dataset.assemblyStep1Status;
+    }
+  }, [assemblyStep1Status, robotKey]);
 
   const handleSceneReady = useCallback((api: MujocoSimAPI) => {
     const bodies = api.getBodies();
@@ -217,6 +297,7 @@ export function App() {
     gizmo: { value: true, label: 'IK gizmo' },
     reset: button(() => {
       apiRef.current?.reset();
+      setAssemblyStep1Status('idle');
       setResetGeneration((generation) => generation + 1);
     }),
   });
@@ -265,11 +346,16 @@ export function App() {
 
         {/* IK + per-robot controllers */}
         <SceneChildren
+          robotKey={robotKey}
           controlFamily={entry.controlFamily}
           target={controlTarget}
           resetGeneration={resetGeneration}
           showGizmo={sim.gizmo}
           gizmoScale={entry.gizmoScale}
+          assemblyStep1RequestId={assemblyStep1RequestId}
+          assemblyStep1Status={assemblyStep1Status}
+          onAssemblyStep1StatusChange={setAssemblyStep1Status}
+          onRunAssemblyStep1={handleRunAssemblyStep1}
         />
 
         {/* Opt-in interaction */}
@@ -303,6 +389,12 @@ export function App() {
       >
         <span className="performance-stats__label">Scene performance</span>
       </div>
+      {robotKey === 'frankaAssembly1' && (
+        <AssemblyStep1Panel
+          status={assemblyStep1Status}
+          onRun={handleRunAssemblyStep1}
+        />
+      )}
       <KeyboardHelp robotKey={entry.controlFamily} controlTargetLabel={controlTarget.label} />
       <GitHubLink />
     </MujocoProvider>

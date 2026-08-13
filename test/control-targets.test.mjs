@@ -60,6 +60,9 @@ test('Franka gripper binding follows the selected namespace', () => {
   assert.deepEqual(getFrankaGripperBinding(target), {
     v: { actuator: 'r2_gripper', toggle: [0, 255] },
   });
+  assert.deepEqual(getFrankaGripperBinding(target, true), {
+    v: { actuator: 'r2_gripper', toggle: [255, 0] },
+  });
 });
 
 test('SO101 keyboard controller writes only the selected six-actuator block', () => {
