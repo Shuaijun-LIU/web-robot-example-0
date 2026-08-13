@@ -35,6 +35,7 @@ const XLEROBOT_BASE =
 const FRANKA_REMOTE_BASE =
   'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/';
 const FRANKA_ASSEMBLY2_BASE = `${import.meta.env.BASE_URL}assets/franka-assembly2/`;
+const SO101_GEARBOX_BASE = `${import.meta.env.BASE_URL}assets/so101-gearbox-room/`;
 
 export const XLEROBOT_HOME_JOINTS = XLEROBOT_LAYOUT.homeJoints.slice(0, 16);
 
@@ -89,7 +90,7 @@ export const robots: Record<string, RobotEntry> = {
     label: 'SO101 Gearbox',
     controlFamily: 'so101',
     config: {
-      src: XLEROBOT_BASE,
+      src: SO101_GEARBOX_BASE,
       sceneFile: 'objects_SO101.xml',
       homeJoints: SO101_GEARBOX_LAYOUT.homeJoints,
       xmlPatches: SO101_GEARBOX_LAYOUT.xmlPatches,

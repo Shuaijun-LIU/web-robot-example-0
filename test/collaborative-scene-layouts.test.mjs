@@ -278,6 +278,162 @@ test('XLeRobot Kitting is an open-plan kitchen with clear mobile circulation', (
   assert.ok(XLEROBOT_KITTING_LAYOUT.navigationClearances.south >= 0.65);
 });
 
+test('XLeRobot Kitting has a connected faucet and recognizable kitchen support props', () => {
+  const xml = patchText(XLEROBOT_KITTING_LAYOUT);
+  for (const name of [
+    'kitchen_faucet_lever_pivot',
+    'saucepan_bottom',
+    'saucepan_wall_segment_0',
+    'saucepan_rim_segment_0',
+    'saucepan_handle_end_cap',
+    'kitchen_trash_bin',
+    'trash_bin_opening',
+    'trash_bin_foot_pedal',
+    'produce_table_scale',
+    'produce_scale_display',
+    'produce_prep_bowl',
+    'prep_bowl_wall_segment_0',
+    'prep_bowl_rim_segment_0',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"`));
+  }
+
+  assert.doesNotMatch(xml, /name="saucepan_body"[^>]*type="cylinder"/);
+  assert.doesNotMatch(xml, /name="kitchen_faucet_lever"[^>]*fromto="0\.04 0 0\.08/);
+  assert.deepEqual(XLEROBOT_KITTING_LAYOUT.taskStations, {
+    sourceTote: [-0.15, -0.36, 0.781],
+    handoffSouth: [0, -0.1, 0.787],
+    handoffNorth: [0, 0.1, 0.787],
+    scannerDock: [0.16, 0, 0.787],
+    orderTray: [0.1, 0.36, 0.781],
+  });
+  assert.deepEqual(XLEROBOT_KITTING_LAYOUT.navigationClearances, {
+    north: 0.65,
+    south: 0.65,
+    west: 1.11,
+  });
+});
+
+test('XLeRobot Kitting is enclosed by three detailed walls while keeping the south side open', () => {
+  const xml = patchText(XLEROBOT_KITTING_LAYOUT);
+  assert.deepEqual(XLEROBOT_KITTING_LAYOUT.roomBounds, {
+    halfWidth: 2.2,
+    halfDepth: 2.05,
+    wallHeight: 2.4,
+    openSide: 'south',
+  });
+  assert.deepEqual(XLEROBOT_KITTING_LAYOUT.camera, {
+    position: [0, -4.8, 2.75],
+    fov: 48,
+  });
+
+  for (const name of [
+    'kitchen_west_wall',
+    'kitchen_east_wall',
+    'kitchen_west_window',
+    'kitchen_west_window_glass',
+    'kitchen_west_window_frame_vertical',
+    'kitchen_west_window_frame_horizontal',
+    'kitchen_east_wall_art_1',
+    'kitchen_east_wall_art_2',
+    'kitchen_side_cabinet',
+    'kitchen_side_cabinet_door_upper',
+    'kitchen_side_cabinet_drawer_lower',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"`));
+  }
+});
+
+test('SO101 Gearbox expands only outside a protected central workcell', () => {
+  assert.deepEqual(SO101_GEARBOX_LAYOUT.roomBounds, {
+    halfWidth: 4.6,
+    halfDepth: 3.6,
+    wallHeight: 2.7,
+    openSide: 'south',
+  });
+  assert.equal(SO101_GEARBOX_LAYOUT.protectedWorkcellRadius, 1.4);
+  assert.deepEqual(SO101_GEARBOX_LAYOUT.roomZones, {
+    lounge: [-3.35, -1.15],
+    office: [2.8, 2.65],
+    g1: [0.9, 2.25],
+    go2Arm: [2.7, -1.5],
+  });
+  for (const center of Object.values(SO101_GEARBOX_LAYOUT.roomZones)) {
+    assert.ok(
+      Math.hypot(...center) > SO101_GEARBOX_LAYOUT.protectedWorkcellRadius,
+      `zone ${center.join(',')} must remain outside the protected workcell`,
+    );
+  }
+
+  assert.deepEqual(SO101_GEARBOX_LAYOUT.taskStations, {
+    fixture: [0, 0, 0.81],
+    housing: [0, 0.21, 0.805],
+    shaftsAndSpacers: [0.21, 0, 0.82],
+    gears: [0, -0.21, 0.814],
+    coverAndPins: [-0.21, 0, 0.809],
+  });
+});
+
+test('SO101 Gearbox room provides a furnished lounge and dual-screen office', () => {
+  const xml = patchText(SO101_GEARBOX_LAYOUT);
+  for (const name of [
+    'gearbox_room_back_wall',
+    'gearbox_room_west_wall',
+    'gearbox_room_east_wall',
+    'gearbox_lounge_rug',
+    'gearbox_sofa',
+    'gearbox_sofa_seat',
+    'gearbox_sofa_back',
+    'gearbox_tv_console',
+    'gearbox_tv',
+    'gearbox_tv_screen',
+    'gearbox_side_table',
+    'gearbox_floor_lamp',
+    'gearbox_desk',
+    'gearbox_monitor_left',
+    'gearbox_monitor_right',
+    'gearbox_keyboard',
+    'gearbox_office_chair',
+    'gearbox_room_art_1',
+    'gearbox_room_art_2',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"`));
+  }
+
+  const sceneObjects = Object.fromEntries(
+    SO101_GEARBOX_LAYOUT.sceneObjects.map((object) => [object.name, object]),
+  );
+  assert.deepEqual(sceneObjects.gearbox_floor.size, [4.6, 3.6, 0.005]);
+  assert.deepEqual(sceneObjects.gearbox_work_surface.size, [0.52, 0.52, 0.035]);
+  assert.deepEqual(sceneObjects.gearbox_work_surface.position, [0, 0, 0.765]);
+  assert.deepEqual(SO101_GEARBOX_LAYOUT.camera, {
+    position: [0, -8.4, 4.2],
+    fov: 47,
+  });
+});
+
+test('SO101 Gearbox room attaches static G1 and Go2 arm models outside the workcell', () => {
+  const xml = patchText(SO101_GEARBOX_LAYOUT);
+  assert.match(
+    xml,
+    /<model name="g1_room_model" file="robots\/g1\/g1_static\.xml"\/>/,
+  );
+  assert.match(
+    xml,
+    /<model name="go2_arm_room_model" file="robots\/go2_arm\/go2_arm_static\.xml"\/>/,
+  );
+  assert.match(
+    xml,
+    /<frame pos="0\.9 2\.25 0" euler="0 0 -112"><attach model="g1_room_model" body="pelvis" prefix="room_g1_"\/><\/frame>/,
+  );
+  assert.match(
+    xml,
+    /<frame pos="2\.7 -1\.5 0" euler="0 0 150"><attach model="go2_arm_room_model" body="base" prefix="room_go2_"\/><\/frame>/,
+  );
+  assert.equal(SO101_GEARBOX_LAYOUT.staticRobots.g1.controlled, false);
+  assert.equal(SO101_GEARBOX_LAYOUT.staticRobots.go2Arm.controlled, false);
+});
+
 test('neither new layout contains an object-carrying shortcut', () => {
   for (const layout of [SO101_GEARBOX_LAYOUT, XLEROBOT_KITTING_LAYOUT]) {
     const xml = patchText(layout);

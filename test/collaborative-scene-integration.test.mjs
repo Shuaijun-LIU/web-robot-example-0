@@ -8,6 +8,8 @@ const files = {
   validator: new URL('../scripts/validate-mjcf.mjs', import.meta.url),
   capture: new URL('../scripts/capture-scenes.mjs', import.meta.url),
   controls: new URL('../scripts/verify-controls.mjs', import.meta.url),
+  g1Static: new URL('../public/assets/so101-gearbox-room/robots/g1/g1_static.xml', import.meta.url),
+  go2ArmStatic: new URL('../public/assets/so101-gearbox-room/robots/go2_arm/go2_arm_static.xml', import.meta.url),
 };
 
 test('runtime registers both collaboration layouts as additional scenes', async () => {
@@ -21,6 +23,23 @@ test('runtime registers both collaboration layouts as additional scenes', async 
   assert.match(source, /xlerobotKitting:\s*{[\s\S]*?label:\s*'XLeRobot Kitting'/);
   assert.match(source, /xlerobotKitting:\s*{[\s\S]*?controlFamily:\s*'xlerobot'/);
   assert.match(source, /xlerobotKitting:\s*{[\s\S]*?controlTargets:\s*createXLeRobotTargets\(\)/);
+  assert.match(
+    source,
+    /const SO101_GEARBOX_BASE = `\$\{import\.meta\.env\.BASE_URL\}assets\/so101-gearbox-room\/`/,
+  );
+  assert.match(source, /so101Gearbox:\s*{[\s\S]*?src:\s*SO101_GEARBOX_BASE/);
+});
+
+test('vendored room robots are visual static models without control or free fall', async () => {
+  for (const [name, path, root] of [
+    ['G1', files.g1Static, 'pelvis'],
+    ['Go2 arm', files.go2ArmStatic, 'base'],
+  ]) {
+    const source = await readFile(path, 'utf8').catch(() => '');
+    assert.match(source, new RegExp(`<body name="${root}"`), `${name} root body must exist`);
+    assert.match(source, /<geom[^>]+mesh=/, `${name} must retain its visual meshes`);
+    assert.doesNotMatch(source, /<freejoint|<joint\b|<actuator>/, `${name} must remain static`);
+  }
 });
 
 test('scene diagnostics count the copied physical roots and preserve Assembly1 as default', async () => {

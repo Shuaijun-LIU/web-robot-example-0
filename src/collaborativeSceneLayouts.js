@@ -240,11 +240,136 @@ const SO101_GEARBOX_WORKCELL_XML = `
       <geom name="press_pin_${index + 1}_grip" type="cylinder" pos="0 0 0.012" size="0.0042 0.004" rgba="0.25 0.27 0.28 1" mass="0.003"/>
     </body>`).join('')}`;
 
+const SO101_GEARBOX_ROOM_XML = `
+    <body name="gearbox_room_back_wall" pos="0 3.56 1.35">
+      <geom name="gearbox_room_back_wall_panel" type="box" size="4.52 0.04 1.35" rgba="0.66 0.64 0.59 1"/>
+      <geom name="gearbox_room_back_wall_baseboard" type="box" pos="0 -0.045 -1.25" size="4.48 0.022 0.1" rgba="0.38 0.35 0.31 1"/>
+    </body>
+    <body name="gearbox_room_west_wall" pos="-4.56 0 1.35">
+      <geom name="gearbox_room_west_wall_panel" type="box" size="0.04 3.52 1.35" rgba="0.66 0.64 0.59 1"/>
+      <geom name="gearbox_room_west_wall_baseboard" type="box" pos="0.045 0 -1.25" size="0.022 3.48 0.1" rgba="0.38 0.35 0.31 1"/>
+    </body>
+    <body name="gearbox_room_east_wall" pos="4.56 0 1.35">
+      <geom name="gearbox_room_east_wall_panel" type="box" size="0.04 3.52 1.35" rgba="0.66 0.64 0.59 1"/>
+      <geom name="gearbox_room_east_wall_baseboard" type="box" pos="-0.045 0 -1.25" size="0.022 3.48 0.1" rgba="0.38 0.35 0.31 1"/>
+    </body>
+
+    <body name="gearbox_lounge_rug" pos="-2.65 -1.15 0.012">
+      <geom name="gearbox_lounge_rug_surface" type="box" size="1.25 1.22 0.012" rgba="0.35 0.32 0.27 1" contype="0" conaffinity="0"/>
+      <geom name="gearbox_lounge_rug_inset" type="box" pos="0 0 0.014" size="1.08 1.05 0.003" rgba="0.48 0.43 0.35 1" contype="0" conaffinity="0"/>
+    </body>
+    <body name="gearbox_sofa" pos="-3.35 -1.15 0">
+      <geom name="gearbox_sofa_base" type="box" pos="0 0 0.24" size="0.42 0.92 0.22" rgba="0.25 0.29 0.29 1"/>
+      <geom name="gearbox_sofa_seat" type="box" pos="0.07 0 0.48" size="0.36 0.76 0.12" rgba="0.39 0.43 0.42 1"/>
+      <geom name="gearbox_sofa_back" type="box" pos="-0.34 0 0.8" size="0.12 0.92 0.44" euler="0 -8 0" rgba="0.34 0.38 0.38 1"/>
+      <geom name="gearbox_sofa_arm_north" type="box" pos="0.02 0.84 0.55" size="0.4 0.08 0.31" rgba="0.31 0.35 0.35 1"/>
+      <geom name="gearbox_sofa_arm_south" type="box" pos="0.02 -0.84 0.55" size="0.4 0.08 0.31" rgba="0.31 0.35 0.35 1"/>
+      <geom name="gearbox_sofa_cushion_north" type="box" pos="0.1 0.39 0.63" size="0.28 0.34 0.16" euler="0 -6 0" rgba="0.44 0.47 0.45 1"/>
+      <geom name="gearbox_sofa_cushion_south" type="box" pos="0.1 -0.39 0.63" size="0.28 0.34 0.16" euler="0 -6 0" rgba="0.42 0.45 0.43 1"/>
+      <geom name="gearbox_sofa_leg_nw" type="box" pos="-0.27 0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
+      <geom name="gearbox_sofa_leg_ne" type="box" pos="0.27 0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
+      <geom name="gearbox_sofa_leg_sw" type="box" pos="-0.27 -0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
+      <geom name="gearbox_sofa_leg_se" type="box" pos="0.27 -0.72 0.08" size="0.045 0.045 0.08" rgba="0.19 0.18 0.16 1"/>
+    </body>
+    <body name="gearbox_tv_console" pos="-1.82 -1.15 0">
+      <geom name="gearbox_tv_console_case" type="box" pos="0 0 0.32" size="0.18 0.72 0.32" rgba="0.36 0.3 0.24 1"/>
+      <geom name="gearbox_tv_console_top" type="box" pos="0 0 0.67" size="0.2 0.75 0.035" rgba="0.25 0.23 0.21 1"/>
+      <geom name="gearbox_tv_console_door_north" type="box" pos="-0.187 0.35 0.36" size="0.008 0.31 0.24" rgba="0.46 0.39 0.31 1"/>
+      <geom name="gearbox_tv_console_door_south" type="box" pos="-0.187 -0.35 0.36" size="0.008 0.31 0.24" rgba="0.46 0.39 0.31 1"/>
+      <geom name="gearbox_tv_console_handle_north" type="capsule" fromto="-0.202 0.18 0.38 -0.202 0.52 0.38" size="0.009" rgba="0.16 0.17 0.17 1"/>
+      <geom name="gearbox_tv_console_handle_south" type="capsule" fromto="-0.202 -0.52 0.38 -0.202 -0.18 0.38" size="0.009" rgba="0.16 0.17 0.17 1"/>
+    </body>
+    <body name="gearbox_tv" pos="-2.03 -1.15 1.16">
+      <geom name="gearbox_tv_panel" type="box" size="0.045 0.69 0.42" rgba="0.08 0.09 0.09 1"/>
+      <geom name="gearbox_tv_screen" type="box" pos="-0.048 0 0.01" size="0.006 0.63 0.355" rgba="0.16 0.23 0.25 1" contype="0" conaffinity="0"/>
+      <geom name="gearbox_tv_screen_glow" type="box" pos="-0.055 0 0.01" size="0.002 0.53 0.27" rgba="0.29 0.38 0.39 1" contype="0" conaffinity="0"/>
+      <geom name="gearbox_tv_stand" type="box" pos="0 0 -0.46" size="0.09 0.2 0.04" rgba="0.12 0.13 0.13 1"/>
+      <geom name="gearbox_tv_neck" type="box" pos="0 0 -0.41" size="0.035 0.035 0.08" rgba="0.12 0.13 0.13 1"/>
+    </body>
+    <body name="gearbox_side_table" pos="-3.58 -2.55 0">
+      <geom name="gearbox_side_table_top" type="cylinder" pos="0 0 0.54" size="0.32 0.035" rgba="0.42 0.34 0.26 1"/>
+      <geom name="gearbox_side_table_post" type="cylinder" pos="0 0 0.28" size="0.045 0.26" rgba="0.24 0.22 0.2 1"/>
+      <geom name="gearbox_side_table_foot" type="cylinder" pos="0 0 0.03" size="0.22 0.03" rgba="0.2 0.19 0.18 1"/>
+    </body>
+    <body name="gearbox_floor_lamp" pos="-4.02 -2.45 0">
+      <geom name="gearbox_floor_lamp_base" type="cylinder" pos="0 0 0.035" size="0.18 0.035" rgba="0.2 0.2 0.19 1"/>
+      <geom name="gearbox_floor_lamp_pole" type="capsule" fromto="0 0 0.06 0 0 1.55" size="0.025" rgba="0.3 0.3 0.28 1"/>
+      <geom name="gearbox_floor_lamp_shade" type="cylinder" pos="0 0 1.58" size="0.23 0.22" rgba="0.57 0.52 0.42 1"/>
+      <geom name="gearbox_floor_lamp_diffuser" type="cylinder" pos="0 0 1.36" size="0.17 0.012" rgba="0.75 0.69 0.54 1" contype="0" conaffinity="0"/>
+    </body>
+
+    <body name="gearbox_desk" pos="2.8 2.65 0">
+      <geom name="gearbox_desk_top" type="box" pos="0 0 0.77" size="1.05 0.38 0.045" rgba="0.42 0.34 0.26 1"/>
+      <geom name="gearbox_desk_leg_nw" type="box" pos="-0.91 0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
+      <geom name="gearbox_desk_leg_ne" type="box" pos="0.91 0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
+      <geom name="gearbox_desk_leg_sw" type="box" pos="-0.91 -0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
+      <geom name="gearbox_desk_leg_se" type="box" pos="0.91 -0.27 0.375" size="0.045 0.045 0.375" rgba="0.19 0.2 0.19 1"/>
+      <geom name="gearbox_keyboard" type="box" pos="0 -0.17 0.83" size="0.34 0.11 0.018" rgba="0.16 0.17 0.17 1"/>
+      <geom name="gearbox_keyboard_keybed" type="box" pos="0 -0.18 0.851" size="0.3 0.09 0.005" rgba="0.28 0.29 0.28 1" contype="0" conaffinity="0"/>
+      <body name="gearbox_monitor_left" pos="-0.43 -0.04 1.18">
+        <geom name="gearbox_monitor_left_panel" type="box" size="0.35 0.035 0.25" rgba="0.09 0.1 0.1 1"/>
+        <geom name="gearbox_monitor_left_screen" type="box" pos="0 -0.039 0.01" size="0.31 0.006 0.21" rgba="0.24 0.34 0.36 1" contype="0" conaffinity="0"/>
+        <geom name="gearbox_monitor_left_neck" type="box" pos="0 0 -0.3" size="0.035 0.035 0.08" rgba="0.15 0.16 0.16 1"/>
+        <geom name="gearbox_monitor_left_foot" type="box" pos="0 0 -0.38" size="0.18 0.13 0.025" rgba="0.15 0.16 0.16 1"/>
+      </body>
+      <body name="gearbox_monitor_right" pos="0.43 -0.04 1.18">
+        <geom name="gearbox_monitor_right_panel" type="box" size="0.35 0.035 0.25" rgba="0.09 0.1 0.1 1"/>
+        <geom name="gearbox_monitor_right_screen" type="box" pos="0 -0.039 0.01" size="0.31 0.006 0.21" rgba="0.3 0.31 0.27 1" contype="0" conaffinity="0"/>
+        <geom name="gearbox_monitor_right_neck" type="box" pos="0 0 -0.3" size="0.035 0.035 0.08" rgba="0.15 0.16 0.16 1"/>
+        <geom name="gearbox_monitor_right_foot" type="box" pos="0 0 -0.38" size="0.18 0.13 0.025" rgba="0.15 0.16 0.16 1"/>
+      </body>
+      <body name="gearbox_desk_lamp" pos="0.83 -0.03 0.84">
+        <geom name="gearbox_desk_lamp_base" type="cylinder" size="0.12 0.025" rgba="0.19 0.2 0.2 1"/>
+        <geom name="gearbox_desk_lamp_arm" type="capsule" fromto="0 0 0.02 -0.05 0 0.42" size="0.018" rgba="0.27 0.28 0.27 1"/>
+        <geom name="gearbox_desk_lamp_shade" type="cylinder" pos="-0.09 -0.02 0.47" size="0.11 0.12" euler="70 0 0" rgba="0.43 0.4 0.34 1"/>
+      </body>
+    </body>
+    <body name="gearbox_office_chair" pos="2.8 1.72 0">
+      <geom name="gearbox_office_chair_base" type="cylinder" pos="0 0 0.08" size="0.28 0.035" rgba="0.16 0.17 0.17 1"/>
+      <geom name="gearbox_office_chair_post" type="cylinder" pos="0 0 0.3" size="0.04 0.2" rgba="0.24 0.25 0.24 1"/>
+      <geom name="gearbox_office_chair_seat" type="box" pos="0 0 0.52" size="0.36 0.34 0.07" rgba="0.28 0.32 0.32 1"/>
+      <geom name="gearbox_office_chair_back" type="box" pos="0 0.29 0.9" size="0.36 0.07 0.36" euler="-8 0 0" rgba="0.25 0.29 0.29 1"/>
+      <geom name="gearbox_office_chair_arm_left" type="capsule" fromto="-0.32 0 0.62 -0.32 0 0.78" size="0.025" rgba="0.19 0.2 0.2 1"/>
+      <geom name="gearbox_office_chair_arm_right" type="capsule" fromto="0.32 0 0.62 0.32 0 0.78" size="0.025" rgba="0.19 0.2 0.2 1"/>
+    </body>
+
+    <body name="gearbox_room_art_1" pos="-2.85 3.505 1.78">
+      <geom name="gearbox_room_art_1_frame" type="box" size="0.58 0.012 0.39" rgba="0.25 0.21 0.18 1" contype="0" conaffinity="0"/>
+      <geom name="gearbox_room_art_1_canvas" type="box" pos="0 -0.016 0" size="0.51 0.006 0.32" rgba="0.37 0.43 0.39 1" contype="0" conaffinity="0"/>
+      <geom name="gearbox_room_art_1_accent" type="box" pos="0.12 -0.024 -0.04" size="0.24 0.003 0.08" euler="0 0 18" rgba="0.61 0.49 0.35 1" contype="0" conaffinity="0"/>
+    </body>
+    <body name="gearbox_room_art_2" pos="-0.9 3.505 1.7">
+      <geom name="gearbox_room_art_2_frame" type="box" size="0.42 0.012 0.48" rgba="0.24 0.21 0.19 1" contype="0" conaffinity="0"/>
+      <geom name="gearbox_room_art_2_canvas" type="box" pos="0 -0.016 0" size="0.35 0.006 0.41" rgba="0.48 0.4 0.33 1" contype="0" conaffinity="0"/>
+      <geom name="gearbox_room_art_2_circle" type="cylinder" pos="0 -0.024 0.06" size="0.15 0.003" euler="90 0 0" rgba="0.28 0.35 0.35 1" contype="0" conaffinity="0"/>
+    </body>`;
+
+const SO101_GEARBOX_STATIC_ROBOTS_XML =
+  '<frame pos="0.9 2.25 0" euler="0 0 -112"><attach model="g1_room_model" body="pelvis" prefix="room_g1_"/></frame>'
+  + '<frame pos="2.7 -1.5 0" euler="0 0 150"><attach model="go2_arm_room_model" body="base" prefix="room_go2_"/></frame>';
+
 export const SO101_GEARBOX_LAYOUT = {
   instanceCount: 4,
   yawStepDegrees: 90,
   ringRadius: 0.42,
   workSurfaceHeight: WORK_SURFACE_HEIGHT,
+  roomBounds: {
+    halfWidth: 4.6,
+    halfDepth: 3.6,
+    wallHeight: 2.7,
+    openSide: 'south',
+  },
+  protectedWorkcellRadius: 1.4,
+  roomZones: {
+    lounge: [-3.35, -1.15],
+    office: [2.8, 2.65],
+    g1: [0.9, 2.25],
+    go2Arm: [2.7, -1.5],
+  },
+  staticRobots: {
+    g1: { rootBody: 'room_g1_pelvis', controlled: false },
+    go2Arm: { rootBody: 'room_go2_base', controlled: false },
+  },
   primaryTcpSite: 'r0_tcp',
   homeJoints: repeatPose(SO101_HOME, 4),
   taskStations: {
@@ -263,7 +388,9 @@ export const SO101_GEARBOX_LAYOUT = {
   xmlPatches: [
     {
       target: 'objects_SO101.xml',
-      inject: '<model name="so101_model" file="SO101.xml"/>',
+      inject: '<model name="so101_model" file="SO101.xml"/>'
+        + '<model name="g1_room_model" file="robots/g1/g1_static.xml"/>'
+        + '<model name="go2_arm_room_model" file="robots/go2_arm/go2_arm_static.xml"/>',
       injectAfter: '<asset>',
     },
     {
@@ -275,7 +402,7 @@ export const SO101_GEARBOX_LAYOUT = {
           { position: [0.42, 0, 0.8], yaw: -QUARTER_TURN_DEGREES },
           { position: [0, -0.42, 0.8], yaw: HALF_TURN_DEGREES },
           { position: [-0.42, 0, 0.8], yaw: QUARTER_TURN_DEGREES },
-        ])}${SO101_GEARBOX_WORKCELL_XML}\n  </worldbody>`,
+        ])}${SO101_GEARBOX_WORKCELL_XML}${SO101_GEARBOX_ROOM_XML}${SO101_GEARBOX_STATIC_ROBOTS_XML}\n  </worldbody>`,
       ],
     },
     {
@@ -299,15 +426,15 @@ export const SO101_GEARBOX_LAYOUT = {
     },
   ],
   sceneObjects: [
-    fixedBox('gearbox_floor', [2, 2, 0.005], [0, 0, -0.005], [0.1, 0.11, 0.12, 1]),
+    fixedBox('gearbox_floor', [4.6, 3.6, 0.005], [0, 0, -0.005], [0.16, 0.15, 0.14, 1]),
     fixedBox('gearbox_work_surface', [0.52, 0.52, 0.035], [0, 0, 0.765], [0.31, 0.29, 0.25, 1]),
     fixedBox('gearbox_table_leg_a', [0.035, 0.035, 0.365], [-0.44, -0.44, 0.365], [0.18, 0.18, 0.17, 1]),
     fixedBox('gearbox_table_leg_b', [0.035, 0.035, 0.365], [0.44, -0.44, 0.365], [0.18, 0.18, 0.17, 1]),
     fixedBox('gearbox_table_leg_c', [0.035, 0.035, 0.365], [-0.44, 0.44, 0.365], [0.18, 0.18, 0.17, 1]),
     fixedBox('gearbox_table_leg_d', [0.035, 0.035, 0.365], [0.44, 0.44, 0.365], [0.18, 0.18, 0.17, 1]),
   ],
-  camera: { position: [1.15, -1.15, 1.28], fov: 40 },
-  orbitTarget: [0, 0, 0.81],
+  camera: { position: [0, -8.4, 4.2], fov: 47 },
+  orbitTarget: [0, 0.15, 1.05],
 };
 
 const XLEROBOT_PARENT_WORLDBODY = `  <worldbody>
@@ -463,6 +590,50 @@ const XLEROBOT_HOME_ENVIRONMENT_XML = `
       <geom name="kitchen_backsplash" type="box" pos="-0.2 -0.045 -0.25" size="1.35 0.012 0.34" rgba="0.48 0.49 0.47 1"/>
     </body>
 
+    <body name="kitchen_west_wall" pos="-2.16 0 1.2">
+      <geom name="kitchen_west_wall_panel" type="box" size="0.04 2.01 1.2" rgba="0.72 0.69 0.62 1"/>
+    </body>
+    <body name="kitchen_east_wall" pos="2.16 0 1.2">
+      <geom name="kitchen_east_wall_panel" type="box" size="0.04 2.01 1.2" rgba="0.72 0.69 0.62 1"/>
+    </body>
+
+    <body name="kitchen_west_window" pos="-2.105 0.68 1.52">
+      <geom name="kitchen_west_window_reveal" type="box" size="0.008 0.64 0.54" rgba="0.2 0.22 0.22 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_glass" type="box" pos="0.01 0 0" size="0.006 0.57 0.47" rgba="0.32 0.48 0.54 0.45" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_frame_north" type="box" pos="0.02 0.605 0" size="0.018 0.035 0.51" rgba="0.76 0.74 0.68 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_frame_south" type="box" pos="0.02 -0.605 0" size="0.018 0.035 0.51" rgba="0.76 0.74 0.68 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_frame_top" type="box" pos="0.02 0 0.495" size="0.018 0.64 0.035" rgba="0.76 0.74 0.68 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_frame_bottom" type="box" pos="0.02 0 -0.495" size="0.018 0.64 0.035" rgba="0.76 0.74 0.68 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_frame_vertical" type="box" pos="0.025 0 0" size="0.018 0.025 0.47" rgba="0.76 0.74 0.68 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_frame_horizontal" type="box" pos="0.025 0 0" size="0.018 0.57 0.025" rgba="0.76 0.74 0.68 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_west_window_sill" type="box" pos="0.07 0 -0.56" size="0.09 0.69 0.035" rgba="0.52 0.48 0.4 1" contype="0" conaffinity="0"/>
+    </body>
+
+    <body name="kitchen_east_wall_art_1" pos="2.105 0.92 1.73">
+      <geom name="kitchen_east_wall_art_1_frame" type="box" size="0.012 0.38 0.31" rgba="0.24 0.2 0.17 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_east_wall_art_1_mat" type="box" pos="-0.014 0 0" size="0.008 0.33 0.26" rgba="0.76 0.72 0.63 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_east_wall_art_1_canvas" type="box" pos="-0.024 0 0" size="0.004 0.28 0.21" rgba="0.35 0.43 0.39 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_east_wall_art_1_horizon" type="box" pos="-0.03 0 -0.035" size="0.003 0.27 0.012" rgba="0.62 0.51 0.38 1" contype="0" conaffinity="0"/>
+    </body>
+    <body name="kitchen_east_wall_art_2" pos="2.105 -1.05 1.62">
+      <geom name="kitchen_east_wall_art_2_frame" type="box" size="0.012 0.31 0.38" rgba="0.23 0.2 0.18 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_east_wall_art_2_mat" type="box" pos="-0.014 0 0" size="0.008 0.26 0.33" rgba="0.73 0.7 0.63 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_east_wall_art_2_canvas" type="box" pos="-0.024 0 0" size="0.004 0.21 0.28" rgba="0.5 0.39 0.31 1" contype="0" conaffinity="0"/>
+      <geom name="kitchen_east_wall_art_2_accent" type="cylinder" pos="-0.03 0.02 0.02" size="0.095 0.003" euler="0 90 0" rgba="0.32 0.38 0.35 1" contype="0" conaffinity="0"/>
+    </body>
+
+    <body name="kitchen_side_cabinet" pos="1.74 -0.1 0">
+      <geom name="kitchen_side_cabinet_case" type="box" pos="0 0 0.79" size="0.34 0.37 0.79" rgba="0.48 0.41 0.34 1"/>
+      <geom name="kitchen_side_cabinet_top" type="box" pos="0 0 1.61" size="0.36 0.39 0.03" rgba="0.34 0.31 0.27 1"/>
+      <geom name="kitchen_side_cabinet_toe_kick" type="box" pos="-0.31 0 0.08" size="0.035 0.32 0.08" rgba="0.24 0.22 0.2 1"/>
+      <geom name="kitchen_side_cabinet_door_upper" type="box" pos="-0.347 0 1.16" size="0.007 0.34 0.35" rgba="0.6 0.53 0.44 1"/>
+      <geom name="kitchen_side_cabinet_drawer_middle" type="box" pos="-0.347 0 0.68" size="0.007 0.34 0.105" rgba="0.61 0.54 0.45 1"/>
+      <geom name="kitchen_side_cabinet_drawer_lower" type="box" pos="-0.347 0 0.38" size="0.007 0.34 0.15" rgba="0.61 0.54 0.45 1"/>
+      <geom name="kitchen_side_cabinet_handle_upper" type="capsule" fromto="-0.362 -0.22 0.95 -0.362 -0.22 1.34" size="0.011" rgba="0.22 0.23 0.22 1"/>
+      <geom name="kitchen_side_cabinet_handle_middle" type="capsule" fromto="-0.362 -0.13 0.68 -0.362 0.13 0.68" size="0.009" rgba="0.22 0.23 0.22 1"/>
+      <geom name="kitchen_side_cabinet_handle_lower" type="capsule" fromto="-0.362 -0.13 0.38 -0.362 0.13 0.38" size="0.009" rgba="0.22 0.23 0.22 1"/>
+    </body>
+
     <body name="kitchen_sink_cabinet" pos="-0.85 1.47 0">
       <geom name="sink_cabinet_case" type="box" pos="0 0 0.4" size="0.34 0.27 0.4" rgba="0.54 0.46 0.36 1"/>
       <geom name="sink_cabinet_door_left" type="box" pos="-0.17 -0.276 0.42" size="0.16 0.006 0.35" rgba="0.64 0.57 0.47 1"/>
@@ -486,7 +657,8 @@ const XLEROBOT_HOME_ENVIRONMENT_XML = `
         <geom name="kitchen_faucet_riser" type="capsule" fromto="0 0 0.01 0 0 0.23" size="0.018" rgba="0.46 0.48 0.48 1"/>
         <geom name="kitchen_faucet_spout" type="capsule" fromto="0 0 0.23 0 -0.17 0.23" size="0.017" rgba="0.46 0.48 0.48 1"/>
         <geom name="kitchen_faucet_nozzle" type="cylinder" pos="0 -0.17 0.205" size="0.022 0.027" rgba="0.31 0.33 0.33 1"/>
-        <geom name="kitchen_faucet_lever" type="capsule" fromto="0.04 0 0.08 0.095 0 0.12" size="0.01" rgba="0.39 0.41 0.41 1"/>
+        <geom name="kitchen_faucet_lever_pivot" type="cylinder" pos="0.022 0 0.085" size="0.014 0.012" euler="0 90 0" rgba="0.34 0.36 0.36 1"/>
+        <geom name="kitchen_faucet_lever" type="capsule" fromto="0.03 0 0.09 0.095 0 0.135" size="0.01" rgba="0.39 0.41 0.41 1"/>
       </body>
     </body>
 
@@ -523,8 +695,13 @@ const XLEROBOT_HOME_ENVIRONMENT_XML = `
         <geom name="oven_handle" type="capsule" fromto="-0.21 -0.025 0.2 0.21 -0.025 0.2" size="0.014" rgba="0.47 0.48 0.47 1"/>
       </body>
       <body name="stove_saucepan" pos="-0.16 0.13 0.91">
-        <geom name="saucepan_body" type="cylinder" size="0.09 0.04" rgba="0.25 0.27 0.27 1"/>
-        <geom name="saucepan_handle" type="capsule" fromto="0.08 0 0 0.25 0 0" size="0.018" rgba="0.13 0.14 0.14 1"/>
+        <geom name="saucepan_bottom" type="cylinder" pos="0 0 -0.034" size="0.082 0.006" rgba="0.22 0.24 0.24 1"/>
+        ${annularGeometry('saucepan_wall', 0.074, 0.09, 0.034, '0.27 0.29 0.29 1', 0.25)}
+        ${annularGeometry('saucepan_rim', 0.071, 0.096, 0.004, '0.38 0.4 0.4 1', 0.05, [0, 0, 0.035])}
+        <geom name="saucepan_inner_bottom" type="cylinder" pos="0 0 -0.027" size="0.073 0.0015" rgba="0.12 0.13 0.13 1" contype="0" conaffinity="0"/>
+        <geom name="saucepan_handle_socket" type="box" pos="0.092 0 0" size="0.018 0.026 0.021" rgba="0.19 0.2 0.2 1"/>
+        <geom name="saucepan_handle" type="capsule" fromto="0.09 0 0 0.25 0 0" size="0.017" rgba="0.13 0.14 0.14 1"/>
+        <geom name="saucepan_handle_end_cap" type="sphere" pos="0.255 0 0" size="0.021" rgba="0.11 0.12 0.12 1"/>
       </body>
     </body>
 
@@ -573,6 +750,38 @@ const XLEROBOT_HOME_ENVIRONMENT_XML = `
       <geom name="bell_pepper_stem" type="cylinder" pos="0 0 0.03" size="0.004 0.012" rgba="0.2 0.3 0.12 1" mass="0.003"/>
     </body>
 
+    <body name="produce_table_scale" pos="0.1 -1.45 0.762">
+      <geom name="produce_scale_base" type="box" size="0.14 0.105 0.012" rgba="0.27 0.29 0.29 1"/>
+      <geom name="produce_scale_platform" type="box" pos="0 0 0.022" size="0.12 0.085 0.008" rgba="0.53 0.54 0.52 1"/>
+      <geom name="produce_scale_display_housing" type="box" pos="0 -0.112 0.034" size="0.06 0.016 0.026" euler="18 0 0" rgba="0.2 0.22 0.22 1"/>
+      <geom name="produce_scale_display" type="box" pos="0 -0.128 0.041" size="0.043 0.002 0.012" euler="18 0 0" rgba="0.44 0.56 0.5 1" contype="0" conaffinity="0"/>
+      <geom name="produce_scale_button_left" type="cylinder" pos="-0.075 -0.108 0.032" size="0.009 0.002" euler="90 0 0" rgba="0.56 0.5 0.38 1" contype="0" conaffinity="0"/>
+      <geom name="produce_scale_button_right" type="cylinder" pos="0.075 -0.108 0.032" size="0.009 0.002" euler="90 0 0" rgba="0.56 0.5 0.38 1" contype="0" conaffinity="0"/>
+    </body>
+    <body name="produce_prep_bowl" pos="0.43 -1.42 0.767">
+      <geom name="prep_bowl_bottom" type="cylinder" size="0.085 0.006" rgba="0.47 0.5 0.49 1"/>
+      ${annularGeometry('prep_bowl_wall', 0.075, 0.105, 0.045, '0.53 0.56 0.55 1', 0.2, [0, 0, 0.043])}
+      ${annularGeometry('prep_bowl_rim', 0.072, 0.112, 0.004, '0.68 0.69 0.66 1', 0.04, [0, 0, 0.088])}
+      <geom name="prep_bowl_inner_bottom" type="cylinder" pos="0 0 0.008" size="0.074 0.0015" rgba="0.28 0.3 0.29 1" contype="0" conaffinity="0"/>
+    </body>
+
+    <body name="kitchen_trash_bin" pos="1.55 -1.25 0">
+      <geom name="trash_bin_base" type="box" pos="0 0 0.025" size="0.18 0.14 0.025" rgba="0.17 0.18 0.18 1"/>
+      <geom name="trash_bin_wall_west" type="box" pos="-0.17 0 0.34" size="0.01 0.14 0.29" rgba="0.27 0.29 0.29 1"/>
+      <geom name="trash_bin_wall_east" type="box" pos="0.17 0 0.34" size="0.01 0.14 0.29" rgba="0.27 0.29 0.29 1"/>
+      <geom name="trash_bin_wall_north" type="box" pos="0 0.13 0.34" size="0.16 0.01 0.29" rgba="0.25 0.27 0.27 1"/>
+      <geom name="trash_bin_wall_south" type="box" pos="0 -0.13 0.34" size="0.16 0.01 0.29" rgba="0.29 0.31 0.31 1"/>
+      <geom name="trash_bin_rim_west" type="box" pos="-0.17 0 0.64" size="0.014 0.15 0.018" rgba="0.15 0.16 0.16 1"/>
+      <geom name="trash_bin_rim_east" type="box" pos="0.17 0 0.64" size="0.014 0.15 0.018" rgba="0.15 0.16 0.16 1"/>
+      <geom name="trash_bin_rim_north" type="box" pos="0 0.14 0.64" size="0.156 0.014 0.018" rgba="0.15 0.16 0.16 1"/>
+      <geom name="trash_bin_rim_south" type="box" pos="0 -0.14 0.64" size="0.156 0.014 0.018" rgba="0.15 0.16 0.16 1"/>
+      <geom name="trash_bin_opening" type="box" pos="0 0 0.61" size="0.15 0.115 0.004" rgba="0.055 0.06 0.06 1" contype="0" conaffinity="0"/>
+      <geom name="trash_bin_lid_hinge" type="cylinder" pos="0 0.145 0.69" size="0.025 0.175" euler="0 90 0" rgba="0.12 0.13 0.13 1"/>
+      <geom name="trash_bin_lid" type="box" pos="0 0.105 0.775" size="0.18 0.14 0.022" euler="-32 0 0" rgba="0.22 0.24 0.24 1"/>
+      <geom name="trash_bin_foot_pedal" type="box" pos="0 -0.18 0.035" size="0.07 0.05 0.015" rgba="0.42 0.43 0.41 1"/>
+      <geom name="trash_bin_front_badge" type="box" pos="0 -0.141 0.39" size="0.045 0.002 0.018" rgba="0.48 0.47 0.42 1" contype="0" conaffinity="0"/>
+    </body>
+
     <body name="storage_shelf" pos="-1.65 0.15 0">
       <geom name="storage_shelf_back" type="box" pos="-0.17 0 0.75" size="0.018 0.28 0.75" rgba="0.35 0.29 0.23 1"/>
       <geom name="storage_shelf_post_front" type="box" pos="0.15 -0.25 0.75" size="0.025 0.025 0.75" rgba="0.27 0.23 0.19 1"/>
@@ -608,6 +817,12 @@ export const XLEROBOT_KITTING_LAYOUT = {
   instanceCount: 2,
   yawStepDegrees: 180,
   spacing: 1,
+  roomBounds: {
+    halfWidth: 2.2,
+    halfDepth: 2.05,
+    wallHeight: 2.4,
+    openSide: 'south',
+  },
   armBaseHeight: XLEROBOT_ARM_BASE_HEIGHT,
   tableTopHeight: XLEROBOT_ARM_BASE_HEIGHT,
   chassisCollisionTop: XLEROBOT_ARM_BASE_HEIGHT,
@@ -663,6 +878,6 @@ export const XLEROBOT_KITTING_LAYOUT = {
     fixedBox('kitting_floor', [2.2, 2.05, 0.005], [0, 0, -0.005], [0.32, 0.29, 0.25, 1]),
     ...xlerobotKittingTableObjects,
   ],
-  camera: { position: [3.2, -3.6, 2.6], fov: 48 },
+  camera: { position: [0, -4.8, 2.75], fov: 48 },
   orbitTarget: [0, 0.08, 0.72],
 };
