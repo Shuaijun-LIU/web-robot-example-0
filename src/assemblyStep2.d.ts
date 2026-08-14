@@ -174,6 +174,11 @@ export function releaseAssemblyStep2Controls(
   }>,
 ): void;
 
+export function captureAssemblyStep2JointTargets(
+  positions: Float64Array,
+  arms: Array<{ qposAddresses: number[] }>,
+): number[][];
+
 export function createAssemblyStep2ControlFrame(
   machine: AssemblyStep2Machine,
   plans: AssemblyStep2ArmPlan[],

@@ -10,6 +10,7 @@ import {
   advanceAssemblyStep2Machine,
   createAssemblyStep2ControlFrame,
   createAssemblyStep2Machine,
+  captureAssemblyStep2JointTargets,
   evaluateAssemblyStep2Grasp,
   interpolateAssemblyStep2Gripper,
   quaternionAngularDistanceDegrees,
@@ -146,6 +147,16 @@ test('Step 2 failure holds each arm at its measured pose and releases every grip
   ]);
   assert.deepEqual(Array.from(controls.slice(0, 4)), [0.1, 0.2, 0.3, 255]);
   assert.deepEqual(Array.from(controls.slice(8, 12)), [1.1, 1.2, 1.3, 255]);
+});
+
+test('frame verification captures an immutable measured joint target per arm', () => {
+  const positions = new Float64Array([0.1, 0.2, 0.3, 9, 1.1, 1.2, 1.3]);
+  const result = captureAssemblyStep2JointTargets(positions, [
+    { qposAddresses: [0, 1, 2] },
+    { qposAddresses: [4, 5, 6] },
+  ]);
+  positions[0] = 8;
+  assert.deepEqual(result, [[0.1, 0.2, 0.3], [1.1, 1.2, 1.3]]);
 });
 
 test('Step 2 control frames descend all arms and close cross-member grippers together', () => {
