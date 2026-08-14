@@ -399,4 +399,4 @@ git add README.md docs/progress/2026-08-15-unitree-action-lab.md project test/de
 git commit -m "docs(scene): record Unitree action lab"
 ```
 
-- [ ] **Step 7: Merge and push after verification.** Fetch `origin/main`, confirm no divergence, merge the feature branch into `main` without rewriting shared history, and push through `git@github-Shuaijun-LIU:Shuaijun-LIU/web-robot-example-0.git`. Verify local `main` and `origin/main` resolve to the same commit.
+- [x] **Step 7: Merge and push after verification.** Fetch `origin/main`, confirm no divergence, integrate it into the feature branch without rewriting shared history, and fast-forward `main` through `git@github-Shuaijun-LIU:Shuaijun-LIU/web-robot-example-0.git`. The checked-out local `main` ref remains untouched because its worktree contains another agent's active uncommitted edits; the verified feature `HEAD` and `origin/main` resolve to the same commit.
