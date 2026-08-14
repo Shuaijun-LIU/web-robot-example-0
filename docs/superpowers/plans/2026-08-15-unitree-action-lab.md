@@ -159,7 +159,7 @@ Run: `node --test test/unitree-action-sequence.test.mjs`
 
 Expected: all sampler, boundary, range, and writer-isolation tests pass.
 
-- [ ] **Step 7: Commit the action-data slice.**
+- [x] **Step 7: Commit the action-data slice.**
 
 ```bash
 git add src/unitreeActionSequence.* test/unitree-action-sequence.test.mjs
@@ -178,7 +178,7 @@ git commit -m "feat(action): add Unitree action clip"
 - Consumes: `sampleUnitreeAction`, named actuator arrays, action-lab scene assets, and `UNITREE_ACTION_LAB_LAYOUT.homeJoints`.
 - Produces: one JSON summary containing phase visits, maximum joint motion, contact counts, final root heights/tilts, and finite-state status.
 
-- [ ] **Step 1: Write the failing executable test.** Execute the verifier and assert the literal JSON contract:
+- [x] **Step 1: Write the failing executable test.** Execute the verifier and assert the literal JSON contract:
 
 ```js
 assert.equal(result.completed, true);
@@ -190,17 +190,17 @@ assert.ok(result.g1.finalHeight >= 0.75 && result.g1.finalHeight <= 0.85);
 assert.ok(result.go2.finalHeight >= 0.22 && result.go2.finalHeight <= 0.34);
 ```
 
-- [ ] **Step 2: Run the test and verify RED.**
+- [x] **Step 2: Run the test and verify RED.**
 
 Run: `node --test test/unitree-action-dynamics.test.mjs`
 
 Expected: FAIL because the executable verifier does not exist.
 
-- [ ] **Step 3: Implement the verifier.** Mount every action-lab asset into `mujoco-js`, load `scene.xml`, seed `ctrl` plus only actuator-transmitted scalar joint positions from `homeJoints`, and call `mj_forward`. Resolve all 47 actuators by name, sample and apply action targets before each physics step, then simulate 10.0 action seconds plus 1.5 final settling seconds. Never write either floating-root qpos during the rollout.
+- [x] **Step 3: Implement the verifier.** Mount every action-lab asset into `mujoco-js`, load `scene.xml`, seed `ctrl` plus only actuator-transmitted scalar joint positions from `homeJoints`, and call `mj_forward`. Resolve all 47 actuators by name, sample and apply action targets before each physics step, then simulate 10.0 action seconds plus 1.5 final settling seconds. Never write either floating-root qpos during the rollout.
 
-- [ ] **Step 4: Calculate physical metrics from the compiled model.** Resolve `g1_pelvis`, `go2_base`, floor-contact body names, joint qpos addresses, and root quaternions. Fail on non-finite state, missing phases, no articulated movement, no final foot contact, or any final stability threshold violation.
+- [x] **Step 4: Calculate physical metrics from the compiled model.** Resolve `g1_pelvis`, `go2_base`, floor-contact body names, joint qpos addresses, and root quaternions. Fail on non-finite state, missing phases, no articulated movement, no final foot contact, or any final stability threshold violation.
 
-- [ ] **Step 5: Run the focused test until GREEN.**
+- [x] **Step 5: Run the focused test until GREEN.**
 
 Run:
 
