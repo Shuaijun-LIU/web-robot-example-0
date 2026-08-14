@@ -392,7 +392,7 @@ git diff --check
 
 Expected: zero failed tests, clean TypeScript/build, stable physics report, no strict penetration failure, and clean diff.
 
-- [ ] **Step 6: Commit the documentation slice.**
+- [x] **Step 6: Commit the documentation slice.**
 
 ```bash
 git add README.md docs/progress/2026-08-15-unitree-action-lab.md project test/deployment-contract.test.mjs docs/superpowers/plans/2026-08-15-unitree-action-lab.md
