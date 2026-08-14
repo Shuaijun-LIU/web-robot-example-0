@@ -325,6 +325,12 @@ test('Step 1 and Step 2 use one ownership token without object-pose shortcuts', 
   assert.doesNotMatch(step1Source, /}, \[ownershipRef, requestId, resetGeneration\]\);/);
   assert.match(step2Source, /ownershipRef/);
   assert.match(step2Source, /ownershipRef\.current\s*=\s*'step2'/);
+  assert.match(step2Source, /frameVerificationJointTargetsRef/);
+  assert.match(
+    step2Source,
+    /captureAssemblyStep2JointTargets\(\s*data\.qpos,\s*runtime\.arms,?\s*\)/,
+  );
+  assert.match(step2Source, /frameVerificationJointTargetsRef\.current\?\.\[index\]/);
   assert.match(
     step2Source,
     /}, \[diagnosticsRef, ownershipRef, resetGeneration\]\);/,
@@ -334,6 +340,7 @@ test('Step 1 and Step 2 use one ownership token without object-pose shortcuts', 
     /}, \[diagnosticsRef, ownershipRef, requestId, resetGeneration\]\);/,
   );
   assert.doesNotMatch(step2Source, /data\.qpos\s*\[[^\]]+\]\s*=/);
+  assert.doesNotMatch(step2Source, /data\.qvel\s*\[[^\]]+\]\s*=/);
   assert.doesNotMatch(step2Source, /mjEQ_WELD|equality|magnet|proximity/i);
   assert.doesNotMatch(step2Source, /taskObject.*follow|scripted.*pose/i);
 });

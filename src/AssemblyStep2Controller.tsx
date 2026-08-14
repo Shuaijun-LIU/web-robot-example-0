@@ -16,6 +16,7 @@ import {
   ASSEMBLY1_STEP2_ARMS,
   ASSEMBLY1_STEP2_LIMITS,
   advanceAssemblyStep2Machine,
+  captureAssemblyStep2JointTargets,
   createAssemblyStep2ControlFrame,
   createAssemblyStep2Machine,
   evaluateAssemblyStep2Grasp,
@@ -316,6 +317,7 @@ export function AssemblyStep2Controller({
   const currentContactSecondsRef = useRef([0, 0, 0, 0]);
   const maximumContactSecondsRef = useRef([0, 0, 0, 0]);
   const closureStartedAtRef = useRef<Array<number | null>>([null, null, null, null]);
+  const frameVerificationJointTargetsRef = useRef<number[][] | null>(null);
   stateCallbackRef.current = onStateChange;
 
   useEffect(() => {
@@ -327,6 +329,7 @@ export function AssemblyStep2Controller({
     currentContactSecondsRef.current = [0, 0, 0, 0];
     maximumContactSecondsRef.current = [0, 0, 0, 0];
     closureStartedAtRef.current = [null, null, null, null];
+    frameVerificationJointTargetsRef.current = null;
     completedRequestRef.current = requestId;
     reportedPhaseRef.current = 'idle';
     if (ownershipRef.current === 'step2') ownershipRef.current = 'manual';
@@ -411,6 +414,14 @@ export function AssemblyStep2Controller({
     };
     const nextMachine = advanceAssemblyStep2Machine(machine, deltaSeconds, evidence);
     machineRef.current = nextMachine;
+    if (machine.phase !== 'frame-verification' && nextMachine.phase === 'frame-verification') {
+      frameVerificationJointTargetsRef.current = captureAssemblyStep2JointTargets(
+        data.qpos,
+        runtime.arms,
+      );
+    } else if (nextMachine.phase !== 'frame-verification') {
+      frameVerificationJointTargetsRef.current = null;
+    }
     if (nextMachine.phase !== reportedPhaseRef.current) {
       reportedPhaseRef.current = nextMachine.phase;
       stateCallbackRef.current({
@@ -449,8 +460,10 @@ export function AssemblyStep2Controller({
     for (let index = 0; index < runtime.arms.length; index += 1) {
       const arm = runtime.arms[index];
       const controls = controlFrame.arms[index];
+      const jointTargets = frameVerificationJointTargetsRef.current?.[index]
+        ?? controls.jointTargets;
       for (let joint = 0; joint < arm.actuatorIndices.length; joint += 1) {
-        data.ctrl[arm.actuatorIndices[joint]] = controls.jointTargets[joint];
+        data.ctrl[arm.actuatorIndices[joint]] = jointTargets[joint];
       }
       data.ctrl[arm.gripperActuatorIndex] = controls.gripperTarget;
       if (
