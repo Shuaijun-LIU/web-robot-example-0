@@ -23,3 +23,7 @@
   - What: Reproduced Arm 2/4 post-Step-1 oscillation and the blank-scene failure independently on NVIDIA/Vulkan. Removed delayed gravity-force feedback, lengthened passive settling, relaxed only the Step 2 start-pose tolerance, and added a terminal safe-stop that releases clamp force without moving task objects by script.
   - Verified: Focused 24-test suite and production build pass. An independent production browser reached `frame-verification`, reported the expected physical contact failure, and remained `ready` with a connected 1440×900 canvas and no console errors six seconds later. Visual evidence is under `artifacts/diagnostics/assembly-stability-fixed/`.
   - Next: User checks Step 1 residual motion and persistent scene rendering; any later contact-geometry tuning remains a separate task.
+- 2026-08-15 07:18 CST
+  - What: Added a self-contained dynamic Unitree scene using licensed G1 and Go2 + Airbot MJCF packages, a continuous six-phase actuator clip, dedicated action controls, and production screenshot/video runners.
+  - Verified: The 58-body, 155-geom model compiles with 47 actuators and two floating roots. Offline and browser rollouts completed with finite state, stable final root poses, ground contacts, visible G1/Go2/Airbot joint motion, and no direct root-state writes or browser errors.
+  - Next: User reviews `artifacts/screenshots/unitree-action-lab.png` and `artifacts/videos/unitree-action-lab.mp4`; any later locomotion or task interaction should be designed as a separate action clip/controller.

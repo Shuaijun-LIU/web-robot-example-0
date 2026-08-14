@@ -259,7 +259,7 @@ Expected: FAIL on missing state module, config, and action target.
 
 - [x] **Step 4: Implement the pure state module and action target.** Add `'action-sequence'` to `ControlTarget.controlMode` and `'unitreeAction'` to `RobotEntry.controlFamily`. Keep the target list non-empty so the existing Leva selector hook remains structurally unchanged.
 
-- [x] **Step 5: Register `unitreeActionLab` in `configs.ts`.** Use `${import.meta.env.BASE_URL}assets/unitree-action-lab/`, `scene.xml`, the 47-value home vector, camera `[4.2, -5.4, 2.7]`, orbit target `[0, 0, 0.75]`, grid size 6, and one action target.
+- [x] **Step 5: Register `unitreeActionLab` in `configs.ts`.** Use `${import.meta.env.BASE_URL}assets/unitree-action-lab/`, `scene.xml`, the 47-value home vector, camera `[3.1, -3.8, 2.1]`, orbit target `[0, 0, 0.75]`, grid size 6, and one action target.
 
 - [x] **Step 6: Implement `UnitreeActionController`.** On a new request, resolve all named actuators through `findActuatorByName`, verify uniqueness and MJCF control ranges, and report an error before control writes if resolution fails. In `useBeforePhysicsStep`, sample using accumulated MuJoCo timestep only while running and call `applyUnitreeActionTargets(data.ctrl, ids, sample)`. While paused, reapply the last sampled controls without advancing elapsed time. Notify React only on phase changes and at 10 Hz elapsed-time updates.
 
@@ -340,7 +340,7 @@ Expected: action reaches `complete`, screenshot and MP4 exist, and all physical 
 
 - [x] **Step 8: Inspect the screenshot and video.** Use the local image viewer for the screenshot and `ffprobe` for duration, resolution, codec, and frame count. Extract three video frames with ffmpeg to a temporary directory and inspect them for floor penetration, separation, visible G1 gesture, visible Airbot scan, and recovery.
 
-- [ ] **Step 9: Commit production verification and artifacts.**
+- [x] **Step 9: Commit production verification and artifacts.**
 
 ```bash
 git add scripts/verify-unitree-action-browser.mjs scripts/capture-unitree-action-video.mjs scripts/capture-scenes.mjs package.json test/browser-verification-contract.test.mjs artifacts/screenshots/unitree-action-lab.png artifacts/videos/unitree-action-lab.mp4
@@ -365,19 +365,19 @@ git commit -m "test(action): capture Unitree sequence"
 **Interfaces:**
 - Produces: source attribution, action semantics, physical verification metrics, visual links, and a ninth-scene Pages contract.
 
-- [ ] **Step 1: Write the failing documentation/deployment expectation.** Update the deployment test to require nine documented scenes and the Unitree screenshot/video links.
+- [x] **Step 1: Write the failing documentation/deployment expectation.** Update the deployment test to require nine documented scenes and the Unitree screenshot/video links.
 
-- [ ] **Step 2: Run the test and verify RED.**
+- [x] **Step 2: Run the test and verify RED.**
 
 Run: `node --test test/deployment-contract.test.mjs`
 
 Expected: FAIL because README and generated Pages documentation do not yet describe Unitree Action Lab.
 
-- [ ] **Step 3: Write the progress report and README entry.** Record exact source paths/licenses, model counts, action phase targets, the no-policy/no-qpos-write contract, offline/browser metrics, screenshot, and MP4. Describe it as a stationary whole-body action demonstration, not learned walking.
+- [x] **Step 3: Write the progress report and README entry.** Record exact source paths/licenses, model counts, action phase targets, the no-policy/no-qpos-write contract, offline/browser metrics, screenshot, and MP4. Describe it as a stationary whole-body action demonstration, not learned walking.
 
-- [ ] **Step 4: Update project tracking.** Add a completed Unitree Action Lab phase and its decisions, append a standup entry, set next actions to user visual review, register both visual artifacts, and regenerate `project/artifacts.md` with the project-flow-manager script.
+- [x] **Step 4: Update project tracking.** Add a completed Unitree Action Lab phase and its decisions, append a standup entry, set next actions to user visual review, register both visual artifacts, and regenerate `project/artifacts.md` with the project-flow-manager script.
 
-- [ ] **Step 5: Run the complete fresh gate.**
+- [x] **Step 5: Run the complete fresh gate.**
 
 Run:
 

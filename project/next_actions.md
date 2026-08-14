@@ -1,9 +1,9 @@
 # Next Actions
 
 ## Top priorities
-1. User verifies that Assembly1 remains visible after Step 2 frame-contact verification fails.
-2. User verifies that Arm 2/4 no longer visibly oscillate after the extended Step 1 settling interval.
-3. Treat later bilateral-contact geometry tuning as separate from this crash/stability repair.
+1. User visually reviews the Unitree mid-action screenshot and complete MP4 action recording.
+2. If the stationary sequence is accepted, define one next action clip with an explicit physical objective before adding locomotion or task props.
+3. Keep Assembly1 Step 2 bilateral-contact tuning as a separate workstream.
 
 ## Blocked
-- None for the current crash/stability repair.
+- None for Unitree Action Lab.

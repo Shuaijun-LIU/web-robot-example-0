@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import { UNITREE_ACTION_LAB_LAYOUT } from '../src/unitreeActionLab.js';
@@ -25,4 +26,18 @@ test('Unitree Action Lab compiles two floating articulated robots', () => {
     ['g1_pelvis', 'go2_base'],
   );
   assert.deepEqual(UNITREE_ACTION_LAB_LAYOUT.camera.position, [3.1, -3.8, 2.1]);
+});
+
+test('vendored dynamic robot packages retain their source licenses', async () => {
+  const g1License = await readFile(
+    new URL('../public/assets/unitree-action-lab/robots/g1/LICENSE', import.meta.url),
+    'utf8',
+  );
+  const go2License = await readFile(
+    new URL('../public/assets/unitree-action-lab/robots/go2_arm/LICENSE', import.meta.url),
+    'utf8',
+  );
+  assert.match(g1License, /directory 'unitree_g1\/'/);
+  assert.match(g1License, /Unitree Robotics/);
+  assert.match(go2License, /Apache License\s+Version 2\.0/);
 });

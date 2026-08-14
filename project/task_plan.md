@@ -5,6 +5,7 @@
 - Preserve the existing Franka Panda, SO101, and XLeRobot scenes and controls unchanged.
 - Deliver a physically coherent static workcell, browser-verified screenshot, documentation, and GitHub Pages deployment.
 - Incrementally animate Assembly1, beginning with a reviewable four-arm pre-grasp staging step before introducing contact or object manipulation.
+- Add an isolated dynamic Unitree scene with a real policy-free actuator action for G1 and Go2 + Airbot.
 
 ## Phases
 - [x] Phase 1: Scope, local asset audit, and scene design
@@ -22,8 +23,9 @@
 - [x] Phase 13: Redesign Step 1 around grasp-ready geometry, dual-arm cross-member handling, and gravity-stable final poses
 - [x] Phase 14: Review the grasp-ready result and define the first real contact/grasp transition
 - [ ] Phase 15: Implement and production-verify Step 2 physical contact and clamped hold
+- [x] Phase 16: Unitree Action Lab dynamic models, actuator choreography, browser verification, and visual artifacts
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 14 design complete; awaiting written-spec review before the Step 2 implementation plan
-- Blockers: Step 2 implementation is gated on review of `docs/superpowers/specs/2026-08-13-assembly1-step2-physical-clamp-design.md`
+- Current phase: Phase 16 complete; Unitree Action Lab is ready for visual review
+- Blockers: None for Unitree Action Lab. Assembly1 Step 2 remains a separate pending workstream.
