@@ -278,7 +278,7 @@ npx tsc --noEmit
 
 Expected: all focused tests and TypeScript pass.
 
-- [ ] **Step 10: Commit the browser integration slice.**
+- [x] **Step 10: Commit the browser integration slice.**
 
 ```bash
 git add src/UnitreeActionController.tsx src/UnitreeActionPanel.tsx src/unitreeActionState.* src/configs.ts src/controlTargets.* src/App.tsx src/global.d.ts src/KeyboardHelp.tsx src/styles.css test/unitree-action-state.test.mjs test/control-targets.test.mjs test/collaborative-scene-integration.test.mjs
@@ -302,21 +302,21 @@ git commit -m "feat(action): run Unitree choreography"
 - Produces: deterministic production-browser verification through the action methods on `window.robotDemo`.
 - Produces: mid-action screenshot and complete MP4 recording.
 
-- [ ] **Step 1: Write the failing browser-runner contract.** Require `unitreeActionLab` in scene capture, the new verifier/video npm scripts, and a verifier that checks two instances, executes the action, observes `scan-wave`, and waits for `complete`.
+- [x] **Step 1: Write the failing browser-runner contract.** Require `unitreeActionLab` in scene capture, the new verifier/video npm scripts, and a verifier that checks two instances, executes the action, observes `scan-wave`, and waits for `complete`.
 
-- [ ] **Step 2: Run the contract test and verify RED.**
+- [x] **Step 2: Run the contract test and verify RED.**
 
 Run: `node --test test/browser-verification-contract.test.mjs`
 
 Expected: FAIL because the new runners and scene entries are absent.
 
-- [ ] **Step 3: Implement the production-browser verifier.** Select `Unitree Action Lab`, wait for two instances and diagnostics, save home joint/root states, call `runUnitreeAction`, capture the screenshot when phase is `scan-wave`, and wait for complete. Assert G1 wrist, Go2 leg, and Airbot joint motion; nonzero final contacts; finite root poses; final height/tilt thresholds; and no page, request, WebGL, or MuJoCo console errors.
+- [x] **Step 3: Implement the production-browser verifier.** Select `Unitree Action Lab`, wait for two instances and diagnostics, save home joint/root states, call `runUnitreeAction`, capture the screenshot when phase is `scan-wave`, and wait for complete. Assert G1 wrist, Go2 leg, and Airbot joint motion; nonzero final contacts; finite root poses; final height/tilt thresholds; and no page, request, WebGL, or MuJoCo console errors.
 
-- [ ] **Step 4: Implement video capture.** Use Playwright `recordVideo` for a 1440×900 context, run the same action, save the resulting WebM in a temporary directory, and invoke ffmpeg with `libx264 -pix_fmt yuv420p -movflags +faststart` to write `artifacts/videos/unitree-action-lab.mp4`. Remove only the temporary WebM after ffmpeg exits successfully.
+- [x] **Step 4: Implement video capture.** Use Playwright `recordVideo` for a 1440×900 context, run the same action, save the resulting WebM in a temporary directory, and invoke ffmpeg with `libx264 -pix_fmt yuv420p -movflags +faststart` to write `artifacts/videos/unitree-action-lab.mp4`. Remove only the temporary WebM after ffmpeg exits successfully.
 
-- [ ] **Step 5: Extend general capture and npm scripts.** Add the ninth scene with `instances: 2`; add `verify:unitree-action`, `verify:unitree-action-browser`, and `capture:unitree-action-video` scripts.
+- [x] **Step 5: Extend general capture and npm scripts.** Add the ninth scene with `instances: 2`; add `verify:unitree-action`, `verify:unitree-action-browser`, and `capture:unitree-action-video` scripts.
 
-- [ ] **Step 6: Build and run the production server.**
+- [x] **Step 6: Build and run the production server.**
 
 Run:
 
@@ -327,7 +327,7 @@ PATH=/home/shuaijun/.local/node-v22.22.0-linux-x64/bin:$PATH npm run preview -- 
 
 Run preview in a PTY session and keep its session ID for cleanup.
 
-- [ ] **Step 7: Run browser verification and capture.**
+- [x] **Step 7: Run browser verification and capture.**
 
 Run:
 
@@ -338,7 +338,7 @@ SCENE_URL=http://127.0.0.1:3011 npm run capture:unitree-action-video
 
 Expected: action reaches `complete`, screenshot and MP4 exist, and all physical thresholds pass.
 
-- [ ] **Step 8: Inspect the screenshot and video.** Use the local image viewer for the screenshot and `ffprobe` for duration, resolution, codec, and frame count. Extract three video frames with ffmpeg to a temporary directory and inspect them for floor penetration, separation, visible G1 gesture, visible Airbot scan, and recovery.
+- [x] **Step 8: Inspect the screenshot and video.** Use the local image viewer for the screenshot and `ffprobe` for duration, resolution, codec, and frame count. Extract three video frames with ffmpeg to a temporary directory and inspect them for floor penetration, separation, visible G1 gesture, visible Airbot scan, and recovery.
 
 - [ ] **Step 9: Commit production verification and artifacts.**
 

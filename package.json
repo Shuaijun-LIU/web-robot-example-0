@@ -14,6 +14,9 @@
     "solve:assembly-step2": "node scripts/solve-assembly-step2-waypoints.mjs",
     "verify:assembly-step2": "node scripts/verify-assembly-step2.mjs",
     "verify:controls": "node scripts/verify-controls.mjs",
+    "verify:unitree-action": "node scripts/verify-unitree-action-dynamics.mjs",
+    "verify:unitree-action-browser": "node scripts/verify-unitree-action-browser.mjs",
+    "capture:unitree-action-video": "node scripts/capture-unitree-action-video.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

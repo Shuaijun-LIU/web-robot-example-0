@@ -4,6 +4,14 @@ export { G1_HOME, GO2_HOME };
 
 const actuator = (name, min, max) => ({ name, min, max });
 
+export function isControlRangeCompatible(actuatorDefinition, rangeMin, rangeMax) {
+  const tolerance = 1e-5;
+  return Number.isFinite(rangeMin)
+    && Number.isFinite(rangeMax)
+    && actuatorDefinition.min >= rangeMin - tolerance
+    && actuatorDefinition.max <= rangeMax + tolerance;
+}
+
 export const G1_ACTUATORS = [
   actuator('g1_left_hip_pitch_joint', -2.5307, 2.8798),
   actuator('g1_left_hip_roll_joint', -0.5236, 2.9671),
@@ -73,7 +81,7 @@ export const GO2_LOWER = [
 
 const G1_GREET = [
   ...G1_HOME.slice(0, 22),
-  -0.72, -0.72, 0.18, 1.05, 0, 0.22, 0,
+  0, -1.45, 0, -0.85, 0, 0.22, 0,
 ];
 const GO2_SCAN_ARM = [0.52, -0.72, 1.12, 1.15, -0.38, -1.18];
 

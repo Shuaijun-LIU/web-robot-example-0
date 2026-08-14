@@ -424,13 +424,15 @@ export function App() {
     () => Object.fromEntries(entry.controlTargets.map((target) => [target.label, target.key])),
     [entry],
   );
-  const { controlTarget: controlTargetKey } = useControls({
-    controlTarget: {
+  const controlTargetControlKey = `controlTarget_${robotKey}`;
+  const controlTargetValues = useControls({
+    [controlTargetControlKey]: {
       value: entry.controlTargets[0].key,
       options: controlTargetOptions,
       label: 'Control target',
     },
-  }, [robotKey]);
+  }, [robotKey]) as unknown as Record<string, string>;
+  const controlTargetKey = controlTargetValues[controlTargetControlKey];
   const controlTarget = entry.controlTargets.find(({ key }) => key === controlTargetKey)
     ?? entry.controlTargets[0];
   const assemblyAutomationActive = assemblyStep1Status === 'planning'
@@ -471,7 +473,6 @@ export function App() {
   const handleRunUnitreeAction = useCallback(() => {
     if (
       robotKey !== 'unitreeActionLab'
-      || !sceneReady
       || (unitreeActionStateRef.current.status !== 'idle'
         && unitreeActionStateRef.current.status !== 'complete')
     ) return false;
@@ -482,7 +483,7 @@ export function App() {
     setUnitreeActionState(startAction(unitreeActionStateRef.current));
     setUnitreeActionRequestId((requestId) => requestId + 1);
     return true;
-  }, [robotKey, sceneReady]);
+  }, [robotKey]);
 
   const handlePauseUnitreeAction = useCallback(() => {
     if (robotKey !== 'unitreeActionLab' || unitreeActionStateRef.current.status !== 'running') return false;
@@ -497,13 +498,13 @@ export function App() {
   }, [robotKey]);
 
   const handleRestartUnitreeAction = useCallback(() => {
-    if (robotKey !== 'unitreeActionLab' || !sceneReady) return false;
+    if (robotKey !== 'unitreeActionLab') return false;
     apiRef.current?.reset();
     setResetGeneration((generation) => generation + 1);
     setUnitreeActionState(startAction(resetAction()));
     setUnitreeActionRequestId((requestId) => requestId + 1);
     return true;
-  }, [robotKey, sceneReady]);
+  }, [robotKey]);
 
   useEffect(() => {
     document.documentElement.dataset.sceneStatus = 'loading';

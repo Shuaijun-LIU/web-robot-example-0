@@ -11,6 +11,7 @@ import {
   GO2_ACTUATORS,
   UNITREE_ACTION_DURATION,
   applyUnitreeActionTargets,
+  isControlRangeCompatible,
   sampleUnitreeAction,
 } from './unitreeActionSequence.js';
 import {
@@ -36,7 +37,7 @@ function resolveActuators(model: MujocoModel): UnitreeActuatorIds {
     if (id < 0) throw new Error(`找不到执行器 ${name}`);
     const rangeMin = model.actuator_ctrlrange[id * 2];
     const rangeMax = model.actuator_ctrlrange[id * 2 + 1];
-    if (!Number.isFinite(rangeMin) || !Number.isFinite(rangeMax) || min < rangeMin || max > rangeMax) {
+    if (!isControlRangeCompatible({ name, min, max }, rangeMin, rangeMax)) {
       throw new Error(`执行器 ${name} 的控制范围与动作定义不一致`);
     }
     return id;
@@ -60,6 +61,7 @@ export function UnitreeActionController({
   const simulation = useMujoco();
   const actuatorIdsRef = useRef<UnitreeActuatorIds | null>(null);
   const elapsedRef = useRef(0);
+  const lastPhysicsTimeRef = useRef(0);
   const lastSampleRef = useRef<UnitreeActionSample>(sampleUnitreeAction(0));
   const processedRequestRef = useRef(0);
   const lastPublishedElapsedRef = useRef(0);
@@ -71,6 +73,7 @@ export function UnitreeActionController({
   useEffect(() => {
     actuatorIdsRef.current = null;
     elapsedRef.current = 0;
+    lastPhysicsTimeRef.current = 0;
     lastSampleRef.current = sampleUnitreeAction(0);
     processedRequestRef.current = 0;
     lastPublishedElapsedRef.current = 0;
@@ -79,11 +82,13 @@ export function UnitreeActionController({
   useEffect(() => {
     if (requestId === 0 || requestId === processedRequestRef.current || simulation.status !== 'ready') return;
     const model = simulation.mjModelRef.current;
-    if (!model) return;
+    const data = simulation.mjDataRef.current;
+    if (!model || !data) return;
     processedRequestRef.current = requestId;
     try {
       actuatorIdsRef.current = resolveActuators(model);
       elapsedRef.current = 0;
+      lastPhysicsTimeRef.current = data.time;
       lastPublishedElapsedRef.current = 0;
       lastSampleRef.current = sampleUnitreeAction(0);
     } catch (error) {
@@ -92,20 +97,23 @@ export function UnitreeActionController({
     }
   }, [requestId, simulation]);
 
-  useBeforePhysicsStep((model, data) => {
+  useBeforePhysicsStep((_model, data) => {
     const ids = actuatorIdsRef.current;
     const currentState = stateRef.current;
     if (!ids || (currentState.status !== 'running' && currentState.status !== 'paused')) return;
 
     try {
       if (currentState.status === 'paused') {
+        lastPhysicsTimeRef.current = data.time;
         applyUnitreeActionTargets(data.ctrl, ids, lastSampleRef.current);
         return;
       }
 
+      const physicsDelta = Math.max(0, data.time - lastPhysicsTimeRef.current);
+      lastPhysicsTimeRef.current = data.time;
       elapsedRef.current = Math.min(
         UNITREE_ACTION_DURATION,
-        elapsedRef.current + model.opt.timestep,
+        elapsedRef.current + physicsDelta,
       );
       const sample = sampleUnitreeAction(elapsedRef.current);
       lastSampleRef.current = sample;

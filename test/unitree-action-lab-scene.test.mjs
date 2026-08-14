@@ -24,4 +24,5 @@ test('Unitree Action Lab compiles two floating articulated robots', () => {
     UNITREE_ACTION_LAB_LAYOUT.dynamicRoots,
     ['g1_pelvis', 'go2_base'],
   );
+  assert.deepEqual(UNITREE_ACTION_LAB_LAYOUT.camera.position, [3.1, -3.8, 2.1]);
 });

@@ -20,6 +20,6 @@ export const UNITREE_ACTION_LAB_LAYOUT = {
   xmlPatches: [],
   sceneObjects: [],
   dynamicRoots: ['g1_pelvis', 'go2_base'],
-  camera: { position: [4.2, -5.4, 2.7], fov: 45 },
+  camera: { position: [3.1, -3.8, 2.1], fov: 45 },
   orbitTarget: [0, 0, 0.75],
 };

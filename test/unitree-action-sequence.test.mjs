@@ -10,8 +10,29 @@ import {
   UNITREE_ACTION_DURATION,
   UNITREE_ACTION_PHASES,
   applyUnitreeActionTargets,
+  isControlRangeCompatible,
   sampleUnitreeAction,
 } from '../src/unitreeActionSequence.js';
+
+test('WASM float rounding does not reject an identical MJCF control range', () => {
+  const compiled = new Float32Array([-1.0472, 2.0944]);
+  assert.equal(
+    isControlRangeCompatible(
+      { name: 'g1_left_elbow_joint', min: -1.0472, max: 2.0944 },
+      compiled[0],
+      compiled[1],
+    ),
+    true,
+  );
+  assert.equal(
+    isControlRangeCompatible(
+      { name: 'bad', min: -1.2, max: 2.2 },
+      compiled[0],
+      compiled[1],
+    ),
+    false,
+  );
+});
 
 const maxAbsDiff = (left, right) => Math.max(
   ...left.map((value, index) => Math.abs(value - right[index])),
@@ -48,6 +69,8 @@ test('action targets remain continuous at every phase boundary', () => {
 test('scan-wave articulates both robots and lower uses the official Go2 pose', () => {
   const scan = sampleUnitreeAction(4);
   assert.equal(scan.phase, 'scan-wave');
+  assert.ok(scan.g1Targets[23] < -1.35, 'right upper arm must rise to a visible wave pose');
+  assert.ok(scan.g1Targets[25] < -0.75, 'right elbow must bend the forearm upward');
   assert.ok(Math.abs(scan.g1Targets[26] - G1_HOME[26]) > 0.25);
   assert.ok(Math.abs(scan.go2Targets[12] - GO2_HOME[12]) > 0.25);
   assert.deepEqual(sampleUnitreeAction(7).go2Targets.slice(0, 12), GO2_LOWER);

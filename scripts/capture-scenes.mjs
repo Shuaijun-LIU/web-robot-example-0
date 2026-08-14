@@ -40,6 +40,12 @@ const allScenes = [
     instances: 4,
     screenshotName: 'franka-assembly2',
   },
+  {
+    key: 'unitreeActionLab',
+    label: 'Unitree Action Lab',
+    instances: 2,
+    screenshotName: 'unitree-action-lab',
+  },
 ];
 const requestedKeys = new Set(
   (process.env.SCENES ?? allScenes.map(({ key }) => key).join(','))

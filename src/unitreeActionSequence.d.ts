@@ -37,6 +37,12 @@ export const UNITREE_ACTION_PHASES: Array<{
 }>;
 export const UNITREE_ACTION_DURATION: number;
 
+export function isControlRangeCompatible(
+  actuator: NamedActuator,
+  rangeMin: number,
+  rangeMax: number,
+): boolean;
+
 export function sampleUnitreeAction(elapsedSeconds: number): UnitreeActionSample;
 export function applyUnitreeActionTargets(
   ctrl: Float64Array | number[],
