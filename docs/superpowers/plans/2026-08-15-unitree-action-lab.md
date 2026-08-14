@@ -109,7 +109,7 @@ INITIAL_CONTACT_REPORT=1 INITIAL_CONTACT_STRICT=1 LIST_NAMES=1 \
 
 Expected: 47 actuators, 61 qpos, exactly two named free roots, no penetration deeper than 5 mm, and PASS.
 
-- [ ] **Step 8: Commit the asset-scene slice.**
+- [x] **Step 8: Commit the asset-scene slice.**
 
 ```bash
 git add public/assets/unitree-action-lab src/unitreeActionLab.* scripts/validate-mjcf.mjs test/unitree-action-lab-scene.test.mjs
@@ -130,7 +130,7 @@ git commit -m "feat(scene): add dynamic Unitree models"
 - Produces: `applyUnitreeActionTargets(ctrl, actuatorIds, sample): void`, where `ctrl` is the only mutable argument.
 - Produces: named exports `G1_ACTUATORS`, `GO2_ACTUATORS`, `UNITREE_ACTION_PHASES`, `UNITREE_ACTION_DURATION`, `G1_HOME`, and `GO2_HOME`.
 
-- [ ] **Step 1: Write failing sampler tests with hand-derived expectations.** Cover home at `t=0`, continuous equality at all six phase boundaries, a non-home G1 wrist target and non-home Airbot target inside `scan-wave`, the official 12-value Go2 lower target at `t=7.0`, and exact home targets at `t=10.0`. Assert all samples are finite and inside literal control limits.
+- [x] **Step 1: Write failing sampler tests with hand-derived expectations.** Cover home at `t=0`, continuous equality at all six phase boundaries, a non-home G1 wrist target and non-home Airbot target inside `scan-wave`, the official 12-value Go2 lower target at `t=7.0`, and exact home targets at `t=10.0`. Assert all samples are finite and inside literal control limits.
 
 ```js
 for (const boundary of [1, 2.5, 5.5, 7, 8.5, 10]) {
@@ -141,19 +141,19 @@ for (const boundary of [1, 2.5, 5.5, 7, 8.5, 10]) {
 }
 ```
 
-- [ ] **Step 2: Write a failing writer-isolation test.** Use a 52-entry sentinel control array, write the 47 mapped actuator IDs in non-contiguous order, and assert the five unmapped entries remain unchanged. The production change this catches is accidental control of unrelated actuators.
+- [x] **Step 2: Write a failing writer-isolation test.** Use a 52-entry sentinel control array, write the 47 mapped actuator IDs in non-contiguous order, and assert the five unmapped entries remain unchanged. The production change this catches is accidental control of unrelated actuators.
 
-- [ ] **Step 3: Run the tests and verify RED.**
+- [x] **Step 3: Run the tests and verify RED.**
 
 Run: `node --test test/unitree-action-sequence.test.mjs`
 
 Expected: FAIL because `unitreeActionSequence.js` is absent.
 
-- [ ] **Step 4: Implement the minimal sampler.** Use `smoothstep(t) = t²(3−2t)` for pose transitions. During `scan-wave`, use a `sin(πp)` envelope so Airbot starts and ends at its home arm pose, and multiply the G1 wrist oscillation by the same envelope so the next phase is continuous. Clamp time to `[0, 10]` and return copied arrays.
+- [x] **Step 4: Implement the minimal sampler.** Use `smoothstep(t) = t²(3−2t)` for pose transitions. During `scan-wave`, use a `sin(πp)` envelope so Airbot starts and ends at its home arm pose, and multiply the G1 wrist oscillation by the same envelope so the next phase is continuous. Clamp time to `[0, 10]` and return copied arrays.
 
-- [ ] **Step 5: Implement the isolated writer.** Its signature accepts only `Float64Array | number[]`, actuator IDs, and the sampled vectors; reject non-finite target values and out-of-range IDs before mutating any element.
+- [x] **Step 5: Implement the isolated writer.** Its signature accepts only `Float64Array | number[]`, actuator IDs, and the sampled vectors; reject non-finite target values and out-of-range IDs before mutating any element.
 
-- [ ] **Step 6: Run the focused tests until GREEN.**
+- [x] **Step 6: Run the focused tests until GREEN.**
 
 Run: `node --test test/unitree-action-sequence.test.mjs`
 
