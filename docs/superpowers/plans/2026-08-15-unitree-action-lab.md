@@ -211,7 +211,7 @@ node scripts/verify-unitree-action-dynamics.mjs
 
 Expected: PASS and a JSON report satisfying every global stability threshold.
 
-- [ ] **Step 6: Commit the physics-verification slice.**
+- [x] **Step 6: Commit the physics-verification slice.**
 
 ```bash
 git add scripts/verify-unitree-action-dynamics.mjs test/unitree-action-dynamics.test.mjs
@@ -243,11 +243,11 @@ git commit -m "test(action): verify Unitree dynamics"
 - Produces: `createUnitreeActionTargets(): ControlTarget[]` with one `controlMode: 'action-sequence'` target.
 - Produces: `window.robotDemo.runUnitreeAction()`, `pauseUnitreeAction()`, `resumeUnitreeAction()`, and `getUnitreeActionState()` while the scene is active.
 
-- [ ] **Step 1: Write failing pure state tests.** Verify idle-to-running, pause/resume without elapsed-time advance, monotonic running advance, completion at 10 seconds, reset to idle, and terminal error with the original failure message.
+- [x] **Step 1: Write failing pure state tests.** Verify idle-to-running, pause/resume without elapsed-time advance, monotonic running advance, completion at 10 seconds, reset to idle, and terminal error with the original failure message.
 
-- [ ] **Step 2: Extend existing integration expectations before production code.** Require a ninth `unitreeActionLab` config with local assets, 47 home joints, two physical instances, action-only target, no IK site, and the existing Assembly1 default unchanged.
+- [x] **Step 2: Extend existing integration expectations before production code.** Require a ninth `unitreeActionLab` config with local assets, 47 home joints, two physical instances, action-only target, no IK site, and the existing Assembly1 default unchanged.
 
-- [ ] **Step 3: Run focused tests and verify RED.**
+- [x] **Step 3: Run focused tests and verify RED.**
 
 Run:
 
@@ -257,17 +257,17 @@ node --test test/unitree-action-state.test.mjs test/control-targets.test.mjs tes
 
 Expected: FAIL on missing state module, config, and action target.
 
-- [ ] **Step 4: Implement the pure state module and action target.** Add `'action-sequence'` to `ControlTarget.controlMode` and `'unitreeAction'` to `RobotEntry.controlFamily`. Keep the target list non-empty so the existing Leva selector hook remains structurally unchanged.
+- [x] **Step 4: Implement the pure state module and action target.** Add `'action-sequence'` to `ControlTarget.controlMode` and `'unitreeAction'` to `RobotEntry.controlFamily`. Keep the target list non-empty so the existing Leva selector hook remains structurally unchanged.
 
-- [ ] **Step 5: Register `unitreeActionLab` in `configs.ts`.** Use `${import.meta.env.BASE_URL}assets/unitree-action-lab/`, `scene.xml`, the 47-value home vector, camera `[4.2, -5.4, 2.7]`, orbit target `[0, 0, 0.75]`, grid size 6, and one action target.
+- [x] **Step 5: Register `unitreeActionLab` in `configs.ts`.** Use `${import.meta.env.BASE_URL}assets/unitree-action-lab/`, `scene.xml`, the 47-value home vector, camera `[4.2, -5.4, 2.7]`, orbit target `[0, 0, 0.75]`, grid size 6, and one action target.
 
-- [ ] **Step 6: Implement `UnitreeActionController`.** On a new request, resolve all named actuators through `findActuatorByName`, verify uniqueness and MJCF control ranges, and report an error before control writes if resolution fails. In `useBeforePhysicsStep`, sample using accumulated MuJoCo timestep only while running and call `applyUnitreeActionTargets(data.ctrl, ids, sample)`. While paused, reapply the last sampled controls without advancing elapsed time. Notify React only on phase changes and at 10 Hz elapsed-time updates.
+- [x] **Step 6: Implement `UnitreeActionController`.** On a new request, resolve all named actuators through `findActuatorByName`, verify uniqueness and MJCF control ranges, and report an error before control writes if resolution fails. In `useBeforePhysicsStep`, sample using accumulated MuJoCo timestep only while running and call `applyUnitreeActionTargets(data.ctrl, ids, sample)`. While paused, reapply the last sampled controls without advancing elapsed time. Notify React only on phase changes and at 10 Hz elapsed-time updates.
 
-- [ ] **Step 7: Implement `UnitreeActionPanel`.** Render the exact Chinese controls from the spec, current phase copy, status, and elapsed time. Disable Execute outside `idle`/`complete`, show Pause only while running, show Resume only while paused, and keep Restart enabled outside loading.
+- [x] **Step 7: Implement `UnitreeActionPanel`.** Render the exact Chinese controls from the spec, current phase copy, status, and elapsed time. Disable Execute outside `idle`/`complete`, show Pause only while running, show Resume only while paused, and keep Restart enabled outside loading.
 
-- [ ] **Step 8: Integrate action ownership in `App.tsx`.** Mount the controller/panel only for `unitreeActionLab`; exclude IK gizmo, drag interaction, arm keyboard controllers, and `KeyboardHelp` in this scene. Extend scene diagnostics and `replicatedRootPatterns` to count `g1_pelvis` and `go2_base` as the two physical instances. Reset and scene switching must clear action state and callbacks.
+- [x] **Step 8: Integrate action ownership in `App.tsx`.** Mount the controller/panel only for `unitreeActionLab`; exclude IK gizmo, drag interaction, arm keyboard controllers, and `KeyboardHelp` in this scene. Extend scene diagnostics and `replicatedRootPatterns` to count `g1_pelvis` and `go2_base` as the two physical instances. Reset and scene switching must clear action state and callbacks.
 
-- [ ] **Step 9: Run focused tests until GREEN, then type-check.**
+- [x] **Step 9: Run focused tests until GREEN, then type-check.**
 
 Run:
 

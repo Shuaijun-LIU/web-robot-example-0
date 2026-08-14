@@ -97,3 +97,13 @@ export function createXLeRobotTargets() {
     actuatorOffset: index * 16,
   }));
 }
+
+export function createUnitreeActionTargets() {
+  return [{
+    key: 'unitreeAction',
+    label: 'G1 + Go2 action',
+    prefix: '',
+    actuatorOffset: 0,
+    controlMode: 'action-sequence',
+  }];
+}

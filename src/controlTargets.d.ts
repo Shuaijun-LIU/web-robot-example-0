@@ -19,7 +19,7 @@ export interface ControlTarget {
   actuatorOffset: number;
   gripperActuator?: string;
   ik?: IkTargetDefinition;
-  controlMode?: 'arm' | 'planar-mobile';
+  controlMode?: 'arm' | 'planar-mobile' | 'action-sequence';
   mobility?: PlanarMobilityDefinition;
 }
 
@@ -28,3 +28,4 @@ export function createFrankaTargets(): ControlTarget[];
 export function createSO101Targets(): ControlTarget[];
 export function createSO101HomeLabTargets(): ControlTarget[];
 export function createXLeRobotTargets(): ControlTarget[];
+export function createUnitreeActionTargets(): ControlTarget[];
