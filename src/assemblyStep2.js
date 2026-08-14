@@ -108,6 +108,10 @@ export function releaseAssemblyStep2Controls(controls, positions, arms) {
   }
 }
 
+export function captureAssemblyStep2JointTargets(positions, arms) {
+  return arms.map((arm) => arm.qposAddresses.map((address) => positions[address]));
+}
+
 export function createAssemblyStep2ControlFrame(machine, plans) {
   const progressFor = (duration) => machine.phaseElapsed / duration;
   const clamps = ASSEMBLY1_STEP2_GRIPPER_CLAMPS;
