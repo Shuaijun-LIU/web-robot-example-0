@@ -17,6 +17,7 @@ import {
   SO101_HOME_LAB_LAYOUT,
   XLEROBOT_KITTING_LAYOUT,
 } from '../src/collaborativeSceneLayouts.js';
+import { UNITREE_ACTION_LAB_LAYOUT } from '../src/unitreeActionLab.js';
 
 const definitions = {
   franka: { layout: FRANKA_LAYOUT, sceneFile: 'scene.xml' },
@@ -27,12 +28,13 @@ const definitions = {
   so101Gearbox: { layout: SO101_GEARBOX_LAYOUT, sceneFile: 'objects_SO101.xml' },
   so101HomeLab: { layout: SO101_HOME_LAB_LAYOUT, sceneFile: 'objects_SO101.xml' },
   xlerobotKitting: { layout: XLEROBOT_KITTING_LAYOUT, sceneFile: 'objects.xml' },
+  unitreeActionLab: { layout: UNITREE_ACTION_LAB_LAYOUT, sceneFile: 'scene.xml' },
 };
 const [sceneKey, assetDirectory] = process.argv.slice(2);
 const definition = definitions[sceneKey];
 
 if (!definition || !assetDirectory) {
-  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly1|frankaAssembly2|so101Gearbox|so101HomeLab|xlerobotKitting> <asset-directory>');
+  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly1|frankaAssembly2|so101Gearbox|so101HomeLab|xlerobotKitting|unitreeActionLab> <asset-directory>');
 }
 
 const mujoco = await loadMujoco({ printErr: (message) => console.error(`MuJoCo: ${message}`) });
@@ -131,6 +133,12 @@ const findNamedIndex = (count, addresses, name) =>
   Array.from({ length: count }, (_, index) => index).find(
     (index) => getName(addresses[index]) === name,
   );
+if (sceneKey === 'unitreeActionLab') {
+  const floatingRoots = Array.from({ length: model.njnt }, (_, index) => index)
+    .filter((index) => model.jnt_type[index] === 0)
+    .map((index) => getName(model.name_jntadr[index]));
+  console.log(`floating roots: ${floatingRoots.join(', ')}`);
+}
 if (process.env.LIST_NAMES === '1') {
   console.log(
     'bodies:',

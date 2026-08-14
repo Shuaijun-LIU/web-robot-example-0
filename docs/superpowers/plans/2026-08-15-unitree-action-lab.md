@@ -42,7 +42,7 @@
 - Produces: compiled actuator names prefixed `g1_` and `go2_`, including explicitly named `go2_joint1` through `go2_joint6` arm actuators.
 - Consumes: Menagerie G1 asset package and UniLab Go2 + Airbot asset package listed in the design spec.
 
-- [ ] **Step 1: Write the failing compiled-scene test.** The test imports `UNITREE_ACTION_LAB_LAYOUT`, invokes the validator, and independently parses its report:
+- [x] **Step 1: Write the failing compiled-scene test.** The test imports `UNITREE_ACTION_LAB_LAYOUT`, invokes the validator, and independently parses its report:
 
 ```js
 test('Unitree Action Lab compiles two floating articulated robots', () => {
@@ -58,13 +58,13 @@ test('Unitree Action Lab compiles two floating articulated robots', () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and verify RED.**
+- [x] **Step 2: Run the test and verify RED.**
 
 Run: `node --test test/unitree-action-lab-scene.test.mjs`
 
 Expected: FAIL because `src/unitreeActionLab.js` and the local action-lab asset root do not exist.
 
-- [ ] **Step 3: Vendor the two source packages mechanically.** Copy the G1 XML/assets/license from the Menagerie mirror and the Go2 + Airbot XML/assets from UniLab. Copy Go2 leg meshes from UniLab's sibling `go2/assets` directory. Rename only the vendored Go2 + Airbot XML to `go2_with_arm.xml`.
+- [x] **Step 3: Vendor the two source packages mechanically.** Copy the G1 XML/assets/license from the Menagerie mirror and the Go2 + Airbot XML/assets from UniLab. Copy Go2 leg meshes from UniLab's sibling `go2/assets` directory. Rename only the vendored Go2 + Airbot XML to `go2_with_arm.xml`.
 
 ```bash
 mkdir -p public/assets/unitree-action-lab/robots/{g1,go2_arm,go2}
@@ -77,9 +77,9 @@ cp /data/private/user2/workspace/14.unilab/code/LICENCE public/assets/unitree-ac
 cp -a /data/private/user2/workspace/14.unilab/code/src/unilab/assets/robots/go2/assets public/assets/unitree-action-lab/robots/go2/
 ```
 
-- [ ] **Step 4: Adapt the vendored Go2 model with `apply_patch`.** Keep all free-joint, inertial, collision, mesh-reference, and actuator properties. Name the free joint `floating_base_joint`, give the six existing Airbot `<position>` actuators names `joint1` through `joint6`, and add an XML comment declaring the file modified for this scene. No geometric or dynamic parameter is removed.
+- [x] **Step 4: Adapt the vendored Go2 model with `apply_patch`.** Keep all free-joint, inertial, collision, mesh-reference, and actuator properties. Name the free joint `floating_base_joint`, give the six existing Airbot `<position>` actuators names `joint1` through `joint6`, and add an XML comment declaring the file modified for this scene. No geometric or dynamic parameter is removed.
 
-- [ ] **Step 5: Add the root scene and layout.** `scene.xml` must use local child models and separate them by 2.2 m:
+- [x] **Step 5: Add the root scene and layout.** `scene.xml` must use local child models and separate them by 2.2 m:
 
 ```xml
 <asset>
@@ -95,9 +95,9 @@ cp -a /data/private/user2/workspace/14.unilab/code/src/unilab/assets/robots/go2/
 
 `UNITREE_ACTION_LAB_LAYOUT.homeJoints` is the literal concatenation of the 29-value G1 `stand` control vector and the 18-value Go2 + Airbot `home` control vector recorded in the spec audit.
 
-- [ ] **Step 6: Extend the offline validator.** Add a `unitreeActionLab` definition with no XML patches or scene objects, allow a direct layout definition, and print floating joint names when the scene key is `unitreeActionLab`.
+- [x] **Step 6: Extend the offline validator.** Add a `unitreeActionLab` definition with no XML patches or scene objects, allow a direct layout definition, and print floating joint names when the scene key is `unitreeActionLab`.
 
-- [ ] **Step 7: Run the focused test and compile until GREEN.**
+- [x] **Step 7: Run the focused test and compile until GREEN.**
 
 Run:
 
