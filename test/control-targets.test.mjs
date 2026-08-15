@@ -3,9 +3,11 @@ import test from 'node:test';
 
 import {
   createFrankaTargets,
+  createPiperTargets,
   createSO101HomeLabTargets,
   createSO101Targets,
   createUnitreeActionTargets,
+  createUR5eTargets,
   createXLeRobotTargets,
   shiftIndices,
 } from '../src/controlTargets.js';
@@ -13,6 +15,7 @@ import {
   createSO101ControllerConfig,
   createXLeRobotControllerConfig,
   getFrankaGripperBinding,
+  getIndustrialGripperBinding,
 } from '../src/controllers/controllerConfigs.js';
 
 test('Unitree Action Lab exposes one action-only target without an IK site', () => {
@@ -38,6 +41,39 @@ test('Franka exposes four namespaced arm targets with independent control blocks
   ]);
   assert.deepEqual(targets[1].ik.actuatorIndices, [8, 9, 10, 11, 12, 13, 14]);
   assert.equal(targets[3].gripperActuator, 'r3_gripper');
+});
+
+test('PiPER exposes four six-axis IK targets and native gripper ranges', () => {
+  const targets = createPiperTargets();
+
+  assert.deepEqual(targets.map(({ actuatorOffset }) => actuatorOffset), [0, 7, 14, 21]);
+  assert.deepEqual(targets[0].ik.jointNames, [
+    'r0_joint1', 'r0_joint2', 'r0_joint3',
+    'r0_joint4', 'r0_joint5', 'r0_joint6',
+  ]);
+  assert.deepEqual(targets[2].ik.actuatorIndices, [14, 15, 16, 17, 18, 19]);
+  assert.equal(targets[3].ik.siteName, 'r3_tcp');
+  assert.deepEqual(targets[3].gripperControl, {
+    actuator: 'r3_gripper',
+    openValue: 0.035,
+    closedValue: 0,
+  });
+});
+
+test('UR5e exposes four six-axis IK targets ending at each Robotiq pinch site', () => {
+  const targets = createUR5eTargets();
+
+  assert.deepEqual(targets.map(({ actuatorOffset }) => actuatorOffset), [0, 7, 14, 21]);
+  assert.deepEqual(targets[0].ik.jointNames, [
+    'r0_shoulder_pan_joint', 'r0_shoulder_lift_joint', 'r0_elbow_joint',
+    'r0_wrist_1_joint', 'r0_wrist_2_joint', 'r0_wrist_3_joint',
+  ]);
+  assert.equal(targets[2].ik.siteName, 'r2_gripper_pinch');
+  assert.deepEqual(targets[1].gripperControl, {
+    actuator: 'r1_gripper_fingers_actuator',
+    openValue: 0,
+    closedValue: 255,
+  });
 });
 
 test('SO101 exposes four namespaced arm targets with six-actuator strides', () => {
@@ -104,6 +140,19 @@ test('Franka gripper binding follows the selected namespace', () => {
   assert.deepEqual(getFrankaGripperBinding(target, true), {
     v: { actuator: 'r2_gripper', toggle: [255, 0] },
   });
+});
+
+test('industrial gripper binding follows robot-specific open and closed values', () => {
+  assert.deepEqual(getIndustrialGripperBinding(createPiperTargets()[1]), {
+    v: { actuator: 'r1_gripper', toggle: [0.035, 0] },
+  });
+  assert.deepEqual(getIndustrialGripperBinding(createUR5eTargets()[0]), {
+    v: { actuator: 'r0_gripper_fingers_actuator', toggle: [0, 255] },
+  });
+  assert.throws(
+    () => getIndustrialGripperBinding({ key: 'missing' }),
+    /has no valid gripper control/,
+  );
 });
 
 test('SO101 keyboard controller writes only the selected six-actuator block', () => {

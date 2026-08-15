@@ -10,5 +10,6 @@ export function getFrankaGripperBinding(
   target: ControlTarget,
   initiallyOpen?: boolean,
 ): GripperBinding;
+export function getIndustrialGripperBinding(target: ControlTarget): GripperBinding;
 export function createSO101ControllerConfig(actuatorOffset: number): ArmControllerConfig;
 export function createXLeRobotControllerConfig(actuatorOffset: number): ArmControllerConfig;

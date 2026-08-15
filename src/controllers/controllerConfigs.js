@@ -17,6 +17,23 @@ export function getFrankaGripperBinding(target, initiallyOpen = false) {
   };
 }
 
+export function getIndustrialGripperBinding(target) {
+  const gripper = target.gripperControl;
+  if (
+    !gripper
+    || !Number.isFinite(gripper.openValue)
+    || !Number.isFinite(gripper.closedValue)
+  ) {
+    throw new Error(`Control target ${target.key} has no valid gripper control`);
+  }
+  return {
+    v: {
+      actuator: gripper.actuator,
+      toggle: [gripper.openValue, gripper.closedValue],
+    },
+  };
+}
+
 export function createSO101ControllerConfig(actuatorOffset) {
   return {
     numActuators: 24,

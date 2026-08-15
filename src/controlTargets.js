@@ -27,6 +27,52 @@ export function createFrankaTargets() {
   });
 }
 
+function createIndustrialTargets({ jointNames, siteName, gripperActuator, openValue, closedValue }) {
+  return Array.from({ length: 4 }, (_, index) => {
+    const prefix = `r${index}_`;
+    const actuatorOffset = index * 7;
+    return {
+      key: `r${index}`,
+      label: `Arm ${index + 1}`,
+      prefix,
+      actuatorOffset,
+      gripperControl: {
+        actuator: `${prefix}${gripperActuator}`,
+        openValue,
+        closedValue,
+      },
+      ik: {
+        siteName: `${prefix}${siteName}`,
+        jointNames: prefixedNames(prefix, jointNames),
+        actuatorIndices: shiftIndices([0, 1, 2, 3, 4, 5], actuatorOffset),
+      },
+    };
+  });
+}
+
+export function createPiperTargets() {
+  return createIndustrialTargets({
+    jointNames: ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6'],
+    siteName: 'tcp',
+    gripperActuator: 'gripper',
+    openValue: 0.035,
+    closedValue: 0,
+  });
+}
+
+export function createUR5eTargets() {
+  return createIndustrialTargets({
+    jointNames: [
+      'shoulder_pan_joint', 'shoulder_lift_joint', 'elbow_joint',
+      'wrist_1_joint', 'wrist_2_joint', 'wrist_3_joint',
+    ],
+    siteName: 'gripper_pinch',
+    gripperActuator: 'gripper_fingers_actuator',
+    openValue: 0,
+    closedValue: 255,
+  });
+}
+
 export function createSO101Targets() {
   return Array.from({ length: 4 }, (_, index) => {
     const prefix = `r${index}_`;
