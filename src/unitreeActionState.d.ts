@@ -19,6 +19,10 @@ export function createInitialUnitreeActionState(
 export function startAction(state: UnitreeActionState): UnitreeActionState;
 export function pauseAction(state: UnitreeActionState): UnitreeActionState;
 export function resumeAction(state: UnitreeActionState): UnitreeActionState;
+export function selectActionProgram(
+  state: UnitreeActionState,
+  programId: UnitreeActionProgramId,
+): UnitreeActionState;
 export function advanceAction(state: UnitreeActionState, deltaSeconds: number): UnitreeActionState;
 export function completeAction(state: UnitreeActionState): UnitreeActionState;
 export function failAction(state: UnitreeActionState, error: unknown): UnitreeActionState;

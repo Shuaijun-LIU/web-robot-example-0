@@ -9,6 +9,7 @@ import {
   pauseAction,
   resetAction,
   resumeAction,
+  selectActionProgram,
   startAction,
 } from '../src/unitreeActionState.js';
 
@@ -55,6 +56,23 @@ test('pause and resume preserve elapsed action time', () => {
   assert.equal(paused.status, 'paused');
   assert.equal(advanceAction(paused, 2).elapsed, 2.25);
   assert.deepEqual(resumeAction(paused), { ...paused, status: 'running' });
+});
+
+test('program selection resets idle/complete state and is locked while active', () => {
+  const greeting = createInitialUnitreeActionState();
+  const locomotion = selectActionProgram(greeting, 'locomotion');
+  assert.deepEqual(locomotion, createInitialUnitreeActionState('locomotion'));
+
+  const running = startAction(locomotion);
+  assert.equal(selectActionProgram(running, 'greeting'), running);
+  const paused = pauseAction(running);
+  assert.equal(selectActionProgram(paused, 'greeting'), paused);
+
+  const complete = completeAction(running);
+  assert.deepEqual(
+    selectActionProgram(complete, 'greeting'),
+    createInitialUnitreeActionState('greeting'),
+  );
 });
 
 test('reset returns to idle and failure keeps the original message', () => {

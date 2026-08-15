@@ -22,6 +22,11 @@ export function resumeAction(state) {
   return state.status === 'paused' ? { ...state, status: 'running' } : state;
 }
 
+export function selectActionProgram(state, programId) {
+  if (state.status === 'running' || state.status === 'paused') return state;
+  return createInitialUnitreeActionState(programId);
+}
+
 export function completeAction(state) {
   if (state.status === 'error') return state;
   const program = getUnitreeActionProgram(state.programId);
