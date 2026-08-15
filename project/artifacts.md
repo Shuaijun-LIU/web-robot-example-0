@@ -6,6 +6,9 @@ This file is generated/updated by artifact registry tooling.
 
 | Time (UTC) | Kind | Path | Produced by | Source | Notes |
 |---|---|---|---|---|---|
+| 2026-08-15 01:03:00 UTC | video | artifacts/videos/unitree-locomotion-suite.mp4 | production-browser-verification | Unitree Locomotion Suite | Complete 1440x900 H.264 recording; 27.0 s, 810 frames at 30 fps |
+| 2026-08-15 01:03:00 UTC | screenshot | artifacts/screenshots/unitree-locomotion-suite.png | production-browser-verification | Unitree Locomotion Suite | G1 gait phase with both robots under free-root MuJoCo dynamics |
+| 2026-08-15 01:03:00 UTC | metrics | artifacts/metrics/unitree-locomotion-suite.json | deterministic-offline-verification | Unitree Locomotion Suite | 25.25 s rollout at 2 ms physics / 16 ms controller cadence |
 | 2026-08-14 23:18:30 UTC | video | artifacts/videos/unitree-action-lab.mp4 | production-browser-verification | Unitree Action Lab | Complete 1440x900 H.264 recording of the verified actuator-only action |
 | 2026-08-14 23:18:29 UTC | screenshot | artifacts/screenshots/unitree-action-lab.png | production-browser-verification | Unitree Action Lab | G1 greeting and Go2 + Airbot scan under dynamic MuJoCo control |
 | 2026-08-13 07:57:00 UTC | screenshot | artifacts/screenshots/franka-assembly1-step1-grasp-ready.png | production-browser-pose-verification | Franka Assembly1 Step 1 grasp-ready redesign | Four exact grasp regions; max TCP error 0.01461 m, max axis error 1.513 degrees, max task-body drift 0.0000222 m |

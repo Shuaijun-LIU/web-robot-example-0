@@ -73,6 +73,7 @@ export function readUnitreeRootState(qpos, qvel, address) {
     angularVelocity,
     speed: Math.hypot(velocity[0], velocity[1]),
     forwardSpeed: Math.cos(yaw) * velocity[0] + Math.sin(yaw) * velocity[1],
+    lateralSpeed: -Math.sin(yaw) * velocity[0] + Math.cos(yaw) * velocity[1],
     roll,
     pitch,
     rollRate: angularVelocity[0],
@@ -98,6 +99,7 @@ function rootValues(root) {
     root?.rollRate,
     root?.pitchRate,
     root?.forwardSpeed,
+    root?.lateralSpeed,
   ].filter((value) => value !== undefined);
 }
 

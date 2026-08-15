@@ -21,6 +21,8 @@ const assetDirectory = 'public/assets/unitree-action-lab';
 const writeMetrics = process.argv.includes('--write');
 const durationArgument = process.argv.find((argument) => argument.startsWith('--duration='));
 const requestedDuration = durationArgument ? Number(durationArgument.split('=')[1]) : 25.25;
+const controlArgument = process.argv.find((argument) => argument.startsWith('--control-period='));
+const requestedControlPeriod = controlArgument ? Number(controlArgument.split('=')[1]) : 0;
 
 function listFiles(directory) {
   return readdirSync(directory).flatMap((name) => {
@@ -139,6 +141,8 @@ let g1MaxJointDelta = 0;
 let go2MaxLegJointDelta = 0;
 const trace = [];
 let nextTraceTime = 0;
+let nextControlTime = 0;
+let lastSample = validateLocomotionTargets(sampleUnitreeLocomotionAction(0, initialRoots));
 
 function recordPhase(phase) {
   if (visitedPhases.at(-1) !== phase) visitedPhases.push(phase);
@@ -184,10 +188,20 @@ while (data.time < rolloutDuration - timestep * 0.5) {
   const roots = readRoots();
   safety = validateUnitreeDynamicsState(roots);
   if (!safety.safe) break;
-  const sample = validateLocomotionTargets(sampleUnitreeLocomotionAction(data.time, {
-    g1: roots.g1,
-    go2: roots.go2,
-  }));
+  if (requestedControlPeriod <= 0 || data.time + timestep * 0.5 >= nextControlTime) {
+    lastSample = validateLocomotionTargets(sampleUnitreeLocomotionAction(data.time, {
+      g1: roots.g1,
+      go2: roots.go2,
+    }));
+    if (requestedControlPeriod > 0) {
+      nextControlTime += requestedControlPeriod;
+      if (nextControlTime <= data.time) nextControlTime = data.time + requestedControlPeriod;
+    }
+    recordPhase(lastSample.phase);
+    clampCount = Math.max(clampCount, lastSample.diagnostics.clampCount);
+    applyUnitreeActionTargets(data.ctrl, actuatorIds, lastSample);
+  }
+  const sample = lastSample;
   if (data.time + timestep * 0.5 >= nextTraceTime) {
     trace.push({
       time: Number(data.time.toFixed(3)),
@@ -205,9 +219,6 @@ while (data.time < rolloutDuration - timestep * 0.5) {
     });
     nextTraceTime += 0.25;
   }
-  recordPhase(sample.phase);
-  clampCount = Math.max(clampCount, sample.diagnostics.clampCount);
-  applyUnitreeActionTargets(data.ctrl, actuatorIds, sample);
   mujoco.mj_step(model, data);
   updateMetrics(readRoots());
 }
@@ -227,6 +238,7 @@ const result = {
   runtimeWrites: 'ctrl-only',
   simulatedSeconds: Number(data.time.toFixed(4)),
   timestep,
+  controlPeriod: requestedControlPeriod > 0 ? requestedControlPeriod : timestep,
   visitedPhases,
   clampCount,
   safety,

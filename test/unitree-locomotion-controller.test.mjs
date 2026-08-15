@@ -68,6 +68,15 @@ test('G1 braking anticipates negative local forward speed without changing the r
   assert.ok(braking.targets[6] > coasting.targets[6]);
   assert.ok(braking.targets[4] < coasting.targets[4]);
   assert.ok(braking.targets[10] < coasting.targets[10]);
+  const lateral = sampleG1Gait(
+    0,
+    0,
+    { ...zeroFeedback.g1, lateralSpeed: 0.2 },
+    1,
+    1,
+  );
+  assert.ok(lateral.targets[1] > coasting.targets[1]);
+  assert.ok(lateral.targets[7] > coasting.targets[7]);
 });
 
 test('Go2 trot phase-locks diagonal pairs and opposes the other diagonal', () => {

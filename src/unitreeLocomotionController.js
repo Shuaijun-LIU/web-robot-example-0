@@ -48,6 +48,7 @@ const ZERO_ATTITUDE = Object.freeze({
   rollRate: 0,
   pitchRate: 0,
   forwardSpeed: 0,
+  lateralSpeed: 0,
 });
 
 export function locomotionEnvelope(progress, rampFraction = 0.3) {
@@ -117,7 +118,7 @@ export function sampleG1Gait(
   const applyLeg = (offset, wave, side) => {
     const swing = Math.max(0, wave);
     const stance = Math.max(0, -wave);
-    targets[offset] += amount * (-0.13 * wave - 0.21 * stance);
+    targets[offset] += amount * (-0.13 * wave - 0.2 * stance);
     targets[offset + 1] += amount * side * 0.012 * lateral;
     targets[offset + 3] += amount * (0.45 * swing - 0.035 * stance);
     targets[offset + 4] += amount * (-0.095 * wave - 0.1 * swing);
@@ -155,7 +156,9 @@ export function sampleG1Gait(
   // back into the leg pose during the exit ramp so momentum is arrested by
   // the feet instead of by touching the free root state.
   const forwardSpeed = Number.isFinite(attitude.forwardSpeed) ? attitude.forwardSpeed : 0;
-  const brake = clamp(-forwardSpeed * 1.25, -0.24, 0.24) * brakeAmount;
+  const brake = clamp(-forwardSpeed * 1.15, -0.24, 0.24) * brakeAmount;
+  const lateralSpeed = Number.isFinite(attitude.lateralSpeed) ? attitude.lateralSpeed : 0;
+  const lateralBrake = clamp(lateralSpeed * 1.1, -0.2, 0.2) * brakeAmount;
   targets[0] += brake * 0.72;
   targets[6] += brake * 0.72;
   targets[3] += Math.abs(brake) * 0.2;
@@ -163,6 +166,11 @@ export function sampleG1Gait(
   targets[4] -= brake * 0.55;
   targets[10] -= brake * 0.55;
   targets[14] += brake * 0.18;
+  targets[1] += lateralBrake * 0.7;
+  targets[7] += lateralBrake * 0.7;
+  targets[5] -= lateralBrake * 0.5;
+  targets[11] -= lateralBrake * 0.5;
+  targets[13] += lateralBrake * 0.2;
 
   return {
     ...clampTargets(targets, G1_ACTUATORS),
@@ -180,8 +188,10 @@ function g1WalkEnvelope(localSeconds) {
 }
 
 function g1BrakeEnvelope(localSeconds) {
-  if (localSeconds <= 3.45) return 0;
-  return smoothstep((localSeconds - 3.45) / 0.55);
+  if (localSeconds <= 0.8) return 0;
+  if (localSeconds < 1.6) return 0.45 * smoothstep((localSeconds - 0.8) / 0.8);
+  if (localSeconds <= 3.2) return 0.45;
+  return 0.45 + 0.55 * smoothstep((localSeconds - 3.2) / 0.8);
 }
 
 function g1WalkSchedule(localSeconds) {

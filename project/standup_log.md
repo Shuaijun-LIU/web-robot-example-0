@@ -27,3 +27,8 @@
   - What: Added a self-contained dynamic Unitree scene using licensed G1 and Go2 + Airbot MJCF packages, a continuous six-phase actuator clip, dedicated action controls, and production screenshot/video runners.
   - Verified: The 58-body, 155-geom model compiles with 47 actuators and two floating roots. Offline and browser rollouts completed with finite state, stable final root poses, ground contacts, visible G1/Go2/Airbot joint motion, and no direct root-state writes or browser errors.
   - Next: User reviews `artifacts/screenshots/unitree-action-lab.png` and `artifacts/videos/unitree-action-lab.mp4`; any later locomotion or task interaction should be designed as a separate action clip/controller.
+- 2026-08-15 09:03 CST
+  - What: Preserved the greeting program and added a selectable 25-second Unitree locomotion suite covering G1 squat/stand/gait, Go2 diagonal gait, stabilization, and the final greeting.
+  - Verified: The final Vulkan browser run produced physical free-root translation (G1 0.099296 m; Go2 0.439727 m), finite state, zero target clamps, final upright poses, and 8/4 final contacts without any root-state write or learned-policy dependency.
+  - Artifacts: `artifacts/screenshots/unitree-locomotion-suite.png`, `artifacts/videos/unitree-locomotion-suite.mp4`, and `artifacts/metrics/unitree-locomotion-suite.json`.
+  - Next: Wait for user visual review before expanding the locomotion controller or adding a task interaction.

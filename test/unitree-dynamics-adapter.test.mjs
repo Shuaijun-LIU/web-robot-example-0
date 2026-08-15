@@ -89,6 +89,7 @@ test('root reader expresses forward speed in the robot frame after a yaw turn', 
   qvel.set([-0.35, 0, 0, 0, 0, 0]);
   const state = readUnitreeRootState(qpos, qvel, { qposAddress: 0, dofAddress: 0 });
   closeTo(state.forwardSpeed, 0.35);
+  closeTo(state.lateralSpeed, 0);
 });
 
 test('dynamics safety distinguishes valid standing state, falls, and NaN', () => {

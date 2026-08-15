@@ -20,6 +20,7 @@ export interface UnitreeRootState {
   angularVelocity: [number, number, number];
   speed: number;
   forwardSpeed: number;
+  lateralSpeed: number;
   roll: number;
   pitch: number;
   rollRate: number;

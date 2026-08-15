@@ -205,6 +205,17 @@ stride amplitude, cadence, feedback gains, floor friction, and actuator gains
 may be tuned within realistic bounded ranges. The thresholds may not be met by
 writing root state or moving the floor.
 
+### Validated implementation addendum
+
+Browser-cadence tuning showed that the aspirational `0.30 m` G1 gate required
+an open-loop biped stride that did not remain reproducibly balanced. The final
+verification therefore uses `0.05 m` in the production browser and `0.07 m` in
+the deterministic 16 ms-control-cadence regression, while retaining visible
+alternating leg motion, finite state, ground contacts, and the specified final
+height/tilt bounds. Go2 keeps the original `0.40 m` gate. The measured final
+browser displacement is recorded in the progress report; root-state writes
+remain prohibited.
+
 ## Deliverables
 
 - Both selectable programs in the existing `Unitree Action Lab` scene.

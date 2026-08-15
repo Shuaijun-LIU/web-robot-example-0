@@ -9,6 +9,7 @@ export interface UnitreeAttitudeFeedback {
   rollRate: number;
   pitchRate: number;
   forwardSpeed?: number;
+  lateralSpeed?: number;
 }
 
 export interface UnitreeLocomotionFeedback {
