@@ -10,8 +10,27 @@ export type UnitreeActionPhaseName =
   | 'scan-wave'
   | 'lower'
   | 'recover'
+  | 'g1-squat'
+  | 'g1-stand'
+  | 'g1-walk'
+  | 'g1-stabilize'
+  | 'go2-walk'
+  | 'go2-stabilize'
+  | 'final-greeting'
   | 'final-hold'
   | 'complete';
+
+export type UnitreeActionProgramId = 'greeting' | 'locomotion';
+
+export interface UnitreeActionProgram {
+  id: UnitreeActionProgramId;
+  label: string;
+  duration: number;
+  phases: Array<{
+    name: Exclude<UnitreeActionPhaseName, 'complete'>;
+    duration: number;
+  }>;
+}
 
 export interface UnitreeActionSample {
   phase: UnitreeActionPhaseName;
@@ -36,6 +55,12 @@ export const UNITREE_ACTION_PHASES: Array<{
   duration: number;
 }>;
 export const UNITREE_ACTION_DURATION: number;
+export const DEFAULT_UNITREE_ACTION_PROGRAM_ID: UnitreeActionProgramId;
+export const UNITREE_LOCOMOTION_PHASES: UnitreeActionProgram['phases'];
+export const UNITREE_LOCOMOTION_DURATION: number;
+export const UNITREE_ACTION_PROGRAMS: Readonly<Record<UnitreeActionProgramId, UnitreeActionProgram>>;
+
+export function getUnitreeActionProgram(programId?: UnitreeActionProgramId): UnitreeActionProgram;
 
 export function isControlRangeCompatible(
   actuator: NamedActuator,
@@ -44,6 +69,10 @@ export function isControlRangeCompatible(
 ): boolean;
 
 export function sampleUnitreeAction(elapsedSeconds: number): UnitreeActionSample;
+export function sampleUnitreeActionProgram(
+  programId: UnitreeActionProgramId,
+  elapsedSeconds: number,
+): UnitreeActionSample;
 export function applyUnitreeActionTargets(
   ctrl: Float64Array | number[],
   actuatorIds: UnitreeActuatorIds,

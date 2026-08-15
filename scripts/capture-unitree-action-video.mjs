@@ -8,18 +8,25 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
 const ffmpegPath = process.env.FFMPEG_PATH ?? 'ffmpeg';
+const ffprobePath = process.env.FFPROBE_PATH ?? 'ffprobe';
 const outputDirectory = resolve('artifacts/videos');
-const outputPath = join(outputDirectory, 'unitree-action-lab.mp4');
+const outputPath = join(outputDirectory, 'unitree-locomotion-suite.mp4');
 const temporaryDirectory = await mkdtemp(join(tmpdir(), 'unitree-action-video-'));
 const useVulkan = process.env.PLAYWRIGHT_USE_VULKAN === '1';
+const browserArgs = [
+  '--disable-background-timer-throttling',
+  '--disable-renderer-backgrounding',
+  '--disable-backgrounding-occluded-windows',
+  ...(useVulkan
+    ? ['--use-angle=vulkan', '--enable-features=Vulkan', '--ignore-gpu-blocklist', '--enable-gpu']
+    : []),
+];
 const launchOptions = {
   headless: true,
+  args: browserArgs,
   ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
     ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE }
     : {}),
-  ...(useVulkan ? {
-    args: ['--use-angle=vulkan', '--enable-features=Vulkan', '--ignore-gpu-blocklist', '--enable-gpu'],
-  } : {}),
 };
 await mkdir(outputDirectory, { recursive: true });
 
@@ -48,8 +55,16 @@ try {
     null,
     { timeout },
   );
-  await page.waitForFunction(() => Boolean(window.robotDemo?.runUnitreeAction), null, { timeout });
+  await page.waitForFunction(
+    () => Boolean(window.robotDemo?.runUnitreeAction && window.robotDemo?.selectUnitreeActionProgram),
+    null,
+    { timeout },
+  );
   await page.waitForTimeout(1_000);
+  const selectedProgram = await page.evaluate(
+    () => window.robotDemo.selectUnitreeActionProgram('locomotion'),
+  );
+  if (!selectedProgram) throw new Error('Could not select locomotion for video recording');
   const started = await page.evaluate(() => window.robotDemo.runUnitreeAction());
   if (!started) throw new Error('Unitree action did not start for video recording');
   await page.waitForFunction(
@@ -67,15 +82,28 @@ try {
   await context.close();
   await browser.close();
 
+  const sourceDuration = Number(execFileSync(ffprobePath, [
+    '-v', 'error',
+    '-show_entries', 'format=duration',
+    '-of', 'default=noprint_wrappers=1:nokey=1',
+    webmPath,
+  ], { encoding: 'utf8' }).trim());
+  if (!Number.isFinite(sourceDuration) || sourceDuration <= 0) {
+    throw new Error(`Could not read recorded video duration: ${sourceDuration}`);
+  }
+  const playbackRatio = Math.min(1, 27 / sourceDuration);
+
   execFileSync(ffmpegPath, [
     '-y',
     '-i', webmPath,
+    '-vf', `setpts=${playbackRatio.toFixed(8)}*PTS,fps=30`,
+    '-an',
     '-c:v', 'libx264',
     '-pix_fmt', 'yuv420p',
     '-movflags', '+faststart',
     outputPath,
   ], { stdio: 'inherit' });
-  console.log(outputPath);
+  console.log(JSON.stringify({ outputPath, sourceDuration, playbackRatio }));
 } finally {
   if (browser.isConnected()) await browser.close();
   await rm(temporaryDirectory, { recursive: true, force: true });

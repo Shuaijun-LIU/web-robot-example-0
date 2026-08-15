@@ -46,13 +46,17 @@ test('browser action timing follows MuJoCo time rather than render-frame count',
   assert.doesNotMatch(source, /elapsedRef\.current \+ model\.opt\.timestep/);
 });
 
-test('browser verifier drives the action through scan-wave to completion', async () => {
+test('browser verifier drives the locomotion suite through gait to completion', async () => {
   const source = await readFile(files.verifier, 'utf8');
   assert.match(source, /sceneInstances\)\s*!==\s*2/);
+  assert.match(source, /selectUnitreeActionProgram\('locomotion'\)/);
   assert.match(source, /runUnitreeAction\(\)/);
-  assert.match(source, /unitreeActionPhase\s*===\s*'scan-wave'/);
+  assert.match(source, /unitreeActionPhase\s*===\s*'g1-walk'/);
+  assert.match(source, /getUnitreeActionDiagnostics\(\)/);
+  assert.match(source, /displacement\.g1\.x/);
+  assert.match(source, /displacement\.go2\.x/);
   assert.match(source, /unitreeActionStatus\s*===\s*'complete'/);
-  assert.match(source, /unitree-action-lab\.png/);
+  assert.match(source, /unitree-locomotion-suite\.png/);
 });
 
 test('video runner records the full action and package exposes all verification commands', async () => {
@@ -62,7 +66,8 @@ test('video runner records the full action and package exposes all verification 
   assert.match(source, /recordVideo/);
   assert.match(source, /process\.env\.FFMPEG_PATH/);
   assert.match(source, /libx264/);
-  assert.match(source, /unitree-action-lab\.mp4/);
+  assert.match(source, /selectUnitreeActionProgram\('locomotion'\)/);
+  assert.match(source, /unitree-locomotion-suite\.mp4/);
   assert.equal(
     packageJson.scripts['verify:unitree-action'],
     'node scripts/verify-unitree-action-dynamics.mjs',

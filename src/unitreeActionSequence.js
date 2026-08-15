@@ -99,6 +99,46 @@ export const UNITREE_ACTION_DURATION = UNITREE_ACTION_PHASES.reduce(
   0,
 );
 
+export const DEFAULT_UNITREE_ACTION_PROGRAM_ID = 'greeting';
+
+export const UNITREE_LOCOMOTION_PHASES = [
+  { name: 'settle', duration: 1 },
+  { name: 'g1-squat', duration: 2 },
+  { name: 'g1-stand', duration: 2 },
+  { name: 'g1-walk', duration: 6 },
+  { name: 'g1-stabilize', duration: 2 },
+  { name: 'go2-walk', duration: 6 },
+  { name: 'go2-stabilize', duration: 2 },
+  { name: 'final-greeting', duration: 3 },
+  { name: 'final-hold', duration: 1 },
+];
+
+export const UNITREE_LOCOMOTION_DURATION = UNITREE_LOCOMOTION_PHASES.reduce(
+  (sum, phase) => sum + phase.duration,
+  0,
+);
+
+export const UNITREE_ACTION_PROGRAMS = Object.freeze({
+  greeting: Object.freeze({
+    id: 'greeting',
+    label: '问候与扫描',
+    duration: UNITREE_ACTION_DURATION,
+    phases: UNITREE_ACTION_PHASES,
+  }),
+  locomotion: Object.freeze({
+    id: 'locomotion',
+    label: '完整运动套件',
+    duration: UNITREE_LOCOMOTION_DURATION,
+    phases: UNITREE_LOCOMOTION_PHASES,
+  }),
+});
+
+export function getUnitreeActionProgram(programId = DEFAULT_UNITREE_ACTION_PROGRAM_ID) {
+  const program = UNITREE_ACTION_PROGRAMS[programId];
+  if (!program) throw new Error(`Unknown Unitree action program: ${programId}`);
+  return program;
+}
+
 const clamp01 = (value) => Math.min(1, Math.max(0, value));
 const smoothstep = (value) => {
   const t = clamp01(value);
@@ -108,14 +148,14 @@ const mix = (from, to, amount) => from.map(
   (value, index) => value + (to[index] - value) * amount,
 );
 
-function phaseAt(time) {
+function phaseAt(time, phases = UNITREE_ACTION_PHASES, duration = UNITREE_ACTION_DURATION) {
   let start = 0;
-  for (const phase of UNITREE_ACTION_PHASES) {
+  for (const phase of phases) {
     const end = start + phase.duration;
     if (time < end) return { ...phase, start, progress: (time - start) / phase.duration };
     start = end;
   }
-  return { name: 'complete', duration: 0, start: UNITREE_ACTION_DURATION, progress: 1 };
+  return { name: 'complete', duration: 0, start: duration, progress: 1 };
 }
 
 export function sampleUnitreeAction(elapsedSeconds) {
@@ -163,6 +203,23 @@ export function sampleUnitreeAction(elapsedSeconds) {
     elapsed: time,
     g1Targets,
     go2Targets,
+  };
+}
+
+export function sampleUnitreeActionProgram(programId, elapsedSeconds) {
+  const program = getUnitreeActionProgram(programId);
+  if (program.id === 'greeting') return sampleUnitreeAction(elapsedSeconds);
+
+  const time = Math.min(
+    program.duration,
+    Math.max(0, Number.isFinite(elapsedSeconds) ? elapsedSeconds : 0),
+  );
+  const phase = phaseAt(time, program.phases, program.duration);
+  return {
+    phase: phase.name,
+    elapsed: time,
+    g1Targets: [...G1_HOME],
+    go2Targets: [...GO2_HOME],
   };
 }
 

@@ -40,11 +40,13 @@ These additive scenes preserve the procedural Assembly1 frame, cross-member, fas
 
 ### Unitree Action Lab — dynamic G1 and Go2 + Airbot
 
-[![Unitree G1 greeting beside a Go2 carrying an Airbot arm](artifacts/screenshots/unitree-action-lab.png)](artifacts/screenshots/unitree-action-lab.png)
+| Greeting & Scan — 10 s | Locomotion Suite — 25 s |
+|---|---|
+| [![Unitree G1 greeting beside a Go2 carrying an Airbot arm](artifacts/screenshots/unitree-action-lab.png)](artifacts/screenshots/unitree-action-lab.png) | [![Unitree G1 walking beside a Go2 carrying an Airbot arm](artifacts/screenshots/unitree-locomotion-suite.png)](artifacts/screenshots/unitree-locomotion-suite.png) |
 
-[Watch the verified 10-second action sequence (MP4)](artifacts/videos/unitree-action-lab.mp4)
+[Watch Greeting & Scan (MP4)](artifacts/videos/unitree-action-lab.mp4) · [Watch the complete Locomotion Suite (MP4)](artifacts/videos/unitree-locomotion-suite.mp4)
 
-This isolated scene contains only a dynamic Unitree G1, a dynamic Go2 carrying a six-joint Airbot arm, and the contact-enabled floor. A deterministic actuator-only action clip drives 47 named MuJoCo actuators through settle, greeting, arm scan, quadruped lowering, recovery, and final hold. It does not use a learned policy, scripted body transforms, root `qpos` writes, mocap, welds, or automatic attachment. Gravity, floating-base balance, contacts, and joint dynamics remain active throughout the action.
+This isolated scene contains only a dynamic Unitree G1, a dynamic Go2 carrying a six-joint Airbot arm, and the contact-enabled floor. Its action selector preserves the original 10-second greeting and adds a complete 25-second locomotion program: settle, G1 squat, G1 stand, G1 gait, stabilization, Go2 diagonal gait, stabilization, and a final coordinated greeting. Both are deterministic actuator-only programs that drive 47 named MuJoCo actuators. They do not use a learned policy, scripted body transforms, root `qpos` writes, mocap, welds, or automatic attachment. Gravity, floating-base balance, ground contacts, and joint dynamics remain active throughout.
 
 | Scene | Physical layout | Shared workspace |
 |---|---|---|
@@ -58,7 +60,7 @@ This isolated scene contains only a dynamic Unitree G1, a dynamic Go2 carrying a
 | SO101 Gearbox | Four SO101 arms in the original compact framing | Precision gearbox housing, gears, shafts, spacers, cover, and press pins |
 | SO101 Home Lab | Same four-arm workcell in a detailed 10 m × 8.4 m room | Lounge, office, static G1, and static Go2-with-arm service zone |
 | XLeRobot Kitting | Two mobile dual-arm robots in a three-wall home kitchen | Produce, packages, scanner, transfer tray, sink, stove, refrigerator, and storage |
-| Unitree Action Lab | One floating-base G1 and one floating-base Go2 with a six-joint Airbot arm | Policy-free, 10-second whole-body and arm action sequence on a shared floor |
+| Unitree Action Lab | One floating-base G1 and one floating-base Go2 with a six-joint Airbot arm | Selectable policy-free 10-second greeting and 25-second locomotion programs on a shared floor |
 
 The app starts running with the IK gizmo visible, matching the original interactive example. Use **Control target** to select an individual Franka, PiPER, UR5e, or SO101 arm, or one complete XLeRobot, without reloading the shared scene. Unitree Action Lab instead exposes a dedicated run/pause/restart action panel and no IK or keyboard target.
 
@@ -95,7 +97,7 @@ The panel also provides pause, speed, gravity compensation, reset, IK gizmo, con
 
 The original layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js), while the collaborative task layouts live in [`src/collaborativeSceneLayouts.js`](src/collaborativeSceneLayouts.js). The detailed SO101 room environment is isolated in [`src/so101HomeLabEnvironment.js`](src/so101HomeLabEnvironment.js), both Franka assembly variants share their installation contract in [`src/frankaAssemblyLayouts.js`](src/frankaAssemblyLayouts.js), the PiPER/UR5e variants are defined in [`src/alternateAssemblyLayouts.js`](src/alternateAssemblyLayouts.js), and the dynamic Unitree scene/action definitions live in [`src/unitreeActionLab.js`](src/unitreeActionLab.js) and [`src/unitreeActionSequence.js`](src/unitreeActionSequence.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
 
-Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Target namespaces and control offsets are defined in [`src/controlTargets.js`](src/controlTargets.js); the selected-instance IK controller resolves explicit joint addresses and actuator indices instead of assuming the first block. Browser smoke tests reject a scene unless it contains exactly 4 roots in each Franka scene, 4 SO101 roots, 2 XLeRobot roots, or the expected G1/Go2 pair in Unitree Action Lab.
+Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Target namespaces and control offsets are defined in [`src/controlTargets.js`](src/controlTargets.js); the selected-instance IK controller resolves explicit joint addresses and actuator indices instead of assuming the first block. The Unitree locomotion targets and bounded root-feedback corrections are isolated in [`src/unitreeLocomotionController.js`](src/unitreeLocomotionController.js), while [`src/unitreeDynamicsAdapter.js`](src/unitreeDynamicsAdapter.js) only reads free-root state for feedback and diagnostics. Browser smoke tests reject a scene unless it contains exactly 4 roots in each Franka scene, 4 SO101 roots, 2 XLeRobot roots, or the expected G1/Go2 pair in Unitree Action Lab.
 
 ## Verification
 
@@ -117,7 +119,7 @@ npm run verify:unitree-action-browser
 npm run capture:unitree-action-video
 ```
 
-`verify:controls` selects every controllable instance, including all four arms in both SO101 task scenes, then checks that keyboard and IK input change only the selected actuator block. G1 and Go2 in Home Lab are intentionally static room assets and do not add control targets. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`. Set `GRASP_REPORT=1` and optionally `GRASP_TOOL=manual_screwdriver|torque_driver|hammer` to run an unsupported physical gravity-hold check for either Franka assembly scene.
+`verify:controls` selects every controllable instance, including all four arms in both SO101 task scenes, then checks that keyboard and IK input change only the selected actuator block. `verify:unitree-action-browser` runs the complete 25-second locomotion program and checks physical root displacement, ground contacts, finite state, final height/tilt, phase coverage, and the absence of direct root-state control. G1 and Go2 in Home Lab are intentionally static room assets and do not add control targets. `FRANKA_ASSET_DIR` and `XLEROBOT_ASSET_DIR` can point both browser scripts at local upstream assets to avoid repeated network downloads. The offline compiler helper is available as `node scripts/validate-mjcf.mjs <scene> <asset-directory>`. Set `GRASP_REPORT=1` and optionally `GRASP_TOOL=manual_screwdriver|torque_driver|hammer` to run an unsupported physical gravity-hold check for either Franka assembly scene.
 
 ## GitHub Pages
 

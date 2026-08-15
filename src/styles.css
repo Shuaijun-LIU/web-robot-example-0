@@ -154,6 +154,31 @@
   font-size: 1rem;
 }
 
+.unitree-action-panel__program {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+  color: #c7ccd1;
+  font-size: 0.72rem;
+}
+
+.unitree-action-panel__program select {
+  min-width: 0;
+  height: 2rem;
+  border: 1px solid rgb(179 185 191 / 28%);
+  border-radius: 0.4rem;
+  background: #41484f;
+  color: #f1f2f3;
+  padding: 0 0.5rem;
+  font: inherit;
+}
+
+.unitree-action-panel__program select:disabled {
+  opacity: 0.5;
+}
+
 .unitree-action-panel__metrics {
   display: flex;
   align-items: center;

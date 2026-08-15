@@ -50,9 +50,12 @@ import {
   pauseAction,
   resetAction,
   resumeAction,
+  selectActionProgram,
   startAction,
 } from './unitreeActionState.js';
 import type { UnitreeActionState } from './unitreeActionState.js';
+import type { UnitreeActionProgramId } from './unitreeActionSequence.js';
+import type { UnitreeRuntimeDiagnostics } from './unitreeDynamicsAdapter.js';
 
 function LoadingOverlay() {
   const sim = useMujoco();
@@ -185,9 +188,11 @@ function SceneChildren({
   onRunAssemblyStep3,
   onResetAssemblySequence,
   unitreeActionStateRef,
+  unitreeActionDiagnosticsRef,
   onRunUnitreeAction,
   onPauseUnitreeAction,
   onResumeUnitreeAction,
+  onSelectUnitreeActionProgram,
 }: {
   robotKey: string;
   controlFamily: 'franka' | 'industrialArm' | 'so101' | 'xlerobot' | 'unitreeAction';
@@ -213,9 +218,11 @@ function SceneChildren({
   onRunAssemblyStep3: () => boolean;
   onResetAssemblySequence: () => void;
   unitreeActionStateRef: React.MutableRefObject<UnitreeActionState>;
+  unitreeActionDiagnosticsRef: React.MutableRefObject<UnitreeRuntimeDiagnostics | null>;
   onRunUnitreeAction: () => boolean;
   onPauseUnitreeAction: () => boolean;
   onResumeUnitreeAction: () => boolean;
+  onSelectUnitreeActionProgram: (programId: UnitreeActionProgramId) => boolean;
 }) {
   const simulation = useMujoco();
   const assemblyAutomationActive = assemblyStep1Status === 'planning'
@@ -317,7 +324,9 @@ function SceneChildren({
       runUnitreeAction: onRunUnitreeAction,
       pauseUnitreeAction: onPauseUnitreeAction,
       resumeUnitreeAction: onResumeUnitreeAction,
+      selectUnitreeActionProgram: onSelectUnitreeActionProgram,
       getUnitreeActionState: () => ({ ...unitreeActionStateRef.current }),
+      getUnitreeActionDiagnostics: () => unitreeActionDiagnosticsRef.current,
     };
     window.robotDemo = diagnostics;
     return () => {
@@ -336,7 +345,9 @@ function SceneChildren({
     onRunUnitreeAction,
     onPauseUnitreeAction,
     onResumeUnitreeAction,
+    onSelectUnitreeActionProgram,
     unitreeActionStateRef,
+    unitreeActionDiagnosticsRef,
   ]);
 
   return (
@@ -455,6 +466,7 @@ export function App() {
   const step2DiagnosticsRef = useRef<AssemblyStep2RuntimeDiagnostics | null>(null);
   const step3DiagnosticsRef = useRef<AssemblyStep3RuntimeDiagnostics | null>(null);
   const unitreeActionStateRef = useRef(unitreeActionState);
+  const unitreeActionDiagnosticsRef = useRef<UnitreeRuntimeDiagnostics | null>(null);
   unitreeActionStateRef.current = unitreeActionState;
   const performanceStatsRef = useRef<HTMLDivElement>(null!);
   // Drei's Stats type omits the null state that every DOM ref has before mount.
@@ -526,6 +538,7 @@ export function App() {
     setAssemblyStep2State({ phase: 'idle', failure: null });
     setAssemblyStep3State({ phase: 'idle', failure: null });
     setUnitreeActionState(resetAction());
+    unitreeActionDiagnosticsRef.current = null;
     setResetGeneration((generation) => generation + 1);
   }, []);
 
@@ -556,11 +569,24 @@ export function App() {
     return true;
   }, [robotKey]);
 
+  const handleSelectUnitreeActionProgram = useCallback((programId: UnitreeActionProgramId) => {
+    if (
+      robotKey !== 'unitreeActionLab'
+      || unitreeActionStateRef.current.status === 'running'
+      || unitreeActionStateRef.current.status === 'paused'
+    ) return false;
+    apiRef.current?.reset();
+    unitreeActionDiagnosticsRef.current = null;
+    setResetGeneration((generation) => generation + 1);
+    setUnitreeActionState(selectActionProgram(unitreeActionStateRef.current, programId));
+    return true;
+  }, [robotKey]);
+
   const handleRestartUnitreeAction = useCallback(() => {
     if (robotKey !== 'unitreeActionLab') return false;
     apiRef.current?.reset();
     setResetGeneration((generation) => generation + 1);
-    setUnitreeActionState(startAction(resetAction()));
+    setUnitreeActionState(startAction(resetAction(unitreeActionStateRef.current)));
     setUnitreeActionRequestId((requestId) => requestId + 1);
     return true;
   }, [robotKey]);
@@ -575,6 +601,7 @@ export function App() {
     delete document.documentElement.dataset.ikSite;
     delete document.documentElement.dataset.unitreeActionStatus;
     delete document.documentElement.dataset.unitreeActionPhase;
+    delete document.documentElement.dataset.unitreeActionProgram;
     setSceneReady(false);
     assemblyOwnershipRef.current = 'manual';
     step1SnapshotRef.current = null;
@@ -584,13 +611,15 @@ export function App() {
     setAssemblyStep2State({ phase: 'idle', failure: null });
     setAssemblyStep3State({ phase: 'idle', failure: null });
     setUnitreeActionState(resetAction());
+    unitreeActionDiagnosticsRef.current = null;
   }, [robotKey]);
 
   useEffect(() => {
     if (robotKey !== 'unitreeActionLab') return;
     document.documentElement.dataset.unitreeActionStatus = unitreeActionState.status;
     document.documentElement.dataset.unitreeActionPhase = unitreeActionState.phase;
-  }, [robotKey, unitreeActionState.phase, unitreeActionState.status]);
+    document.documentElement.dataset.unitreeActionProgram = unitreeActionState.programId;
+  }, [robotKey, unitreeActionState.phase, unitreeActionState.programId, unitreeActionState.status]);
 
   useEffect(() => {
     if (robotKey === 'frankaAssembly1') {
@@ -709,9 +738,11 @@ export function App() {
           onRunAssemblyStep3={handleRunAssemblyStep3}
           onResetAssemblySequence={handleResetAssemblySequence}
           unitreeActionStateRef={unitreeActionStateRef}
+          unitreeActionDiagnosticsRef={unitreeActionDiagnosticsRef}
           onRunUnitreeAction={handleRunUnitreeAction}
           onPauseUnitreeAction={handlePauseUnitreeAction}
           onResumeUnitreeAction={handleResumeUnitreeAction}
+          onSelectUnitreeActionProgram={handleSelectUnitreeActionProgram}
         />
 
         {isUnitreeActionScene && (
@@ -719,6 +750,7 @@ export function App() {
             requestId={unitreeActionRequestId}
             resetGeneration={resetGeneration}
             state={unitreeActionState}
+            diagnosticsRef={unitreeActionDiagnosticsRef}
             onStateChange={setUnitreeActionState}
           />
         )}
@@ -781,6 +813,7 @@ export function App() {
           onPause={handlePauseUnitreeAction}
           onResume={handleResumeUnitreeAction}
           onRestart={handleRestartUnitreeAction}
+          onProgramChange={handleSelectUnitreeActionProgram}
         />
       )}
       {!isUnitreeActionScene && (

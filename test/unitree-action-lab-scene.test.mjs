@@ -41,3 +41,17 @@ test('vendored dynamic robot packages retain their source licenses', async () =>
   assert.match(g1License, /Unitree Robotics/);
   assert.match(go2License, /Apache License\s+Version 2\.0/);
 });
+
+test('Unitree panel exposes both programs and locks selection during execution', async () => {
+  const panel = await readFile(
+    new URL('../src/UnitreeActionPanel.tsx', import.meta.url),
+    'utf8',
+  );
+  const app = await readFile(new URL('../src/App.tsx', import.meta.url), 'utf8');
+  assert.match(panel, /UNITREE_ACTION_PROGRAMS/);
+  assert.match(panel, /<select/);
+  assert.match(panel, /state\.status === 'running' \|\| state\.status === 'paused'/);
+  assert.match(panel, /program\.duration\.toFixed\(1\)/);
+  assert.match(app, /handleSelectUnitreeActionProgram/);
+  assert.match(app, /selectActionProgram/);
+});
