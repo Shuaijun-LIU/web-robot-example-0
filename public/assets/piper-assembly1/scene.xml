@@ -1,0 +1,14 @@
+<mujoco model="piper assembly1">
+  <compiler angle="radian" autolimits="true"/>
+  <option timestep="0.002" integrator="implicitfast" cone="elliptic" impratio="10"/>
+  <statistic center="0 0 .4" extent="2.6"/>
+  <visual>
+    <headlight diffuse=".7 .7 .7" ambient=".3 .3 .3" specular=".15 .15 .15"/>
+  </visual>
+  <asset>
+    <model name="piper_model" file="robots/piper/piper.xml"/>
+  </asset>
+  <worldbody>
+    <light pos="0 -2 4" dir="0 .4 -1" directional="true"/>
+  </worldbody>
+</mujoco>
