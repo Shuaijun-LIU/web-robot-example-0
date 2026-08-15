@@ -125,3 +125,94 @@
 .keyboard-help__line {
   white-space: nowrap;
 }
+
+.unitree-action-panel {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 100;
+  width: 18rem;
+  padding: 1rem;
+  border: 1px solid rgb(186 191 196 / 26%);
+  border-radius: 0.8rem;
+  background: rgb(28 31 34 / 88%);
+  color: #e3e5e7;
+  font-family: system-ui, sans-serif;
+  box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 24%);
+  backdrop-filter: blur(8px);
+}
+
+.unitree-action-panel__eyebrow {
+  color: #aeb4ba;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.unitree-action-panel h2 {
+  margin: 0.28rem 0 0.8rem;
+  font-size: 1rem;
+}
+
+.unitree-action-panel__metrics {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #c7ccd1;
+  font-size: 0.75rem;
+}
+
+.unitree-action-panel__metrics strong {
+  color: #f1f2f3;
+  font-variant-numeric: tabular-nums;
+}
+
+.unitree-action-panel__phase {
+  margin-top: 0.5rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.45rem;
+  background: rgb(75 82 89 / 44%);
+  color: #eef0f2;
+  font-size: 0.76rem;
+}
+
+.unitree-action-panel__error {
+  margin-top: 0.55rem;
+  color: #e5aaa4;
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+.unitree-action-panel__controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+}
+
+.unitree-action-panel button {
+  min-height: 2.15rem;
+  border: 1px solid rgb(179 185 191 / 28%);
+  border-radius: 0.45rem;
+  background: #515961;
+  color: #f6f7f8;
+  font-size: 0.72rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.unitree-action-panel button:hover:not(:disabled) {
+  background: #606972;
+}
+
+.unitree-action-panel button:disabled {
+  cursor: default;
+  opacity: 0.46;
+}
+
+.unitree-action-panel p {
+  margin: 0.7rem 0 0;
+  color: #aeb4ba;
+  font-size: 0.66rem;
+  line-height: 1.45;
+}

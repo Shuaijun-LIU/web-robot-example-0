@@ -1,6 +1,7 @@
 import type { ThreeElements } from '@react-three/fiber';
 import type { AssemblyStep2RuntimeDiagnostics } from './assemblyStep2.js';
 import type { AssemblyStep3RuntimeDiagnostics } from './assemblyStep3.js';
+import type { UnitreeActionState } from './unitreeActionState.js';
 
 declare global {
   interface Window {
@@ -21,6 +22,10 @@ declare global {
       runAssemblyStep3(): boolean;
       getAssemblyStep2Diagnostics(): AssemblyStep2RuntimeDiagnostics | null;
       getAssemblyStep3Diagnostics(): AssemblyStep3RuntimeDiagnostics | null;
+      runUnitreeAction(): boolean;
+      pauseUnitreeAction(): boolean;
+      resumeUnitreeAction(): boolean;
+      getUnitreeActionState(): UnitreeActionState;
     };
   }
 }

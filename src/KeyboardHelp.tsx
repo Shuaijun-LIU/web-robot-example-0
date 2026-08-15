@@ -37,7 +37,7 @@ export function KeyboardHelp({
 }: {
   robotKey: string;
   controlTargetLabel: string;
-  controlMode?: 'arm' | 'planar-mobile';
+  controlMode?: 'arm' | 'planar-mobile' | 'action-sequence';
 }) {
   const lines = controlMode === 'planar-mobile'
     ? [

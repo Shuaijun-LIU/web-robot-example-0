@@ -5,6 +5,7 @@ import {
   createFrankaTargets,
   createSO101HomeLabTargets,
   createSO101Targets,
+  createUnitreeActionTargets,
   createXLeRobotTargets,
   shiftIndices,
 } from '../src/controlTargets.js';
@@ -13,6 +14,16 @@ import {
   createXLeRobotControllerConfig,
   getFrankaGripperBinding,
 } from '../src/controllers/controllerConfigs.js';
+
+test('Unitree Action Lab exposes one action-only target without an IK site', () => {
+  assert.deepEqual(createUnitreeActionTargets(), [{
+    key: 'unitreeAction',
+    label: 'G1 + Go2 action',
+    prefix: '',
+    actuatorOffset: 0,
+    controlMode: 'action-sequence',
+  }]);
+});
 
 test('Franka exposes four namespaced arm targets with independent control blocks', () => {
   const targets = createFrankaTargets();

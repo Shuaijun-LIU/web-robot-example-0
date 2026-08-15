@@ -35,6 +35,24 @@ test('runtime registers all collaboration layouts as additional scenes', async (
   assert.match(source, /so101HomeLab:\s*{[\s\S]*?src:\s*SO101_GEARBOX_BASE/);
 });
 
+test('runtime registers the independent two-robot Unitree action scene', async () => {
+  const source = await readFile(files.configs, 'utf8');
+  const app = await readFile(files.app, 'utf8');
+
+  assert.match(source, /UNITREE_ACTION_LAB_LAYOUT/);
+  assert.match(
+    source,
+    /const UNITREE_ACTION_LAB_BASE = `\$\{import\.meta\.env\.BASE_URL\}assets\/unitree-action-lab\/`/,
+  );
+  assert.match(source, /unitreeActionLab:\s*{[\s\S]*?label:\s*'Unitree Action Lab'/);
+  assert.match(source, /unitreeActionLab:\s*{[\s\S]*?controlFamily:\s*'unitreeAction'/);
+  assert.match(source, /unitreeActionLab:\s*{[\s\S]*?sceneFile:\s*'scene\.xml'/);
+  assert.match(source, /unitreeActionLab:\s*{[\s\S]*?homeJoints:\s*UNITREE_ACTION_LAB_LAYOUT\.homeJoints/);
+  assert.match(source, /unitreeActionLab:\s*{[\s\S]*?controlTargets:\s*createUnitreeActionTargets\(\)/);
+  assert.match(app, /unitreeActionLab:\s*\/\^\(g1_pelvis\|go2_base\)\$\//);
+  assert.match(app, /robot:\s*{\s*value:\s*'frankaAssembly1'/);
+});
+
 test('vendored room robots are visual static models without control or free fall', async () => {
   for (const [name, path, root] of [
     ['G1', files.g1Static, 'pelvis'],

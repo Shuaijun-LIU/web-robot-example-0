@@ -14,17 +14,19 @@ import {
   SO101_HOME_LAB_LAYOUT,
   XLEROBOT_KITTING_LAYOUT,
 } from './collaborativeSceneLayouts.js';
+import { UNITREE_ACTION_LAB_LAYOUT } from './unitreeActionLab.js';
 import {
   createFrankaTargets,
   createSO101HomeLabTargets,
   createSO101Targets,
+  createUnitreeActionTargets,
   createXLeRobotTargets,
 } from './controlTargets.js';
 import type { ControlTarget } from './controlTargets.js';
 
 export interface RobotEntry {
   label: string;
-  controlFamily: 'franka' | 'so101' | 'xlerobot';
+  controlFamily: 'franka' | 'so101' | 'xlerobot' | 'unitreeAction';
   config: SceneConfig;
   camera: { position: [number, number, number]; fov: number };
   orbitTarget: [number, number, number];
@@ -40,6 +42,7 @@ const FRANKA_REMOTE_BASE =
   'https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/main/franka_emika_panda/';
 const FRANKA_ASSEMBLY2_BASE = `${import.meta.env.BASE_URL}assets/franka-assembly2/`;
 const SO101_GEARBOX_BASE = `${import.meta.env.BASE_URL}assets/so101-gearbox-room/`;
+const UNITREE_ACTION_LAB_BASE = `${import.meta.env.BASE_URL}assets/unitree-action-lab/`;
 
 export const XLEROBOT_HOME_JOINTS = XLEROBOT_LAYOUT.homeJoints.slice(0, 16);
 
@@ -167,5 +170,22 @@ export const robots: Record<string, RobotEntry> = {
     camera: FRANKA_ASSEMBLY2_LAYOUT.camera,
     orbitTarget: FRANKA_ASSEMBLY2_LAYOUT.orbitTarget,
     controlTargets: createFrankaTargets(),
+  },
+
+  unitreeActionLab: {
+    label: 'Unitree Action Lab',
+    controlFamily: 'unitreeAction',
+    config: {
+      src: UNITREE_ACTION_LAB_BASE,
+      sceneFile: 'scene.xml',
+      homeJoints: UNITREE_ACTION_LAB_LAYOUT.homeJoints,
+      xmlPatches: UNITREE_ACTION_LAB_LAYOUT.xmlPatches,
+      sceneObjects: UNITREE_ACTION_LAB_LAYOUT.sceneObjects,
+    },
+    camera: UNITREE_ACTION_LAB_LAYOUT.camera,
+    orbitTarget: UNITREE_ACTION_LAB_LAYOUT.orbitTarget,
+    gridSize: 6,
+    gridDivisions: 60,
+    controlTargets: createUnitreeActionTargets(),
   },
 };
