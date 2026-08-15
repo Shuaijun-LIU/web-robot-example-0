@@ -4,14 +4,13 @@
 - Build two additive Assembly1-derived scenes using four AgileX PiPER arms and four UR5e + Robotiq 2F-85 arms.
 
 ## Current State (last updated: 2026-08-15)
-- `origin/main` contains the published Franka Assembly1 scene.
-- The canonical main checkout is occupied by separate Assembly Step 3 work and is not touched by this workstream.
-- This workstream is isolated in `.worktrees/piper-ur5e-assembly` on `feature/piper-ur5e-assembly`.
-- Both alternate scenes are implemented, strictly compiled, browser-verified across all four arms, captured, and ready for review/integration.
+- Assembly Step 3 is already present in `main`.
+- The verified PiPER and UR5e Assembly1 history has been fast-forwarded into local `main`.
+- The verified Unitree locomotion history is being merged from `feature/unitree-action-lab`.
+- Final integrated tests and GitHub push are pending.
 
 ## Active Workstreams
-- S-PIPER-UR5E: two new manual industrial-arm assembly scenes.
-- S-ASSEMBLY-STEP3: observed in the canonical checkout; ownership and changes remain external to this worktree.
+- S-INTEGRATION: unify the completed alternate-arm and Unitree locomotion branches on `main`.
 
 ## Key Paths
 - `src/configs.ts`

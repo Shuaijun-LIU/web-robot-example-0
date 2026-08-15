@@ -23,3 +23,9 @@
 - Context: At the selected `0.78 m` PiPER ring, the original `x=0.65 m` hammer station intersected the east arm at its home pose.
 - Decision: move the complete PiPER hammer station (tool, mat, and both shelf supports) to `x=0.57 m`; keep every other Assembly1 station and all UR5e stations unchanged.
 - Rationale: strict contact evidence isolates the overlap to that station, and the adjusted scene reports zero initial penetrating contacts.
+
+## 2026-08-15: Preserve both completed feature histories during integration
+- Context: PiPER/UR5e Assembly1 and Unitree locomotion were developed in isolated worktrees and overlap in three UI/test files.
+- Options considered: squash one branch, overwrite shared files from one branch, or merge both histories and resolve shared files additively.
+- Decision: fast-forward the PiPER/UR5e branch, merge the Unitree branch without rewriting history, and resolve shared files so both scene families and their verification contracts remain present.
+- Rationale: this keeps independently verified commits attributable and avoids dropping either completed feature set.
