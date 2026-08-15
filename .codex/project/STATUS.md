@@ -7,6 +7,7 @@
 - `origin/main` contains the published Franka Assembly1 scene.
 - The canonical main checkout is occupied by separate Assembly Step 3 work and is not touched by this workstream.
 - This workstream is isolated in `.worktrees/piper-ur5e-assembly` on `feature/piper-ur5e-assembly`.
+- Both alternate scenes are implemented, strictly compiled, browser-verified across all four arms, captured, and ready for review/integration.
 
 ## Active Workstreams
 - S-PIPER-UR5E: two new manual industrial-arm assembly scenes.
@@ -23,3 +24,5 @@
 - `npm test`
 - `npm run build`
 - `npm run dev`
+- `node scripts/verify-alternate-assembly-browser.mjs`
+- `SCENES=piperAssembly1,ur5eAssembly1 node scripts/capture-scenes.mjs`

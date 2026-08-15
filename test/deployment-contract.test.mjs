@@ -23,7 +23,7 @@ test('Pages build preserves design and plan records under docs', async () => {
   assert.match(packageJson.scripts['build:pages'], /--emptyOutDir=false/);
 });
 
-test('README documents and displays all nine verified layouts', async () => {
+test('README documents and displays all eleven verified layouts', async () => {
   const readme = await readFile(readmePath, 'utf8');
 
   assert.match(readme, /artifacts\/screenshots\/franka\.png/);
@@ -35,6 +35,8 @@ test('README documents and displays all nine verified layouts', async () => {
   assert.match(readme, /artifacts\/screenshots\/so101-gearbox\.png/);
   assert.match(readme, /artifacts\/screenshots\/so101-home-lab\.png/);
   assert.match(readme, /artifacts\/screenshots\/unitree-action-lab\.png/);
+  assert.match(readme, /artifacts\/screenshots\/piper-assembly1\.png/);
+  assert.match(readme, /artifacts\/screenshots\/ur5e-assembly1\.png/);
   assert.match(readme, /artifacts\/videos\/unitree-action-lab\.mp4/);
   assert.match(readme, /Unitree Action Lab/);
   assert.match(readme, /actuator-only/i);

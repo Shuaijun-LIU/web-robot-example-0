@@ -8,6 +8,10 @@ const files = {
   video: new URL('../scripts/capture-unitree-action-video.mjs', import.meta.url),
   package: new URL('../package.json', import.meta.url),
   controller: new URL('../src/UnitreeActionController.tsx', import.meta.url),
+  alternateAssemblyVerifier: new URL(
+    '../scripts/verify-alternate-assembly-browser.mjs',
+    import.meta.url,
+  ),
 };
 
 test('scene capture includes the two-instance Unitree Action Lab', async () => {
@@ -16,6 +20,24 @@ test('scene capture includes the two-instance Unitree Action Lab', async () => {
     source,
     /key:\s*'unitreeActionLab',[\s\S]*?label:\s*'Unitree Action Lab',[\s\S]*?instances:\s*2/,
   );
+});
+
+test('alternate Assembly1 capture and browser verification cover all four arms', async () => {
+  const [capture, verifier] = await Promise.all([
+    readFile(files.capture, 'utf8'),
+    readFile(files.alternateAssemblyVerifier, 'utf8').catch(() => ''),
+  ]);
+
+  assert.match(capture, /key:\s*'piperAssembly1',[\s\S]*?screenshotName:\s*'piper-assembly1'/);
+  assert.match(capture, /key:\s*'ur5eAssembly1',[\s\S]*?screenshotName:\s*'ur5e-assembly1'/);
+  assert.match(verifier, /Piper Assembly1/);
+  assert.match(verifier, /UR5e Assembly1/);
+  assert.match(verifier, /Arm 1[\s\S]*Arm 2[\s\S]*Arm 3[\s\S]*Arm 4/);
+  assert.match(verifier, /sceneInstances\)\s*!==\s*4/);
+  assert.match(verifier, /dataset\.ikSite/);
+  assert.match(verifier, /moveIkTargetBy/);
+  assert.match(verifier, /getCtrl/);
+  assert.match(verifier, /KeyV/);
 });
 
 test('browser action timing follows MuJoCo time rather than render-frame count', async () => {

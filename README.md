@@ -1,6 +1,6 @@
 # Multi-Robot MuJoCo Web Example
 
-An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The nine selectable scenes use independent physical robot instances—not visual-only clones.
+An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The eleven selectable scenes use independent physical robot instances—not visual-only clones.
 
 [Open the live demo](https://shuaijun-liu.github.io/web-robot-example-0/)
 
@@ -19,6 +19,14 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 These are two independently selectable implementations of the same static four-arm assembly staging area. Both use a `0.90 m` Panda ring, slotted aluminum frame, loose perforated cross-member, mounting plate, four fasteners, three tool stations, and handover pad. The four cross-member holes have named target sites that exactly match four recessed frame receivers at the planned installation pose. Assembly1 uses stable procedural geometry, including a grooved octagonal screwdriver with a flat collision proxy, detailed cordless torque driver, and a symmetric double-face hammer. Assembly2 keeps the same task geometry while using converted RoboTwin tool meshes with palette-baked color regions and simple collision proxies. Neither scene runs scripted task motion yet.
 
 Both assembly scenes use real MuJoCo contact for grasping. Panda finger stiffness, damping, friction, and contact dimensionality are tuned so the screwdriver, torque driver, and hammer can survive an unsupported gravity hold; there is no proximity attachment, weld, magnetic grasp, or scripted object following. The XLeRobot rack also has a collision proxy covering its complete visible height, preventing the blue chassis from entering the arm-height table.
+
+### PiPER and UR5e Assembly1 — alternate industrial arms
+
+| AgileX PiPER — native grippers | UR5e — Robotiq 2F-85 grippers |
+|---|---|
+| [![Four AgileX PiPER arms around the Assembly1 workcell](artifacts/screenshots/piper-assembly1.png)](artifacts/screenshots/piper-assembly1.png) | [![Four UR5e arms with Robotiq grippers around the Assembly1 workcell](artifacts/screenshots/ur5e-assembly1.png)](artifacts/screenshots/ur5e-assembly1.png) |
+
+These additive scenes preserve the procedural Assembly1 frame, cross-member, fasteners, tools, and handover stations while replacing the four Panda arms. `Piper Assembly1` uses four six-axis AgileX PiPER arms with their native coupled grippers on a `0.78 m` ring; `UR5e Assembly1` uses four six-axis UR5e arms with independently namespaced Robotiq 2F-85 grippers on a `0.90 m` ring. Both are manual scenes with per-arm target selection, IK gizmos, and physical gripper control; they do not run the Panda-specific three-step automation.
 
 [![XLeRobot driven forward until its blue rack stops immediately before the table](artifacts/screenshots/xlerobot-collision-stop.png)](artifacts/screenshots/xlerobot-collision-stop.png)
 
@@ -45,12 +53,14 @@ This isolated scene contains only a dynamic Unitree G1, a dynamic Go2 carrying a
 | XLeRobot | Two complete dual-arm mobile robots, facing one another | One four-leg table; its top is exactly `0.775 m`, matching the arm mounting height |
 | Franka Assembly1 | Four 7-DOF arms on a larger `0.900 m` ring | Detailed procedural tools and explicit frame/cross-member interfaces |
 | Franka Assembly2 | Same robot and task layout as Assembly1 | Multi-color RoboTwin tool meshes with stable collision proxies |
+| Piper Assembly1 | Four PiPER arms on a `0.780 m` ring | Procedural Assembly1 workcell and native PiPER grippers |
+| UR5e Assembly1 | Four UR5e arms on a `0.900 m` ring | Procedural Assembly1 workcell and Robotiq 2F-85 grippers |
 | SO101 Gearbox | Four SO101 arms in the original compact framing | Precision gearbox housing, gears, shafts, spacers, cover, and press pins |
 | SO101 Home Lab | Same four-arm workcell in a detailed 10 m × 8.4 m room | Lounge, office, static G1, and static Go2-with-arm service zone |
 | XLeRobot Kitting | Two mobile dual-arm robots in a three-wall home kitchen | Produce, packages, scanner, transfer tray, sink, stove, refrigerator, and storage |
 | Unitree Action Lab | One floating-base G1 and one floating-base Go2 with a six-joint Airbot arm | Policy-free, 10-second whole-body and arm action sequence on a shared floor |
 
-The app starts running with the IK gizmo visible, matching the original interactive example. Use **Control target** to select an individual Franka/SO101 arm or one complete XLeRobot without reloading the shared scene. Unitree Action Lab instead exposes a dedicated run/pause/restart action panel and no IK or keyboard target.
+The app starts running with the IK gizmo visible, matching the original interactive example. Use **Control target** to select an individual Franka, PiPER, UR5e, or SO101 arm, or one complete XLeRobot, without reloading the shared scene. Unitree Action Lab instead exposes a dedicated run/pause/restart action panel and no IK or keyboard target.
 
 ## Run locally
 
@@ -62,11 +72,11 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000`. The robot mesh files are loaded from their upstream model repositories, so the first visit may take longer than later cached visits.
+Open `http://localhost:3000`. PiPER and UR5e/Robotiq assets are shipped locally; older Franka, SO101, and XLeRobot scenes still load their robot mesh files from the upstream model repositories, so their first visit may take longer than later cached visits.
 
 ## Controls
 
-Keyboard and IK controls now work on every physical instance. Franka and SO101 offer `Arm 1–4`; XLeRobot offers `Robot 1–2`, with each selected robot retaining its original base, head, and two-arm key map. Only the selected control block is written, so switching targets preserves the other robots' poses.
+Keyboard and IK controls now work on every physical instance. Franka, PiPER, UR5e, and SO101 offer `Arm 1–4`; XLeRobot offers `Robot 1–2`, with each selected robot retaining its original base, head, and two-arm key map. Only the selected control block is written, so switching targets preserves the other robots' poses.
 
 | Key | Franka selected arm | SO101 selected arm | Selected XLeRobot |
 |---|---|---|---|
@@ -83,7 +93,7 @@ The panel also provides pause, speed, gravity compensation, reset, IK gizmo, con
 
 ## Implementation
 
-The original layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js), while the collaborative task layouts live in [`src/collaborativeSceneLayouts.js`](src/collaborativeSceneLayouts.js). The detailed SO101 room environment is isolated in [`src/so101HomeLabEnvironment.js`](src/so101HomeLabEnvironment.js), both Franka assembly variants share their installation contract in [`src/frankaAssemblyLayouts.js`](src/frankaAssemblyLayouts.js), and the dynamic Unitree scene/action definitions live in [`src/unitreeActionLab.js`](src/unitreeActionLab.js) and [`src/unitreeActionSequence.js`](src/unitreeActionSequence.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
+The original layouts are centralized in [`src/sceneLayouts.js`](src/sceneLayouts.js), while the collaborative task layouts live in [`src/collaborativeSceneLayouts.js`](src/collaborativeSceneLayouts.js). The detailed SO101 room environment is isolated in [`src/so101HomeLabEnvironment.js`](src/so101HomeLabEnvironment.js), both Franka assembly variants share their installation contract in [`src/frankaAssemblyLayouts.js`](src/frankaAssemblyLayouts.js), the PiPER/UR5e variants are defined in [`src/alternateAssemblyLayouts.js`](src/alternateAssemblyLayouts.js), and the dynamic Unitree scene/action definitions live in [`src/unitreeActionLab.js`](src/unitreeActionLab.js) and [`src/unitreeActionSequence.js`](src/unitreeActionSequence.js). Each upstream robot is loaded as an MJCF model asset and inserted into a parent scene with MuJoCo `attach` elements and per-instance prefixes such as `r0_`, `r1_`, and so on. This keeps cross-references namespaced and produces independent physics for every instance.
 
 Runtime selection and cameras are defined in [`src/configs.ts`](src/configs.ts). Target namespaces and control offsets are defined in [`src/controlTargets.js`](src/controlTargets.js); the selected-instance IK controller resolves explicit joint addresses and actuator indices instead of assuming the first block. Browser smoke tests reject a scene unless it contains exactly 4 roots in each Franka scene, 4 SO101 roots, 2 XLeRobot roots, or the expected G1/Go2 pair in Unitree Action Lab.
 
@@ -101,6 +111,7 @@ For reproducible screenshots, run the Vite server and then:
 ```bash
 npm run capture:scenes
 npm run verify:controls
+node scripts/verify-alternate-assembly-browser.mjs
 npm run verify:unitree-action
 npm run verify:unitree-action-browser
 npm run capture:unitree-action-video
@@ -115,6 +126,9 @@ Every push to `main` runs [`.github/workflows/pages.yml`](.github/workflows/page
 ## Model sources
 
 - Franka Panda: [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main/franka_emika_panda)
+- AgileX PiPER: [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main/agilex_piper) (MIT; vendored locally)
+- Universal Robots UR5e: [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main/universal_robots_ur5e) (BSD-3-Clause; vendored locally)
+- Robotiq 2F-85: [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main/robotiq_2f85) (BSD-2-Clause; vendored locally)
 - SO101 and XLeRobot: [MuJoCo-GS-Web](https://github.com/Vector-Wangel/MuJoCo-GS-Web/tree/main/assets/robots/xlerobot)
 - Assembly2 screwdriver, drill, and hammer: [RoboTwin](https://github.com/RoboTwin-Platform/RoboTwin) (MIT; converted locally from selected GLB assets)
 - Unitree G1: [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/main/unitree_g1) (BSD-3-Clause)

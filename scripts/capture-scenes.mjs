@@ -46,6 +46,18 @@ const allScenes = [
     instances: 2,
     screenshotName: 'unitree-action-lab',
   },
+  {
+    key: 'piperAssembly1',
+    label: 'Piper Assembly1',
+    instances: 4,
+    screenshotName: 'piper-assembly1',
+  },
+  {
+    key: 'ur5eAssembly1',
+    label: 'UR5e Assembly1',
+    instances: 4,
+    screenshotName: 'ur5e-assembly1',
+  },
 ];
 const requestedKeys = new Set(
   (process.env.SCENES ?? allScenes.map(({ key }) => key).join(','))

@@ -13,3 +13,13 @@
 - Decision: vendor the local Menagerie MJCFs and meshes; compose UR5e and 2F-85 with MuJoCo `attach`.
 - Rationale: deterministic GitHub Pages loading, documented provenance, and direct actuator/IK integration.
 - Consequences / follow-ups: retain each upstream license and add third-party notices.
+
+## 2026-08-15: Keep outer assembly transforms in degrees
+- Context: Robot child models define radian joint ranges, while the copied Assembly1 parent frames and tool poses use literal 90/180-degree Euler values.
+- Decision: compile both new parent scenes with `angle="degree"`; attached child models retain their own compiler settings.
+- Rationale: preserves the proven Assembly1 orientation contract and prevents parent tool/base transforms from being interpreted as 90 radians.
+
+## 2026-08-15: Move only the PiPER hammer station inward
+- Context: At the selected `0.78 m` PiPER ring, the original `x=0.65 m` hammer station intersected the east arm at its home pose.
+- Decision: move the complete PiPER hammer station (tool, mat, and both shelf supports) to `x=0.58 m`; keep every other Assembly1 station and all UR5e stations unchanged.
+- Rationale: strict contact evidence isolates the overlap to that station, and the adjusted scene has no penetration beyond `0.434 mm`.
