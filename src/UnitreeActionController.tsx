@@ -130,6 +130,7 @@ export function UnitreeActionController({
       if (phaseChanged || publishElapsed) {
         lastPublishedElapsedRef.current = elapsedRef.current;
         onStateChangeRef.current({
+          programId: currentState.programId,
           status: 'running',
           phase: sample.phase,
           elapsed: elapsedRef.current,

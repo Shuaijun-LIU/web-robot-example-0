@@ -7,11 +7,15 @@ import {
   GO2_ACTUATORS,
   GO2_HOME,
   GO2_LOWER,
+  DEFAULT_UNITREE_ACTION_PROGRAM_ID,
+  UNITREE_ACTION_PROGRAMS,
   UNITREE_ACTION_DURATION,
   UNITREE_ACTION_PHASES,
   applyUnitreeActionTargets,
+  getUnitreeActionProgram,
   isControlRangeCompatible,
   sampleUnitreeAction,
+  sampleUnitreeActionProgram,
 } from '../src/unitreeActionSequence.js';
 
 test('WASM float rounding does not reject an identical MJCF control range', () => {
@@ -39,6 +43,7 @@ const maxAbsDiff = (left, right) => Math.max(
 );
 
 test('action clip has the exact timeline and home endpoints', () => {
+  assert.equal(DEFAULT_UNITREE_ACTION_PROGRAM_ID, 'greeting');
   assert.equal(UNITREE_ACTION_DURATION, 10);
   assert.deepEqual(
     UNITREE_ACTION_PHASES.map(({ name, duration }) => [name, duration]),
@@ -55,6 +60,64 @@ test('action clip has the exact timeline and home endpoints', () => {
   assert.deepEqual(sampleUnitreeAction(0).go2Targets, GO2_HOME);
   assert.deepEqual(sampleUnitreeAction(10).g1Targets, G1_HOME);
   assert.deepEqual(sampleUnitreeAction(10).go2Targets, GO2_HOME);
+});
+
+test('program registry preserves greeting and defines the approved locomotion timeline', () => {
+  const greeting = getUnitreeActionProgram('greeting');
+  const locomotion = getUnitreeActionProgram('locomotion');
+
+  assert.equal(greeting, UNITREE_ACTION_PROGRAMS.greeting);
+  assert.equal(greeting.duration, UNITREE_ACTION_DURATION);
+  assert.deepEqual(greeting.phases, UNITREE_ACTION_PHASES);
+  assert.deepEqual(
+    locomotion.phases.map(({ name, duration }) => [name, duration]),
+    [
+      ['settle', 1],
+      ['g1-squat', 2],
+      ['g1-stand', 2],
+      ['g1-walk', 6],
+      ['g1-stabilize', 2],
+      ['go2-walk', 6],
+      ['go2-stabilize', 2],
+      ['final-greeting', 3],
+      ['final-hold', 1],
+    ],
+  );
+  assert.equal(locomotion.duration, 25);
+  assert.throws(() => getUnitreeActionProgram('missing'), /Unknown Unitree action program/);
+});
+
+test('legacy greeting sampler is identical to the program-aware sampler', () => {
+  for (let step = 0; step <= 100; step += 1) {
+    const time = step / 10;
+    assert.deepEqual(sampleUnitreeActionProgram('greeting', time), sampleUnitreeAction(time));
+  }
+});
+
+test('locomotion program owns an exact continuous 25-second phase clock', () => {
+  const expected = [
+    [0, 'settle'],
+    [1, 'g1-squat'],
+    [3, 'g1-stand'],
+    [5, 'g1-walk'],
+    [11, 'g1-stabilize'],
+    [13, 'go2-walk'],
+    [19, 'go2-stabilize'],
+    [21, 'final-greeting'],
+    [24, 'final-hold'],
+    [25, 'complete'],
+  ];
+  for (const [time, phase] of expected) {
+    assert.equal(sampleUnitreeActionProgram('locomotion', time).phase, phase);
+  }
+  for (const boundary of expected.slice(1).map(([time]) => time)) {
+    const left = sampleUnitreeActionProgram('locomotion', boundary - 1e-7);
+    const right = sampleUnitreeActionProgram('locomotion', boundary + 1e-7);
+    assert.ok(maxAbsDiff(left.g1Targets, right.g1Targets) < 1e-5);
+    assert.ok(maxAbsDiff(left.go2Targets, right.go2Targets) < 1e-5);
+  }
+  assert.deepEqual(sampleUnitreeActionProgram('locomotion', 25).g1Targets, G1_HOME);
+  assert.deepEqual(sampleUnitreeActionProgram('locomotion', 25).go2Targets, GO2_HOME);
 });
 
 test('action targets remain continuous at every phase boundary', () => {

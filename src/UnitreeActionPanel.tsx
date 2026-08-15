@@ -6,6 +6,13 @@ const PHASE_COPY: Record<UnitreeActionState['phase'], string> = {
   'scan-wave': 'G1 挥手，机械臂扫描',
   lower: 'Go2 下蹲，G1 收臂',
   recover: '恢复站姿',
+  'g1-squat': 'G1 下蹲',
+  'g1-stand': 'G1 起立',
+  'g1-walk': 'G1 行走',
+  'g1-stabilize': 'G1 稳定',
+  'go2-walk': 'Go2 行走',
+  'go2-stabilize': 'Go2 稳定',
+  'final-greeting': '最终问候与扫描',
   'final-hold': '最终稳定',
   complete: '动作完成',
 };
