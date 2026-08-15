@@ -12,7 +12,9 @@
     "build:pages": "vite build --base=/web-robot-example-0/ --outDir docs --emptyOutDir=false",
     "capture:scenes": "node scripts/capture-scenes.mjs",
     "solve:assembly-step2": "node scripts/solve-assembly-step2-waypoints.mjs",
+    "solve:assembly-step3": "node scripts/solve-assembly-step3-waypoints.mjs",
     "verify:assembly-step2": "node scripts/verify-assembly-step2.mjs",
+    "verify:assembly-step3": "node scripts/verify-assembly-step3.mjs",
     "verify:controls": "node scripts/verify-controls.mjs",
     "preview": "vite preview"
   },

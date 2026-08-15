@@ -27,7 +27,7 @@ test('arm layouts replicate four robots inward around one center', () => {
   assert.equal(SO101_LAYOUT.yawStepDegrees, 90);
 });
 
-test('Franka assembly scene enlarges only the new four-arm ring while remaining reachable', () => {
+test('Franka assembly scenes keep the enlarged envelope and Assembly1 reachable offsets', () => {
   assert.equal(FRANKA_LAYOUT.ringRadius, 0.72);
   for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
     assert.equal(layout.instanceCount, 4);
@@ -40,8 +40,8 @@ test('Franka assembly scene enlarges only the new four-arm ring while remaining 
     .join('\n');
   assert.match(attachmentXml, /<frame pos="0 -0\.9 0\.1">/);
   assert.match(attachmentXml, /<frame pos="0\.9 0 0\.1" euler="0 0 90">/);
-  assert.match(attachmentXml, /<frame pos="0 0\.9 0\.1" euler="0 0 180">/);
-  assert.match(attachmentXml, /<frame pos="-0\.9 0 0\.1" euler="0 0 -90">/);
+  assert.match(attachmentXml, /<frame pos="-0\.3 0\.85 0\.1" euler="0 0 180">/);
+  assert.match(attachmentXml, /<frame pos="-0\.8 0 0\.1" euler="0 0 -90">/);
 });
 
 test('Franka assembly scene stages a frame, installable parts, separated tools, and handover area', () => {

@@ -20,8 +20,8 @@ const assetDirectory = resolve(process.argv[2] ?? defaultAssetDirectory);
 const attachmentFrames = [
   { position: [0, -0.9, 0.1], yaw: 0 },
   { position: [0.9, 0, 0.1], yaw: Math.PI / 2 },
-  { position: [0, 0.9, 0.1], yaw: Math.PI },
-  { position: [-0.9, 0, 0.1], yaw: -Math.PI / 2 },
+  { position: [-0.3, 0.85, 0.1], yaw: Math.PI },
+  { position: [-0.8, 0, 0.1], yaw: -Math.PI / 2 },
 ];
 
 function listFiles(directory) {
@@ -175,12 +175,15 @@ for (const [index, arm] of ASSEMBLY1_STEP2_ARMS.entries()) {
   const approachTarget = worldToRobot(arm.approachWaypoint, attachmentFrames[index]);
   const contactTarget = worldToRobot(arm.contactWaypoint, attachmentFrames[index]);
   const shared = { mujoco, model, data, siteId, qposAddresses, targetQuaternion };
+  const solverOptions = index === 2
+    ? { maxIterations: 800, damping: 0.005, rotationWeight: 1 }
+    : { maxIterations: 300 };
 
   const approach = solveSelectedIk({
     ...shared,
     currentQ: [...step1Final],
     targetPosition: new THREE.Vector3(...approachTarget),
-    maxIterations: 300,
+    ...solverOptions,
   });
   if (!approach) throw new Error(`${arm.key} approach waypoint did not produce a solution`);
   const boundedApproach = approach.map((value, joint) => fitJointAngleToRange(
@@ -198,7 +201,7 @@ for (const [index, arm] of ASSEMBLY1_STEP2_ARMS.entries()) {
     ...shared,
     currentQ: boundedApproach,
     targetPosition: new THREE.Vector3(...contactTarget),
-    maxIterations: 300,
+    ...solverOptions,
   });
   if (!contact) throw new Error(`${arm.key} contact waypoint did not produce a solution`);
   const boundedContact = contact.map((value, joint) => fitJointAngleToRange(

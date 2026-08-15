@@ -81,7 +81,7 @@ test('Assembly1 is the initial scene shown on page entry', async () => {
   assert.match(source, /robot:\s*\{\s*value:\s*'frankaAssembly1'/);
 });
 
-test('Assembly1 exposes one two-step sequence panel and deterministic Step 2 diagnostics', async () => {
+test('Assembly1 exposes one three-step sequence panel and deterministic Step 3 diagnostics', async () => {
   const [appSource, panelSource] = await Promise.all([
     readFile(appPath, 'utf8'),
     readFile(assemblySequencePanelPath, 'utf8').catch(() => ''),
@@ -91,9 +91,15 @@ test('Assembly1 exposes one two-step sequence panel and deterministic Step 2 dia
   assert.match(appSource, /dataset\.assemblyStep2Status/);
   assert.match(appSource, /runAssemblyStep2/);
   assert.match(appSource, /getAssemblyStep2Diagnostics/);
+  assert.match(appSource, /dataset\.assemblyStep3Status/);
+  assert.match(appSource, /runAssemblyStep3/);
+  assert.match(appSource, /getAssemblyStep3Diagnostics/);
+  assert.match(appSource, /<AssemblyStep3Controller/);
   assert.match(appSource, /assemblyAutomationActive/);
   assert.match(panelSource, /执行第二步：下降并物理夹持/);
   assert.match(panelSource, /第一步已完成/);
   assert.match(panelSource, /第二步已完成：四处物理夹持已建立/);
+  assert.match(panelSource, /执行第三步：双臂搬运并对孔/);
+  assert.match(panelSource, /第三步已完成：横梁已对孔并保持/);
   assert.match(panelSource, /请 Reset 后重试/);
 });

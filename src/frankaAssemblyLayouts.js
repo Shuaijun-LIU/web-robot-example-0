@@ -16,7 +16,7 @@ const TASK_STATIONS = {
 };
 
 export const FRANKA_ASSEMBLY_INTERFACE = {
-  crossMemberTargetPose: [0, 0, 0.235],
+  crossMemberTargetPose: [0, 0, 0.278],
   frameReceiverPositions: [
     [-0.04, 0.215, 0.275],
     [0.04, 0.215, 0.275],
@@ -24,10 +24,10 @@ export const FRANKA_ASSEMBLY_INTERFACE = {
     [0.04, -0.215, 0.275],
   ],
   crossMemberHoleLocalPositions: [
-    [-0.04, 0.215, 0.04],
-    [0.04, 0.215, 0.04],
-    [-0.04, -0.215, 0.04],
-    [0.04, -0.215, 0.04],
+    [-0.04, 0.215, -0.003],
+    [0.04, 0.215, -0.003],
+    [-0.04, -0.215, -0.003],
+    [0.04, -0.215, -0.003],
   ],
 };
 
@@ -35,12 +35,12 @@ export function applyAssemblyTargetPose(points, targetPose) {
   return points.map((point) => point.map((value, axis) => value + targetPose[axis]));
 }
 
-function attachmentFrames() {
+function attachmentFrames(northArmX = 0, northArmY = RING_RADIUS, westArmX = -RING_RADIUS) {
   return [
     { position: [0, -RING_RADIUS, PLATFORM_TOP], yaw: 0 },
     { position: [RING_RADIUS, 0, PLATFORM_TOP], yaw: QUARTER_TURN_DEGREES },
-    { position: [0, RING_RADIUS, PLATFORM_TOP], yaw: HALF_TURN_DEGREES },
-    { position: [-RING_RADIUS, 0, PLATFORM_TOP], yaw: -QUARTER_TURN_DEGREES },
+    { position: [northArmX, northArmY, PLATFORM_TOP], yaw: HALF_TURN_DEGREES },
+    { position: [westArmX, 0, PLATFORM_TOP], yaw: -QUARTER_TURN_DEGREES },
   ].map(({ position, yaw }, index) => {
     const euler = yaw === 0 ? '' : ` euler="0 0 ${yaw}"`;
     return `<frame pos="${position.join(' ')}"${euler}><attach model="panda_model" body="link0" prefix="r${index}_"/></frame>`;
@@ -114,13 +114,22 @@ const SHARED_WORKCELL_XML = `
       <geom name="parts_tray_east_wall" type="box" pos=".245 0 .035" size=".008 .29 .035" rgba=".19 .24 .28 1"/>
       <geom name="parts_tray_north_wall" type="box" pos="0 .285 .035" size=".25 .008 .035" rgba=".19 .24 .28 1"/>
       <geom name="parts_tray_south_wall" type="box" pos="0 -.285 .035" size=".25 .008 .035" rgba=".19 .24 .28 1"/>
+      <geom name="cross_member_stand_south" type="box" pos=".08 -.20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>
+      <geom name="cross_member_stand_north" type="box" pos=".08 .20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>
     </body>
 
-    <!-- This staged cross-member fits the four receivers at target pose (0, 0, .235). -->
-    <body name="cross_member" pos="-.49 .44 .14">
+    <!-- At target pose (0, 0, .278), the beam rests on the frame instead of intersecting it. -->
+    <body name="cross_member" pos="-.49 .44 .20">
       <freejoint/>
       <geom name="cross_member_flange_left" type="box" pos="-.016 0 0" size=".009 .245 .018" rgba=".56 .58 .59 1" mass=".18" friction="1.2 .2 .02"/>
       <geom name="cross_member_flange_right" type="box" pos=".016 0 0" size=".009 .245 .018" rgba=".68 .69 .69 1" mass=".18" friction="1.2 .2 .02"/>
+      <!-- Handling-stop pairs physically retain both grippers during the shared carry. -->
+      <geom name="cross_member_grip_stop_north_outer" type="box" pos="0 .1525 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
+      <geom name="cross_member_grip_stop_north_inner" type="box" pos="0 .1025 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
+      <geom name="cross_member_grip_stop_south_outer" type="box" pos="0 -.1525 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
+      <geom name="cross_member_grip_stop_south_inner" type="box" pos="0 -.1025 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
+      <geom name="cross_member_grip_cap_north" type="box" pos="0 .1275 .035" size=".035 .018 .005" rgba=".22 .24 .25 1" mass=".01" friction="2 .2 .03"/>
+      <geom name="cross_member_grip_cap_south" type="box" pos="0 -.1275 .035" size=".035 .018 .005" rgba=".22 .24 .25 1" mass=".01" friction="2 .2 .03"/>
       <geom name="cross_member_slot" type="box" pos="0 0 .019" size=".005 .205 .002" rgba=".08 .09 .1 1" contype="0" conaffinity="0"/>
       <geom name="cross_member_north_plate_outer" type="box" pos="0 .239 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
       <geom name="cross_member_north_plate_inner" type="box" pos="0 .191 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
@@ -136,10 +145,10 @@ const SHARED_WORKCELL_XML = `
       <site name="cross_member_north_hole_right" pos=".04 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
       <site name="cross_member_south_hole_left" pos="-.04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
       <site name="cross_member_south_hole_right" pos=".04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
-      <site name="cross_member_hole_nw" pos="-.04 .215 .04" size=".004" rgba=".8 .55 .18 .35"/>
-      <site name="cross_member_hole_ne" pos=".04 .215 .04" size=".004" rgba=".8 .55 .18 .35"/>
-      <site name="cross_member_hole_sw" pos="-.04 -.215 .04" size=".004" rgba=".8 .55 .18 .35"/>
-      <site name="cross_member_hole_se" pos=".04 -.215 .04" size=".004" rgba=".8 .55 .18 .35"/>
+      <site name="cross_member_hole_nw" pos="-.04 .215 -.003" size=".004" rgba=".8 .55 .18 .35"/>
+      <site name="cross_member_hole_ne" pos=".04 .215 -.003" size=".004" rgba=".8 .55 .18 .35"/>
+      <site name="cross_member_hole_sw" pos="-.04 -.215 -.003" size=".004" rgba=".8 .55 .18 .35"/>
+      <site name="cross_member_hole_se" pos=".04 -.215 -.003" size=".004" rgba=".8 .55 .18 .35"/>
     </body>
 
     <body name="mounting_plate" pos="-.72 .44 .135">
@@ -265,7 +274,7 @@ const sceneObjects = (includeTorqueDriverCradle = false) => [
   ] : []),
 ];
 
-function createPatches(toolAssetXml, toolXml) {
+function createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX) {
   return [
     { target: 'panda.xml', replace: ['name="actuator8"', 'name="gripper"'] },
     {
@@ -294,7 +303,7 @@ function createPatches(toolAssetXml, toolXml) {
         `  <asset><model name="panda_model" file="panda.xml"/>${toolAssetXml}</asset>`,
       ],
     },
-    { target: 'scene.xml', replace: ['  <worldbody>', `  <worldbody>${attachmentFrames()}`] },
+    { target: 'scene.xml', replace: ['  <worldbody>', `  <worldbody>${attachmentFrames(northArmX, northArmY, westArmX)}`] },
     { target: 'scene.xml', replace: ['</worldbody>', `${SHARED_WORKCELL_XML}${toolXml}\n  </worldbody>`] },
     {
       target: 'panda.xml',
@@ -306,7 +315,14 @@ function createPatches(toolAssetXml, toolXml) {
   ];
 }
 
-function createLayout(toolAssetXml, toolXml, includeTorqueDriverCradle = false) {
+function createLayout(
+  toolAssetXml,
+  toolXml,
+  includeTorqueDriverCradle = false,
+  northArmX = 0,
+  northArmY = RING_RADIUS,
+  westArmX = -RING_RADIUS,
+) {
   return {
     instanceCount: 4,
     yawStepDegrees: 90,
@@ -316,7 +332,7 @@ function createLayout(toolAssetXml, toolXml, includeTorqueDriverCradle = false) 
     primaryGripperActuator: 'r0_gripper',
     homeJoints: repeatPose(FRANKA_HOME, 4),
     taskStations: { ...TASK_STATIONS },
-    xmlPatches: createPatches(toolAssetXml, toolXml),
+    xmlPatches: createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX),
     sceneObjects: sceneObjects(includeTorqueDriverCradle),
     camera: { position: [2.85, -2.85, 3.05], fov: 45 },
     orbitTarget: [0, 0, .32],
@@ -327,5 +343,8 @@ export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
   ASSEMBLY1_ASSET_XML,
   ASSEMBLY1_TOOL_XML,
   true,
+  -0.3,
+  0.85,
+  -0.8,
 );
 export const FRANKA_ASSEMBLY2_LAYOUT = createLayout(ASSEMBLY2_ASSET_XML, ASSEMBLY2_TOOL_XML);

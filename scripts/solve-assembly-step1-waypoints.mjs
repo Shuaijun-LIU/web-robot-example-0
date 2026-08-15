@@ -20,8 +20,8 @@ const assetDirectory = resolve(process.argv[2] ?? defaultAssetDirectory);
 const attachmentFrames = [
   { position: [0, -0.9, 0.1], yaw: 0 },
   { position: [0.9, 0, 0.1], yaw: Math.PI / 2 },
-  { position: [0, 0.9, 0.1], yaw: Math.PI },
-  { position: [-0.9, 0, 0.1], yaw: -Math.PI / 2 },
+  { position: [-0.3, 0.85, 0.1], yaw: Math.PI },
+  { position: [-0.8, 0, 0.1], yaw: -Math.PI / 2 },
 ];
 
 function listFiles(directory) {

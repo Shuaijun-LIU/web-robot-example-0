@@ -30,8 +30,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r0',
       targetBody: 'assembly_frame',
-      contactWaypoint: [0, -0.23, 0.235],
-      approachWaypoint: [0, -0.23, 0.25],
+      contactWaypoint: [0.18, -0.23, 0.235],
+      approachWaypoint: [0.18, -0.23, 0.25],
       closingAxisYawDegrees: 90,
       leftFingerBody: 'r0_left_finger',
       rightFingerBody: 'r0_right_finger',
@@ -48,8 +48,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r2',
       targetBody: 'cross_member',
-      contactWaypoint: [-0.49, 0.56, 0.14],
-      approachWaypoint: [-0.49, 0.56, 0.155],
+      contactWaypoint: [-0.49, 0.56, 0.20],
+      approachWaypoint: [-0.49, 0.56, 0.215],
       closingAxisYawDegrees: 0,
       leftFingerBody: 'r2_left_finger',
       rightFingerBody: 'r2_right_finger',
@@ -57,8 +57,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r3',
       targetBody: 'cross_member',
-      contactWaypoint: [-0.49, 0.32, 0.14],
-      approachWaypoint: [-0.49, 0.32, 0.155],
+      contactWaypoint: [-0.49, 0.32, 0.20],
+      approachWaypoint: [-0.49, 0.32, 0.215],
       closingAxisYawDegrees: 0,
       leftFingerBody: 'r3_left_finger',
       rightFingerBody: 'r3_right_finger',
@@ -77,16 +77,21 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     frameClamp: 0.8,
     crossMemberClamp: 1,
     torqueDriverClamp: 0.8,
-    contactWindow: 0.25,
+    contactWindow: 0.08,
     verificationTimeout: 2.5,
     stableHold: 2,
   });
-  assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [48, 96, 0, 0]);
+  assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [48, 96, 24, 24]);
   assert.deepEqual(ASSEMBLY1_STEP2_LIMITS, {
     tcpPosition: 0.06,
     tcpOrientationDegrees: 8,
     preStepObjectDrift: 0.003,
     objectTranslation: 0.005,
+    settlingTranslation: {
+      assembly_frame: 0.008,
+      torque_driver: 0.03,
+      cross_member: 0.03,
+    },
     objectRotationDegrees: 5,
     verticalDisplacement: 0.003,
     minimumAperture: 0.02,
@@ -188,14 +193,14 @@ test('Step 2 control frames descend all arms and close cross-member grippers tog
     machine('cross-member-clamp', 0.5),
     plans,
   );
-  assert.deepEqual(crossClamp.arms.map((arm) => arm.gripperTarget), [48, 255, 127.5, 127.5]);
+  assert.deepEqual(crossClamp.arms.map((arm) => arm.gripperTarget), [48, 255, 139.5, 139.5]);
   assert.equal(crossClamp.arms[2].gripperTarget, crossClamp.arms[3].gripperTarget);
 
   const toolClamp = createAssemblyStep2ControlFrame(
     machine('torque-driver-clamp', 0.4),
     plans,
   );
-  assert.deepEqual(toolClamp.arms.map((arm) => arm.gripperTarget), [48, 175.5, 0, 0]);
+  assert.deepEqual(toolClamp.arms.map((arm) => arm.gripperTarget), [48, 175.5, 24, 24]);
 });
 
 test('Step 2 phase machine follows timed motions and starts verification windows', () => {
@@ -211,21 +216,21 @@ test('Step 2 phase machine follows timed motions and starts verification windows
   assert.equal(state.phase, 'frame-verification');
 });
 
-test('Step 2 verification requires an uninterrupted quarter-second window', () => {
+test('Step 2 verification requires an uninterrupted 0.08 second window', () => {
   let state = {
     phase: 'frame-verification',
     phaseElapsed: 0,
     continuousValidSeconds: 0,
     failure: null,
   };
-  state = advanceAssemblyStep2Machine(state, 0.15, { frame: { ok: true } });
+  state = advanceAssemblyStep2Machine(state, 0.05, { frame: { ok: true } });
   assert.equal(state.phase, 'frame-verification');
-  assert.equal(state.continuousValidSeconds, 0.15);
-  state = advanceAssemblyStep2Machine(state, 0.05, {
+  assert.equal(state.continuousValidSeconds, 0.05);
+  state = advanceAssemblyStep2Machine(state, 0.02, {
     frame: { ok: false, code: 'missing-left-contact' },
   });
   assert.equal(state.continuousValidSeconds, 0);
-  state = advanceAssemblyStep2Machine(state, 0.25, { frame: { ok: true } });
+  state = advanceAssemblyStep2Machine(state, 0.08, { frame: { ok: true } });
   assert.equal(state.phase, 'cross-member-clamp');
 });
 
@@ -287,6 +292,15 @@ test('Step 2 grasp verdict accepts only bilateral physical target contact', () =
     evaluateAssemblyStep2Grasp({ ...valid, rightContactBodies: [] }).code,
     'missing-right-contact',
   );
+  assert.deepEqual(
+    evaluateAssemblyStep2Grasp({
+      ...valid,
+      leftContactBodies: [],
+      rightContactBodies: [],
+      requireBilateralContact: false,
+    }),
+    { ok: true },
+  );
   assert.equal(
     evaluateAssemblyStep2Grasp({ ...valid, forbiddenBodies: ['work_platform'] }).code,
     'forbidden-contact',
@@ -294,6 +308,14 @@ test('Step 2 grasp verdict accepts only bilateral physical target contact', () =
   assert.equal(
     evaluateAssemblyStep2Grasp({ ...valid, translation: 0.0051 }).code,
     'object-drift',
+  );
+  assert.deepEqual(
+    evaluateAssemblyStep2Grasp({
+      ...valid,
+      translation: 0.019,
+      maximumTranslation: ASSEMBLY1_STEP2_LIMITS.settlingTranslation.cross_member,
+    }),
+    { ok: true },
   );
   assert.equal(
     evaluateAssemblyStep2Grasp({ ...valid, rotationDegrees: 5.1 }).code,

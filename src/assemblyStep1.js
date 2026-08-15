@@ -1,7 +1,7 @@
 export const ASSEMBLY1_STEP1_PHASE_DURATION = 1.5;
 export const ASSEMBLY1_STEP1_SETTLE_DURATION = 3;
 export const ASSEMBLY1_GRIPPER_OPEN = 255;
-export const ASSEMBLY1_STEP1_IK_VERSION = 'grasp-ready-v2';
+export const ASSEMBLY1_STEP1_IK_VERSION = 'installation-clearance-v4';
 
 export function topDownTcpQuaternion(closingAxisYawDegrees) {
   const halfTurn = (closingAxisYawDegrees + 90) * Math.PI / 360;
@@ -12,11 +12,11 @@ export function topDownTcpQuaternion(closingAxisYawDegrees) {
 const roles = [
   {
     role: 'south frame rail',
-    highWaypoint: [0, -0.23, 0.50],
-    finalWaypoint: [0, -0.23, 0.33],
+    highWaypoint: [0.18, -0.23, 0.50],
+    finalWaypoint: [0.18, -0.23, 0.33],
     closingAxisYawDegrees: 90,
-    highJointTargets: [-2.436612, -0.739274, -1.834062, -1.36531, -0.708778, 1.593286, -0.412203],
-    finalJointTargets: [-2.462187, -0.877127, -1.957716, -1.627588, -0.85221, 1.901325, -0.316657],
+    highJointTargets: [-2.573928, -1.289455, -1.247694, -1.174015, -1.420985, 1.173492, -0.537856],
+    finalJointTargets: [-2.71468, -1.525629, -1.384456, -1.46819, -1.543915, 1.380128, -0.454438],
   },
   {
     role: 'side-laid torque driver handle',
@@ -29,18 +29,18 @@ const roles = [
   {
     role: 'cross member north balance point',
     highWaypoint: [-0.49, 0.56, 0.48],
-    finalWaypoint: [-0.49, 0.56, 0.26],
+    finalWaypoint: [-0.49, 0.56, 0.32],
     closingAxisYawDegrees: 0,
-    highJointTargets: [2.556337, -0.990657, -1.399648, -1.722293, -0.9717, 1.513838, -2.720657],
-    finalJointTargets: [2.576151, -1.172598, -1.716567, -1.948272, -1.241199, 1.841582, -2.619852],
+    highJointTargets: [1.408659, -0.716703, -0.347729, -2.561273, -0.236465, 1.867725, -2.714777],
+    finalJointTargets: [1.405982, -0.491764, -0.460373, -2.836589, -0.305042, 2.365578, -2.711917],
   },
   {
     role: 'cross member south balance point',
     highWaypoint: [-0.49, 0.32, 0.48],
-    finalWaypoint: [-0.49, 0.32, 0.26],
+    finalWaypoint: [-0.49, 0.32, 0.32],
     closingAxisYawDegrees: 0,
-    highJointTargets: [2.717062, -0.131099, -0.462315, -2.077166, -0.06344, 1.96, -0.073787],
-    finalJointTargets: [2.700314, 0.204706, -0.45956, -2.326086, 0.148119, 2.505253, -0.225722],
+    highJointTargets: [2.716026, -0.36425, -0.309448, -2.310332, -0.118177, 1.961558, 0.114814],
+    finalJointTargets: [2.730191, -0.144788, -0.361464, -2.543284, -0.078026, 2.406184, 0.074369],
   },
 ];
 

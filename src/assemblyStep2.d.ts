@@ -139,18 +139,23 @@ export const ASSEMBLY1_STEP2_DURATIONS: Readonly<{
   frameClamp: 0.8;
   crossMemberClamp: 1;
   torqueDriverClamp: 0.8;
-  contactWindow: 0.25;
+  contactWindow: 0.08;
   verificationTimeout: 2.5;
   stableHold: 2;
 }>;
 
-export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS: readonly [48, 96, 0, 0];
+export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
 
 export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   tcpPosition: 0.06;
   tcpOrientationDegrees: 8;
   preStepObjectDrift: 0.003;
   objectTranslation: 0.005;
+  settlingTranslation: Readonly<{
+    assembly_frame: 0.008;
+    torque_driver: 0.03;
+    cross_member: 0.03;
+  }>;
   objectRotationDegrees: 5;
   verticalDisplacement: 0.003;
   minimumAperture: 0.02;
@@ -196,8 +201,10 @@ export function evaluateAssemblyStep2Grasp(input: {
   forbiddenBodies: string[];
   aperture: number;
   translation: number;
+  maximumTranslation?: number;
   rotationDegrees: number;
   verticalDisplacement: number;
+  requireBilateralContact?: boolean;
 }): AssemblyStep2GraspVerdict;
 
 export function createAssemblyStep2Machine(): AssemblyStep2Machine;

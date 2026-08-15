@@ -30,6 +30,27 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
   }
 });
 
+test('Assembly1 positions Arms 3/4 to reach both staging and the central interface', () => {
+  const assembly1Xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
+  const assembly2Xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
+  assert.match(
+    assembly1Xml,
+    /<frame pos="-0\.3 0\.85 0\.1" euler="0 0 180"><attach model="panda_model" body="link0" prefix="r2_"\/><\/frame>/,
+  );
+  assert.match(
+    assembly1Xml,
+    /<frame pos="-0\.8 0 0\.1" euler="0 0 -90"><attach model="panda_model" body="link0" prefix="r3_"\/><\/frame>/,
+  );
+  assert.match(
+    assembly2Xml,
+    /<frame pos="0 0\.9 0\.1" euler="0 0 180"><attach model="panda_model" body="link0" prefix="r2_"\/><\/frame>/,
+  );
+  assert.match(
+    assembly2Xml,
+    /<frame pos="-0\.9 0 0\.1" euler="0 0 -90"><attach model="panda_model" body="link0" prefix="r3_"\/><\/frame>/,
+  );
+});
+
 test('cross-member target pose aligns all four installation holes with frame receivers', () => {
   const expected = [
     [-0.04, 0.215, 0.275],
@@ -38,6 +59,10 @@ test('cross-member target pose aligns all four installation holes with frame rec
     [0.04, -0.215, 0.275],
   ];
   assert.deepEqual(FRANKA_ASSEMBLY_INTERFACE.frameReceiverPositions, expected);
+  assert.deepEqual(FRANKA_ASSEMBLY_INTERFACE.crossMemberTargetPose, [0, 0, 0.278]);
+  assert.ok(FRANKA_ASSEMBLY_INTERFACE.crossMemberHoleLocalPositions.every(
+    (position) => position[2] === -0.003,
+  ));
 
   const actual = applyAssemblyTargetPose(
     FRANKA_ASSEMBLY_INTERFACE.crossMemberHoleLocalPositions,
@@ -46,6 +71,26 @@ test('cross-member target pose aligns all four installation holes with frame rec
   actual.forEach((point, pointIndex) => point.forEach((value, axis) => {
     assert.ok(Math.abs(value - expected[pointIndex][axis]) < 1e-9);
   }));
+});
+
+test('cross-member target rests on top of the frame instead of intersecting its rails', () => {
+  const frameTop = 0.235 + 0.025;
+  const crossMemberBottom = FRANKA_ASSEMBLY_INTERFACE.crossMemberTargetPose[2] - 0.018;
+  assert.ok(crossMemberBottom >= frameTop - 1e-9);
+});
+
+test('cross-member has physical handling stops around both dual-arm grip stations', () => {
+  const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
+  for (const name of [
+    'cross_member_grip_stop_north_outer',
+    'cross_member_grip_stop_north_inner',
+    'cross_member_grip_stop_south_outer',
+    'cross_member_grip_stop_south_inner',
+    'cross_member_grip_cap_north',
+    'cross_member_grip_cap_south',
+  ]) {
+    assert.match(xml, new RegExp(`name="${name}"[^>]*mass="\\.01"`));
+  }
 });
 
 test('Assembly1 exposes stable faceted hand tools with recognizable detail', () => {
@@ -92,7 +137,10 @@ test('both Assembly layouts strengthen physical finger contact without attachmen
   for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
     const xml = layoutXml(layout);
     assert.match(xml, /gainprm="\.23529411765 0 0" biasprm="0 -1500 -40"/);
-    assert.match(xml, /fingertip_pad_collision_1[\s\S]*friction="3 \.2 \.05" condim="6"/);
+    assert.match(
+      xml,
+      /fingertip_pad_collision_1[\s\S]*friction="3 \.2 \.05" condim="6" solref="\.002 1"/,
+    );
     assert.doesNotMatch(xml, /weld|equality[^>]*tool|attach_tool|magnet/i);
   }
 });

@@ -23,3 +23,8 @@
   - What: Reproduced Arm 2/4 post-Step-1 oscillation and the blank-scene failure independently on NVIDIA/Vulkan. Removed delayed gravity-force feedback, lengthened passive settling, relaxed only the Step 2 start-pose tolerance, and added a terminal safe-stop that releases clamp force without moving task objects by script.
   - Verified: Focused 24-test suite and production build pass. An independent production browser reached `frame-verification`, reported the expected physical contact failure, and remained `ready` with a connected 1440×900 canvas and no console errors six seconds later. Visual evidence is under `artifacts/diagnostics/assembly-stability-fixed/`.
   - Next: User checks Step 1 residual motion and persistent scene rendering; any later contact-geometry tuning remains a separate task.
+- 2026-08-15 09:10 CST
+  - What: Implemented Assembly1 Step 3. Arms 3/4 physically lift the staged cross-member, follow two checked transfer segments, descend through an alignment midpoint, and retain the aligned part while Arms 1/2 keep their frame/tool roles.
+  - Fixed: Removed the contact-handle memory leak behind the disappearing scene, corrected the impossible frame/cross-member target overlap, moved Arm 1's clamp out of the installation corridor, and added physical grasp-stop/cap geometry plus millimetre-scale final load compensation.
+  - Verified: Two consecutive production-browser runs reached `complete`; four-hole error was `2.44–2.61 mm` and `4.90–6.38 mm`, frame drift stayed below `4.89 mm`, cross-member rotation stayed below `0.67°`, and the Step 2 regression passed.
+  - Next: User reviews `artifacts/screenshots/franka-assembly1-step3-aligned-hold.png`; fastening is the boundary of a future action.

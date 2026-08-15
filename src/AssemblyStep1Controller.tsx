@@ -35,7 +35,7 @@ interface HeldArmState {
 interface AssemblyStep1ControllerProps {
   requestId: number;
   resetGeneration: number;
-  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2'>;
+  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2' | 'step3'>;
   onStatusChange: (status: AssemblyStep1Status) => void;
   onMotionComplete: (model: MujocoModel, data: MujocoData) => void;
 }

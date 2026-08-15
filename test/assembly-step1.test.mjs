@@ -35,8 +35,8 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
     [
       {
         role: 'south frame rail',
-        highWaypoint: [0, -0.23, 0.50],
-        finalWaypoint: [0, -0.23, 0.33],
+        highWaypoint: [0.18, -0.23, 0.50],
+        finalWaypoint: [0.18, -0.23, 0.33],
         closingAxisYawDegrees: 90,
       },
       {
@@ -48,13 +48,13 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
       {
         role: 'cross member north balance point',
         highWaypoint: [-0.49, 0.56, 0.48],
-        finalWaypoint: [-0.49, 0.56, 0.26],
+        finalWaypoint: [-0.49, 0.56, 0.32],
         closingAxisYawDegrees: 0,
       },
       {
         role: 'cross member south balance point',
         highWaypoint: [-0.49, 0.32, 0.48],
-        finalWaypoint: [-0.49, 0.32, 0.26],
+        finalWaypoint: [-0.49, 0.32, 0.32],
         closingAxisYawDegrees: 0,
       },
     ],
@@ -63,6 +63,7 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
     ASSEMBLY1_STEP1_ARMS[2].finalWaypoint[1]
     - ASSEMBLY1_STEP1_ARMS[3].finalWaypoint[1],
   ) >= 0.21);
+  assert.ok(Math.abs(ASSEMBLY1_STEP1_ARMS[0].finalWaypoint[0]) >= 0.15);
 
   assert.deepEqual(topDownTcpQuaternion(90), [0, 1, 0, 0]);
   assert.deepEqual(
@@ -92,7 +93,7 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
 });
 
 test('Assembly1 Step 1 uses the verified grasp-ready IK generation', () => {
-  assert.equal(assemblyStep1.ASSEMBLY1_STEP1_IK_VERSION, 'grasp-ready-v2');
+  assert.equal(assemblyStep1.ASSEMBLY1_STEP1_IK_VERSION, 'installation-clearance-v4');
   for (const arm of ASSEMBLY1_STEP1_ARMS) {
     assert.equal(arm.highJointTargets.length, 7);
     assert.equal(arm.finalJointTargets.length, 7);

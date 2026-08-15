@@ -4,13 +4,13 @@ import {
   findBodyByName,
   findJointByName,
   findSiteByName,
-  getContact,
   useBeforePhysicsStep,
   useMujoco,
 } from 'mujoco-react';
 import type { MujocoData, MujocoModel } from 'mujoco-react';
 import * as THREE from 'three';
 
+import { consumeMujocoContacts } from './mujocoContact.js';
 import { ASSEMBLY1_STEP1_ARMS } from './assemblyStep1.js';
 import {
   ASSEMBLY1_STEP2_ARMS,
@@ -73,7 +73,7 @@ interface AssemblyStep2ControllerProps {
   resetGeneration: number;
   step1Complete: boolean;
   step1SnapshotRef: MutableRefObject<AssemblyStep1CompletionSnapshot | null>;
-  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2'>;
+  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2' | 'step3'>;
   diagnosticsRef: MutableRefObject<AssemblyStep2RuntimeDiagnostics | null>;
   onStateChange: (state: AssemblyStep2State) => void;
 }
@@ -244,9 +244,7 @@ function contactsByFinger(model: MujocoModel, data: MujocoData, arms: RuntimeArm
     result.set(arm.leftFingerBodyId, new Set());
     result.set(arm.rightFingerBodyId, new Set());
   }
-  for (let index = 0; index < data.ncon; index += 1) {
-    const contact = getContact(data, index);
-    if (!contact) continue;
+  for (const contact of consumeMujocoContacts(data.contact, data.ncon)) {
     const firstBody = model.geom_bodyid[contact.geom1];
     const secondBody = model.geom_bodyid[contact.geom2];
     result.get(firstBody)?.add(secondBody);
@@ -259,6 +257,7 @@ function armVerdicts(
   model: MujocoModel,
   data: MujocoData,
   runtime: RuntimePlan,
+  requireBilateralContact: boolean,
 ) {
   const contacts = contactsByFinger(model, data, runtime.arms);
   return runtime.arms.map((arm) => {
@@ -285,6 +284,10 @@ function armVerdicts(
       targetBody: arm.targetBody,
       ...measurements,
       forbiddenBodies,
+      maximumTranslation: ASSEMBLY1_STEP2_LIMITS.settlingTranslation[
+        arm.targetBody as keyof typeof ASSEMBLY1_STEP2_LIMITS.settlingTranslation
+      ],
+      requireBilateralContact,
     });
     const taggedVerdict: AssemblyStep2GraspVerdict = verdict.ok
       ? verdict
@@ -396,7 +399,12 @@ export function AssemblyStep2Controller({
     const previousTime = lastTimeRef.current ?? data.time;
     const deltaSeconds = Math.max(0, data.time - previousTime);
     lastTimeRef.current = data.time;
-    const samples = armVerdicts(model, data, runtime);
+    const samples = armVerdicts(
+      model,
+      data,
+      runtime,
+      machine.phase !== 'clamped-hold' && machine.phase !== 'complete',
+    );
     for (let index = 0; index < samples.length; index += 1) {
       currentContactSecondsRef.current[index] = samples[index].verdict.ok
         ? currentContactSecondsRef.current[index] + deltaSeconds

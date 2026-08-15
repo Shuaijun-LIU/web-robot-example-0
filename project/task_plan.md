@@ -21,9 +21,10 @@
 - [x] Phase 12: Assembly1 Step 1 four-arm coordinated pre-grasp staging
 - [x] Phase 13: Redesign Step 1 around grasp-ready geometry, dual-arm cross-member handling, and gravity-stable final poses
 - [x] Phase 14: Review the grasp-ready result and define the first real contact/grasp transition
-- [ ] Phase 15: Implement and production-verify Step 2 physical contact and clamped hold
+- [x] Phase 15: Implement and production-verify Step 2 physical contact and clamped hold
+- [x] Phase 16: Implement and production-verify Step 3 dual-arm cross-member placement
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 14 design complete; awaiting written-spec review before the Step 2 implementation plan
-- Blockers: Step 2 implementation is gated on review of `docs/superpowers/specs/2026-08-13-assembly1-step2-physical-clamp-design.md`
+- Current phase: Phase 16 complete; Assembly1 now reaches a physically aligned, dual-arm-held cross-member state.
+- Blockers: None. Fastener insertion/torque is intentionally deferred to a later action.

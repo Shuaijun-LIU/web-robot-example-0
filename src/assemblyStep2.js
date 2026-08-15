@@ -10,18 +10,23 @@ export const ASSEMBLY1_STEP2_DURATIONS = Object.freeze({
   frameClamp: 0.8,
   crossMemberClamp: 1,
   torqueDriverClamp: 0.8,
-  contactWindow: 0.25,
+  contactWindow: 0.08,
   verificationTimeout: 2.5,
   stableHold: 2,
 });
 
-export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS = Object.freeze([48, 96, 0, 0]);
+export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
 
 export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   tcpPosition: 0.06,
   tcpOrientationDegrees: 8,
   preStepObjectDrift: 0.003,
   objectTranslation: 0.005,
+  settlingTranslation: Object.freeze({
+    assembly_frame: 0.008,
+    torque_driver: 0.03,
+    cross_member: 0.03,
+  }),
   objectRotationDegrees: 5,
   verticalDisplacement: 0.003,
   minimumAperture: 0.02,
@@ -31,10 +36,10 @@ const roles = [
   {
     role: 'south frame rail',
     targetBody: 'assembly_frame',
-    contactWaypoint: [0, -0.23, 0.235],
+    contactWaypoint: [0.18, -0.23, 0.235],
     closingAxisYawDegrees: 90,
-    approachJointTargets: [-2.422463, -0.967332, -2.055864, -1.664503, -0.942029, 2.02085, -0.275333],
-    contactJointTargets: [-2.412541, -0.986406, -2.075424, -1.665048, -0.959337, 2.041001, -0.268219],
+    approachJointTargets: [-2.740245, -1.616952, -1.476044, -1.512758, -1.622041, 1.478096, -0.446735],
+    contactJointTargets: [-2.743069, -1.633435, -1.493859, -1.516005, -1.637347, 1.496908, -0.446552],
   },
   {
     role: 'side-laid torque driver handle',
@@ -47,18 +52,18 @@ const roles = [
   {
     role: 'cross member north balance point',
     targetBody: 'cross_member',
-    contactWaypoint: [-0.49, 0.56, 0.14],
+    contactWaypoint: [-0.49, 0.56, 0.20],
     closingAxisYawDegrees: 0,
-    approachJointTargets: [2.65007, -1.276525, -1.901844, -1.922017, -1.389913, 1.973555, -2.583203],
-    contactJointTargets: [2.662583, -1.294408, -1.92694, -1.910965, -1.410603, 1.990045, -2.579454],
+    approachJointTargets: [1.520671, -0.115799, -0.578707, -2.892429, -0.184844, 2.789877, -2.808175],
+    contactJointTargets: [1.557521, -0.047497, -0.591649, -2.891678, -0.093261, 2.851089, -2.871199],
   },
   {
     role: 'cross member south balance point',
     targetBody: 'cross_member',
-    contactWaypoint: [-0.49, 0.32, 0.14],
+    contactWaypoint: [-0.49, 0.32, 0.20],
     closingAxisYawDegrees: 0,
-    approachJointTargets: [2.605475, 0.464764, -0.32948, -2.29885, 0.354635, 2.717314, -0.372398],
-    contactJointTargets: [2.585778, 0.503303, -0.304679, -2.287456, 0.379514, 2.74454, -0.391434],
+    approachJointTargets: [2.73572, 0.133697, -0.345734, -2.582379, 0.100799, 2.706221, -0.054203],
+    contactJointTargets: [2.725553, 0.179815, -0.327617, -2.578473, 0.143924, 2.744882, -0.085798],
   },
 ];
 
@@ -204,16 +209,22 @@ export function evaluateAssemblyStep2Grasp({
   forbiddenBodies,
   aperture,
   translation,
+  maximumTranslation = ASSEMBLY1_STEP2_LIMITS.objectTranslation,
   rotationDegrees,
   verticalDisplacement,
+  requireBilateralContact = true,
 }) {
-  if (!leftContactBodies.includes(targetBody)) return failed('missing-left-contact');
-  if (!rightContactBodies.includes(targetBody)) return failed('missing-right-contact');
+  if (requireBilateralContact && !leftContactBodies.includes(targetBody)) {
+    return failed('missing-left-contact');
+  }
+  if (requireBilateralContact && !rightContactBodies.includes(targetBody)) {
+    return failed('missing-right-contact');
+  }
   if (forbiddenBodies.length > 0) return failed('forbidden-contact', forbiddenBodies.join(', '));
   if (!(aperture > ASSEMBLY1_STEP2_LIMITS.minimumAperture)) {
     return failed('empty-closure', String(aperture));
   }
-  if (translation > ASSEMBLY1_STEP2_LIMITS.objectTranslation) {
+  if (translation > maximumTranslation) {
     return failed('object-drift', String(translation));
   }
   if (rotationDegrees > ASSEMBLY1_STEP2_LIMITS.objectRotationDegrees) {
