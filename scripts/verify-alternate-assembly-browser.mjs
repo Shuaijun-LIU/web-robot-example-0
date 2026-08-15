@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
 const targets = ['Arm 1', 'Arm 2', 'Arm 3', 'Arm 4'];
-const scenes = [
+const allScenes = [
   {
     key: 'piperAssembly1',
     label: 'Piper Assembly1',
@@ -15,6 +15,12 @@ const scenes = [
     siteSuffix: 'gripper_pinch',
   },
 ];
+const requestedKeys = new Set(
+  (process.env.SCENES ?? allScenes.map(({ key }) => key).join(','))
+    .split(',')
+    .map((key) => key.trim()),
+);
+const scenes = allScenes.filter(({ key }) => requestedKeys.has(key));
 const failures = [];
 
 function changedIndices(before, after, epsilon = 1e-5) {

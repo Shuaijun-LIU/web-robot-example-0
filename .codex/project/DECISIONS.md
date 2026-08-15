@@ -21,5 +21,5 @@
 
 ## 2026-08-15: Move only the PiPER hammer station inward
 - Context: At the selected `0.78 m` PiPER ring, the original `x=0.65 m` hammer station intersected the east arm at its home pose.
-- Decision: move the complete PiPER hammer station (tool, mat, and both shelf supports) to `x=0.58 m`; keep every other Assembly1 station and all UR5e stations unchanged.
-- Rationale: strict contact evidence isolates the overlap to that station, and the adjusted scene has no penetration beyond `0.434 mm`.
+- Decision: move the complete PiPER hammer station (tool, mat, and both shelf supports) to `x=0.57 m`; keep every other Assembly1 station and all UR5e stations unchanged.
+- Rationale: strict contact evidence isolates the overlap to that station, and the adjusted scene reports zero initial penetrating contacts.

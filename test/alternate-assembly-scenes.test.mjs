@@ -44,6 +44,6 @@ for (const [sceneKey, assetDirectory, rootName, tcpName] of [
     assert.match(report, new RegExp(tcpName));
     assert.match(report, /instance 3: root=\[[^\]]+\] tcp=\[[^\]]+\]/);
     assert.doesNotMatch(report, /null|NaN/);
-    assert.match(report, /initial penetrating contacts:/);
+    assert.match(report, /initial penetrating contacts: 0\//);
   });
 }

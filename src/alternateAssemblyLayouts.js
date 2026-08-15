@@ -108,7 +108,7 @@ export const PIPER_ASSEMBLY1_LAYOUT = createAssemblyLayout({
   tcp: 'tcp',
   gripper: 'gripper',
   camera: [2.6, -2.6, 2.75],
-  hammerX: 0.58,
+  hammerX: 0.57,
 });
 
 export const UR5E_ASSEMBLY1_LAYOUT = createAssemblyLayout({

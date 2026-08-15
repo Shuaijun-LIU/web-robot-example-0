@@ -38,5 +38,5 @@ They reuse the detailed procedural Assembly1 workcell but do not use or widen Fr
 - Implementation commits begin after `origin/main` at `8b8b7e1`; scene implementation is complete through `e3abe44`, followed by the verification/documentation commit containing this handoff.
 - The canonical checkout was not modified by this workstream.
 - Review should preserve exact `robotKey === 'frankaAssembly1'` automation gates.
-- PiPER's hammer station is intentionally at `x=0.58 m`; UR5e and Franka remain at `x=0.65 m`.
+- PiPER's hammer station is intentionally at `x=0.57 m`; UR5e and Franka remain at `x=0.65 m`.
 - All new runtime assets are local and their licenses are retained.

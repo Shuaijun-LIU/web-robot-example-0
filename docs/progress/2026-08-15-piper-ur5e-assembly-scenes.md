@@ -15,10 +15,10 @@ Branch: `feature/piper-ur5e-assembly`
 
 | Scene | Bodies | Geoms | Actuators | Qpos | Named sites | Initial penetration |
 |---|---:|---:|---:|---:|---:|---|
-| Piper Assembly1 | 60 | 448 | 28 | 102 | 17 | One shallow resting contact at `0.434 mm`; no contact exceeds the strict `5 mm` limit |
+| Piper Assembly1 | 60 | 448 | 28 | 102 | 17 | `0` penetrating contacts |
 | UR5e Assembly1 | 108 | 324 | 28 | 126 | 21 | `0` penetrating contacts |
 
-Both models compile with four prefixed physical roots and four finite TCP poses. PiPER uses a `0.78 m` ring and moves the complete hammer station to `x=0.58 m` to clear the east arm. UR5e uses a `0.90 m` ring.
+Both models compile with four prefixed physical roots and four finite TCP poses. PiPER uses a `0.78 m` ring and moves the complete hammer station to `x=0.57 m` to clear the east arm. UR5e uses a `0.90 m` ring.
 
 ## Browser Control Evidence
 
