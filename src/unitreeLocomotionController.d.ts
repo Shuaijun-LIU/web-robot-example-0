@@ -8,6 +8,7 @@ export interface UnitreeAttitudeFeedback {
   pitch: number;
   rollRate: number;
   pitchRate: number;
+  forwardSpeed?: number;
 }
 
 export interface UnitreeLocomotionFeedback {
@@ -51,11 +52,14 @@ export function sampleG1Gait(
   cyclePhase: number,
   envelope?: number,
   attitude?: UnitreeAttitudeFeedback,
+  balanceEnvelope?: number,
+  brakeEnvelope?: number,
 ): GaitSample;
 export function sampleGo2Trot(
   cyclePhase: number,
   envelope?: number,
   attitude?: UnitreeAttitudeFeedback,
+  balanceEnvelope?: number,
 ): GaitSample;
 export function sampleUnitreeLocomotionAction(
   elapsedSeconds: number,

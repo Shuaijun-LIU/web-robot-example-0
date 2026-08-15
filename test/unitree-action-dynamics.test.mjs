@@ -42,3 +42,38 @@ test('the actuator-only clip completes under MuJoCo gravity and contact', () => 
   assert.ok(result.go2.groundContactSteps > 0);
   assert.equal(result.runtimeWrites, 'ctrl-only');
 });
+
+test('the locomotion suite produces stable free-root displacement', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/simulate-unitree-locomotion.mjs'],
+    { cwd: repoRoot, encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 },
+  );
+  const result = JSON.parse(output.trim().split('\n').at(-1));
+
+  assert.equal(result.completed, true);
+  assert.equal(result.finiteState, true);
+  assert.equal(result.safety.safe, true);
+  assert.equal(result.runtimeWrites, 'ctrl-only');
+  assert.deepEqual(result.visitedPhases, [
+    'settle',
+    'g1-squat',
+    'g1-stand',
+    'g1-walk',
+    'g1-stabilize',
+    'go2-walk',
+    'go2-stabilize',
+    'final-greeting',
+    'final-hold',
+    'complete',
+  ]);
+  assert.ok(result.g1.forwardDisplacement >= 0.2);
+  assert.ok(result.go2.forwardDisplacement >= 0.4);
+  assert.ok(result.g1.finalHeight >= 0.7 && result.g1.finalHeight <= 0.9);
+  assert.ok(result.g1.finalTiltDegrees <= 12);
+  assert.ok(result.go2.finalHeight >= 0.2 && result.go2.finalHeight <= 0.36);
+  assert.ok(result.go2.finalTiltDegrees <= 15);
+  assert.ok(result.g1.groundContactSteps > 0);
+  assert.ok(result.go2.groundContactSteps > 0);
+  assert.equal(result.clampCount, 0);
+});

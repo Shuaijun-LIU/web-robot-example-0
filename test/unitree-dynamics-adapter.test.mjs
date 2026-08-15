@@ -67,6 +67,7 @@ test('root reader extracts pose, rates, and planar displacement without mutating
   assert.deepEqual(state.velocity, [0.3, 0.4, 0.1]);
   assert.deepEqual(state.angularVelocity, [0.2, -0.1, 0.05]);
   closeTo(state.speed, 0.5);
+  closeTo(state.forwardSpeed, 0.3);
   closeTo(state.roll, 0);
   closeTo(state.pitch, 0);
   assert.deepEqual([...qpos], beforeQpos);
@@ -79,6 +80,15 @@ test('root reader extracts pose, rates, and planar displacement without mutating
   closeTo(displacement.x, 0.45);
   closeTo(displacement.y, 0.2);
   closeTo(displacement.planar, Math.hypot(0.45, 0.2));
+});
+
+test('root reader expresses forward speed in the robot frame after a yaw turn', () => {
+  const qpos = new Float64Array(7);
+  const qvel = new Float64Array(6);
+  qpos.set([0, 0, 0.8, 0, 0, 0, 1]);
+  qvel.set([-0.35, 0, 0, 0, 0, 0]);
+  const state = readUnitreeRootState(qpos, qvel, { qposAddress: 0, dofAddress: 0 });
+  closeTo(state.forwardSpeed, 0.35);
 });
 
 test('dynamics safety distinguishes valid standing state, falls, and NaN', () => {

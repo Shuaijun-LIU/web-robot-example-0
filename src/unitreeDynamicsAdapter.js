@@ -46,6 +46,17 @@ export function quaternionToRollPitch(quaternion) {
   };
 }
 
+function quaternionToYaw(quaternion) {
+  let [w, x, y, z] = quaternion;
+  const norm = Math.hypot(w, x, y, z);
+  if (!Number.isFinite(norm) || norm <= 1e-12) return Number.NaN;
+  w /= norm;
+  x /= norm;
+  y /= norm;
+  z /= norm;
+  return Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
+}
+
 export function readUnitreeRootState(qpos, qvel, address) {
   const q = address.qposAddress;
   const v = address.dofAddress;
@@ -54,12 +65,14 @@ export function readUnitreeRootState(qpos, qvel, address) {
   const velocity = [qvel[v], qvel[v + 1], qvel[v + 2]];
   const angularVelocity = [qvel[v + 3], qvel[v + 4], qvel[v + 5]];
   const { roll, pitch } = quaternionToRollPitch(quaternion);
+  const yaw = quaternionToYaw(quaternion);
   return {
     position,
     quaternion,
     velocity,
     angularVelocity,
     speed: Math.hypot(velocity[0], velocity[1]),
+    forwardSpeed: Math.cos(yaw) * velocity[0] + Math.sin(yaw) * velocity[1],
     roll,
     pitch,
     rollRate: angularVelocity[0],
@@ -84,6 +97,7 @@ function rootValues(root) {
     root?.pitch,
     root?.rollRate,
     root?.pitchRate,
+    root?.forwardSpeed,
   ].filter((value) => value !== undefined);
 }
 

@@ -22,8 +22,8 @@ const maxAbsDiff = (left, right) => Math.max(
 );
 
 const zeroFeedback = {
-  g1: { roll: 0, pitch: 0, rollRate: 0, pitchRate: 0 },
-  go2: { roll: 0, pitch: 0, rollRate: 0, pitchRate: 0 },
+  g1: { roll: 0, pitch: 0, rollRate: 0, pitchRate: 0, forwardSpeed: 0 },
+  go2: { roll: 0, pitch: 0, rollRate: 0, pitchRate: 0, forwardSpeed: 0 },
 };
 
 test('locomotion envelope enters and exits with zero value and slope-friendly bounds', () => {
@@ -51,14 +51,23 @@ test('G1 squat visibly flexes symmetric legs and returns toward a walk-ready sta
 test('G1 gait alternates legs and counter-swings arms', () => {
   const first = sampleG1Gait(0.25, 1, zeroFeedback.g1);
   const second = sampleG1Gait(0.75, 1, zeroFeedback.g1);
-  const leftHipA = first.targets[0] - G1_WALK_READY[0];
-  const rightHipA = first.targets[6] - G1_WALK_READY[6];
-  assert.ok(leftHipA * rightHipA < 0);
-  assert.ok((first.targets[15] - G1_WALK_READY[15]) * leftHipA < 0);
-  assert.ok((first.targets[22] - G1_WALK_READY[22]) * rightHipA < 0);
+  const leftKneeA = first.targets[3] - G1_WALK_READY[3];
+  const rightKneeA = first.targets[9] - G1_WALK_READY[9];
+  assert.ok(leftKneeA * rightKneeA < 0);
+  assert.ok((first.targets[15] - G1_WALK_READY[15])
+    * (first.targets[22] - G1_WALK_READY[22]) < 0);
   assert.ok(maxAbsDiff(first.targets, second.targets) > 0.2);
   assert.ok(Math.abs(first.targets[0] - second.targets[6]) < 1e-9);
   assert.ok(Math.abs(first.targets[6] - second.targets[0]) < 1e-9);
+});
+
+test('G1 braking anticipates negative local forward speed without changing the root state', () => {
+  const coasting = sampleG1Gait(0, 0, zeroFeedback.g1, 1, 0);
+  const braking = sampleG1Gait(0, 0, { ...zeroFeedback.g1, forwardSpeed: -0.25 }, 1, 1);
+  assert.ok(braking.targets[0] > coasting.targets[0]);
+  assert.ok(braking.targets[6] > coasting.targets[6]);
+  assert.ok(braking.targets[4] < coasting.targets[4]);
+  assert.ok(braking.targets[10] < coasting.targets[10]);
 });
 
 test('Go2 trot phase-locks diagonal pairs and opposes the other diagonal', () => {

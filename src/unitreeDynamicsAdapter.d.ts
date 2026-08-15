@@ -19,6 +19,7 @@ export interface UnitreeRootState {
   velocity: [number, number, number];
   angularVelocity: [number, number, number];
   speed: number;
+  forwardSpeed: number;
   roll: number;
   pitch: number;
   rollRate: number;
