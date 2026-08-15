@@ -5,12 +5,13 @@
 
 ## Current State (last updated: 2026-08-15)
 - Assembly Step 3 is already present in `main`.
-- The verified PiPER and UR5e Assembly1 history has been fast-forwarded into local `main`.
-- The verified Unitree locomotion history is being merged from `feature/unitree-action-lab`.
-- Final integrated tests and GitHub push are pending.
+- The verified PiPER and UR5e Assembly1 history is integrated into `main`.
+- The verified Unitree locomotion history is integrated into `main`.
+- Previously untracked Assembly diagnostic screenshots are archived in Git.
+- The integrated branch passes 151 tests, TypeScript checking, and a production build.
 
 ## Active Workstreams
-- S-INTEGRATION: unify the completed alternate-arm and Unitree locomotion branches on `main`.
+- None. The unified `main` is ready for remote synchronization.
 
 ## Key Paths
 - `src/configs.ts`
