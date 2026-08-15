@@ -10,6 +10,10 @@ import {
   FRANKA_ASSEMBLY2_LAYOUT,
 } from './frankaAssemblyLayouts.js';
 import {
+  PIPER_ASSEMBLY1_LAYOUT,
+  UR5E_ASSEMBLY1_LAYOUT,
+} from './alternateAssemblyLayouts.js';
+import {
   SO101_GEARBOX_LAYOUT,
   SO101_HOME_LAB_LAYOUT,
   XLEROBOT_KITTING_LAYOUT,
@@ -17,16 +21,18 @@ import {
 import { UNITREE_ACTION_LAB_LAYOUT } from './unitreeActionLab.js';
 import {
   createFrankaTargets,
+  createPiperTargets,
   createSO101HomeLabTargets,
   createSO101Targets,
   createUnitreeActionTargets,
+  createUR5eTargets,
   createXLeRobotTargets,
 } from './controlTargets.js';
 import type { ControlTarget } from './controlTargets.js';
 
 export interface RobotEntry {
   label: string;
-  controlFamily: 'franka' | 'so101' | 'xlerobot' | 'unitreeAction';
+  controlFamily: 'franka' | 'industrialArm' | 'so101' | 'xlerobot' | 'unitreeAction';
   config: SceneConfig;
   camera: { position: [number, number, number]; fov: number };
   orbitTarget: [number, number, number];
@@ -43,6 +49,8 @@ const FRANKA_REMOTE_BASE =
 const FRANKA_ASSEMBLY2_BASE = `${import.meta.env.BASE_URL}assets/franka-assembly2/`;
 const SO101_GEARBOX_BASE = `${import.meta.env.BASE_URL}assets/so101-gearbox-room/`;
 const UNITREE_ACTION_LAB_BASE = `${import.meta.env.BASE_URL}assets/unitree-action-lab/`;
+const PIPER_ASSEMBLY1_BASE = `${import.meta.env.BASE_URL}assets/piper-assembly1/`;
+const UR5E_ASSEMBLY1_BASE = `${import.meta.env.BASE_URL}assets/ur5e-assembly1/`;
 
 export const XLEROBOT_HOME_JOINTS = XLEROBOT_LAYOUT.homeJoints.slice(0, 16);
 
@@ -170,6 +178,38 @@ export const robots: Record<string, RobotEntry> = {
     camera: FRANKA_ASSEMBLY2_LAYOUT.camera,
     orbitTarget: FRANKA_ASSEMBLY2_LAYOUT.orbitTarget,
     controlTargets: createFrankaTargets(),
+  },
+
+  piperAssembly1: {
+    label: 'Piper Assembly1',
+    controlFamily: 'industrialArm',
+    config: {
+      src: PIPER_ASSEMBLY1_BASE,
+      sceneFile: 'scene.xml',
+      homeJoints: PIPER_ASSEMBLY1_LAYOUT.homeJoints,
+      xmlPatches: PIPER_ASSEMBLY1_LAYOUT.xmlPatches,
+      sceneObjects: PIPER_ASSEMBLY1_LAYOUT.sceneObjects,
+    },
+    camera: PIPER_ASSEMBLY1_LAYOUT.camera,
+    orbitTarget: PIPER_ASSEMBLY1_LAYOUT.orbitTarget,
+    gizmoScale: 0.08,
+    controlTargets: createPiperTargets(),
+  },
+
+  ur5eAssembly1: {
+    label: 'UR5e Assembly1',
+    controlFamily: 'industrialArm',
+    config: {
+      src: UR5E_ASSEMBLY1_BASE,
+      sceneFile: 'scene.xml',
+      homeJoints: UR5E_ASSEMBLY1_LAYOUT.homeJoints,
+      xmlPatches: UR5E_ASSEMBLY1_LAYOUT.xmlPatches,
+      sceneObjects: UR5E_ASSEMBLY1_LAYOUT.sceneObjects,
+    },
+    camera: UR5E_ASSEMBLY1_LAYOUT.camera,
+    orbitTarget: UR5E_ASSEMBLY1_LAYOUT.orbitTarget,
+    gizmoScale: 0.1,
+    controlTargets: createUR5eTargets(),
   },
 
   unitreeActionLab: {

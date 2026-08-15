@@ -13,6 +13,10 @@ import {
   FRANKA_ASSEMBLY2_LAYOUT,
 } from '../src/frankaAssemblyLayouts.js';
 import {
+  PIPER_ASSEMBLY1_LAYOUT,
+  UR5E_ASSEMBLY1_LAYOUT,
+} from '../src/alternateAssemblyLayouts.js';
+import {
   SO101_GEARBOX_LAYOUT,
   SO101_HOME_LAB_LAYOUT,
   XLEROBOT_KITTING_LAYOUT,
@@ -25,6 +29,8 @@ const definitions = {
   xlerobot: { layout: XLEROBOT_LAYOUT, sceneFile: 'objects.xml' },
   frankaAssembly1: { layout: FRANKA_ASSEMBLY1_LAYOUT, sceneFile: 'scene.xml' },
   frankaAssembly2: { layout: FRANKA_ASSEMBLY2_LAYOUT, sceneFile: 'scene.xml' },
+  piperAssembly1: { layout: PIPER_ASSEMBLY1_LAYOUT, sceneFile: 'scene.xml' },
+  ur5eAssembly1: { layout: UR5E_ASSEMBLY1_LAYOUT, sceneFile: 'scene.xml' },
   so101Gearbox: { layout: SO101_GEARBOX_LAYOUT, sceneFile: 'objects_SO101.xml' },
   so101HomeLab: { layout: SO101_HOME_LAB_LAYOUT, sceneFile: 'objects_SO101.xml' },
   xlerobotKitting: { layout: XLEROBOT_KITTING_LAYOUT, sceneFile: 'objects.xml' },
@@ -34,7 +40,7 @@ const [sceneKey, assetDirectory] = process.argv.slice(2);
 const definition = definitions[sceneKey];
 
 if (!definition || !assetDirectory) {
-  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly1|frankaAssembly2|so101Gearbox|so101HomeLab|xlerobotKitting|unitreeActionLab> <asset-directory>');
+  throw new Error('Usage: node scripts/validate-mjcf.mjs <franka|so101|xlerobot|frankaAssembly1|frankaAssembly2|piperAssembly1|ur5eAssembly1|so101Gearbox|so101HomeLab|xlerobotKitting|unitreeActionLab> <asset-directory>');
 }
 
 const mujoco = await loadMujoco({ printErr: (message) => console.error(`MuJoCo: ${message}`) });
@@ -148,6 +154,10 @@ if (process.env.LIST_NAMES === '1') {
     'actuators:',
     Array.from({ length: model.nu }, (_, index) => getName(model.name_actuatoradr[index])).join(', '),
   );
+  console.log(
+    'sites:',
+    Array.from({ length: model.nsite }, (_, index) => getName(model.name_siteadr[index])).join(', '),
+  );
 }
 if (process.env.POSE_REPORT === '1') {
   const data = new mujoco.MjData(model);
@@ -168,6 +178,8 @@ if (process.env.POSE_REPORT === '1') {
     franka: 'link0',
     frankaAssembly1: 'link0',
     frankaAssembly2: 'link0',
+    piperAssembly1: 'base_link',
+    ur5eAssembly1: 'base',
     so101: 'Base',
     so101Gearbox: 'Base',
     so101HomeLab: 'Base',
@@ -182,7 +194,9 @@ if (process.env.POSE_REPORT === '1') {
     const rootPosition = bodyId === undefined
       ? null
       : Array.from(data.xpos.slice(bodyId * 3, bodyId * 3 + 3));
-    const tcpName = `r${instance}_tcp`;
+    const tcpName = definition.layout.primaryTcpSite
+      ? definition.layout.primaryTcpSite.replace(/^r0_/, `r${instance}_`)
+      : `r${instance}_tcp`;
     const siteId = Array.from({ length: model.nsite }, (_, index) => index).find(
       (index) => getName(model.name_siteadr[index]) === tcpName,
     );

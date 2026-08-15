@@ -103,3 +103,19 @@ test('Assembly1 exposes one three-step sequence panel and deterministic Step 3 d
   assert.match(panelSource, /第三步已完成：横梁已对孔并保持/);
   assert.match(panelSource, /请 Reset 后重试/);
 });
+
+test('alternate industrial arms expose manual IK and grippers without Franka automation', async () => {
+  const [appSource, helpSource] = await Promise.all([
+    readFile(appPath, 'utf8'),
+    readFile(keyboardHelpPath, 'utf8'),
+  ]);
+
+  assert.match(appSource, /IndustrialArmController/);
+  assert.match(appSource, /controlFamily === 'industrialArm'/);
+  assert.match(appSource, /piperAssembly1:\s*\/\^r\\d\+_base_link\$\//);
+  assert.match(appSource, /ur5eAssembly1:\s*\/\^r\\d\+_base\$\//);
+  assert.equal((appSource.match(/robotKey === 'frankaAssembly1'/g) ?? []).length >= 3, true);
+  assert.doesNotMatch(appSource, /robotKey === '(?:piper|ur5e)Assembly1'[\s\S]{0,100}<AssemblyStep/);
+  assert.match(helpSource, /industrialArm:\s*\[[\s\S]*V — Toggle gripper/);
+  assert.match(helpSource, /industrialArm:\s*\[[\s\S]*Drag gizmo — Move arm \(IK\)/);
+});

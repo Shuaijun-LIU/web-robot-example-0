@@ -79,3 +79,17 @@ test('alternate scenes keep Assembly1 supports, mats, and cradles as scene objec
     }
   }
 });
+
+test('PiPER moves the complete hammer station inward to clear its east arm base', () => {
+  assert.deepEqual(PIPER_ASSEMBLY1_LAYOUT.taskStations.hammer, [0.58, 0, 0.229]);
+  assert.match(layoutXml(PIPER_ASSEMBLY1_LAYOUT), /double_face_hammer" pos="0\.58 0 \.229"/);
+  for (const name of [
+    'tool_mat_hammer',
+    'hammer_shelf_support_north',
+    'hammer_shelf_support_south',
+  ]) {
+    const object = PIPER_ASSEMBLY1_LAYOUT.sceneObjects.find((candidate) => candidate.name === name);
+    assert.equal(object?.position[0], 0.58);
+  }
+  assert.deepEqual(UR5E_ASSEMBLY1_LAYOUT.taskStations.hammer, [0.65, 0, 0.229]);
+});

@@ -20,6 +20,7 @@ import { consumeMujocoContacts } from './mujocoContact.js';
 import { robots } from './configs';
 import type { ControlTarget } from './controlTargets.js';
 import { FrankaController } from './controllers/FrankaController';
+import { IndustrialArmController } from './controllers/IndustrialArmController';
 import { SO101Controller } from './controllers/SO101Controller';
 import { XLeRobotController } from './controllers/XLeRobotController';
 import { PlanarMobileController } from './controllers/PlanarMobileController';
@@ -189,7 +190,7 @@ function SceneChildren({
   onResumeUnitreeAction,
 }: {
   robotKey: string;
-  controlFamily: 'franka' | 'so101' | 'xlerobot' | 'unitreeAction';
+  controlFamily: 'franka' | 'industrialArm' | 'so101' | 'xlerobot' | 'unitreeAction';
   target: ControlTarget;
   resetGeneration: number;
   showGizmo: boolean;
@@ -357,6 +358,13 @@ function SceneChildren({
           initiallyOpen={assemblyStep1Status === 'complete'}
         />
       )}
+      {controlFamily === 'industrialArm' && (
+        <IndustrialArmController
+          key={`industrial-${target.key}`}
+          target={target}
+          enabled={!assemblyAutomationActive}
+        />
+      )}
       {target.controlMode === 'planar-mobile' && (
         <PlanarMobileController key={`mobile-${target.key}`} target={target} />
       )}
@@ -412,6 +420,8 @@ const replicatedRootPatterns: Record<string, RegExp> = {
   franka: /^r\d+_link0$/,
   frankaAssembly1: /^r\d+_link0$/,
   frankaAssembly2: /^r\d+_link0$/,
+  piperAssembly1: /^r\d+_base_link$/,
+  ur5eAssembly1: /^r\d+_base$/,
   so101: /^r\d+_Base$/,
   so101Gearbox: /^r\d+_Base$/,
   so101HomeLab: /^r\d+_Base$/,

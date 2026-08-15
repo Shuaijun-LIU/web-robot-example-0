@@ -34,7 +34,7 @@ function attachmentFrames(model, body, radius) {
   }).join('');
 }
 
-function createPatches({ model, body, radius }) {
+function createPatches({ model, body, radius, toolXml }) {
   return [
     {
       target: 'scene.xml',
@@ -54,7 +54,7 @@ function createPatches({ model, body, radius }) {
       target: 'scene.xml',
       replace: [
         '  </worldbody>',
-        `${SHARED_ASSEMBLY1_WORKCELL_XML}${SHARED_ASSEMBLY1_TOOL_XML}\n  </worldbody>`,
+        `${SHARED_ASSEMBLY1_WORKCELL_XML}${toolXml}\n  </worldbody>`,
       ],
     },
   ];
@@ -68,7 +68,22 @@ function createAssemblyLayout({
   tcp,
   gripper,
   camera,
+  hammerX = 0.65,
 }) {
+  const toolXml = hammerX === 0.65
+    ? SHARED_ASSEMBLY1_TOOL_XML
+    : SHARED_ASSEMBLY1_TOOL_XML.replace(
+      '<body name="double_face_hammer" pos=".65 0 .229"',
+      `<body name="double_face_hammer" pos="${hammerX} 0 .229"`,
+    );
+  const sceneObjects = createAssembly1SceneObjects(true).map((object) => (
+    hammerX !== 0.65 && (
+      object.name === 'tool_mat_hammer'
+      || object.name.startsWith('hammer_shelf_support_')
+    )
+      ? { ...object, position: [hammerX, object.position[1], object.position[2]] }
+      : object
+  ));
   return {
     instanceCount: 4,
     yawStepDegrees: 90,
@@ -77,9 +92,9 @@ function createAssemblyLayout({
     primaryTcpSite: `r0_${tcp}`,
     primaryGripperActuator: `r0_${gripper}`,
     homeJoints: repeatPose(home, 4),
-    taskStations: { ...TASK_STATIONS },
-    xmlPatches: createPatches({ model, body, radius }),
-    sceneObjects: createAssembly1SceneObjects(true),
+    taskStations: { ...TASK_STATIONS, hammer: [hammerX, 0, 0.229] },
+    xmlPatches: createPatches({ model, body, radius, toolXml }),
+    sceneObjects,
     camera: { position: camera, fov: 45 },
     orbitTarget: [0, 0, 0.32],
   };
@@ -93,6 +108,7 @@ export const PIPER_ASSEMBLY1_LAYOUT = createAssemblyLayout({
   tcp: 'tcp',
   gripper: 'gripper',
   camera: [2.6, -2.6, 2.75],
+  hammerX: 0.58,
 });
 
 export const UR5E_ASSEMBLY1_LAYOUT = createAssemblyLayout({

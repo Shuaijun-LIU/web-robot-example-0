@@ -8,6 +8,12 @@ const HELP: Record<string, string[]> = {
     `${MOD}+click — Drag body`,
     'Double-click — Select body',
   ],
+  industrialArm: [
+    'V — Toggle gripper',
+    'Drag gizmo — Move arm (IK)',
+    `${MOD}+click — Drag body`,
+    'Double-click — Select body',
+  ],
   so101: [
     'W/S — Arm forward/back',
     'Q/E — Arm up/down',
