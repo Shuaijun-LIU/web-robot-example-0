@@ -76,7 +76,7 @@ function octagonalHandleMesh() {
   return `vertex="${vertices.flat().map((value) => value.toFixed(6)).join(' ')}" face="${faces.flat().join(' ')}"`;
 }
 
-const SHARED_WORKCELL_XML = `
+export const SHARED_ASSEMBLY1_WORKCELL_XML = `
     <!-- Four supports hold the movable frame at the same height as its installation pose. -->
     <body name="frame_supports">
       <geom name="frame_support_nw" type="box" pos="-.27 .18 .155" size=".055 .045 .055" rgba=".16 .18 .2 1"/>
@@ -170,9 +170,9 @@ const SHARED_WORKCELL_XML = `
     <body name="fastener_3" pos=".50 .48 .152"><freejoint/><geom name="fastener_3_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/><geom name="fastener_3_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/></body>
     <body name="fastener_4" pos=".60 .48 .152"><freejoint/><geom name="fastener_4_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/><geom name="fastener_4_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/></body>`;
 
-const ASSEMBLY1_ASSET_XML = `<mesh name="manual_screwdriver_octagonal_handle" ${octagonalHandleMesh()}/>`;
+export const SHARED_ASSEMBLY1_ASSET_XML = `<mesh name="manual_screwdriver_octagonal_handle" ${octagonalHandleMesh()}/>`;
 
-const ASSEMBLY1_TOOL_XML = `
+export const SHARED_ASSEMBLY1_TOOL_XML = `
     <body name="manual_screwdriver" pos="-.53 -.42 .145">
       <joint name="manual_screwdriver_free" type="free" damping=".08"/>
       <geom name="manual_screwdriver_handle" type="mesh" mesh="manual_screwdriver_octagonal_handle" rgba=".48 .19 .07 1" contype="0" conaffinity="0" mass=".001"/>
@@ -259,7 +259,7 @@ const ASSEMBLY2_TOOL_XML = `
       <geom name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"/>
     </body>`;
 
-const sceneObjects = (includeTorqueDriverCradle = false) => [
+export const createAssembly1SceneObjects = (includeTorqueDriverCradle = false) => [
   fixedBox('assembly_platform', [1.15, 1.15, .05], [0, 0, .05], [.25, .27, .29, 1]),
   fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
   fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
@@ -304,7 +304,7 @@ function createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX) {
       ],
     },
     { target: 'scene.xml', replace: ['  <worldbody>', `  <worldbody>${attachmentFrames(northArmX, northArmY, westArmX)}`] },
-    { target: 'scene.xml', replace: ['</worldbody>', `${SHARED_WORKCELL_XML}${toolXml}\n  </worldbody>`] },
+    { target: 'scene.xml', replace: ['</worldbody>', `${SHARED_ASSEMBLY1_WORKCELL_XML}${toolXml}\n  </worldbody>`] },
     {
       target: 'panda.xml',
       replace: [
@@ -333,15 +333,15 @@ function createLayout(
     homeJoints: repeatPose(FRANKA_HOME, 4),
     taskStations: { ...TASK_STATIONS },
     xmlPatches: createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX),
-    sceneObjects: sceneObjects(includeTorqueDriverCradle),
+    sceneObjects: createAssembly1SceneObjects(includeTorqueDriverCradle),
     camera: { position: [2.85, -2.85, 3.05], fov: 45 },
     orbitTarget: [0, 0, .32],
   };
 }
 
 export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
-  ASSEMBLY1_ASSET_XML,
-  ASSEMBLY1_TOOL_XML,
+  SHARED_ASSEMBLY1_ASSET_XML,
+  SHARED_ASSEMBLY1_TOOL_XML,
   true,
   -0.3,
   0.85,
