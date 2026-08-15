@@ -47,6 +47,7 @@ import {
   startAction,
 } from './unitreeActionState.js';
 import type { UnitreeActionState } from './unitreeActionState.js';
+import type { UnitreeRuntimeDiagnostics } from './unitreeDynamicsAdapter.js';
 
 function LoadingOverlay() {
   const sim = useMujoco();
@@ -174,6 +175,7 @@ function SceneChildren({
   onRunAssemblyStep2,
   onResetAssemblySequence,
   unitreeActionStateRef,
+  unitreeActionDiagnosticsRef,
   onRunUnitreeAction,
   onPauseUnitreeAction,
   onResumeUnitreeAction,
@@ -197,6 +199,7 @@ function SceneChildren({
   onRunAssemblyStep2: () => boolean;
   onResetAssemblySequence: () => void;
   unitreeActionStateRef: React.MutableRefObject<UnitreeActionState>;
+  unitreeActionDiagnosticsRef: React.MutableRefObject<UnitreeRuntimeDiagnostics | null>;
   onRunUnitreeAction: () => boolean;
   onPauseUnitreeAction: () => boolean;
   onResumeUnitreeAction: () => boolean;
@@ -300,6 +303,7 @@ function SceneChildren({
       pauseUnitreeAction: onPauseUnitreeAction,
       resumeUnitreeAction: onResumeUnitreeAction,
       getUnitreeActionState: () => ({ ...unitreeActionStateRef.current }),
+      getUnitreeActionDiagnostics: () => unitreeActionDiagnosticsRef.current,
     };
     window.robotDemo = diagnostics;
     return () => {
@@ -317,6 +321,7 @@ function SceneChildren({
     onResumeUnitreeAction,
     step2DiagnosticsRef,
     unitreeActionStateRef,
+    unitreeActionDiagnosticsRef,
   ]);
 
   return (
@@ -410,6 +415,7 @@ export function App() {
   const step1SnapshotRef = useRef<AssemblyStep1CompletionSnapshot | null>(null);
   const step2DiagnosticsRef = useRef<AssemblyStep2RuntimeDiagnostics | null>(null);
   const unitreeActionStateRef = useRef(unitreeActionState);
+  const unitreeActionDiagnosticsRef = useRef<UnitreeRuntimeDiagnostics | null>(null);
   unitreeActionStateRef.current = unitreeActionState;
   const performanceStatsRef = useRef<HTMLDivElement>(null!);
   // Drei's Stats type omits the null state that every DOM ref has before mount.
@@ -467,6 +473,7 @@ export function App() {
     setAssemblyStep1Status('idle');
     setAssemblyStep2State({ phase: 'idle', failure: null });
     setUnitreeActionState(resetAction());
+    unitreeActionDiagnosticsRef.current = null;
     setResetGeneration((generation) => generation + 1);
   }, []);
 
@@ -523,6 +530,7 @@ export function App() {
     setAssemblyStep1Status('idle');
     setAssemblyStep2State({ phase: 'idle', failure: null });
     setUnitreeActionState(resetAction());
+    unitreeActionDiagnosticsRef.current = null;
   }, [robotKey]);
 
   useEffect(() => {
@@ -635,6 +643,7 @@ export function App() {
           onRunAssemblyStep2={handleRunAssemblyStep2}
           onResetAssemblySequence={handleResetAssemblySequence}
           unitreeActionStateRef={unitreeActionStateRef}
+          unitreeActionDiagnosticsRef={unitreeActionDiagnosticsRef}
           onRunUnitreeAction={handleRunUnitreeAction}
           onPauseUnitreeAction={handlePauseUnitreeAction}
           onResumeUnitreeAction={handleResumeUnitreeAction}
@@ -645,6 +654,7 @@ export function App() {
             requestId={unitreeActionRequestId}
             resetGeneration={resetGeneration}
             state={unitreeActionState}
+            diagnosticsRef={unitreeActionDiagnosticsRef}
             onStateChange={setUnitreeActionState}
           />
         )}

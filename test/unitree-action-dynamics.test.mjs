@@ -1,8 +1,16 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const repoRoot = new URL('..', import.meta.url).pathname;
+
+test('runtime action controller never assigns kinematic or force state', () => {
+  const source = readFileSync(new URL('../src/UnitreeActionController.tsx', import.meta.url), 'utf8');
+  const forbiddenAssignment = /data\.(?:qpos|qvel|xpos|xquat|mocap_pos|mocap_quat|xfrc_applied)\s*(?:\[[^\]]+\])?\s*=/;
+  assert.equal(forbiddenAssignment.test(source), false);
+  assert.match(source, /data\.ctrl/);
+});
 
 test('the actuator-only clip completes under MuJoCo gravity and contact', () => {
   const output = execFileSync(
