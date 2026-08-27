@@ -101,18 +101,25 @@ test('cross-member target rests on top of the frame instead of intersecting its 
   assert.ok(crossMemberBottom >= frameTop - 1e-9);
 });
 
-test('cross-member has physical handling stops around both dual-arm grip stations', () => {
+test('cross-member keeps side stops, removes top caps, and bridges both mounting plates', () => {
   const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
   for (const name of [
     'cross_member_grip_stop_north_outer',
     'cross_member_grip_stop_north_inner',
     'cross_member_grip_stop_south_outer',
     'cross_member_grip_stop_south_inner',
-    'cross_member_grip_cap_north',
-    'cross_member_grip_cap_south',
   ]) {
     assert.match(xml, new RegExp(`name="${name}"[^>]*mass="\\.01"`));
   }
+  assert.doesNotMatch(xml, /cross_member_grip_cap_(?:north|south)/);
+  assert.match(
+    xml,
+    /name="cross_member_north_plate_mount"[^>]*pos="0 \.215 \.025"[^>]*size="\.076 \.024 \.007"/,
+  );
+  assert.match(
+    xml,
+    /name="cross_member_south_plate_mount"[^>]*pos="0 -\.215 \.025"[^>]*size="\.076 \.024 \.007"/,
+  );
 });
 
 test('Assembly1 exposes stable faceted hand tools with recognizable detail', () => {

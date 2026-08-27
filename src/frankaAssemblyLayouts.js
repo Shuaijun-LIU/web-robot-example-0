@@ -123,19 +123,19 @@ export const SHARED_ASSEMBLY1_WORKCELL_XML = `
       <freejoint/>
       <geom name="cross_member_flange_left" type="box" pos="-.016 0 0" size=".009 .245 .018" rgba=".56 .58 .59 1" mass=".18" friction="1.2 .2 .02"/>
       <geom name="cross_member_flange_right" type="box" pos=".016 0 0" size=".009 .245 .018" rgba=".68 .69 .69 1" mass=".18" friction="1.2 .2 .02"/>
-      <!-- Handling-stop pairs physically retain both grippers during the shared carry. -->
+      <!-- Side-stop pairs retain both grippers during carry without blocking upward withdrawal. -->
       <geom name="cross_member_grip_stop_north_outer" type="box" pos="0 .1525 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
       <geom name="cross_member_grip_stop_north_inner" type="box" pos="0 .1025 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
       <geom name="cross_member_grip_stop_south_outer" type="box" pos="0 -.1525 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
       <geom name="cross_member_grip_stop_south_inner" type="box" pos="0 -.1025 0" size=".035 .004 .025" rgba=".14 .16 .17 1" mass=".01" friction="2 .2 .03"/>
-      <geom name="cross_member_grip_cap_north" type="box" pos="0 .1275 .035" size=".035 .018 .005" rgba=".22 .24 .25 1" mass=".01" friction="2 .2 .03"/>
-      <geom name="cross_member_grip_cap_south" type="box" pos="0 -.1275 .035" size=".035 .018 .005" rgba=".22 .24 .25 1" mass=".01" friction="2 .2 .03"/>
       <geom name="cross_member_slot" type="box" pos="0 0 .019" size=".005 .205 .002" rgba=".08 .09 .1 1" contype="0" conaffinity="0"/>
+      <geom name="cross_member_north_plate_mount" type="box" pos="0 .215 .025" size=".076 .024 .007" rgba=".31 .34 .36 1" mass=".015" friction="1.2 .2 .02"/>
       <geom name="cross_member_north_plate_outer" type="box" pos="0 .239 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
       <geom name="cross_member_north_plate_inner" type="box" pos="0 .191 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
       <geom name="cross_member_north_plate_left" type="box" pos="-.071 .215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
       <geom name="cross_member_north_plate_center" type="box" pos="0 .215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
       <geom name="cross_member_north_plate_right" type="box" pos=".071 .215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
+      <geom name="cross_member_south_plate_mount" type="box" pos="0 -.215 .025" size=".076 .024 .007" rgba=".31 .34 .36 1" mass=".015" friction="1.2 .2 .02"/>
       <geom name="cross_member_south_plate_outer" type="box" pos="0 -.239 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
       <geom name="cross_member_south_plate_inner" type="box" pos="0 -.191 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
       <geom name="cross_member_south_plate_left" type="box" pos="-.071 -.215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>

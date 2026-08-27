@@ -50,3 +50,7 @@
   - Fixed: Rebuilt and committed the actual `docs` bundle consumed by legacy Pages. Added a regression gate requiring the bundle to contain Step 3 release/settle/retreat copy and the Step 4 action button; also pinned the reported 22.2406 mm alignment sample as accepted by the current 36 mm effective planar gate.
   - Verified: The artifact regression changed from red to green, and focused Step 3/Step 4/UI tests passed 26/26. The full headless dynamics runner was stopped after six minutes because SwiftShader consumed over 12 CPU cores without reaching a terminal phase; this environmental run is not counted as dynamics evidence.
   - Next: Confirm the legacy Pages URL serves the new hashed bundle, then visually review Step 3 release/retreat and the staged Step 4 button before resuming fastener-grasp tuning.
+- 2026-08-28
+  - What: Removed only the two overhead cross-member grip caps that could trap fully opened Arms 3/4 during Step 3 withdrawal; retained all four lateral handling stops.
+  - Fixed: Added north/south solid installation mounts that touch both the beam top and the reserved plate undersides, eliminating the prior 12–14 mm floating visual gaps.
+  - Verified: The focused geometry contract passed 11/11, the full suite passed 164/164, and the Node 22 production build completed. The browser dynamics verifier timed out while loading the page and therefore provides no motion/withdrawal evidence; visual acceptance remains with the user.
