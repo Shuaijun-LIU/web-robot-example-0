@@ -450,6 +450,13 @@ function SceneChildren({
           onStateChange={onAssemblyStep4StateChange}
         />
       )}
+      {robotKey === 'frankaAssembly2' && (
+        <FrankaAssembly2DataRecorderPanel
+          targets={entry.controlTargets}
+          activeTarget={target}
+          resetGeneration={resetGeneration}
+        />
+      )}
     </>
   );
 }
@@ -876,13 +883,6 @@ export function App() {
           onRunStep2={handleRunAssemblyStep2}
           onRunStep3={handleRunAssemblyStep3}
           onRunStep4={handleRunAssemblyStep4}
-        />
-      )}
-      {robotKey === 'frankaAssembly2' && (
-        <FrankaAssembly2DataRecorderPanel
-          targets={entry.controlTargets}
-          activeTarget={controlTarget}
-          resetGeneration={resetGeneration}
         />
       )}
       {isUnitreeActionScene && (
