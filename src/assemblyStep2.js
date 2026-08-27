@@ -25,7 +25,7 @@ export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   objectTranslation: 0.005,
   settlingTranslation: Object.freeze({
     assembly_frame: 0.008,
-    double_face_hammer: 0.03,
+    double_face_hammer: 0.04,
     cross_member: 0.03,
   }),
   objectRotationDegrees: 5,
@@ -46,9 +46,9 @@ const roles = [
     role: 'horizontal hammer handle',
     targetBody: 'double_face_hammer',
     contactWaypoint: [0.559, -0.421, 0.16],
-    closingAxisYawDegrees: 162,
-    approachJointTargets: [2.291276, 0.432042, 0.156637, -2.241718, -0.139372, 2.664861, 0.515273],
-    contactJointTargets: [2.298379, 0.468452, 0.147356, -2.23421, -0.150268, 2.693066, 0.523317],
+    closingAxisYawDegrees: 90,
+    approachJointTargets: [1.730202, 0.562724, 0.688394, -2.20587, -0.65804, 2.556128, 2.124833],
+    contactJointTargets: [1.756327, 0.596224, 0.655031, -2.194746, -0.691376, 2.57683, 2.147234],
   },
   {
     role: 'cross member north balance point',

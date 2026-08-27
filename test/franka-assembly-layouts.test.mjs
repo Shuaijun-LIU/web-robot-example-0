@@ -36,19 +36,25 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
   }
 });
 
-test('Assembly1 alone moves the fastener station into Arm 3 reach', () => {
+test('Assembly1 alone moves four identical fasteners into Arm 3 reach', () => {
   const assembly1Xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
   const assembly2Xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
   assert.match(assembly1Xml, /<body name="fastener_tray" pos="\.18 \.48 \.11">/);
   assert.match(assembly1Xml, /name="fastener_tray_floor" type="box" pos="0 0 -\.03" size="\.18 \.18 \.04"/);
-  for (const side of ['west', 'east', 'south', 'north']) {
-    assert.match(assembly1Xml, new RegExp(`name="fastener_1_guide_${side}"`));
-  }
+  assert.doesNotMatch(assembly1Xml, /fastener_1_guide_/);
   assert.match(assembly1Xml, /<body name="fastener_1" pos="\.12 \.42 \.152"><freejoint\/>/);
-  assert.match(assembly1Xml, /name="fastener_1_shaft" type="cylinder" size="\.007 \.025"/);
   assert.match(assembly1Xml, /<body name="fastener_4" pos="\.22 \.54 \.152">/);
-  assert.match(assembly1Xml, /name="fastener_1_head" type="cylinder" pos="0 0 \.032" size="\.015 \.007"/);
-  assert.doesNotMatch(assembly1Xml, /fastener_1_retention_cap/);
+  for (let fastener = 1; fastener <= 4; fastener += 1) {
+    assert.match(
+      assembly1Xml,
+      new RegExp(`name="fastener_${fastener}_shaft" type="cylinder" size="\\.007 \\.025"[^>]*mass="\\.012"`),
+    );
+    assert.match(
+      assembly1Xml,
+      new RegExp(`name="fastener_${fastener}_head" type="cylinder" pos="0 0 \\.032" size="\\.015 \\.007"[^>]*mass="\\.006"`),
+    );
+  }
+  assert.doesNotMatch(assembly1Xml, /fastener_1_retention_cap|fastener_1_guide_/);
   assert.match(assembly2Xml, /<body name="fastener_tray" pos="\.56 \.42 \.11">/);
   assert.match(assembly2Xml, /<body name="fastener_1" pos="\.50 \.36 \.152">/);
   assert.match(assembly2Xml, /name="fastener_1_head"[^>]+size="\.015 \.007"/);
@@ -103,7 +109,7 @@ test('cross-member target rests on top of the frame instead of intersecting its 
   assert.ok(crossMemberBottom >= frameTop - 1e-9);
 });
 
-test('cross-member uses recessed grasp pockets and hollow round/square interfaces', () => {
+test('cross-member uses underside grasp pockets and integral hollow round/square plates', () => {
   const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
   for (const name of [
     'cross_member_grip_stop_north_outer',
@@ -114,7 +120,6 @@ test('cross-member uses recessed grasp pockets and hollow round/square interface
     assert.match(xml, new RegExp(`name="${name}"[^>]*mass="\\.01"`));
   }
   assert.doesNotMatch(xml, /cross_member_grip_cap_(?:north|south)/);
-  assert.doesNotMatch(xml, /cross_member_(?:north|south)_plate_mount/);
   for (const side of ['north', 'south']) {
     for (const opening of ['left', 'right']) {
       assert.match(xml, new RegExp(
@@ -123,18 +128,19 @@ test('cross-member uses recessed grasp pockets and hollow round/square interface
     }
     for (const flange of ['left', 'right']) {
       assert.match(xml, new RegExp(
-        `name="cross_member_flange_${flange}_${side}_grip_recess"[^>]*pos="[^\"]+ -?0?\\.1275 -0?\\.006"[^>]*size="\\.009 0?\\.025 0?\\.012"`,
+        `name="cross_member_flange_${flange}_${side}_grip_recess"[^>]*pos="[^\"]+ -?0?\\.1275 0?\\.006"[^>]*size="\\.009 0?\\.025 0?\\.012"`,
+      ));
+    }
+    for (const edge of ['outer', 'inner', 'left', 'center', 'right']) {
+      assert.match(xml, new RegExp(
+        `name="cross_member_${side}_plate_${edge}"[^>]*pos="[^\"]+ \\.033"[^>]*size="[^\"]+ \\.015"`,
       ));
     }
     assert.equal(
       (xml.match(new RegExp(`cross_member_${side}_round_opening_segment_`, 'g')) ?? []).length,
       12,
     );
-    for (const edge of ['west', 'east', 'south', 'north']) {
-      assert.match(xml, new RegExp(
-        `name="cross_member_${side}_square_opening_${edge}"[^>]*pos="[^\"]+ \\.033"[^>]*size="[^\"]+ \\.015"`,
-      ));
-    }
+    assert.match(xml, new RegExp(`name="cross_member_${side}_square_opening"`));
   }
 });
 

@@ -29,7 +29,7 @@ const attachmentFrames = [
 const tasks = [
   {
     key: 'r1',
-    closingAxisYawDegrees: 162,
+    closingAxisYawDegrees: ASSEMBLY1_STEP2_ARMS[1].closingAxisYawDegrees,
     start: ASSEMBLY1_STEP2_ARMS[1].contactJointTargets,
     waypoints: ['prepare', 'clear', 'ready', 'strike'],
     orientationFor(name, initialWorldQuaternion) {

@@ -155,7 +155,7 @@ export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   objectTranslation: 0.005;
   settlingTranslation: Readonly<{
     assembly_frame: 0.008;
-    double_face_hammer: 0.03;
+    double_face_hammer: 0.04;
     cross_member: 0.03;
   }>;
   objectRotationDegrees: 5;

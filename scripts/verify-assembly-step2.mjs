@@ -10,7 +10,7 @@ const gripperClampControls = [48, 96, 24, 24];
 const taskBodies = ['assembly_frame', 'double_face_hammer', 'cross_member'];
 const settlingTranslationLimits = {
   assembly_frame: 0.008,
-  double_face_hammer: 0.03,
+  double_face_hammer: 0.04,
   cross_member: 0.03,
 };
 

@@ -43,7 +43,7 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
         role: 'horizontal hammer handle',
         highWaypoint: [0.559, -0.421, 0.48],
         finalWaypoint: [0.559, -0.421, 0.28],
-        closingAxisYawDegrees: 162,
+        closingAxisYawDegrees: 90,
       },
       {
         role: 'cross member north balance point',
@@ -66,6 +66,8 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
   assert.ok(Math.abs(ASSEMBLY1_STEP1_ARMS[0].finalWaypoint[0]) >= 0.15);
 
   assert.deepEqual(topDownTcpQuaternion(90), [0, 1, 0, 0]);
+  const hammerClosingAxisYaw = ASSEMBLY1_STEP1_ARMS[1].closingAxisYawDegrees * Math.PI / 180;
+  assert.ok(Math.abs(Math.cos(hammerClosingAxisYaw)) < 1e-12);
   assert.deepEqual(
     topDownTcpQuaternion(0).map((value) => Number(value.toFixed(6))),
     [0.707107, 0.707107, 0, 0],

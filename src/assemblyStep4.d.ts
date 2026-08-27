@@ -64,6 +64,7 @@ export const ASSEMBLY1_STEP4_ARMS: ReadonlyArray<Readonly<{
   key: string;
   armIndex: number;
   role: string;
+  closingAxisYawDegrees?: number;
   jointTargets: Readonly<Record<string, readonly number[]>>;
 }>>;
 

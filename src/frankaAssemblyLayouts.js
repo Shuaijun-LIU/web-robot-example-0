@@ -84,9 +84,9 @@ function cleanDecimal(value) {
 function recessedCrossMemberFlangesXml() {
   const segments = [
     ['south_outer', -0.19875, 0.04625, 0, 0.018, 0.034],
-    ['south_grip_recess', -0.1275, 0.025, -0.006, 0.012, 0.012],
+    ['south_grip_recess', -0.1275, 0.025, 0.006, 0.012, 0.012],
     ['center', 0, 0.1025, 0, 0.018, 0.075],
-    ['north_grip_recess', 0.1275, 0.025, -0.006, 0.012, 0.012],
+    ['north_grip_recess', 0.1275, 0.025, 0.006, 0.012, 0.012],
     ['north_outer', 0.19875, 0.04625, 0, 0.018, 0.034],
   ];
   return [
@@ -100,8 +100,24 @@ function recessedCrossMemberFlangesXml() {
 }
 
 function connectorInterfaceXml(side, y) {
+  const direction = Math.sign(y);
+  const platePieces = [
+    ['outer', 0, cleanDecimal(y + direction * 0.018), '.076 .006 .015'],
+    ['inner', 0, cleanDecimal(y - direction * 0.018), '.076 .006 .015'],
+    ['left', -0.071, y, '.005 .012 .015'],
+    ['center', 0, y, '.008 .012 .015'],
+    ['right', 0.071, y, '.005 .012 .015'],
+    ['round_bridge_west', -0.061, y, '.005 .012 .015'],
+    ['round_bridge_east', -0.014, y, '.006 .012 .015'],
+    ['square_opening_west_fill', 0.018, y, '.010 .012 .015'],
+    ['square_opening_east_fill', 0.059, y, '.007 .012 .015'],
+  ].map(([name, x, pieceY, size]) => (
+    `<geom name="cross_member_${side}_plate_${name}" type="box" `
+    + `pos="${x} ${pieceY} .033" size="${size}" `
+    + 'rgba=".24 .27 .29 1" mass=".008"/>'
+  )).join('\n      ');
   const circleCenterX = -0.038;
-  const circleRadius = 0.018;
+  const circleRadius = 0.015;
   const circleSegments = Array.from({ length: 12 }, (_, index) => {
     const angleDegrees = index * 30;
     const angle = angleDegrees * Math.PI / 180;
@@ -111,19 +127,9 @@ function connectorInterfaceXml(side, y) {
       + `type="box" pos="${x} ${segmentY} .033" size=".005 .003 .015" `
       + `euler="0 0 ${angleDegrees + 90}" rgba=".24 .27 .29 1" mass=".004"/>`;
   }).join('\n      ');
-  const squareCenterX = 0.038;
-  const innerHalf = 0.015;
-  const outerHalf = 0.019;
-  const squareEdges = [
-    ['west', cleanDecimal(squareCenterX - outerHalf), y, '.004 .019 .015'],
-    ['east', cleanDecimal(squareCenterX + outerHalf), y, '.004 .019 .015'],
-    ['south', squareCenterX, cleanDecimal(y - outerHalf), '.019 .004 .015'],
-    ['north', squareCenterX, cleanDecimal(y + outerHalf), '.019 .004 .015'],
-  ].map(([edge, x, edgeY, size]) => (
-    `<geom name="cross_member_${side}_square_opening_${edge}" type="box" `
-    + `pos="${x} ${edgeY} .033" size="${size}" rgba=".24 .27 .29 1" mass=".008"/>`
-  )).join('\n      ');
-  return `${circleSegments}\n      ${squareEdges}`;
+  const squareOpening = `<site name="cross_member_${side}_square_opening" `
+    + `pos=".04 ${y} .033" type="box" size=".012 .012 .002" rgba="0 0 0 0"/>`;
+  return `${platePieces}\n      ${circleSegments}\n      ${squareOpening}`;
 }
 
 function hollowConnectorInterfacesXml() {
@@ -310,7 +316,7 @@ function assembly1ReachableFastenerWorkcellXml() {
     )
     .replace(
       '<site name="cross_member_north_hole_right" pos=".04 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>',
-      '<site name="cross_member_north_hole_right" pos=".04 .215 .04" type="cylinder" size=".012 .002" rgba="0 0 0 0"/>',
+      '<site name="cross_member_north_hole_right" pos=".04 .215 .04" type="box" size=".012 .012 .002" rgba="0 0 0 0"/>',
     )
     .replace(
       '<site name="cross_member_south_hole_left" pos="-.04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>',
@@ -318,20 +324,12 @@ function assembly1ReachableFastenerWorkcellXml() {
     )
     .replace(
       '<site name="cross_member_south_hole_right" pos=".04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>',
-      '<site name="cross_member_south_hole_right" pos=".04 -.215 .04" type="cylinder" size=".012 .002" rgba="0 0 0 0"/>',
+      '<site name="cross_member_south_hole_right" pos=".04 -.215 .04" type="box" size=".012 .012 .002" rgba="0 0 0 0"/>',
     )
     .replace('name="fastener_tray" pos=".56 .42 .11"', 'name="fastener_tray" pos=".18 .48 .11"')
     .replace(
       '<geom name="fastener_tray_floor" type="box" size=".18 .18 .01"',
       '<geom name="fastener_tray_floor" type="box" pos="0 0 -.03" size=".18 .18 .04"',
-    )
-    .replace(
-      '<geom name="fastener_tray_floor" type="box" pos="0 0 -.03" size=".18 .18 .04" rgba=".3 .32 .34 1"/>',
-      `<geom name="fastener_tray_floor" type="box" pos="0 0 -.03" size=".18 .18 .04" rgba=".3 .32 .34 1"/>
-      <geom name="fastener_1_guide_west" type="box" pos="-.073 -.06 .03" size=".004 .018 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>
-      <geom name="fastener_1_guide_east" type="box" pos="-.047 -.06 .03" size=".004 .018 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>
-      <geom name="fastener_1_guide_south" type="box" pos="-.06 -.073 .03" size=".018 .004 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>
-      <geom name="fastener_1_guide_north" type="box" pos="-.06 -.047 .03" size=".018 .004 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>`,
     )
     .replace('name="fastener_1" pos=".50 .36 .152"', 'name="fastener_1" pos=".12 .42 .152"')
     .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".22 .42 .152"')

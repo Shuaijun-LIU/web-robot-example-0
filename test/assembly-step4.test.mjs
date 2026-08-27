@@ -30,6 +30,7 @@ test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () 
     }
   }
   const [, tool, fastener, support] = step4.ASSEMBLY1_STEP4_ARMS;
+  assert.equal(tool.closingAxisYawDegrees, 90);
   assert.notDeepEqual(tool.jointTargets.hold, tool.jointTargets.ready);
   assert.notDeepEqual(tool.jointTargets.ready, tool.jointTargets.strike);
   assert.notDeepEqual(fastener.jointTargets.prepare, fastener.jointTargets.engage);

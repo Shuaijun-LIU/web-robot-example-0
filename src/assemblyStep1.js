@@ -22,9 +22,9 @@ const roles = [
     role: 'horizontal hammer handle',
     highWaypoint: [0.559, -0.421, 0.48],
     finalWaypoint: [0.559, -0.421, 0.28],
-    closingAxisYawDegrees: 162,
-    highJointTargets: [2.254901, -0.053876, 0.201647, -2.005079, 0.012022, 1.954481, 0.409568],
-    finalJointTargets: [2.262258, 0.200462, 0.19843, -2.241938, -0.058834, 2.43746, 0.459226],
+    closingAxisYawDegrees: 90,
+    highJointTargets: [1.391776, -0.105437, 1.034431, -2.00286, 0.098109, 1.948539, 1.601918],
+    finalJointTargets: [1.540117, 0.325783, 0.926499, -2.230769, -0.38426, 2.394071, 1.942869],
   },
   {
     role: 'cross member north balance point',

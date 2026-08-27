@@ -20,7 +20,7 @@ const taskBodies = [
 ];
 const tcpTargets = {
   r0_tcp: { position: [0, -0.23, 0.33], closingAxis: [0, 1, 0] },
-  r1_tcp: { position: [0.559, -0.421, 0.28], closingAxis: [-0.951057, 0.309017, 0] },
+  r1_tcp: { position: [0.559, -0.421, 0.28], closingAxis: [0, 1, 0] },
   r2_tcp: { position: [-0.49, 0.56, 0.26], closingAxis: [1, 0, 0] },
   r3_tcp: { position: [-0.49, 0.32, 0.26], closingAxis: [1, 0, 0] },
 };
