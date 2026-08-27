@@ -168,6 +168,7 @@ function createRuntimePlan(
       insert: contract.jointTargets.insert,
       clear: contract.jointTargets.clear,
       ready: contract.jointTargets.ready,
+      strike: contract.jointTargets.strike,
     });
   }
 

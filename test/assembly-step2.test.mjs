@@ -38,7 +38,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     },
     {
       key: 'r1',
-      targetBody: 'torque_driver',
+      targetBody: 'double_face_hammer',
       contactWaypoint: [0.559, -0.421, 0.16],
       approachWaypoint: [0.559, -0.421, 0.175],
       closingAxisYawDegrees: 162,
@@ -76,7 +76,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     contactSettle: 1.5,
     frameClamp: 0.8,
     crossMemberClamp: 1,
-    torqueDriverClamp: 0.8,
+    hammerClamp: 0.8,
     contactWindow: 0.08,
     contactGrace: 0.2,
     verificationTimeout: 4,
@@ -90,7 +90,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     objectTranslation: 0.005,
     settlingTranslation: {
       assembly_frame: 0.008,
-      torque_driver: 0.03,
+      double_face_hammer: 0.03,
       cross_member: 0.03,
     },
     objectRotationDegrees: 5,
@@ -198,7 +198,7 @@ test('Step 2 control frames descend all arms and close cross-member grippers tog
   assert.equal(crossClamp.arms[2].gripperTarget, crossClamp.arms[3].gripperTarget);
 
   const toolClamp = createAssemblyStep2ControlFrame(
-    machine('torque-driver-clamp', 0.4),
+    machine('hammer-clamp', 0.4),
     plans,
   );
   assert.deepEqual(toolClamp.arms.map((arm) => arm.gripperTarget), [48, 175.5, 24, 24]);
@@ -237,9 +237,9 @@ test('Step 2 verification requires an uninterrupted 0.08 second window', () => {
 
 test('Step 2 verification accepts recent real contact but rejects expired contact memory', () => {
   const valid = {
-    targetBody: 'torque_driver',
+    targetBody: 'double_face_hammer',
     leftContactBodies: [],
-    rightContactBodies: ['torque_driver'],
+    rightContactBodies: ['double_face_hammer'],
     forbiddenBodies: [],
     aperture: 0.03,
     translation: 0.001,

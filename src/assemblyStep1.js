@@ -19,7 +19,7 @@ const roles = [
     finalJointTargets: [-2.71468, -1.525629, -1.384456, -1.46819, -1.543915, 1.380128, -0.454438],
   },
   {
-    role: 'side-laid torque driver handle',
+    role: 'horizontal hammer handle',
     highWaypoint: [0.559, -0.421, 0.48],
     finalWaypoint: [0.559, -0.421, 0.28],
     closingAxisYawDegrees: 162,

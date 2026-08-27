@@ -19,7 +19,7 @@ test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () 
   assert.equal(step4.ASSEMBLY1_STEP4_ARMS.length, 4);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_ARMS.map(({ key, role }) => [key, role]), [
     ['r0', 'frame hold'],
-    ['r1', 'torque driver pre-drive'],
+    ['r1', 'hammer pickup and strike'],
     ['r2', 'fastener pickup and insertion'],
     ['r3', 'cross-member standby'],
   ]);
@@ -31,12 +31,13 @@ test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () 
   }
   const [, tool, fastener, support] = step4.ASSEMBLY1_STEP4_ARMS;
   assert.notDeepEqual(tool.jointTargets.hold, tool.jointTargets.ready);
+  assert.notDeepEqual(tool.jointTargets.ready, tool.jointTargets.strike);
   assert.notDeepEqual(fastener.jointTargets.prepare, fastener.jointTargets.engage);
   assert.notDeepEqual(fastener.jointTargets.engage, fastener.jointTargets.insert);
   assert.deepEqual(support.jointTargets.hold, support.jointTargets.engage);
 });
 
-test('Step 4 orders physical pickup, insertion, release, clearance, and tool staging', () => {
+test('Step 4 orders physical insertion followed by a hammer strike and recovery', () => {
   let machine = step4.createAssemblyStep4Machine();
   assert.equal(machine.phase, 'prepare');
   const advance = (duration, expected, evidence = valid) => {
@@ -55,8 +56,10 @@ test('Step 4 orders physical pickup, insertion, release, clearance, and tool sta
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.insert, 'fastener-release');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.fastenerRelease, 'clear');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.clear, 'placement-verification');
-  advance(step4.ASSEMBLY1_STEP4_DURATIONS.placementHold, 'tool-stage');
-  advance(step4.ASSEMBLY1_STEP4_DURATIONS.toolStage, 'complete');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.placementHold, 'hammer-stage');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerStage, 'hammer-strike');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerStrike, 'hammer-recover');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerRecover, 'complete');
 });
 
 test('Step 4 stops if the fastener grasp is lost during transfer', () => {
@@ -90,7 +93,7 @@ test('Step 4 placement verification tolerates settling before a continuous valid
     step4.ASSEMBLY1_STEP4_DURATIONS.placementHold,
     valid,
   );
-  assert.equal(machine.phase, 'tool-stage');
+  assert.equal(machine.phase, 'hammer-stage');
 });
 
 test('Step 4 placement timeout retains the physical failure reason', () => {
@@ -131,6 +134,7 @@ test('Step 4 control frames clamp only Arm 3 and finish with both transport arms
     insert: Array(7).fill(index * 10 + 5),
     clear: Array(7).fill(index * 10 + 6),
     ready: Array(7).fill(index * 10 + 7),
+    strike: Array(7).fill(index * 10 + 8),
   }));
   const clamp = step4.createAssemblyStep4ControlFrame({
     phase: 'fastener-clamp',

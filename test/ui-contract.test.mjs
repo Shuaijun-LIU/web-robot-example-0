@@ -108,7 +108,8 @@ test('Assembly1 exposes one four-step sequence panel and deterministic Step 4 di
   assert.match(panelSource, /执行第三步：双臂搬运并对孔/);
   assert.match(panelSource, /第三步已完成：横梁已落位并释放/);
   assert.match(panelSource, /执行第四步：拾取并插入第一颗紧固件/);
-  assert.match(panelSource, /第四步已完成：紧固件已落位，扭矩工具已预定位/);
+  assert.match(panelSource, /Arm 2 正在下击紧固件/);
+  assert.match(panelSource, /第四步已完成：紧固件已落位并完成锤击/);
   assert.match(panelSource, /请 Reset 后重试/);
   assert.match(step4ControllerSource, /useBeforePhysicsStep/);
   assert.match(step4ControllerSource, /consumeMujocoContacts/);

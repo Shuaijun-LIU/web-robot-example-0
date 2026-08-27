@@ -40,7 +40,7 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
         closingAxisYawDegrees: 90,
       },
       {
-        role: 'side-laid torque driver handle',
+        role: 'horizontal hammer handle',
         highWaypoint: [0.559, -0.421, 0.48],
         finalWaypoint: [0.559, -0.421, 0.28],
         closingAxisYawDegrees: 162,

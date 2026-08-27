@@ -31,14 +31,9 @@ const tasks = [
     key: 'r1',
     closingAxisYawDegrees: 162,
     start: ASSEMBLY1_STEP2_ARMS[1].contactJointTargets,
-    waypoints: ['prepare', 'clear', 'ready'],
+    waypoints: ['prepare', 'clear', 'ready', 'strike'],
     orientationFor(name, initialWorldQuaternion) {
-      if (name === 'prepare') return initialWorldQuaternion;
-      const rotateToolBitDown = new THREE.Quaternion().setFromAxisAngle(
-        new THREE.Vector3(0, 1, 0),
-        -Math.PI / 2,
-      );
-      return rotateToolBitDown.multiply(initialWorldQuaternion).normalize();
+      return initialWorldQuaternion;
     },
   },
   {

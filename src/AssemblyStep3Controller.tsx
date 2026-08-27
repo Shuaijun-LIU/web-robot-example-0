@@ -54,9 +54,10 @@ const FORBIDDEN_BODY_NAMES = [
   'fastener_4',
   'manual_screwdriver',
   'double_face_hammer',
+  'torque_driver',
   'tool_mat',
-  'torque_driver_cradle_south',
-  'torque_driver_cradle_north',
+  'hammer_pickup_cradle_west',
+  'hammer_pickup_cradle_east',
 ];
 
 interface RuntimeArm {

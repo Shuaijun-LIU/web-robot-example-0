@@ -1,7 +1,8 @@
 export type AssemblyStep4Phase =
   | 'idle' | 'planning' | 'prepare' | 'engage' | 'engage-settle' | 'fastener-clamp'
   | 'fastener-verification' | 'fastener-tighten' | 'lift' | 'transfer' | 'transfer-settle' | 'insert'
-  | 'fastener-release' | 'clear' | 'placement-verification' | 'tool-stage'
+  | 'fastener-release' | 'clear' | 'placement-verification'
+  | 'hammer-stage' | 'hammer-strike' | 'hammer-recover'
   | 'complete' | 'error';
 
 export interface AssemblyStep4Failure {
@@ -35,6 +36,7 @@ export interface AssemblyStep4ArmPlan {
   insert: readonly number[];
   clear: readonly number[];
   ready: readonly number[];
+  strike: readonly number[];
 }
 
 export interface AssemblyStep4RuntimeDiagnostics {

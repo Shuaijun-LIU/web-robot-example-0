@@ -76,6 +76,60 @@ function octagonalHandleMesh() {
   return `vertex="${vertices.flat().map((value) => value.toFixed(6)).join(' ')}" face="${faces.flat().join(' ')}"`;
 }
 
+function cleanDecimal(value) {
+  const rounded = Number(value.toFixed(6));
+  return Object.is(rounded, -0) ? 0 : rounded;
+}
+
+function recessedCrossMemberFlangesXml() {
+  const segments = [
+    ['south_outer', -0.19875, 0.04625, 0, 0.018, 0.034],
+    ['south_grip_recess', -0.1275, 0.025, -0.006, 0.012, 0.012],
+    ['center', 0, 0.1025, 0, 0.018, 0.075],
+    ['north_grip_recess', 0.1275, 0.025, -0.006, 0.012, 0.012],
+    ['north_outer', 0.19875, 0.04625, 0, 0.018, 0.034],
+  ];
+  return [
+    ['left', -0.016, '.56 .58 .59 1'],
+    ['right', 0.016, '.68 .69 .69 1'],
+  ].flatMap(([flange, x, rgba]) => segments.map(([name, y, halfY, z, halfZ, mass]) => (
+    `<geom name="cross_member_flange_${flange}_${name}" type="box" `
+    + `pos="${x} ${y} ${z}" size=".009 ${halfY} ${halfZ}" `
+    + `rgba="${rgba}" mass="${mass}" friction="1.2 .2 .02"/>`
+  ))).join('\n      ');
+}
+
+function connectorInterfaceXml(side, y) {
+  const circleCenterX = -0.038;
+  const circleRadius = 0.018;
+  const circleSegments = Array.from({ length: 12 }, (_, index) => {
+    const angleDegrees = index * 30;
+    const angle = angleDegrees * Math.PI / 180;
+    const x = cleanDecimal(circleCenterX + circleRadius * Math.cos(angle));
+    const segmentY = cleanDecimal(y + circleRadius * Math.sin(angle));
+    return `<geom name="cross_member_${side}_round_opening_segment_${String(index + 1).padStart(2, '0')}" `
+      + `type="box" pos="${x} ${segmentY} .033" size=".005 .003 .015" `
+      + `euler="0 0 ${angleDegrees + 90}" rgba=".24 .27 .29 1" mass=".004"/>`;
+  }).join('\n      ');
+  const squareCenterX = 0.038;
+  const innerHalf = 0.015;
+  const outerHalf = 0.019;
+  const squareEdges = [
+    ['west', cleanDecimal(squareCenterX - outerHalf), y, '.004 .019 .015'],
+    ['east', cleanDecimal(squareCenterX + outerHalf), y, '.004 .019 .015'],
+    ['south', squareCenterX, cleanDecimal(y - outerHalf), '.019 .004 .015'],
+    ['north', squareCenterX, cleanDecimal(y + outerHalf), '.019 .004 .015'],
+  ].map(([edge, x, edgeY, size]) => (
+    `<geom name="cross_member_${side}_square_opening_${edge}" type="box" `
+    + `pos="${x} ${edgeY} .033" size="${size}" rgba=".24 .27 .29 1" mass=".008"/>`
+  )).join('\n      ');
+  return `${circleSegments}\n      ${squareEdges}`;
+}
+
+function hollowConnectorInterfacesXml() {
+  return `${connectorInterfaceXml('north', 0.215)}\n      ${connectorInterfaceXml('south', -0.215)}`;
+}
+
 export const SHARED_ASSEMBLY1_WORKCELL_XML = `
     <!-- Four supports hold the movable frame at the same height as its installation pose. -->
     <body name="frame_supports">
@@ -212,8 +266,60 @@ export const SHARED_ASSEMBLY1_TOOL_XML = `
       <geom name="hammer_striking_face_b" type="cylinder" fromto=".075 .053 0 .075 .073 0" size=".027" rgba=".5 .51 .52 1" mass=".08"/>
     </body>`;
 
+const FRANKA_ASSEMBLY1_TOOL_XML = SHARED_ASSEMBLY1_TOOL_XML
+  .replace(
+    '<body name="torque_driver" pos=".53 -.42 .166" euler="90 0 0">',
+    '<body name="torque_driver" pos=".65 0 .238" euler="90 0 0">',
+  )
+  .replace(
+    '<body name="double_face_hammer" pos=".65 0 .229" euler="0 0 180">',
+    '<body name="double_face_hammer" pos=".642 -.421 .171">',
+  )
+  .replace('mass=".1" friction="1.4 .22 .03"', 'mass=".05" friction="2 .3 .04"')
+  .replace('mass=".12"/>\n      <geom name="hammer_eye"', 'mass=".08"/>\n      <geom name="hammer_eye"')
+  .replace('mass=".08"/>\n      <geom name="hammer_cheek"', 'mass=".04"/>\n      <geom name="hammer_cheek"')
+  .replace('mass=".18"/>\n      <geom name="hammer_face_neck_a"', 'mass=".08"/>\n      <geom name="hammer_face_neck_a"')
+  .replaceAll('mass=".04"/>\n      <geom name="hammer_striking_face_', 'mass=".025"/>\n      <geom name="hammer_striking_face_')
+  .replaceAll('mass=".08"/>', 'mass=".04"/>');
+
 function assembly1ReachableFastenerWorkcellXml() {
   return SHARED_ASSEMBLY1_WORKCELL_XML
+    .replace(
+      `<geom name="cross_member_flange_left" type="box" pos="-.016 0 0" size=".009 .245 .018" rgba=".56 .58 .59 1" mass=".18" friction="1.2 .2 .02"/>
+      <geom name="cross_member_flange_right" type="box" pos=".016 0 0" size=".009 .245 .018" rgba=".68 .69 .69 1" mass=".18" friction="1.2 .2 .02"/>`,
+      recessedCrossMemberFlangesXml(),
+    )
+    .replace(
+      `<geom name="cross_member_north_plate_mount" type="box" pos="0 .215 .025" size=".076 .024 .007" rgba=".31 .34 .36 1" mass=".015" friction="1.2 .2 .02"/>
+      <geom name="cross_member_north_plate_outer" type="box" pos="0 .239 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
+      <geom name="cross_member_north_plate_inner" type="box" pos="0 .191 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
+      <geom name="cross_member_north_plate_left" type="box" pos="-.071 .215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
+      <geom name="cross_member_north_plate_center" type="box" pos="0 .215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
+      <geom name="cross_member_north_plate_right" type="box" pos=".071 .215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
+      <geom name="cross_member_south_plate_mount" type="box" pos="0 -.215 .025" size=".076 .024 .007" rgba=".31 .34 .36 1" mass=".015" friction="1.2 .2 .02"/>
+      <geom name="cross_member_south_plate_outer" type="box" pos="0 -.239 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
+      <geom name="cross_member_south_plate_inner" type="box" pos="0 -.191 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
+      <geom name="cross_member_south_plate_left" type="box" pos="-.071 -.215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
+      <geom name="cross_member_south_plate_center" type="box" pos="0 -.215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>
+      <geom name="cross_member_south_plate_right" type="box" pos=".071 -.215 .04" size=".005 .018 .008" rgba=".24 .27 .29 1" mass=".01"/>`,
+      hollowConnectorInterfacesXml(),
+    )
+    .replace(
+      '<site name="cross_member_north_hole_left" pos="-.04 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>',
+      '<site name="cross_member_north_hole_left" pos="-.04 .215 .04" type="cylinder" size=".012 .002" rgba="0 0 0 0"/>',
+    )
+    .replace(
+      '<site name="cross_member_north_hole_right" pos=".04 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>',
+      '<site name="cross_member_north_hole_right" pos=".04 .215 .04" type="cylinder" size=".012 .002" rgba="0 0 0 0"/>',
+    )
+    .replace(
+      '<site name="cross_member_south_hole_left" pos="-.04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>',
+      '<site name="cross_member_south_hole_left" pos="-.04 -.215 .04" type="cylinder" size=".012 .002" rgba="0 0 0 0"/>',
+    )
+    .replace(
+      '<site name="cross_member_south_hole_right" pos=".04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>',
+      '<site name="cross_member_south_hole_right" pos=".04 -.215 .04" type="cylinder" size=".012 .002" rgba="0 0 0 0"/>',
+    )
     .replace('name="fastener_tray" pos=".56 .42 .11"', 'name="fastener_tray" pos=".18 .48 .11"')
     .replace(
       '<geom name="fastener_tray_floor" type="box" size=".18 .18 .01"',
@@ -228,22 +334,9 @@ function assembly1ReachableFastenerWorkcellXml() {
       <geom name="fastener_1_guide_north" type="box" pos="-.06 -.047 .03" size=".018 .004 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>`,
     )
     .replace('name="fastener_1" pos=".50 .36 .152"', 'name="fastener_1" pos=".12 .42 .152"')
-    .replace(
-      '<body name="fastener_1" pos=".12 .42 .152"><freejoint/>',
-      '<body name="fastener_1" pos=".12 .42 .152" gravcomp=".99"><joint name="fastener_1_free" type="free" damping=".08"/>',
-    )
-    .replace(
-      '<geom name="fastener_1_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/>',
-      '<geom name="fastener_1_shaft" type="cylinder" size=".0085 .025" friction="10 .5 .1" margin=".002" rgba=".42 .43 .44 1" mass=".12"/>',
-    )
     .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".22 .42 .152"')
     .replace('name="fastener_3" pos=".50 .48 .152"', 'name="fastener_3" pos=".12 .54 .152"')
-    .replace('name="fastener_4" pos=".60 .48 .152"', 'name="fastener_4" pos=".22 .54 .152"')
-    .replace(
-      '<geom name="fastener_1_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/>',
-      `<geom name="fastener_1_head" type="box" pos="0 0 .04" size=".02 .045 .03" rgba=".16 .17 .18 1" mass=".06" friction="10 .5 .1"/>
-      <geom name="fastener_1_retention_cap" type="box" pos="0 0 .076" size=".0275 .05 .006" rgba=".42 .43 .44 1" mass=".02" friction="10 .5 .1"/>`,
-    );
+    .replace('name="fastener_4" pos=".60 .48 .152"', 'name="fastener_4" pos=".22 .54 .152"');
 }
 
 const ASSEMBLY2_ASSET_XML = `
@@ -308,6 +401,19 @@ export const createAssembly1SceneObjects = (includeTorqueDriverCradle = false) =
   ] : []),
 ];
 
+function createFrankaAssembly1SceneObjects() {
+  return [
+    fixedBox('assembly_platform', [1.15, 1.15, .05], [0, 0, .05], [.25, .27, .29, 1]),
+    fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
+    fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
+    fixedBox('tool_mat_hammer', [.2, .13, .006], [.53, -.42, .112], [.31, .27, .21, 1]),
+    fixedBox('hammer_pickup_cradle_west', [.008, .05, .015], [.495, -.421, .133], [.17, .18, .19, 1]),
+    fixedBox('hammer_pickup_cradle_east', [.008, .05, .015], [.675, -.421, .133], [.17, .18, .19, 1]),
+    fixedBox('tool_mat_powered', [.16, .2, .01], [.65, 0, .19], [.27, .25, .22, 1]),
+    fixedBox('tool_mat_manual', [.2, .13, .006], [-.53, -.42, .112], [.31, .27, .21, 1]),
+  ];
+}
+
 function createPatches(
   toolAssetXml,
   toolXml,
@@ -364,6 +470,7 @@ function createLayout(
   northArmY = RING_RADIUS,
   westArmX = -RING_RADIUS,
   reachableFastenerStation = false,
+  hammerPickupForArm2 = false,
 ) {
   const workcellXml = reachableFastenerStation
     ? assembly1ReachableFastenerWorkcellXml()
@@ -379,6 +486,10 @@ function createLayout(
     taskStations: {
       ...TASK_STATIONS,
       ...(reachableFastenerStation ? { fasteners: [0.18, 0.48, 0.125] } : {}),
+      ...(hammerPickupForArm2 ? {
+        poweredTool: [0.65, 0, 0.238],
+        hammer: [0.642, -0.421, 0.171],
+      } : {}),
     },
     xmlPatches: createPatches(
       toolAssetXml,
@@ -388,7 +499,9 @@ function createLayout(
       westArmX,
       workcellXml,
     ),
-    sceneObjects: createAssembly1SceneObjects(includeTorqueDriverCradle),
+    sceneObjects: hammerPickupForArm2
+      ? createFrankaAssembly1SceneObjects()
+      : createAssembly1SceneObjects(includeTorqueDriverCradle),
     camera: { position: [2.85, -2.85, 3.05], fov: 45 },
     orbitTarget: [0, 0, .32],
   };
@@ -396,11 +509,12 @@ function createLayout(
 
 export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
   SHARED_ASSEMBLY1_ASSET_XML,
-  SHARED_ASSEMBLY1_TOOL_XML,
+  FRANKA_ASSEMBLY1_TOOL_XML,
   true,
   -0.3,
   0.85,
   -0.8,
+  true,
   true,
 );
 export const FRANKA_ASSEMBLY2_LAYOUT = createLayout(ASSEMBLY2_ASSET_XML, ASSEMBLY2_TOOL_XML);

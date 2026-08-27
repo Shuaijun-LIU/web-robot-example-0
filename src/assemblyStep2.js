@@ -9,7 +9,7 @@ export const ASSEMBLY1_STEP2_DURATIONS = Object.freeze({
   contactSettle: 1.5,
   frameClamp: 0.8,
   crossMemberClamp: 1,
-  torqueDriverClamp: 0.8,
+  hammerClamp: 0.8,
   contactWindow: 0.08,
   contactGrace: 0.2,
   verificationTimeout: 4,
@@ -25,7 +25,7 @@ export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   objectTranslation: 0.005,
   settlingTranslation: Object.freeze({
     assembly_frame: 0.008,
-    torque_driver: 0.03,
+    double_face_hammer: 0.03,
     cross_member: 0.03,
   }),
   objectRotationDegrees: 5,
@@ -43,8 +43,8 @@ const roles = [
     contactJointTargets: [-2.743069, -1.633435, -1.493859, -1.516005, -1.637347, 1.496908, -0.446552],
   },
   {
-    role: 'side-laid torque driver handle',
-    targetBody: 'torque_driver',
+    role: 'horizontal hammer handle',
+    targetBody: 'double_face_hammer',
     contactWaypoint: [0.559, -0.421, 0.16],
     closingAxisYawDegrees: 162,
     approachJointTargets: [2.291276, 0.432042, 0.156637, -2.241718, -0.139372, 2.664861, 0.515273],
@@ -143,12 +143,12 @@ export function createAssemblyStep2ControlFrame(machine, plans) {
     gripperTargets[0] = clamps[0];
     gripperTargets[2] = clamps[2];
     gripperTargets[3] = clamps[3];
-  } else if (machine.phase === 'torque-driver-clamp') {
+  } else if (machine.phase === 'hammer-clamp') {
     gripperTargets[0] = clamps[0];
     gripperTargets[1] = interpolateAssemblyStep2Gripper(
       255,
       clamps[1],
-      progressFor(ASSEMBLY1_STEP2_DURATIONS.torqueDriverClamp),
+      progressFor(ASSEMBLY1_STEP2_DURATIONS.hammerClamp),
     );
     gripperTargets[2] = clamps[2];
     gripperTargets[3] = clamps[3];
@@ -268,15 +268,15 @@ const timedTransitions = {
     ASSEMBLY1_STEP2_DURATIONS.crossMemberClamp,
     'cross-member-verification',
   ],
-  'torque-driver-clamp': [
-    ASSEMBLY1_STEP2_DURATIONS.torqueDriverClamp,
+  'hammer-clamp': [
+    ASSEMBLY1_STEP2_DURATIONS.hammerClamp,
     'tool-verification',
   ],
 };
 
 const verificationTransitions = {
   'frame-verification': ['frame', 'cross-member-clamp'],
-  'cross-member-verification': ['crossMember', 'torque-driver-clamp'],
+  'cross-member-verification': ['crossMember', 'hammer-clamp'],
   'tool-verification': ['tool', 'clamped-hold'],
 };
 

@@ -7,10 +7,10 @@ const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
 const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step2-physical-clamp.png');
 const gripperClampControls = [48, 96, 24, 24];
-const taskBodies = ['assembly_frame', 'torque_driver', 'cross_member'];
+const taskBodies = ['assembly_frame', 'double_face_hammer', 'cross_member'];
 const settlingTranslationLimits = {
   assembly_frame: 0.008,
-  torque_driver: 0.03,
+  double_face_hammer: 0.03,
   cross_member: 0.03,
 };
 

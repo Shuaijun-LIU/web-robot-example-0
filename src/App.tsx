@@ -123,7 +123,7 @@ function captureAssemblyStep1Snapshot(
   data: MujocoData,
 ): AssemblyStep1CompletionSnapshot {
   const objectPoses = Object.fromEntries(
-    ['assembly_frame', 'torque_driver', 'cross_member'].map((name) => {
+    ['assembly_frame', 'double_face_hammer', 'cross_member'].map((name) => {
       const bodyId = findBodyByName(model, name);
       if (bodyId < 0) throw new Error(`Could not capture Assembly1 body: ${name}`);
       const positionOffset = bodyId * 3;

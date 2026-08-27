@@ -19,7 +19,9 @@ export const ASSEMBLY1_STEP4_DURATIONS = Object.freeze({
   clear: 2,
   placementHold: 1,
   placementTimeout: 4,
-  toolStage: 4,
+  hammerStage: 4,
+  hammerStrike: 0.9,
+  hammerRecover: 1.2,
 });
 
 export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
@@ -46,7 +48,8 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
   r1: Object.freeze({
     prepare: Object.freeze([0.46, -0.30, 0.36]),
     clear: Object.freeze([0.46, -0.10, 0.42]),
-    ready: Object.freeze([0.40, 0.04, 0.43]),
+    ready: Object.freeze([0.198, 0.215, 0.41]),
+    strike: Object.freeze([0.198, 0.215, 0.35]),
   }),
   r2: Object.freeze({
     prepare: Object.freeze([0.12, 0.42, 0.34]),
@@ -82,6 +85,7 @@ function targets(hold, overrides = {}) {
     insert: Object.freeze([...(overrides.insert ?? overrides.transfer ?? hold)]),
     clear: Object.freeze([...(overrides.clear ?? overrides.insert ?? hold)]),
     ready: Object.freeze([...(overrides.ready ?? overrides.clear ?? hold)]),
+    strike: Object.freeze([...(overrides.strike ?? overrides.ready ?? overrides.clear ?? hold)]),
   });
 }
 
@@ -96,11 +100,12 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
   Object.freeze({
     key: 'r1',
     armIndex: 1,
-    role: 'torque driver pre-drive',
+    role: 'hammer pickup and strike',
     jointTargets: targets(holds[1], {
       prepare: [2.028178, 0.037292, 0.141969, -2.219225, -0.007456, 2.258367, 0.132989],
-      clear: [1.758575, 0.73779, -0.086946, -1.317063, 0.26433, 0.490352, -0.295778],
-      ready: [1.540806, 1.035024, -0.013709, -0.764197, -0.161325, 0.232504, -0.640055],
+      clear: [1.84031, -0.276201, -0.043845, -2.402831, -0.014403, 2.127414, -0.236139],
+      ready: [1.486248, 0.653868, -0.317255, -1.203378, 0.197518, 1.829155, -0.861579],
+      strike: [1.490502, 0.692457, -0.308888, -1.293171, 0.210743, 1.952446, -0.87218],
     }),
   }),
   Object.freeze({
@@ -183,7 +188,9 @@ const timedTransitions = {
     false,
   ],
   clear: [ASSEMBLY1_STEP4_DURATIONS.clear, 'placement-verification', false, false],
-  'tool-stage': [ASSEMBLY1_STEP4_DURATIONS.toolStage, 'complete', false, true],
+  'hammer-stage': [ASSEMBLY1_STEP4_DURATIONS.hammerStage, 'hammer-strike', false, true],
+  'hammer-strike': [ASSEMBLY1_STEP4_DURATIONS.hammerStrike, 'hammer-recover', false, true],
+  'hammer-recover': [ASSEMBLY1_STEP4_DURATIONS.hammerRecover, 'complete', false, true],
 };
 
 export function advanceAssemblyStep4Machine(machine, deltaSeconds, evidence) {
@@ -220,7 +227,7 @@ export function advanceAssemblyStep4Machine(machine, deltaSeconds, evidence) {
     const continuousValidSeconds = verdict?.ok ? machine.continuousValidSeconds + dt : 0;
     const lastInvalidVerdict = verdict?.ok ? machine.lastInvalidVerdict : verdict;
     if (continuousValidSeconds >= ASSEMBLY1_STEP4_DURATIONS.placementHold) {
-      return enterPhase('tool-stage');
+      return enterPhase('hammer-stage');
     }
     if (phaseElapsed >= ASSEMBLY1_STEP4_DURATIONS.placementTimeout) {
       return terminalFailure(verdict?.ok ? lastInvalidVerdict : verdict);
@@ -267,9 +274,17 @@ function phaseTargets(machine, plan) {
     return interpolateJointTargets(plan.insert, plan.clear, progress(ASSEMBLY1_STEP4_DURATIONS.clear));
   }
   if (machine.phase === 'placement-verification') return plan.clear;
-  if (machine.phase === 'tool-stage') {
+  if (machine.phase === 'hammer-stage') {
     if (plan.armKey !== 'r1') return plan.clear;
-    return interpolateJointTargets(plan.clear, plan.ready, progress(ASSEMBLY1_STEP4_DURATIONS.toolStage));
+    return interpolateJointTargets(plan.clear, plan.ready, progress(ASSEMBLY1_STEP4_DURATIONS.hammerStage));
+  }
+  if (machine.phase === 'hammer-strike') {
+    if (plan.armKey !== 'r1') return plan.clear;
+    return interpolateJointTargets(plan.ready, plan.strike, progress(ASSEMBLY1_STEP4_DURATIONS.hammerStrike));
+  }
+  if (machine.phase === 'hammer-recover') {
+    if (plan.armKey !== 'r1') return plan.clear;
+    return interpolateJointTargets(plan.strike, plan.ready, progress(ASSEMBLY1_STEP4_DURATIONS.hammerRecover));
   }
   if (plan.armKey === 'r2') return plan.clear;
   return plan.ready;

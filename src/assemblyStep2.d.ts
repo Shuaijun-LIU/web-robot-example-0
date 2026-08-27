@@ -8,7 +8,7 @@ export type AssemblyStep2Phase =
   | 'frame-verification'
   | 'cross-member-clamp'
   | 'cross-member-verification'
-  | 'torque-driver-clamp'
+  | 'hammer-clamp'
   | 'tool-verification'
   | 'clamped-hold'
   | 'complete'
@@ -139,7 +139,7 @@ export const ASSEMBLY1_STEP2_DURATIONS: Readonly<{
   contactSettle: 1.5;
   frameClamp: 0.8;
   crossMemberClamp: 1;
-  torqueDriverClamp: 0.8;
+  hammerClamp: 0.8;
   contactWindow: 0.08;
   contactGrace: 0.2;
   verificationTimeout: 4;
@@ -155,7 +155,7 @@ export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   objectTranslation: 0.005;
   settlingTranslation: Readonly<{
     assembly_frame: 0.008;
-    torque_driver: 0.03;
+    double_face_hammer: 0.03;
     cross_member: 0.03;
   }>;
   objectRotationDegrees: 5;

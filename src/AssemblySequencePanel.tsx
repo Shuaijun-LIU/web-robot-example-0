@@ -21,7 +21,7 @@ const step2PhaseCopy: Record<AssemblyStep2Phase, string> = {
   'frame-verification': '正在验证框架双侧接触',
   'cross-member-clamp': 'Arm 3 / Arm 4 正在同步夹持横梁',
   'cross-member-verification': '正在验证横梁四指接触',
-  'torque-driver-clamp': 'Arm 2 正在夹持电动扭矩工具',
+  'hammer-clamp': 'Arm 2 正在夹持锤柄',
   'tool-verification': '正在验证工具双侧接触',
   'clamped-hold': '正在验证四处稳定保持',
   complete: '第二步已完成：四处物理夹持已建立',
@@ -80,14 +80,16 @@ const step4PhaseCopy: Record<AssemblyStep4Phase, string> = {
   'fastener-release': '紧固件已到位，Arm 3 正在松开夹爪',
   clear: 'Arm 3 正在撤离，Arm 4 继续支撑横梁',
   'placement-verification': '正在验证紧固件无夹持落位状态',
-  'tool-stage': 'Arm 2 正在将扭矩工具转为竖直预拧姿态',
-  complete: '第四步已完成：紧固件已落位，扭矩工具已预定位',
+  'hammer-stage': 'Arm 2 正在将锤头移至紧固件上方',
+  'hammer-strike': 'Arm 2 正在下击紧固件',
+  'hammer-recover': 'Arm 2 正在抬锤并离开安装接口',
+  complete: '第四步已完成：紧固件已落位并完成锤击',
   error: '第四步失败',
 };
 
 function step4ButtonCopy(phase: AssemblyStep4Phase) {
   if (phase === 'idle') return '执行第四步：拾取并插入第一颗紧固件';
-  if (phase === 'complete') return '第四步已完成：紧固件与工具已就位';
+  if (phase === 'complete') return '第四步已完成：紧固件已落位并完成锤击';
   if (phase === 'error') return '第四步执行失败';
   return '正在执行第四步…';
 }
