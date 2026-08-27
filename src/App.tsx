@@ -33,6 +33,7 @@ import { AssemblyStep2Controller } from './AssemblyStep2Controller';
 import { AssemblyStep3Controller } from './AssemblyStep3Controller';
 import { AssemblyStep4Controller } from './AssemblyStep4Controller';
 import { AssemblySequencePanel } from './AssemblySequencePanel';
+import { FrankaAssembly2DataRecorderPanel } from './FrankaAssembly2DataRecorderPanel';
 import type { AssemblyStep1Status } from './assemblyStep1.js';
 import { ASSEMBLY1_STEP2_ARMS } from './assemblyStep2.js';
 import type {
@@ -875,6 +876,13 @@ export function App() {
           onRunStep2={handleRunAssemblyStep2}
           onRunStep3={handleRunAssemblyStep3}
           onRunStep4={handleRunAssemblyStep4}
+        />
+      )}
+      {robotKey === 'frankaAssembly2' && (
+        <FrankaAssembly2DataRecorderPanel
+          targets={entry.controlTargets}
+          activeTarget={controlTarget}
+          resetGeneration={resetGeneration}
         />
       )}
       {isUnitreeActionScene && (

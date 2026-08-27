@@ -241,3 +241,141 @@
   font-size: 0.66rem;
   line-height: 1.45;
 }
+
+.franka-recorder-panel {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 100;
+  width: min(34rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  padding: 0.9rem;
+  border: 1px solid rgb(148 163 184 / 24%);
+  border-radius: 0.72rem;
+  background: rgb(16 22 28 / 90%);
+  color: #d7dce2;
+  font-family: system-ui, sans-serif;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 26%);
+  pointer-events: auto;
+}
+
+.franka-recorder-panel__title {
+  margin-bottom: 0.45rem;
+  color: #f1f3f5;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.franka-recorder-panel__line {
+  margin-bottom: 0.42rem;
+  color: #b8c0c8;
+  font-size: 0.73rem;
+  line-height: 1.35;
+}
+
+.franka-recorder-panel__error {
+  color: #e9a29d;
+}
+
+.franka-recorder-panel__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
+}
+
+.franka-recorder-panel__row button {
+  min-height: 2rem;
+  border: 1px solid rgb(179 185 191 / 28%);
+  border-radius: 0.45rem;
+  background: #515961;
+  color: #f6f7f8;
+  font-size: 0.72rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.franka-recorder-panel__row button:hover:not(:disabled) {
+  background: #5f6972;
+}
+
+.franka-recorder-panel__row button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.franka-recorder-panel__section {
+  margin-top: 0.58rem;
+  border-top: 1px solid rgb(148 163 184 / 16%);
+  padding-top: 0.58rem;
+}
+
+.franka-recorder-panel__section-title {
+  margin-bottom: 0.38rem;
+  color: #e2e7ec;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.franka-recorder-panel__checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.franka-recorder-panel__checkline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  font-size: 0.72rem;
+  color: #b8c0c8;
+}
+
+.franka-recorder-panel__frames {
+  max-height: 9rem;
+  overflow: auto;
+  border: 1px solid rgb(148 163 184 / 16%);
+  border-radius: 0.45rem;
+  padding: 0.35rem;
+  background: rgb(9 14 20 / 55%);
+}
+
+.franka-recorder-panel__frame-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.franka-recorder-panel__frame-row:last-child {
+  margin-bottom: 0;
+}
+
+.franka-recorder-panel__frame-meta {
+  color: #b8c0c8;
+  font-size: 0.67rem;
+  white-space: nowrap;
+}
+
+.franka-recorder-panel__frame-row button {
+  border: 1px solid rgb(179 185 191 / 28%);
+  border-radius: 0.38rem;
+  background: #3f4752;
+  color: #f6f7f8;
+  padding: 0.18rem 0.48rem;
+  font-size: 0.66rem;
+}
+
+.franka-recorder-panel__frame-row button:hover {
+  background: #49525d;
+}
+
+.franka-recorder-panel__hint {
+  margin-top: 0.28rem;
+  color: #aeb7c0;
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
