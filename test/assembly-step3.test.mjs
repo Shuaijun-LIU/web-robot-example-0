@@ -256,6 +256,10 @@ test('Step 3 alignment separates strict planar error from seated vertical offset
     crossMemberRotationDegrees: 2,
   };
   assert.deepEqual(evaluateAssemblyStep3Alignment(valid), { ok: true });
+  assert.deepEqual(evaluateAssemblyStep3Alignment({
+    ...valid,
+    holePlanarDistances: [0.003, 0.02224061821727346, 0.005, 0.006],
+  }), { ok: true });
   assert.equal(evaluateAssemblyStep3Alignment({
     ...valid,
     holePlanarDistances: [0.003, 0.0361, 0.005, 0.006],

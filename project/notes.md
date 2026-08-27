@@ -17,3 +17,4 @@
 - Arm 3 cannot reliably reach the original northeast fastener tray; the approved center `(0.18, 0.48)` is reachable and clear of the prior paths.
 - Step 4 browser trials established real bilateral r2 contact and, in one candidate, a physical fastener lift from roughly `z=0.136 m` to `z=0.290 m`. Contact was not retained through the end of lift, so the final browser verifier remains red with `missing-finger-contact`.
 - Static evidence is green: 163/163 unit tests, TypeScript, production build, and offline Step 4 IK. This does not supersede the failed dynamics gate.
+- GitHub Pages currently reports `build_type=legacy` and `source=main:/docs`. A successful Actions deployment alone does not update the user-visible page; the committed `docs/index.html` had continued to reference the pre-Step-4 `index-CewyqVpw.js` bundle until the 2026-08-28 rebuild.

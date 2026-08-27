@@ -1,9 +1,9 @@
 # Next Actions
 
 ## Top priorities
-1. Add exact r2 contact-geom/normal diagnostics during Step 4 clamp and lift.
-2. Use those diagnostics to make the T-fastener grasp survive the complete lift and transfer without attachment or object-state writes.
-3. Re-run the complete browser 1→2→3→4 sequence multiple times before declaring Phase 18 complete.
+1. Confirm the public legacy Pages URL references the newly committed bundle and visibly exposes all four Assembly1 buttons.
+2. Visually inspect Step 3 release/retreat and the initial Step 4 motion before changing Step 4 grasp dynamics.
+3. After visual approval, add exact r2 contact-geom/normal diagnostics and tune the T-fastener grasp without attachment or object-state writes.
 
 ## Blocked
 - None.

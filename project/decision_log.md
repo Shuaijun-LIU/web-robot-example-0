@@ -34,3 +34,4 @@
 - 2026-08-27 — Define Step 4 as first-fastener staging: Arm 1 holds the frame, Arm 4 supports the beam, Arm 3 inserts one fastener, and Arm 2 stages the powered tool.
 - 2026-08-27 — Keep Step 4 contact-only: runtime may command Panda actuators but may not weld, magnetize, auto-attach, or write the fastener pose. Treat the current lift contact loss as an unresolved physical failure instead of weakening the browser gate.
 - 2026-08-27 — Raise Step 3 nominal planar tolerance only from 34.5 mm to 35.0 mm (36.0 mm including the existing comparison epsilon). This admits a measured 35.504 mm boundary case but continues to reject observed 38–39 mm misalignment.
+- 2026-08-28 — Until repository Pages is explicitly switched from `legacy main:/docs` to Actions by the owner account, treat the committed `docs` bundle as a release artifact and test it for the current Step 3 release flow and Step 4 UI before every push.

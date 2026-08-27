@@ -1,0 +1,2 @@
+docs/assets/index-*.js -diff -whitespace linguist-generated=true
+docs/assets/index-*.css -diff -whitespace linguist-generated=true
