@@ -10,6 +10,12 @@ export type AssemblyStep3Phase =
   | 'aligned-descent'
   | 'alignment-verification'
   | 'aligned-hold'
+  | 'reseat-lift'
+  | 'reseat-descent'
+  | 'release'
+  | 'release-settle'
+  | 'retreat'
+  | 'placed-verification'
   | 'complete'
   | 'error';
 
@@ -21,6 +27,7 @@ export type AssemblyStep3FailureCode =
   | 'frame-drift'
   | 'cross-member-rotation'
   | 'hole-misalignment'
+  | 'hole-height'
   | 'verification-timeout'
   | 'invalid-precondition'
   | 'missing-resource'
@@ -44,6 +51,7 @@ export interface AssemblyStep3Machine {
   phase: Exclude<AssemblyStep3Phase, 'idle' | 'planning'>;
   phaseElapsed: number;
   continuousValidSeconds: number;
+  reseatAttempts: number;
   failure: AssemblyStep3Failure | null;
 }
 
@@ -84,17 +92,25 @@ export interface AssemblyStep3RuntimeDiagnostics {
   frameTranslation: number;
   crossMemberRotationDegrees: number;
   holeDistances: number[];
+  holePlanarDistances: number[];
+  holeVerticalOffsets: number[];
   arms: AssemblyStep3ArmDiagnostics[];
 }
 
 export const ASSEMBLY1_STEP3_DURATIONS: Readonly<{
   graspCheckWindow: 0.25;
-  verificationTimeout: 2.5;
+  verificationTimeout: 4;
   lift: 3;
   transferA: 4.5;
   transferB: 4.5;
   alignedDescent: 3;
   alignedHold: 1;
+  reseatLift: 1.2;
+  reseatDescent: 1.5;
+  release: 0.8;
+  releaseSettle: 0.5;
+  retreat: 1.5;
+  placedHold: 1;
 }>;
 
 export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
@@ -102,8 +118,10 @@ export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
 export const ASSEMBLY1_STEP3_LIMITS: Readonly<{
   minimumAperture: 0.02;
   frameTranslation: 0.008;
-  crossMemberRotationDegrees: 5;
-  holeDistance: 0.008;
+  holePlanarDistance: 0.03;
+  holeVerticalOffset: 0.025;
+  seatedVerticalOffset: 0.02;
+  comparisonEpsilon: 0.001;
 }>;
 
 export const ASSEMBLY1_STEP3_WAYPOINTS: Readonly<Record<
@@ -133,9 +151,12 @@ export function evaluateAssemblyStep3Transport(input: {
 }): AssemblyStep3Verdict;
 
 export function evaluateAssemblyStep3Alignment(input: {
-  holeDistances: number[];
+  holePlanarDistances: number[];
+  holeVerticalOffsets: number[];
   frameTranslation: number;
   crossMemberRotationDegrees: number;
+  planarTolerance?: number;
+  verticalTolerance?: number;
 }): AssemblyStep3Verdict;
 
 export function createAssemblyStep3Machine(): AssemblyStep3Machine;

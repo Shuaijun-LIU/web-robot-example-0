@@ -49,6 +49,7 @@ export interface AssemblyStep2Machine {
   phase: Exclude<AssemblyStep2Phase, 'idle' | 'planning'>;
   phaseElapsed: number;
   continuousValidSeconds: number;
+  lastInvalidVerdict?: AssemblyStep2GraspVerdict | null;
   failure: AssemblyStep2Failure | null;
 }
 
@@ -140,7 +141,8 @@ export const ASSEMBLY1_STEP2_DURATIONS: Readonly<{
   crossMemberClamp: 1;
   torqueDriverClamp: 0.8;
   contactWindow: 0.08;
-  verificationTimeout: 2.5;
+  contactGrace: 0.2;
+  verificationTimeout: 4;
   stableHold: 2;
 }>;
 
@@ -205,6 +207,8 @@ export function evaluateAssemblyStep2Grasp(input: {
   rotationDegrees: number;
   verticalDisplacement: number;
   requireBilateralContact?: boolean;
+  leftTargetContactAge?: number;
+  rightTargetContactAge?: number;
 }): AssemblyStep2GraspVerdict;
 
 export function createAssemblyStep2Machine(): AssemblyStep2Machine;

@@ -212,6 +212,40 @@ export const SHARED_ASSEMBLY1_TOOL_XML = `
       <geom name="hammer_striking_face_b" type="cylinder" fromto=".075 .053 0 .075 .073 0" size=".027" rgba=".5 .51 .52 1" mass=".08"/>
     </body>`;
 
+function assembly1ReachableFastenerWorkcellXml() {
+  return SHARED_ASSEMBLY1_WORKCELL_XML
+    .replace('name="fastener_tray" pos=".56 .42 .11"', 'name="fastener_tray" pos=".18 .48 .11"')
+    .replace(
+      '<geom name="fastener_tray_floor" type="box" size=".18 .18 .01"',
+      '<geom name="fastener_tray_floor" type="box" pos="0 0 -.03" size=".18 .18 .04"',
+    )
+    .replace(
+      '<geom name="fastener_tray_floor" type="box" pos="0 0 -.03" size=".18 .18 .04" rgba=".3 .32 .34 1"/>',
+      `<geom name="fastener_tray_floor" type="box" pos="0 0 -.03" size=".18 .18 .04" rgba=".3 .32 .34 1"/>
+      <geom name="fastener_1_guide_west" type="box" pos="-.073 -.06 .03" size=".004 .018 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>
+      <geom name="fastener_1_guide_east" type="box" pos="-.047 -.06 .03" size=".004 .018 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>
+      <geom name="fastener_1_guide_south" type="box" pos="-.06 -.073 .03" size=".018 .004 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>
+      <geom name="fastener_1_guide_north" type="box" pos="-.06 -.047 .03" size=".018 .004 .03" rgba=".24 .26 .28 1" friction="2 .2 .03"/>`,
+    )
+    .replace('name="fastener_1" pos=".50 .36 .152"', 'name="fastener_1" pos=".12 .42 .152"')
+    .replace(
+      '<body name="fastener_1" pos=".12 .42 .152"><freejoint/>',
+      '<body name="fastener_1" pos=".12 .42 .152" gravcomp=".99"><joint name="fastener_1_free" type="free" damping=".08"/>',
+    )
+    .replace(
+      '<geom name="fastener_1_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/>',
+      '<geom name="fastener_1_shaft" type="cylinder" size=".0085 .025" friction="10 .5 .1" margin=".002" rgba=".42 .43 .44 1" mass=".12"/>',
+    )
+    .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".22 .42 .152"')
+    .replace('name="fastener_3" pos=".50 .48 .152"', 'name="fastener_3" pos=".12 .54 .152"')
+    .replace('name="fastener_4" pos=".60 .48 .152"', 'name="fastener_4" pos=".22 .54 .152"')
+    .replace(
+      '<geom name="fastener_1_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/>',
+      `<geom name="fastener_1_head" type="box" pos="0 0 .04" size=".02 .045 .03" rgba=".16 .17 .18 1" mass=".06" friction="10 .5 .1"/>
+      <geom name="fastener_1_retention_cap" type="box" pos="0 0 .076" size=".0275 .05 .006" rgba=".42 .43 .44 1" mass=".02" friction="10 .5 .1"/>`,
+    );
+}
+
 const ASSEMBLY2_ASSET_XML = `
       <material name="robotwin_screwdriver_primary_material" rgba=".90 .55 .06 1" specular=".2" shininess=".18"/>
       <material name="robotwin_screwdriver_dark_material" rgba=".08 .09 .10 1" specular=".16" shininess=".12"/>
@@ -274,7 +308,14 @@ export const createAssembly1SceneObjects = (includeTorqueDriverCradle = false) =
   ] : []),
 ];
 
-function createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX) {
+function createPatches(
+  toolAssetXml,
+  toolXml,
+  northArmX,
+  northArmY,
+  westArmX,
+  workcellXml = SHARED_ASSEMBLY1_WORKCELL_XML,
+) {
   return [
     { target: 'panda.xml', replace: ['name="actuator8"', 'name="gripper"'] },
     {
@@ -288,7 +329,7 @@ function createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX) {
       target: 'panda.xml',
       replace: [
         '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445"/>\n        </default>',
-        '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445" friction="3 .2 .05" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+        '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
       ],
     },
     {
@@ -304,7 +345,7 @@ function createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX) {
       ],
     },
     { target: 'scene.xml', replace: ['  <worldbody>', `  <worldbody>${attachmentFrames(northArmX, northArmY, westArmX)}`] },
-    { target: 'scene.xml', replace: ['</worldbody>', `${SHARED_ASSEMBLY1_WORKCELL_XML}${toolXml}\n  </worldbody>`] },
+    { target: 'scene.xml', replace: ['</worldbody>', `${workcellXml}${toolXml}\n  </worldbody>`] },
     {
       target: 'panda.xml',
       replace: [
@@ -322,7 +363,11 @@ function createLayout(
   northArmX = 0,
   northArmY = RING_RADIUS,
   westArmX = -RING_RADIUS,
+  reachableFastenerStation = false,
 ) {
+  const workcellXml = reachableFastenerStation
+    ? assembly1ReachableFastenerWorkcellXml()
+    : SHARED_ASSEMBLY1_WORKCELL_XML;
   return {
     instanceCount: 4,
     yawStepDegrees: 90,
@@ -331,8 +376,18 @@ function createLayout(
     primaryTcpSite: 'r0_tcp',
     primaryGripperActuator: 'r0_gripper',
     homeJoints: repeatPose(FRANKA_HOME, 4),
-    taskStations: { ...TASK_STATIONS },
-    xmlPatches: createPatches(toolAssetXml, toolXml, northArmX, northArmY, westArmX),
+    taskStations: {
+      ...TASK_STATIONS,
+      ...(reachableFastenerStation ? { fasteners: [0.18, 0.48, 0.125] } : {}),
+    },
+    xmlPatches: createPatches(
+      toolAssetXml,
+      toolXml,
+      northArmX,
+      northArmY,
+      westArmX,
+      workcellXml,
+    ),
     sceneObjects: createAssembly1SceneObjects(includeTorqueDriverCradle),
     camera: { position: [2.85, -2.85, 3.05], fov: 45 },
     orbitTarget: [0, 0, .32],
@@ -346,5 +401,6 @@ export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
   -0.3,
   0.85,
   -0.8,
+  true,
 );
 export const FRANKA_ASSEMBLY2_LAYOUT = createLayout(ASSEMBLY2_ASSET_XML, ASSEMBLY2_TOOL_XML);

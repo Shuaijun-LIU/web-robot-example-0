@@ -40,3 +40,9 @@
 
 ## GitHub coordination
 - Use: `github-repo-coordinator`
+
+## Current Assembly1 implementation
+- Bug isolation: `superpowers:systematic-debugging`
+- Behavior changes: `superpowers:test-driven-development`
+- Plan execution: `superpowers:executing-plans`
+- Completion evidence: `superpowers:verification-before-completion`

@@ -31,6 +31,7 @@ import { GitHubLink } from './GitHubLink';
 import { AssemblyStep1Controller } from './AssemblyStep1Controller';
 import { AssemblyStep2Controller } from './AssemblyStep2Controller';
 import { AssemblyStep3Controller } from './AssemblyStep3Controller';
+import { AssemblyStep4Controller } from './AssemblyStep4Controller';
 import { AssemblySequencePanel } from './AssemblySequencePanel';
 import type { AssemblyStep1Status } from './assemblyStep1.js';
 import { ASSEMBLY1_STEP2_ARMS } from './assemblyStep2.js';
@@ -43,6 +44,10 @@ import type {
   AssemblyStep3RuntimeDiagnostics,
   AssemblyStep3State,
 } from './assemblyStep3.js';
+import type {
+  AssemblyStep4RuntimeDiagnostics,
+  AssemblyStep4State,
+} from './assemblyStep4.js';
 import { UnitreeActionController } from './UnitreeActionController';
 import { UnitreeActionPanel } from './UnitreeActionPanel';
 import {
@@ -176,16 +181,21 @@ function SceneChildren({
   assemblyStep2State,
   assemblyStep3RequestId,
   assemblyStep3State,
+  assemblyStep4RequestId,
+  assemblyStep4State,
   assemblyOwnershipRef,
   step1SnapshotRef,
   step2DiagnosticsRef,
   step3DiagnosticsRef,
+  step4DiagnosticsRef,
   onAssemblyStep1StatusChange,
   onAssemblyStep2StateChange,
   onAssemblyStep3StateChange,
+  onAssemblyStep4StateChange,
   onRunAssemblyStep1,
   onRunAssemblyStep2,
   onRunAssemblyStep3,
+  onRunAssemblyStep4,
   onResetAssemblySequence,
   unitreeActionStateRef,
   unitreeActionDiagnosticsRef,
@@ -206,16 +216,21 @@ function SceneChildren({
   assemblyStep2State: AssemblyStep2State;
   assemblyStep3RequestId: number;
   assemblyStep3State: AssemblyStep3State;
-  assemblyOwnershipRef: React.MutableRefObject<'manual' | 'step1' | 'step2' | 'step3'>;
+  assemblyStep4RequestId: number;
+  assemblyStep4State: AssemblyStep4State;
+  assemblyOwnershipRef: React.MutableRefObject<'manual' | 'step1' | 'step2' | 'step3' | 'step4'>;
   step1SnapshotRef: React.MutableRefObject<AssemblyStep1CompletionSnapshot | null>;
   step2DiagnosticsRef: React.MutableRefObject<AssemblyStep2RuntimeDiagnostics | null>;
   step3DiagnosticsRef: React.MutableRefObject<AssemblyStep3RuntimeDiagnostics | null>;
+  step4DiagnosticsRef: React.MutableRefObject<AssemblyStep4RuntimeDiagnostics | null>;
   onAssemblyStep1StatusChange: (status: AssemblyStep1Status) => void;
   onAssemblyStep2StateChange: (state: AssemblyStep2State) => void;
   onAssemblyStep3StateChange: (state: AssemblyStep3State) => void;
+  onAssemblyStep4StateChange: (state: AssemblyStep4State) => void;
   onRunAssemblyStep1: () => boolean;
   onRunAssemblyStep2: () => boolean;
   onRunAssemblyStep3: () => boolean;
+  onRunAssemblyStep4: () => boolean;
   onResetAssemblySequence: () => void;
   unitreeActionStateRef: React.MutableRefObject<UnitreeActionState>;
   unitreeActionDiagnosticsRef: React.MutableRefObject<UnitreeRuntimeDiagnostics | null>;
@@ -228,7 +243,8 @@ function SceneChildren({
   const assemblyAutomationActive = assemblyStep1Status === 'planning'
     || assemblyStep1Status === 'running'
     || assemblyStep2State.phase !== 'idle'
-    || assemblyStep3State.phase !== 'idle';
+    || assemblyStep3State.phase !== 'idle'
+    || assemblyStep4State.phase !== 'idle';
   const { controller: ik, resolvedSiteName } = useSelectedIkController(
     target,
     resetGeneration,
@@ -319,8 +335,10 @@ function SceneChildren({
       runAssemblyStep1: onRunAssemblyStep1,
       runAssemblyStep2: onRunAssemblyStep2,
       runAssemblyStep3: onRunAssemblyStep3,
+      runAssemblyStep4: onRunAssemblyStep4,
       getAssemblyStep2Diagnostics: () => step2DiagnosticsRef.current,
       getAssemblyStep3Diagnostics: () => step3DiagnosticsRef.current,
+      getAssemblyStep4Diagnostics: () => step4DiagnosticsRef.current,
       runUnitreeAction: onRunUnitreeAction,
       pauseUnitreeAction: onPauseUnitreeAction,
       resumeUnitreeAction: onResumeUnitreeAction,
@@ -340,8 +358,10 @@ function SceneChildren({
     onRunAssemblyStep1,
     onRunAssemblyStep2,
     onRunAssemblyStep3,
+    onRunAssemblyStep4,
     step2DiagnosticsRef,
     step3DiagnosticsRef,
+    step4DiagnosticsRef,
     onRunUnitreeAction,
     onPauseUnitreeAction,
     onResumeUnitreeAction,
@@ -419,6 +439,16 @@ function SceneChildren({
           onStateChange={onAssemblyStep3StateChange}
         />
       )}
+      {robotKey === 'frankaAssembly1' && (
+        <AssemblyStep4Controller
+          requestId={assemblyStep4RequestId}
+          resetGeneration={resetGeneration}
+          step3Complete={assemblyStep3State.phase === 'complete'}
+          ownershipRef={assemblyOwnershipRef}
+          diagnosticsRef={step4DiagnosticsRef}
+          onStateChange={onAssemblyStep4StateChange}
+        />
+      )}
     </>
   );
 }
@@ -456,15 +486,21 @@ export function App() {
     phase: 'idle',
     failure: null,
   });
+  const [assemblyStep4RequestId, setAssemblyStep4RequestId] = useState(0);
+  const [assemblyStep4State, setAssemblyStep4State] = useState<AssemblyStep4State>({
+    phase: 'idle',
+    failure: null,
+  });
   const [unitreeActionState, setUnitreeActionState] = useState<UnitreeActionState>(
     createInitialUnitreeActionState,
   );
   const [unitreeActionRequestId, setUnitreeActionRequestId] = useState(0);
   const [sceneReady, setSceneReady] = useState(false);
-  const assemblyOwnershipRef = useRef<'manual' | 'step1' | 'step2' | 'step3'>('manual');
+  const assemblyOwnershipRef = useRef<'manual' | 'step1' | 'step2' | 'step3' | 'step4'>('manual');
   const step1SnapshotRef = useRef<AssemblyStep1CompletionSnapshot | null>(null);
   const step2DiagnosticsRef = useRef<AssemblyStep2RuntimeDiagnostics | null>(null);
   const step3DiagnosticsRef = useRef<AssemblyStep3RuntimeDiagnostics | null>(null);
+  const step4DiagnosticsRef = useRef<AssemblyStep4RuntimeDiagnostics | null>(null);
   const unitreeActionStateRef = useRef(unitreeActionState);
   const unitreeActionDiagnosticsRef = useRef<UnitreeRuntimeDiagnostics | null>(null);
   unitreeActionStateRef.current = unitreeActionState;
@@ -495,7 +531,8 @@ export function App() {
   const assemblyAutomationActive = assemblyStep1Status === 'planning'
     || assemblyStep1Status === 'running'
     || assemblyStep2State.phase !== 'idle'
-    || assemblyStep3State.phase !== 'idle';
+    || assemblyStep3State.phase !== 'idle'
+    || assemblyStep4State.phase !== 'idle';
   const isUnitreeActionScene = robotKey === 'unitreeActionLab';
 
   const handleRunAssemblyStep1 = useCallback(() => {
@@ -528,15 +565,28 @@ export function App() {
     return true;
   }, [assemblyStep2State.phase, assemblyStep3State.phase, robotKey]);
 
+  const handleRunAssemblyStep4 = useCallback(() => {
+    if (
+      robotKey !== 'frankaAssembly1'
+      || assemblyStep3State.phase !== 'complete'
+      || assemblyStep4State.phase !== 'idle'
+    ) return false;
+    setAssemblyStep4State({ phase: 'planning', failure: null });
+    setAssemblyStep4RequestId((requestId) => requestId + 1);
+    return true;
+  }, [assemblyStep3State.phase, assemblyStep4State.phase, robotKey]);
+
   const handleResetAssemblySequence = useCallback(() => {
     apiRef.current?.reset();
     assemblyOwnershipRef.current = 'manual';
     step1SnapshotRef.current = null;
     step2DiagnosticsRef.current = null;
     step3DiagnosticsRef.current = null;
+    step4DiagnosticsRef.current = null;
     setAssemblyStep1Status('idle');
     setAssemblyStep2State({ phase: 'idle', failure: null });
     setAssemblyStep3State({ phase: 'idle', failure: null });
+    setAssemblyStep4State({ phase: 'idle', failure: null });
     setUnitreeActionState(resetAction());
     unitreeActionDiagnosticsRef.current = null;
     setResetGeneration((generation) => generation + 1);
@@ -599,6 +649,7 @@ export function App() {
     delete document.documentElement.dataset.sceneError;
     delete document.documentElement.dataset.controlTarget;
     delete document.documentElement.dataset.ikSite;
+    delete document.documentElement.dataset.assemblyStep4Status;
     delete document.documentElement.dataset.unitreeActionStatus;
     delete document.documentElement.dataset.unitreeActionPhase;
     delete document.documentElement.dataset.unitreeActionProgram;
@@ -607,9 +658,11 @@ export function App() {
     step1SnapshotRef.current = null;
     step2DiagnosticsRef.current = null;
     step3DiagnosticsRef.current = null;
+    step4DiagnosticsRef.current = null;
     setAssemblyStep1Status('idle');
     setAssemblyStep2State({ phase: 'idle', failure: null });
     setAssemblyStep3State({ phase: 'idle', failure: null });
+    setAssemblyStep4State({ phase: 'idle', failure: null });
     setUnitreeActionState(resetAction());
     unitreeActionDiagnosticsRef.current = null;
   }, [robotKey]);
@@ -644,6 +697,14 @@ export function App() {
       delete document.documentElement.dataset.assemblyStep3Status;
     }
   }, [assemblyStep3State.phase, robotKey]);
+
+  useEffect(() => {
+    if (robotKey === 'frankaAssembly1') {
+      document.documentElement.dataset.assemblyStep4Status = assemblyStep4State.phase;
+    } else {
+      delete document.documentElement.dataset.assemblyStep4Status;
+    }
+  }, [assemblyStep4State.phase, robotKey]);
 
   const handleSceneReady = useCallback((api: MujocoSimAPI) => {
     const bodies = api.getBodies();
@@ -726,16 +787,21 @@ export function App() {
           assemblyStep2State={assemblyStep2State}
           assemblyStep3RequestId={assemblyStep3RequestId}
           assemblyStep3State={assemblyStep3State}
+          assemblyStep4RequestId={assemblyStep4RequestId}
+          assemblyStep4State={assemblyStep4State}
           assemblyOwnershipRef={assemblyOwnershipRef}
           step1SnapshotRef={step1SnapshotRef}
           step2DiagnosticsRef={step2DiagnosticsRef}
           step3DiagnosticsRef={step3DiagnosticsRef}
+          step4DiagnosticsRef={step4DiagnosticsRef}
           onAssemblyStep1StatusChange={setAssemblyStep1Status}
           onAssemblyStep2StateChange={setAssemblyStep2State}
           onAssemblyStep3StateChange={setAssemblyStep3State}
+          onAssemblyStep4StateChange={setAssemblyStep4State}
           onRunAssemblyStep1={handleRunAssemblyStep1}
           onRunAssemblyStep2={handleRunAssemblyStep2}
           onRunAssemblyStep3={handleRunAssemblyStep3}
+          onRunAssemblyStep4={handleRunAssemblyStep4}
           onResetAssemblySequence={handleResetAssemblySequence}
           unitreeActionStateRef={unitreeActionStateRef}
           unitreeActionDiagnosticsRef={unitreeActionDiagnosticsRef}
@@ -791,6 +857,7 @@ export function App() {
           step1Status={assemblyStep1Status}
           step2State={assemblyStep2State}
           step3State={assemblyStep3State}
+          step4State={assemblyStep4State}
           canRunStep2={
             assemblyStep1Status === 'complete'
             && assemblyStep2State.phase === 'idle'
@@ -800,9 +867,14 @@ export function App() {
             assemblyStep2State.phase === 'complete'
             && assemblyStep3State.phase === 'idle'
           }
+          canRunStep4={
+            assemblyStep3State.phase === 'complete'
+            && assemblyStep4State.phase === 'idle'
+          }
           onRunStep1={handleRunAssemblyStep1}
           onRunStep2={handleRunAssemblyStep2}
           onRunStep3={handleRunAssemblyStep3}
+          onRunStep4={handleRunAssemblyStep4}
         />
       )}
       {isUnitreeActionScene && (

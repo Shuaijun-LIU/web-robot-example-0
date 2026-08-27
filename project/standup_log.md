@@ -37,3 +37,11 @@
   - Fixed: Removed the contact-handle memory leak behind the disappearing scene, corrected the impossible frame/cross-member target overlap, moved Arm 1's clamp out of the installation corridor, and added physical grasp-stop/cap geometry plus millimetre-scale final load compensation.
   - Verified: Two consecutive production-browser runs reached `complete`; four-hole error was `2.44–2.61 mm` and `4.90–6.38 mm`, frame drift stayed below `4.89 mm`, cross-member rotation stayed below `0.67°`, and the Step 2 regression passed.
   - Next: User reviews `artifacts/screenshots/franka-assembly1-step3-aligned-hold.png`; fastening is the boundary of a future action.
+- 2026-08-27
+  - What: Approved the Step 2 recent-contact evidence change, Step 3 split alignment and physical release, and Step 4 first-fastener staging design.
+  - Next: Execute the recorded test-first implementation plan and capture complete 1→2→3→4 browser evidence.
+- 2026-08-27
+  - What: Implemented Step 2 recent-contact memory, Step 3 split XY/Z verification plus release/retreat, and the Step 4 four-arm controller/UI/diagnostics/IK contracts. Step 4 uses actuator controls only and contains no object-pose write or attachment API.
+  - Verified: `npm test` passed 163/163, `npx tsc --noEmit` passed, `npm run build` passed, and the Step 4 offline IK solver matched every recorded target. Browser runs repeatedly reached Step 4 and observed bilateral contact; one candidate physically lifted the fastener from about 0.136 m to 0.290 m before losing the grasp.
+  - Open: The final conservative T-fastener version has not passed the full browser 1→2→3→4 placement gate. The recurrent terminal result is `r2 / missing-finger-contact` during lift; do not describe Step 4 as dynamically complete.
+  - Next: Instrument exact r2 fingertip geom contacts and redesign the grasp interface or waypoint from that evidence before enabling a tightening Step 5.

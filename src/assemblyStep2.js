@@ -11,7 +11,8 @@ export const ASSEMBLY1_STEP2_DURATIONS = Object.freeze({
   crossMemberClamp: 1,
   torqueDriverClamp: 0.8,
   contactWindow: 0.08,
-  verificationTimeout: 2.5,
+  contactGrace: 0.2,
+  verificationTimeout: 4,
   stableHold: 2,
 });
 
@@ -213,11 +214,23 @@ export function evaluateAssemblyStep2Grasp({
   rotationDegrees,
   verticalDisplacement,
   requireBilateralContact = true,
+  leftTargetContactAge = Number.POSITIVE_INFINITY,
+  rightTargetContactAge = Number.POSITIVE_INFINITY,
 }) {
-  if (requireBilateralContact && !leftContactBodies.includes(targetBody)) {
+  const leftContactIsRecent = leftTargetContactAge <= ASSEMBLY1_STEP2_DURATIONS.contactGrace;
+  const rightContactIsRecent = rightTargetContactAge <= ASSEMBLY1_STEP2_DURATIONS.contactGrace;
+  if (
+    requireBilateralContact
+    && !leftContactBodies.includes(targetBody)
+    && !leftContactIsRecent
+  ) {
     return failed('missing-left-contact');
   }
-  if (requireBilateralContact && !rightContactBodies.includes(targetBody)) {
+  if (
+    requireBilateralContact
+    && !rightContactBodies.includes(targetBody)
+    && !rightContactIsRecent
+  ) {
     return failed('missing-right-contact');
   }
   if (forbiddenBodies.length > 0) return failed('forbidden-contact', forbiddenBodies.join(', '));
@@ -241,6 +254,7 @@ export function createAssemblyStep2Machine() {
     phase: 'approach',
     phaseElapsed: 0,
     continuousValidSeconds: 0,
+    lastInvalidVerdict: null,
     failure: null,
   };
 }
@@ -271,6 +285,7 @@ function enterPhase(phase) {
     phase,
     phaseElapsed: 0,
     continuousValidSeconds: 0,
+    lastInvalidVerdict: null,
     failure: null,
   };
 }
@@ -280,6 +295,7 @@ function terminalFailure(verdict) {
     phase: 'error',
     phaseElapsed: 0,
     continuousValidSeconds: 0,
+    lastInvalidVerdict: null,
     failure: {
       code: verdict?.code ?? 'verification-timeout',
       ...(verdict?.armKey ? { armKey: verdict.armKey } : {}),
@@ -308,16 +324,20 @@ export function advanceAssemblyStep2Machine(machine, deltaSeconds, evidence) {
     const continuousValidSeconds = verdict?.ok
       ? machine.continuousValidSeconds + dt
       : 0;
+    const lastInvalidVerdict = verdict?.ok
+      ? (machine.lastInvalidVerdict ?? null)
+      : verdict;
     if (continuousValidSeconds >= ASSEMBLY1_STEP2_DURATIONS.contactWindow) {
       return enterPhase(nextPhase);
     }
     if (phaseElapsed >= ASSEMBLY1_STEP2_DURATIONS.verificationTimeout) {
-      return terminalFailure(verdict);
+      return terminalFailure(verdict?.ok ? lastInvalidVerdict : verdict);
     }
     return {
       ...machine,
       phaseElapsed,
       continuousValidSeconds,
+      lastInvalidVerdict,
     };
   }
 

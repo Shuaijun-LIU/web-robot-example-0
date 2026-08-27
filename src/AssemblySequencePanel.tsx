@@ -1,6 +1,7 @@
 import type { AssemblyStep1Status } from './assemblyStep1.js';
 import type { AssemblyStep2Phase, AssemblyStep2State } from './assemblyStep2.js';
 import type { AssemblyStep3Phase, AssemblyStep3State } from './assemblyStep3.js';
+import type { AssemblyStep4Phase, AssemblyStep4State } from './assemblyStep4.js';
 
 const step1Copy: Record<AssemblyStep1Status, { button: string; status: string }> = {
   idle: { button: '执行第一步：协作就位', status: '就绪' },
@@ -46,35 +47,75 @@ const step3PhaseCopy: Record<AssemblyStep3Phase, string> = {
   'aligned-descent': '正在缓慢下降并对准安装孔',
   'alignment-verification': '正在验证四孔与框架接口',
   'aligned-hold': '正在验证对孔后的稳定保持',
-  complete: '第三步已完成：横梁已对孔并保持',
+  'reseat-lift': '对孔未收敛，正在抬升横梁重新落位',
+  'reseat-descent': '正在执行一次慢速重新落位',
+  release: '对孔已确认，Arms 3 / 4 正在松开横梁',
+  'release-settle': '横梁已释放，正在等待物理落稳',
+  retreat: 'Arms 3 / 4 正在撤离安装区域',
+  'placed-verification': '正在验证无夹持状态下的横梁稳定性',
+  complete: '第三步已完成：横梁已落位，Arms 3 / 4 已释放',
   error: '第三步失败',
 };
 
 function step3ButtonCopy(phase: AssemblyStep3Phase) {
   if (phase === 'idle') return '执行第三步：双臂搬运并对孔';
-  if (phase === 'complete') return '第三步已完成：横梁已对孔并保持';
+  if (phase === 'complete') return '第三步已完成：横梁已落位并释放';
   if (phase === 'error') return '第三步执行失败';
   return '正在执行第三步…';
+}
+
+const step4PhaseCopy: Record<AssemblyStep4Phase, string> = {
+  idle: '等待第三步完成',
+  planning: '正在验证紧固件安装前置条件',
+  prepare: '四臂正在切换至紧固件安装分工位',
+  engage: 'Arm 3 接近紧固件，Arm 4 保持安全待命位',
+  'engage-settle': 'Arm 3 正在稳定紧固件预抓取姿态',
+  'fastener-clamp': 'Arm 3 正在物理夹持第一颗紧固件',
+  'fastener-verification': '正在验证紧固件双侧接触',
+  'fastener-tighten': 'Arm 3 正在逐步增加紧固件夹持力',
+  lift: 'Arm 3 正在从料盘抬起紧固件',
+  transfer: 'Arm 3 正在将紧固件搬运至安装孔上方',
+  'transfer-settle': 'Arm 3 正在安装孔上方稳定紧固件',
+  insert: 'Arm 3 正在将紧固件插入东北侧接口',
+  'fastener-release': '紧固件已到位，Arm 3 正在松开夹爪',
+  clear: 'Arm 3 正在撤离，Arm 4 继续支撑横梁',
+  'placement-verification': '正在验证紧固件无夹持落位状态',
+  'tool-stage': 'Arm 2 正在将扭矩工具转为竖直预拧姿态',
+  complete: '第四步已完成：紧固件已落位，扭矩工具已预定位',
+  error: '第四步失败',
+};
+
+function step4ButtonCopy(phase: AssemblyStep4Phase) {
+  if (phase === 'idle') return '执行第四步：拾取并插入第一颗紧固件';
+  if (phase === 'complete') return '第四步已完成：紧固件与工具已就位';
+  if (phase === 'error') return '第四步执行失败';
+  return '正在执行第四步…';
 }
 
 export function AssemblySequencePanel({
   step1Status,
   step2State,
   step3State,
+  step4State,
   canRunStep2,
   canRunStep3,
+  canRunStep4,
   onRunStep1,
   onRunStep2,
   onRunStep3,
+  onRunStep4,
 }: {
   step1Status: AssemblyStep1Status;
   step2State: AssemblyStep2State;
   step3State: AssemblyStep3State;
+  step4State: AssemblyStep4State;
   canRunStep2: boolean;
   canRunStep3: boolean;
+  canRunStep4: boolean;
   onRunStep1: () => void;
   onRunStep2: () => void;
   onRunStep3: () => void;
+  onRunStep4: () => void;
 }) {
   const first = step1Copy[step1Status];
   const failure = step2State.failure;
@@ -123,6 +164,25 @@ export function AssemblySequencePanel({
         </div>
         <button type="button" onClick={onRunStep3} disabled={!canRunStep3}>
           {step3ButtonCopy(step3State.phase)}
+        </button>
+      </div>
+      <div className="assembly-sequence-panel__step">
+        <div
+          className={`assembly-sequence-panel__status${
+            step4State.phase === 'error' ? ' assembly-sequence-panel__status--error' : ''
+          }`}
+        >
+          {step4PhaseCopy[step4State.phase]}
+          {step4State.failure && (
+            <span>
+              {`：${step4State.failure.armKey ?? '系统'} / ${step4State.failure.code}`}
+              {step4State.failure.detail ? ` / ${step4State.failure.detail}` : ''}
+              {'。请 Reset 后重试'}
+            </span>
+          )}
+        </div>
+        <button type="button" onClick={onRunStep4} disabled={!canRunStep4}>
+          {step4ButtonCopy(step4State.phase)}
         </button>
       </div>
     </section>

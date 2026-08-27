@@ -24,10 +24,32 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
       poweredTool: [0.53, -0.42, 0.135],
       manualTool: [-0.53, -0.42, 0.13],
       hammer: [0.65, 0, 0.229],
-      fasteners: [0.56, 0.42, 0.125],
+      fasteners: layout === FRANKA_ASSEMBLY1_LAYOUT
+        ? [0.18, 0.48, 0.125]
+        : [0.56, 0.42, 0.125],
       handover: [0, -0.48, 0.112],
     });
   }
+});
+
+test('Assembly1 alone moves the fastener station into Arm 3 reach', () => {
+  const assembly1Xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
+  const assembly2Xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
+  assert.match(assembly1Xml, /<body name="fastener_tray" pos="\.18 \.48 \.11">/);
+  assert.match(assembly1Xml, /name="fastener_tray_floor" type="box" pos="0 0 -\.03" size="\.18 \.18 \.04"/);
+  for (const side of ['west', 'east', 'south', 'north']) {
+    assert.match(assembly1Xml, new RegExp(`name="fastener_1_guide_${side}"`));
+  }
+  assert.match(assembly1Xml, /<body name="fastener_1" pos="\.12 \.42 \.152" gravcomp="\.99">/);
+  assert.match(assembly1Xml, /name="fastener_1_free" type="free" damping="\.08"/);
+  assert.match(assembly1Xml, /name="fastener_1_shaft" type="cylinder" size="\.0085 \.025"/);
+  assert.match(assembly1Xml, /name="fastener_1_shaft"[^>]+mass="\.12"/);
+  assert.match(assembly1Xml, /<body name="fastener_4" pos="\.22 \.54 \.152">/);
+  assert.match(assembly1Xml, /name="fastener_1_head" type="box" pos="0 0 \.04" size="\.02 \.045 \.03"/);
+  assert.match(assembly1Xml, /name="fastener_1_retention_cap" type="box" pos="0 0 \.076" size="\.0275 \.05 \.006"/);
+  assert.match(assembly2Xml, /<body name="fastener_tray" pos="\.56 \.42 \.11">/);
+  assert.match(assembly2Xml, /<body name="fastener_1" pos="\.50 \.36 \.152">/);
+  assert.match(assembly2Xml, /name="fastener_1_head"[^>]+size="\.015 \.007"/);
 });
 
 test('Assembly1 positions Arms 3/4 to reach both staging and the central interface', () => {
@@ -139,7 +161,7 @@ test('both Assembly layouts strengthen physical finger contact without attachmen
     assert.match(xml, /gainprm="\.23529411765 0 0" biasprm="0 -1500 -40"/);
     assert.match(
       xml,
-      /fingertip_pad_collision_1[\s\S]*friction="3 \.2 \.05" condim="6" solref="\.002 1"/,
+      /fingertip_pad_collision_1[\s\S]*friction="10 \.5 \.1" condim="6" solref="\.002 1"/,
     );
     assert.doesNotMatch(xml, /weld|equality[^>]*tool|attach_tool|magnet/i);
   }

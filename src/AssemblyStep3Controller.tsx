@@ -13,6 +13,7 @@ import { consumeMujocoContacts } from './mujocoContact.js';
 import { ASSEMBLY1_STEP2_ARMS, quaternionAngularDistanceDegrees } from './assemblyStep2.js';
 import {
   ASSEMBLY1_STEP3_GRIPPER_CLAMPS,
+  ASSEMBLY1_STEP3_LIMITS,
   ASSEMBLY1_STEP3_TRANSPORT_ARMS,
   advanceAssemblyStep3Machine,
   createAssemblyStep3ControlFrame,
@@ -77,7 +78,6 @@ interface RuntimePlan {
   frameBodyId: number;
   crossMemberBodyId: number;
   frameBaseline: [number, number, number];
-  crossMemberBaselineQuaternion: [number, number, number, number];
   holeSiteIds: number[];
   receiverSiteIds: number[];
 }
@@ -86,7 +86,7 @@ interface AssemblyStep3ControllerProps {
   requestId: number;
   resetGeneration: number;
   step2Complete: boolean;
-  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2' | 'step3'>;
+  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2' | 'step3' | 'step4'>;
   diagnosticsRef: MutableRefObject<AssemblyStep3RuntimeDiagnostics | null>;
   onStateChange: (state: AssemblyStep3State) => void;
 }
@@ -236,7 +236,6 @@ function createRuntimePlan(
       frameBodyId,
       crossMemberBodyId,
       frameBaseline: vector3(data.xpos, frameBodyId),
-      crossMemberBaselineQuaternion: quaternion4(data.xquat, crossMemberBodyId),
       holeSiteIds,
       receiverSiteIds,
     },
@@ -300,16 +299,32 @@ function sampleRuntime(
   const crossMemberQuaternion = quaternion4(data.xquat, runtime.crossMemberBodyId);
   const crossMemberRotationDegrees = quaternionAngularDistanceDegrees(
     crossMemberQuaternion,
-    runtime.crossMemberBaselineQuaternion,
+    [1, 0, 0, 0],
   );
-  const holeDistances = runtime.holeSiteIds.map((siteId, index) => distance(
-    vector3(data.site_xpos, siteId),
-    vector3(data.site_xpos, runtime.receiverSiteIds[index]),
-  ));
+  const holeOffsets = runtime.holeSiteIds.map((siteId, index) => {
+    const hole = vector3(data.site_xpos, siteId);
+    const receiver = vector3(data.site_xpos, runtime.receiverSiteIds[index]);
+    return [
+      hole[0] - receiver[0],
+      hole[1] - receiver[1],
+      hole[2] - receiver[2],
+    ] as [number, number, number];
+  });
+  const holeDistances = holeOffsets.map((offset) => Math.hypot(...offset));
+  const holePlanarDistances = holeOffsets.map((offset) => Math.hypot(offset[0], offset[1]));
+  const holeVerticalOffsets = holeOffsets.map((offset) => Math.abs(offset[2]));
   const alignment = evaluateAssemblyStep3Alignment({
-    holeDistances,
+    holePlanarDistances,
+    holeVerticalOffsets,
     frameTranslation,
     crossMemberRotationDegrees,
+  });
+  const placedAlignment = evaluateAssemblyStep3Alignment({
+    holePlanarDistances,
+    holeVerticalOffsets,
+    frameTranslation,
+    crossMemberRotationDegrees,
+    verticalTolerance: ASSEMBLY1_STEP3_LIMITS.seatedVerticalOffset,
   });
   const all = arms.find(({ verdict }) => !verdict.ok)?.verdict ?? { ok: true as const };
   return {
@@ -319,8 +334,11 @@ function sampleRuntime(
     frameTranslation,
     crossMemberRotationDegrees,
     holeDistances,
+    holePlanarDistances,
+    holeVerticalOffsets,
     all: all as AssemblyStep3Verdict,
     alignment,
+    placedAlignment,
   };
 }
 
@@ -397,7 +415,9 @@ export function AssemblyStep3Controller({
     const sample = sampleRuntime(model, data, runtime, false);
     const nextMachine = advanceAssemblyStep3Machine(machine, deltaSeconds, {
       all: sample.all,
-      alignment: sample.alignment,
+      alignment: machine.phase === 'placed-verification'
+        ? sample.placedAlignment
+        : sample.alignment,
     });
     machineRef.current = nextMachine;
     if (nextMachine.phase !== reportedPhaseRef.current) {
@@ -432,6 +452,8 @@ export function AssemblyStep3Controller({
       frameTranslation: sample.frameTranslation,
       crossMemberRotationDegrees: sample.crossMemberRotationDegrees,
       holeDistances: sample.holeDistances,
+      holePlanarDistances: sample.holePlanarDistances,
+      holeVerticalOffsets: sample.holeVerticalOffsets,
       arms: sample.arms,
     };
     if (nextMachine.phase === 'error') {

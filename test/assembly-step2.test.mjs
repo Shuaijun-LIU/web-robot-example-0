@@ -78,7 +78,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     crossMemberClamp: 1,
     torqueDriverClamp: 0.8,
     contactWindow: 0.08,
-    verificationTimeout: 2.5,
+    contactGrace: 0.2,
+    verificationTimeout: 4,
     stableHold: 2,
   });
   assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [48, 96, 24, 24]);
@@ -234,10 +235,33 @@ test('Step 2 verification requires an uninterrupted 0.08 second window', () => {
   assert.equal(state.phase, 'cross-member-clamp');
 });
 
+test('Step 2 verification accepts recent real contact but rejects expired contact memory', () => {
+  const valid = {
+    targetBody: 'torque_driver',
+    leftContactBodies: [],
+    rightContactBodies: ['torque_driver'],
+    forbiddenBodies: [],
+    aperture: 0.03,
+    translation: 0.001,
+    rotationDegrees: 1,
+    verticalDisplacement: 0.001,
+  };
+  assert.deepEqual(evaluateAssemblyStep2Grasp({
+    ...valid,
+    leftTargetContactAge: 0.05,
+    rightTargetContactAge: 0,
+  }), { ok: true });
+  assert.equal(evaluateAssemblyStep2Grasp({
+    ...valid,
+    leftTargetContactAge: 0.201,
+    rightTargetContactAge: 0,
+  }).code, 'missing-left-contact');
+});
+
 test('Step 2 verification timeout is terminal and preserves the failure reason', () => {
   let state = {
     phase: 'tool-verification',
-    phaseElapsed: 2.4,
+    phaseElapsed: 3.9,
     continuousValidSeconds: 0,
     failure: null,
   };
@@ -250,6 +274,25 @@ test('Step 2 verification timeout is terminal and preserves the failure reason',
     armKey: 'r1',
   });
   assert.deepEqual(advanceAssemblyStep2Machine(state, 10, {}), state);
+});
+
+test('Step 2 timeout reports the retained invalid sample when the final sample is valid', () => {
+  const state = advanceAssemblyStep2Machine({
+    phase: 'tool-verification',
+    phaseElapsed: 3.995,
+    continuousValidSeconds: 0,
+    lastInvalidVerdict: {
+      ok: false,
+      code: 'missing-left-contact',
+      armKey: 'r1',
+    },
+    failure: null,
+  }, 0.01, { tool: { ok: true } });
+  assert.equal(state.phase, 'error');
+  assert.deepEqual(state.failure, {
+    code: 'missing-left-contact',
+    armKey: 'r1',
+  });
 });
 
 test('Step 2 stable hold completes only while every grasp remains valid', () => {

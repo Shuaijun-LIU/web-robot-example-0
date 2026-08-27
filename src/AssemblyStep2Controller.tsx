@@ -73,7 +73,7 @@ interface AssemblyStep2ControllerProps {
   resetGeneration: number;
   step1Complete: boolean;
   step1SnapshotRef: MutableRefObject<AssemblyStep1CompletionSnapshot | null>;
-  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2' | 'step3'>;
+  ownershipRef: MutableRefObject<'manual' | 'step1' | 'step2' | 'step3' | 'step4'>;
   diagnosticsRef: MutableRefObject<AssemblyStep2RuntimeDiagnostics | null>;
   onStateChange: (state: AssemblyStep2State) => void;
 }
@@ -258,12 +258,21 @@ function armVerdicts(
   data: MujocoData,
   runtime: RuntimePlan,
   requireBilateralContact: boolean,
+  lastTargetContactAt: Array<{ left: number | null; right: number | null }>,
 ) {
   const contacts = contactsByFinger(model, data, runtime.arms);
-  return runtime.arms.map((arm) => {
+  return runtime.arms.map((arm, index) => {
     const leftIds = [...(contacts.get(arm.leftFingerBodyId) ?? [])];
     const rightIds = [...(contacts.get(arm.rightFingerBodyId) ?? [])];
     const oppositeIds = [...leftIds, ...rightIds];
+    if (leftIds.includes(arm.targetBodyId)) lastTargetContactAt[index].left = data.time;
+    if (rightIds.includes(arm.targetBodyId)) lastTargetContactAt[index].right = data.time;
+    const leftTargetContactAge = lastTargetContactAt[index].left === null
+      ? Number.POSITIVE_INFINITY
+      : Math.max(0, data.time - lastTargetContactAt[index].left);
+    const rightTargetContactAge = lastTargetContactAt[index].right === null
+      ? Number.POSITIVE_INFINITY
+      : Math.max(0, data.time - lastTargetContactAt[index].right);
     const forbiddenBodies = [...new Set(oppositeIds)]
       .filter((id) => runtime.forbiddenBodyIds.has(id) && id !== arm.targetBodyId)
       .map((id) => bodyName(model, id));
@@ -279,6 +288,8 @@ function armVerdicts(
       translation: distance(current.position, baseline.position),
       rotationDegrees: quaternionAngularDistanceDegrees(current.quaternion, baseline.quaternion),
       verticalDisplacement: Math.abs(current.position[2] - baseline.position[2]),
+      leftTargetContactAge,
+      rightTargetContactAge,
     };
     const verdict = evaluateAssemblyStep2Grasp({
       targetBody: arm.targetBody,
@@ -288,6 +299,8 @@ function armVerdicts(
         arm.targetBody as keyof typeof ASSEMBLY1_STEP2_LIMITS.settlingTranslation
       ],
       requireBilateralContact,
+      leftTargetContactAge,
+      rightTargetContactAge,
     });
     const taggedVerdict: AssemblyStep2GraspVerdict = verdict.ok
       ? verdict
@@ -321,6 +334,12 @@ export function AssemblyStep2Controller({
   const maximumContactSecondsRef = useRef([0, 0, 0, 0]);
   const closureStartedAtRef = useRef<Array<number | null>>([null, null, null, null]);
   const frameVerificationJointTargetsRef = useRef<number[][] | null>(null);
+  const lastTargetContactAtRef = useRef(
+    Array.from({ length: 4 }, () => ({ left: null, right: null })) as Array<{
+      left: number | null;
+      right: number | null;
+    }>,
+  );
   stateCallbackRef.current = onStateChange;
 
   useEffect(() => {
@@ -333,6 +352,10 @@ export function AssemblyStep2Controller({
     maximumContactSecondsRef.current = [0, 0, 0, 0];
     closureStartedAtRef.current = [null, null, null, null];
     frameVerificationJointTargetsRef.current = null;
+    lastTargetContactAtRef.current = Array.from(
+      { length: 4 },
+      () => ({ left: null, right: null }),
+    );
     completedRequestRef.current = requestId;
     reportedPhaseRef.current = 'idle';
     if (ownershipRef.current === 'step2') ownershipRef.current = 'manual';
@@ -404,6 +427,7 @@ export function AssemblyStep2Controller({
       data,
       runtime,
       machine.phase !== 'clamped-hold' && machine.phase !== 'complete',
+      lastTargetContactAtRef.current,
     );
     for (let index = 0; index < samples.length; index += 1) {
       currentContactSecondsRef.current[index] = samples[index].verdict.ok

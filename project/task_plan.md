@@ -6,6 +6,7 @@
 - Deliver a physically coherent static workcell, browser-verified screenshot, documentation, and GitHub Pages deployment.
 - Incrementally animate Assembly1, beginning with a reviewable four-arm pre-grasp staging step before introducing contact or object manipulation.
 - Add an isolated dynamic Unitree scene with a real policy-free actuator action for G1 and Go2 + Airbot.
+- Continue Assembly1 through robust physical release and first-fastener staging.
 
 ## Phases
 - [x] Phase 1: Scope, local asset audit, and scene design
@@ -25,8 +26,9 @@
 - [x] Phase 15: Implement and production-verify Step 2 physical contact and clamped hold
 - [x] Phase 16: Unitree Action Lab dynamic models, actuator choreography, browser verification, and visual artifacts
 - [x] Phase 17: Implement and production-verify Step 3 dual-arm cross-member placement
+- [ ] Phase 18: Robust Step 2/3 verification, Step 3 release, and Step 4 first-fastener staging
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 17 complete; both Unitree Action Lab and Assembly1 Step 3 are ready for visual review.
-- Blockers: None. Assembly fastening and Unitree locomotion are intentionally deferred.
+- Current phase: Phase 18 implementation; static contracts and builds pass, but Step 4 physical lift retention remains unresolved in browser verification.
+- Blockers: None.

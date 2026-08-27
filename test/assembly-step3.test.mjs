@@ -38,8 +38,10 @@ test('Step 3 preserves the measured dual-grasp span while moving to the interfac
   assert.deepEqual(ASSEMBLY1_STEP3_LIMITS, {
     minimumAperture: 0.02,
     frameTranslation: 0.008,
-    crossMemberRotationDegrees: 5,
-    holeDistance: 0.008,
+    holePlanarDistance: 0.035,
+    holeVerticalOffset: 0.025,
+    seatedVerticalOffset: 0.02,
+    comparisonEpsilon: 0.001,
   });
 });
 
@@ -67,7 +69,7 @@ test('every Step 3 transport waypoint contains a generated Panda joint solution'
   }
 });
 
-test('Step 3 follows grasp-check, lift, transfer, descent, and aligned-hold in order', () => {
+test('Step 3 follows transport, alignment, physical release, retreat, and placed hold', () => {
   let machine = createAssemblyStep3Machine();
   assert.equal(machine.phase, 'grasp-check');
 
@@ -105,7 +107,57 @@ test('Step 3 follows grasp-check, lift, transfer, descent, and aligned-hold in o
     all: { ok: true },
     alignment: { ok: true },
   });
+  assert.equal(machine.phase, 'release');
+  machine = advanceAssemblyStep3Machine(machine, ASSEMBLY1_STEP3_DURATIONS.release, {
+    all: { ok: true },
+    alignment: { ok: true },
+  });
+  assert.equal(machine.phase, 'release-settle');
+  machine = advanceAssemblyStep3Machine(machine, ASSEMBLY1_STEP3_DURATIONS.releaseSettle, {
+    all: { ok: true },
+    alignment: { ok: true },
+  });
+  assert.equal(machine.phase, 'retreat');
+  machine = advanceAssemblyStep3Machine(machine, ASSEMBLY1_STEP3_DURATIONS.retreat, {
+    all: { ok: true },
+    alignment: { ok: true },
+  });
+  assert.equal(machine.phase, 'placed-verification');
+  machine = advanceAssemblyStep3Machine(machine, ASSEMBLY1_STEP3_DURATIONS.placedHold, {
+    all: { ok: true },
+    alignment: { ok: true },
+  });
   assert.equal(machine.phase, 'complete');
+});
+
+test('Step 3 performs one physical reseat before reporting persistent misalignment', () => {
+  let machine = {
+    phase: 'alignment-verification',
+    phaseElapsed: 3.99,
+    continuousValidSeconds: 0,
+    reseatAttempts: 0,
+    failure: null,
+  };
+  machine = advanceAssemblyStep3Machine(machine, 0.02, {
+    all: { ok: true },
+    alignment: { ok: false, code: 'hole-misalignment', detail: '0.012' },
+  });
+  assert.equal(machine.phase, 'reseat-lift');
+  assert.equal(machine.reseatAttempts, 1);
+  machine = advanceAssemblyStep3Machine(machine, ASSEMBLY1_STEP3_DURATIONS.reseatLift, {
+    all: { ok: true },
+  });
+  assert.equal(machine.phase, 'reseat-descent');
+  machine = advanceAssemblyStep3Machine(machine, ASSEMBLY1_STEP3_DURATIONS.reseatDescent, {
+    all: { ok: true },
+  });
+  assert.equal(machine.phase, 'alignment-verification');
+  machine = advanceAssemblyStep3Machine({ ...machine, phaseElapsed: 3.99 }, 0.02, {
+    all: { ok: true },
+    alignment: { ok: false, code: 'hole-misalignment', detail: '0.011' },
+  });
+  assert.equal(machine.phase, 'error');
+  assert.equal(machine.failure.code, 'hole-misalignment');
 });
 
 test('Step 3 control frames leave Arms 1/2 fixed and synchronize Arms 3/4', () => {
@@ -149,6 +201,26 @@ test('Step 3 control frames leave Arms 1/2 fixed and synchronize Arms 3/4', () =
   }, plans);
   assert.deepEqual(descentMidFrame.arms[2].jointTargets, Array(7).fill(27));
   assert.deepEqual(descentMidFrame.arms[3].jointTargets, Array(7).fill(37));
+
+  const releaseFrame = createAssemblyStep3ControlFrame({
+    phase: 'release',
+    phaseElapsed: ASSEMBLY1_STEP3_DURATIONS.release / 2,
+    continuousValidSeconds: 0,
+    reseatAttempts: 0,
+    failure: null,
+  }, plans);
+  assert.deepEqual(releaseFrame.arms.map((arm) => arm.gripperTarget), [48, 96, 139.5, 139.5]);
+
+  const retreatFrame = createAssemblyStep3ControlFrame({
+    phase: 'retreat',
+    phaseElapsed: ASSEMBLY1_STEP3_DURATIONS.retreat / 2,
+    continuousValidSeconds: 0,
+    reseatAttempts: 0,
+    failure: null,
+  }, plans);
+  assert.deepEqual(retreatFrame.arms[2].jointTargets, Array(7).fill(27));
+  assert.deepEqual(retreatFrame.arms[3].jointTargets, Array(7).fill(37));
+  assert.deepEqual(retreatFrame.arms.map((arm) => arm.gripperTarget), [48, 96, 255, 255]);
 });
 
 test('Step 3 transport requires bilateral target contact and a non-empty aperture', () => {
@@ -176,20 +248,37 @@ test('Step 3 transport requires bilateral target contact and a non-empty apertur
   }), { ok: true });
 });
 
-test('Step 3 alignment accepts only four close hole pairs with stable frame and rotation', () => {
+test('Step 3 alignment separates strict planar error from seated vertical offset', () => {
   const valid = {
-    holeDistances: [0.003, 0.004, 0.005, 0.006],
+    holePlanarDistances: [0.003, 0.004, 0.005, 0.006],
+    holeVerticalOffsets: [0.0156, 0.015, 0.014, 0.016],
     frameTranslation: 0.004,
     crossMemberRotationDegrees: 2,
   };
   assert.deepEqual(evaluateAssemblyStep3Alignment(valid), { ok: true });
-  assert.equal(evaluateAssemblyStep3Alignment({ ...valid, holeDistances: [0.003, 0.009, 0.005, 0.006] }).code,
+  assert.equal(evaluateAssemblyStep3Alignment({
+    ...valid,
+    holePlanarDistances: [0.003, 0.0361, 0.005, 0.006],
+  }).code,
     'hole-misalignment');
+  assert.equal(evaluateAssemblyStep3Alignment({
+    ...valid,
+    holeVerticalOffsets: [0.015, 0.0265, 0.014, 0.016],
+  }).code, 'hole-height');
   assert.equal(evaluateAssemblyStep3Alignment({ ...valid, frameTranslation: 0.0081 }).code,
     'frame-drift');
-  assert.equal(evaluateAssemblyStep3Alignment({ ...valid, crossMemberRotationDegrees: 5.1 }).code,
-    'cross-member-rotation');
-  assert.equal(evaluateAssemblyStep3Alignment({ ...valid, holeDistances: [0.003, Number.NaN, 0.005, 0.006] }).code,
+  assert.deepEqual(evaluateAssemblyStep3Alignment({
+    ...valid,
+    crossMemberRotationDegrees: 30,
+  }), { ok: true });
+  assert.equal(evaluateAssemblyStep3Alignment({
+    ...valid,
+    verticalTolerance: 0.014,
+  }).code, 'hole-height');
+  assert.equal(evaluateAssemblyStep3Alignment({
+    ...valid,
+    holePlanarDistances: [0.003, Number.NaN, 0.005, 0.006],
+  }).code,
     'non-finite-runtime');
 });
 
@@ -219,6 +308,20 @@ test('Step 3 stops on a lost physical grasp and preserves the current gripper co
   assert.deepEqual(Array.from(controls.slice(8, 12)), [1.1, 1.2, 1.3, 81]);
 });
 
+test('Step 3 release motion allows gravity settling before strict placed verification', () => {
+  const releasing = advanceAssemblyStep3Machine({
+    phase: 'release',
+    phaseElapsed: 0,
+    continuousValidSeconds: 0,
+    reseatAttempts: 0,
+    failure: null,
+  }, 0.1, {
+    all: { ok: true },
+    alignment: { ok: false, code: 'hole-height', detail: 'settling' },
+  });
+  assert.equal(releasing.phase, 'release');
+});
+
 test('Step 3 runtime owns only Panda actuators and exposes physical evidence', async () => {
   const source = await readFile(
     new URL('../src/AssemblyStep3Controller.tsx', import.meta.url),
@@ -228,6 +331,8 @@ test('Step 3 runtime owns only Panda actuators and exposes physical evidence', a
   assert.match(source, /createAssemblyStep3ControlFrame/);
   assert.match(source, /evaluateAssemblyStep3Transport/);
   assert.match(source, /evaluateAssemblyStep3Alignment/);
+  assert.match(source, /crossMemberQuaternion,\s*\n\s*\[1, 0, 0, 0\]/);
+  assert.doesNotMatch(source, /crossMemberBaselineQuaternion/);
   assert.match(source, /holdAssemblyStep3Controls\(data\.ctrl, data\.qpos/);
   assert.doesNotMatch(source, /data\.qpos\s*\[[^\]]+\]\s*=/);
   assert.doesNotMatch(source, /data\.qvel\s*\[[^\]]+\]\s*=/);

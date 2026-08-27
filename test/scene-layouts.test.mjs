@@ -56,7 +56,10 @@ test('Franka assembly scene stages a frame, installable parts, separated tools, 
   };
 
   for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
-    assert.deepEqual(layout.taskStations, expectedStations);
+    assert.deepEqual(layout.taskStations, {
+      ...expectedStations,
+      ...(layout === FRANKA_ASSEMBLY1_LAYOUT ? { fasteners: [0.18, 0.48, 0.125] } : {}),
+    });
     const sceneNames = layout.sceneObjects.map(({ name }) => name);
     assert.ok(sceneNames.includes('assembly_platform'));
     assert.ok(sceneNames.includes('handover_pad'));

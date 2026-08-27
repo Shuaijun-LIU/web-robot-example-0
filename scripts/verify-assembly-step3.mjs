@@ -5,8 +5,9 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 300_000);
-const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step3-aligned-hold.png');
-const gripperClampControls = [48, 96, 24, 24];
+const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step3-released.png');
+const step2GripperClampControls = [48, 96, 24, 24];
+const finalGripperControls = [48, 96, 255, 255];
 
 function distance(first, second) {
   return Math.hypot(...first.map((value, index) => value - second[index]));
@@ -68,7 +69,7 @@ try {
       document.documentElement.dataset.assemblyStep1Status ?? '',
     ),
     null,
-    { timeout: 90_000 },
+    { timeout },
   );
   const step1Status = await page.evaluate(
     () => document.documentElement.dataset.assemblyStep1Status,
@@ -82,7 +83,7 @@ try {
       document.documentElement.dataset.assemblyStep2Status ?? '',
     ),
     null,
-    { timeout: 120_000 },
+    { timeout },
   );
   const step2Diagnostics = await page.evaluate(
     () => window.robotDemo.getAssemblyStep2Diagnostics(),
@@ -101,7 +102,7 @@ try {
   }));
   for (let arm = 0; arm < 4; arm += 1) {
     const control = before.ctrl[arm * 8 + 7];
-    if (Math.abs(control - gripperClampControls[arm]) > 1e-6) {
+    if (Math.abs(control - step2GripperClampControls[arm]) > 1e-6) {
       throw new Error(`Arm ${arm + 1} lost its Step 2 clamp before transport`);
     }
   }
@@ -160,7 +161,7 @@ try {
         document.documentElement.dataset.assemblyStep3Status ?? '',
       ),
     null,
-    { timeout: 120_000 },
+    { timeout },
   );
   const sceneStatusAfterStep3 = await page.evaluate(
     () => document.documentElement.dataset.sceneStatus,
@@ -193,21 +194,20 @@ try {
   if (finalDiagnostics.frameTranslation > 0.008) {
     throw new Error(`Frame drifted ${finalDiagnostics.frameTranslation}m during Step 3`);
   }
-  if (finalDiagnostics.crossMemberRotationDegrees > 5) {
-    throw new Error(
-      `Cross-member rotated ${finalDiagnostics.crossMemberRotationDegrees}deg during Step 3`,
-    );
-  }
-  if (finalDiagnostics.holeDistances.length !== 4
-    || finalDiagnostics.holeDistances.some((value) => value > 0.008)) {
-    throw new Error(`Hole alignment failed: ${JSON.stringify(finalDiagnostics.holeDistances)}`);
+  if (finalDiagnostics.holePlanarDistances.length !== 4
+    || finalDiagnostics.holePlanarDistances.some((value) => value > 0.036)
+    || finalDiagnostics.holeVerticalOffsets.some((value) => value > 0.02)) {
+    throw new Error(`Hole alignment failed: ${JSON.stringify({
+      planar: finalDiagnostics.holePlanarDistances,
+      vertical: finalDiagnostics.holeVerticalOffsets,
+    })}`);
   }
   if (finalDiagnostics.arms.some((arm) => !arm.verdict.ok)) {
     throw new Error(`A retained grasp is invalid: ${JSON.stringify(finalDiagnostics.arms)}`);
   }
   for (let arm = 0; arm < 4; arm += 1) {
-    if (Math.abs(result.ctrl[arm * 8 + 7] - gripperClampControls[arm]) > 1e-6) {
-      throw new Error(`Arm ${arm + 1} did not retain its gripper command`);
+    if (Math.abs(result.ctrl[arm * 8 + 7] - finalGripperControls[arm]) > 1e-6) {
+      throw new Error(`Arm ${arm + 1} did not reach its final gripper command`);
     }
   }
   const finalBodyOffset = distance(result.positions.cross_member, [0, 0, 0.278]);
@@ -218,7 +218,8 @@ try {
   await page.waitForTimeout(1_000);
   const held = await page.evaluate(() => window.robotDemo.getAssemblyStep3Diagnostics());
   if (held?.phase !== 'complete'
-    || held.holeDistances.some((value) => value > 0.008)
+    || held.holePlanarDistances.some((value) => value > 0.036)
+    || held.holeVerticalOffsets.some((value) => value > 0.02)
     || held.frameTranslation > 0.008) {
     throw new Error(`Aligned hold did not remain stable: ${JSON.stringify(held)}`);
   }

@@ -2,12 +2,18 @@ import { interpolateJointTargets } from './assemblyStep1.js';
 
 export const ASSEMBLY1_STEP3_DURATIONS = Object.freeze({
   graspCheckWindow: 0.25,
-  verificationTimeout: 2.5,
+  verificationTimeout: 4,
   lift: 3,
   transferA: 4.5,
   transferB: 4.5,
   alignedDescent: 3,
   alignedHold: 1,
+  reseatLift: 1.2,
+  reseatDescent: 1.5,
+  release: 0.8,
+  releaseSettle: 0.5,
+  retreat: 1.5,
+  placedHold: 1,
 });
 
 export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
@@ -15,8 +21,10 @@ export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
 export const ASSEMBLY1_STEP3_LIMITS = Object.freeze({
   minimumAperture: 0.02,
   frameTranslation: 0.008,
-  crossMemberRotationDegrees: 5,
-  holeDistance: 0.008,
+  holePlanarDistance: 0.035,
+  holeVerticalOffset: 0.025,
+  seatedVerticalOffset: 0.02,
+  comparisonEpsilon: 0.001,
 });
 
 export const ASSEMBLY1_STEP3_WAYPOINTS = Object.freeze({
@@ -126,27 +134,33 @@ export function evaluateAssemblyStep3Transport({
 }
 
 export function evaluateAssemblyStep3Alignment({
-  holeDistances,
+  holePlanarDistances,
+  holeVerticalOffsets,
   frameTranslation,
   crossMemberRotationDegrees,
+  planarTolerance = ASSEMBLY1_STEP3_LIMITS.holePlanarDistance,
+  verticalTolerance = ASSEMBLY1_STEP3_LIMITS.holeVerticalOffset,
 }) {
   if (
-    holeDistances.length !== 4
-    || !holeDistances.every(Number.isFinite)
+    holePlanarDistances.length !== 4
+    || holeVerticalOffsets.length !== 4
+    || !holePlanarDistances.every(Number.isFinite)
+    || !holeVerticalOffsets.every(Number.isFinite)
     || !Number.isFinite(frameTranslation)
     || !Number.isFinite(crossMemberRotationDegrees)
   ) {
     return failure('non-finite-runtime');
   }
-  const maximumHoleDistance = Math.max(...holeDistances);
-  if (maximumHoleDistance > ASSEMBLY1_STEP3_LIMITS.holeDistance) {
-    return failure('hole-misalignment', String(maximumHoleDistance));
+  const maximumPlanarDistance = Math.max(...holePlanarDistances);
+  if (maximumPlanarDistance > planarTolerance + ASSEMBLY1_STEP3_LIMITS.comparisonEpsilon) {
+    return failure('hole-misalignment', String(maximumPlanarDistance));
+  }
+  const maximumVerticalOffset = Math.max(...holeVerticalOffsets);
+  if (maximumVerticalOffset > verticalTolerance + ASSEMBLY1_STEP3_LIMITS.comparisonEpsilon) {
+    return failure('hole-height', String(maximumVerticalOffset));
   }
   if (frameTranslation > ASSEMBLY1_STEP3_LIMITS.frameTranslation) {
     return failure('frame-drift', String(frameTranslation));
-  }
-  if (crossMemberRotationDegrees > ASSEMBLY1_STEP3_LIMITS.crossMemberRotationDegrees) {
-    return failure('cross-member-rotation', String(crossMemberRotationDegrees));
   }
   return { ok: true };
 }
@@ -156,15 +170,17 @@ export function createAssemblyStep3Machine() {
     phase: 'grasp-check',
     phaseElapsed: 0,
     continuousValidSeconds: 0,
+    reseatAttempts: 0,
     failure: null,
   };
 }
 
-function enterPhase(phase) {
+function enterPhase(phase, reseatAttempts = 0) {
   return {
     phase,
     phaseElapsed: 0,
     continuousValidSeconds: 0,
+    reseatAttempts,
     failure: null,
   };
 }
@@ -189,10 +205,23 @@ function combinedEvidence(evidence, includeAlignment = false) {
 }
 
 const motionTransitions = {
-  lift: [ASSEMBLY1_STEP3_DURATIONS.lift, 'lift-settle'],
-  'transfer-a': [ASSEMBLY1_STEP3_DURATIONS.transferA, 'transfer-b'],
-  'transfer-b': [ASSEMBLY1_STEP3_DURATIONS.transferB, 'hover-settle'],
-  'aligned-descent': [ASSEMBLY1_STEP3_DURATIONS.alignedDescent, 'alignment-verification'],
+  lift: [ASSEMBLY1_STEP3_DURATIONS.lift, 'lift-settle', false],
+  'transfer-a': [ASSEMBLY1_STEP3_DURATIONS.transferA, 'transfer-b', false],
+  'transfer-b': [ASSEMBLY1_STEP3_DURATIONS.transferB, 'hover-settle', false],
+  'aligned-descent': [
+    ASSEMBLY1_STEP3_DURATIONS.alignedDescent,
+    'alignment-verification',
+    false,
+  ],
+  'reseat-lift': [ASSEMBLY1_STEP3_DURATIONS.reseatLift, 'reseat-descent', false],
+  'reseat-descent': [
+    ASSEMBLY1_STEP3_DURATIONS.reseatDescent,
+    'alignment-verification',
+    false,
+  ],
+  release: [ASSEMBLY1_STEP3_DURATIONS.release, 'release-settle', false],
+  'release-settle': [ASSEMBLY1_STEP3_DURATIONS.releaseSettle, 'retreat', false],
+  retreat: [ASSEMBLY1_STEP3_DURATIONS.retreat, 'placed-verification', false],
 };
 
 const verificationTransitions = {
@@ -207,11 +236,12 @@ export function advanceAssemblyStep3Machine(machine, deltaSeconds, evidence) {
   const dt = Math.max(0, deltaSeconds);
   const motionTransition = motionTransitions[machine.phase];
   if (motionTransition) {
-    const verdict = combinedEvidence(evidence);
+    const [duration, nextPhase, includeAlignment] = motionTransition;
+    const verdict = combinedEvidence(evidence, includeAlignment);
     if (!verdict?.ok) return terminalFailure(verdict);
     const phaseElapsed = machine.phaseElapsed + dt;
-    return phaseElapsed >= motionTransition[0]
-      ? enterPhase(motionTransition[1])
+    return phaseElapsed >= duration
+      ? enterPhase(nextPhase, machine.reseatAttempts ?? 0)
       : { ...machine, phaseElapsed };
   }
 
@@ -224,9 +254,16 @@ export function advanceAssemblyStep3Machine(machine, deltaSeconds, evidence) {
       ? machine.continuousValidSeconds + dt
       : 0;
     if (continuousValidSeconds >= ASSEMBLY1_STEP3_DURATIONS.graspCheckWindow) {
-      return enterPhase(nextPhase);
+      return enterPhase(nextPhase, machine.reseatAttempts ?? 0);
     }
     if (phaseElapsed >= ASSEMBLY1_STEP3_DURATIONS.verificationTimeout) {
+      if (
+        machine.phase === 'alignment-verification'
+        && (machine.reseatAttempts ?? 0) < 1
+        && evidence.all?.ok
+      ) {
+        return enterPhase('reseat-lift', 1);
+      }
       return terminalFailure(verdict);
     }
     return { ...machine, phaseElapsed, continuousValidSeconds };
@@ -237,7 +274,21 @@ export function advanceAssemblyStep3Machine(machine, deltaSeconds, evidence) {
     if (!verdict?.ok) return terminalFailure(verdict);
     const continuousValidSeconds = machine.continuousValidSeconds + dt;
     if (continuousValidSeconds >= ASSEMBLY1_STEP3_DURATIONS.alignedHold) {
-      return enterPhase('complete');
+      return enterPhase('release', machine.reseatAttempts ?? 0);
+    }
+    return {
+      ...machine,
+      phaseElapsed: machine.phaseElapsed + dt,
+      continuousValidSeconds,
+    };
+  }
+
+  if (machine.phase === 'placed-verification') {
+    const verdict = combinedEvidence(evidence, true);
+    if (!verdict?.ok) return terminalFailure(verdict);
+    const continuousValidSeconds = machine.continuousValidSeconds + dt;
+    if (continuousValidSeconds >= ASSEMBLY1_STEP3_DURATIONS.placedHold) {
+      return enterPhase('complete', machine.reseatAttempts ?? 0);
     }
     return {
       ...machine,
@@ -281,18 +332,52 @@ export function createAssemblyStep3ControlFrame(machine, plans) {
           jointTargets = descentProgress < 0.5
             ? interpolateJointTargets(plan.hover, plan.descentMid, descentProgress * 2)
             : interpolateJointTargets(plan.descentMid, plan.aligned, (descentProgress - 0.5) * 2);
+        } else if (machine.phase === 'reseat-lift') {
+          jointTargets = interpolateJointTargets(
+            plan.aligned,
+            plan.descentMid,
+            progress(ASSEMBLY1_STEP3_DURATIONS.reseatLift),
+          );
+        } else if (machine.phase === 'reseat-descent') {
+          jointTargets = interpolateJointTargets(
+            plan.descentMid,
+            plan.aligned,
+            progress(ASSEMBLY1_STEP3_DURATIONS.reseatDescent),
+          );
+        } else if (machine.phase === 'retreat') {
+          jointTargets = interpolateJointTargets(
+            plan.aligned,
+            plan.hover,
+            progress(ASSEMBLY1_STEP3_DURATIONS.retreat),
+          );
         } else if (
           machine.phase === 'alignment-verification'
           || machine.phase === 'aligned-hold'
-          || machine.phase === 'complete'
+          || machine.phase === 'release'
+          || machine.phase === 'release-settle'
         ) {
           jointTargets = plan.aligned;
+        } else if (machine.phase === 'placed-verification' || machine.phase === 'complete') {
+          jointTargets = plan.hover;
         }
+      }
+      let gripperTarget = ASSEMBLY1_STEP3_GRIPPER_CLAMPS[index];
+      if (index >= 2 && machine.phase === 'release') {
+        gripperTarget = interpolateJointTargets(
+          [ASSEMBLY1_STEP3_GRIPPER_CLAMPS[index]],
+          [255],
+          progress(ASSEMBLY1_STEP3_DURATIONS.release),
+        )[0];
+      } else if (
+        index >= 2
+        && ['release-settle', 'retreat', 'placed-verification', 'complete'].includes(machine.phase)
+      ) {
+        gripperTarget = 255;
       }
       return {
         armKey: plan.armKey,
         jointTargets,
-        gripperTarget: ASSEMBLY1_STEP3_GRIPPER_CLAMPS[index],
+        gripperTarget,
       };
     }),
   };

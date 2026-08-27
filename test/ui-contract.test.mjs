@@ -7,6 +7,7 @@ const githubLinkPath = new URL('../src/GitHubLink.tsx', import.meta.url);
 const stylesPath = new URL('../src/styles.css', import.meta.url);
 const keyboardHelpPath = new URL('../src/KeyboardHelp.tsx', import.meta.url);
 const assemblySequencePanelPath = new URL('../src/AssemblySequencePanel.tsx', import.meta.url);
+const assemblyStep4ControllerPath = new URL('../src/AssemblyStep4Controller.tsx', import.meta.url);
 
 test('GitHub link points to this project repository', async () => {
   const source = await readFile(githubLinkPath, 'utf8');
@@ -81,10 +82,11 @@ test('Assembly1 is the initial scene shown on page entry', async () => {
   assert.match(source, /robot:\s*\{\s*value:\s*'frankaAssembly1'/);
 });
 
-test('Assembly1 exposes one three-step sequence panel and deterministic Step 3 diagnostics', async () => {
-  const [appSource, panelSource] = await Promise.all([
+test('Assembly1 exposes one four-step sequence panel and deterministic Step 4 diagnostics', async () => {
+  const [appSource, panelSource, step4ControllerSource] = await Promise.all([
     readFile(appPath, 'utf8'),
     readFile(assemblySequencePanelPath, 'utf8').catch(() => ''),
+    readFile(assemblyStep4ControllerPath, 'utf8').catch(() => ''),
   ]);
 
   assert.match(appSource, /AssemblySequencePanel/);
@@ -95,13 +97,25 @@ test('Assembly1 exposes one three-step sequence panel and deterministic Step 3 d
   assert.match(appSource, /runAssemblyStep3/);
   assert.match(appSource, /getAssemblyStep3Diagnostics/);
   assert.match(appSource, /<AssemblyStep3Controller/);
+  assert.match(appSource, /dataset\.assemblyStep4Status/);
+  assert.match(appSource, /runAssemblyStep4/);
+  assert.match(appSource, /getAssemblyStep4Diagnostics/);
+  assert.match(appSource, /<AssemblyStep4Controller/);
   assert.match(appSource, /assemblyAutomationActive/);
   assert.match(panelSource, /执行第二步：下降并物理夹持/);
   assert.match(panelSource, /第一步已完成/);
   assert.match(panelSource, /第二步已完成：四处物理夹持已建立/);
   assert.match(panelSource, /执行第三步：双臂搬运并对孔/);
-  assert.match(panelSource, /第三步已完成：横梁已对孔并保持/);
+  assert.match(panelSource, /第三步已完成：横梁已落位并释放/);
+  assert.match(panelSource, /执行第四步：拾取并插入第一颗紧固件/);
+  assert.match(panelSource, /第四步已完成：紧固件已落位，扭矩工具已预定位/);
   assert.match(panelSource, /请 Reset 后重试/);
+  assert.match(step4ControllerSource, /useBeforePhysicsStep/);
+  assert.match(step4ControllerSource, /consumeMujocoContacts/);
+  assert.match(step4ControllerSource, /machine\.phase === 'prepare'/);
+  assert.match(step4ControllerSource, /nextMachine\.phase === 'engage'/);
+  assert.match(step4ControllerSource, /nextMachine\.phase === 'fastener-clamp'/);
+  assert.doesNotMatch(step4ControllerSource, /data\.qpos\[[^\]]+\]\s*=/);
 });
 
 test('alternate industrial arms expose manual IK and grippers without Franka automation', async () => {
