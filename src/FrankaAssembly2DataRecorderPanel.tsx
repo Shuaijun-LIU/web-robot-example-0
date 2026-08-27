@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   findActuatorByName,
@@ -612,7 +613,12 @@ export function FrankaAssembly2DataRecorderPanel({
   }, [clearSession, resetGeneration]);
 
   return (
-    <section className="franka-recorder-panel" aria-label="Franka Assembly2 示教采集">
+    <Html
+      fullscreen
+      style={{ pointerEvents: 'none' }}
+      calculatePosition={(_object, _camera, size) => [size.width / 2, size.height / 2]}
+    >
+      <section className="franka-recorder-panel" aria-label="Franka Assembly2 示教采集">
       <div className="franka-recorder-panel__title">Franka Assembly2 数据采集</div>
       <div className="franka-recorder-panel__line">
         可采集机械臂：{armProfiles.length > 0 ? armProfiles.map((profile) => profile.armKey).join(' / ') : '未解析'}
@@ -690,6 +696,7 @@ export function FrankaAssembly2DataRecorderPanel({
         快捷键：Alt+Shift+R 开始/停止、Alt+Shift+P 记录、Alt+Shift+S 完成导出、
         Alt+Shift+D 删除最后一条、Alt+Shift+C 清空重录、Alt+Shift+X 重置选中臂
       </div>
-    </section>
+      </section>
+    </Html>
   );
 }

@@ -59,6 +59,10 @@
   - Fixed: Replaced the out-of-scope Assembly2 recorder reference `entry.controlTargets` with the scene catalog lookup `robots[robotKey].controlTargets` inside `SceneChildren`.
   - Verified: The original `TS2304: Cannot find name 'entry'` reproduced before the fix; afterwards `tsc --noEmit`, all 164 tests, and the Node 22 Pages production build passed.
 - 2026-08-28
+  - What: Reproduced the deployed Assembly2 blank page and captured the runtime error `R3F: Div is not part of the THREE namespace`.
+  - Fixed: Kept recorder state and MuJoCo hooks inside the simulation provider while routing only its HTML through Drei `Html`; anchored the overlay to the viewport and preserved canvas pointer input outside the panel.
+  - Verified: The pre-fix browser smoke test stalled at `sceneStatus=loading`; the fixed Pages production bundle loaded 4 physical instances / 66 bodies, exposed all four recorder arms, and passed the isolated 164-test suite, TypeScript check, and production build.
+- 2026-08-28
   - What: Reworked Assembly1's cross-member interfaces and reassigned Arm 2 from the torque driver to the double-face hammer across Steps 1–4.
   - Fixed: Removed the solid gap-filling mounts, added hollow round/square frames whose walls touch the beam, cut two true beam recesses while retaining four side stops, restored the first fastener to the same round form as the other three, and added hammer stage/strike/recover phases.
   - Verified: Focused contracts passed 48/48; the Step 4 IK solver matched all recorded targets below 0.6 mm and 0.14 degrees; MuJoCo compiled the 66-body/451-geom scene; the unsupported hammer hold retained 33 contacts with about 31.35 N and 20.9 mm height loss.
