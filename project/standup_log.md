@@ -54,3 +54,7 @@
   - What: Removed only the two overhead cross-member grip caps that could trap fully opened Arms 3/4 during Step 3 withdrawal; retained all four lateral handling stops.
   - Fixed: Added north/south solid installation mounts that touch both the beam top and the reserved plate undersides, eliminating the prior 12–14 mm floating visual gaps.
   - Verified: The focused geometry contract passed 11/11, the full suite passed 164/164, and the Node 22 production build completed. The browser dynamics verifier timed out while loading the page and therefore provides no motion/withdrawal evidence; visual acceptance remains with the user.
+- 2026-08-28
+  - What: Diagnosed the failed `Deploy GitHub Pages` run at its `Verify source` step.
+  - Fixed: Replaced the out-of-scope Assembly2 recorder reference `entry.controlTargets` with the scene catalog lookup `robots[robotKey].controlTargets` inside `SceneChildren`.
+  - Verified: The original `TS2304: Cannot find name 'entry'` reproduced before the fix; afterwards `tsc --noEmit`, all 164 tests, and the Node 22 Pages production build passed.

@@ -452,7 +452,7 @@ function SceneChildren({
       )}
       {robotKey === 'frankaAssembly2' && (
         <FrankaAssembly2DataRecorderPanel
-          targets={entry.controlTargets}
+          targets={robots[robotKey].controlTargets}
           activeTarget={target}
           resetGeneration={resetGeneration}
         />
