@@ -93,9 +93,9 @@ function recessedCrossMemberFlangesXml() {
     ['left', -0.016, '.56 .58 .59 1'],
     ['right', 0.016, '.68 .69 .69 1'],
   ].flatMap(([flange, x, rgba]) => segments.map(([name, y, halfY, z, halfZ, mass]) => {
-    const halfX = name.includes('grip_recess') ? '.014' : '.009';
+    const halfX = name.includes('grip_recess') ? '.0045' : '.009';
     const contact = name.includes('grip_recess')
-      ? 'friction="10 2 1" condim="6"'
+      ? 'friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"'
       : 'friction="1.2 .2 .02"';
     return `<geom name="cross_member_flange_${flange}_${name}" type="box" `
       + `pos="${x} ${y} ${z}" size="${halfX} ${halfY} ${halfZ}" `
@@ -308,6 +308,10 @@ const FRANKA_ASSEMBLY1_TOOL_XML = SHARED_ASSEMBLY1_TOOL_XML
 function assembly1ReachableFastenerWorkcellXml() {
   return SHARED_ASSEMBLY1_WORKCELL_XML
     .replace(
+      'name="frame_rail_south_outer" type="box" pos="0 -.242 0" size=".34 .012 .025"',
+      'name="frame_rail_south_outer" type="box" pos="0 -.242 0" size=".34 .018 .025"',
+    )
+    .replace(
       `<geom name="cross_member_stand_south" type="box" pos=".08 -.20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>
       <geom name="cross_member_stand_north" type="box" pos=".08 .20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>`,
       `<geom name="cross_member_stand_south" type="box" pos=".08 -.20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>
@@ -325,12 +329,15 @@ function assembly1ReachableFastenerWorkcellXml() {
       `${recessedCrossMemberFlangesXml()}
       <!-- Solid underside bridges stop the fingers entering the extrusion gap;
            they remain recessed and do not obstruct upward gripper withdrawal. -->
-      <geom name="cross_member_grip_recess_bridge_north" type="box" pos="0 .1275 .006" size=".014 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6"/>
-      <geom name="cross_member_grip_recess_bridge_south" type="box" pos="0 -.1275 .006" size=".014 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6"/>
-      <!-- Bottom-only shoulders mechanically retain the beam during carry;
-           there is deliberately no top cap, so open fingers can retreat upward. -->
-      <geom name="cross_member_grip_lower_guard_north" type="box" pos="0 .1275 -.010" size=".020 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6"/>
-      <geom name="cross_member_grip_lower_guard_south" type="box" pos="0 -.1275 -.010" size=".020 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6"/>`,
+      <geom name="cross_member_grip_recess_bridge_north" type="box" pos="0 .1275 .006" size=".012 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="cross_member_grip_recess_bridge_south" type="box" pos="0 -.1275 .006" size=".012 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <!-- Recess shoulders mechanically retain the beam during carry.  The
+           upper shoulders are narrower than the fully open Panda aperture, so
+           the fingers can still release sideways and retreat after placement. -->
+      <geom name="cross_member_grip_lower_guard_north" type="box" pos="0 .1275 -.010" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="cross_member_grip_lower_guard_south" type="box" pos="0 -.1275 -.010" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="cross_member_grip_upper_guard_north" type="box" pos="0 .1275 .024" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="cross_member_grip_upper_guard_south" type="box" pos="0 -.1275 .024" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>`,
     )
     .replaceAll('mass=".01" friction="2 .2 .03"', 'mass=".005" friction="2 .2 .03"')
     .replace(
@@ -422,6 +429,37 @@ const ASSEMBLY2_TOOL_XML = `
       <geom name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"/>
     </body>`;
 
+// Assembly1 stages the detailed RoboTwin tools at its task-specific pickup
+// stations. The legacy procedural tools above remain available to other layouts.
+const FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML = ASSEMBLY2_TOOL_XML
+  .replace(
+    '<body name="torque_driver" pos=".53 -.42 .222">',
+    '<body name="torque_driver" pos=".65 0 .222">',
+  )
+  .replace(
+    '<body name="claw_hammer" pos=".65 0 .229">',
+    '<body name="double_face_hammer" pos=".642 -.421 .148">',
+  )
+  .replace(
+    'name="robotwin_hammer_collision" type="capsule" fromto="-.14 0 -.008 .06 0 -.008" size=".02" rgba="0 0 0 0" mass=".16" friction="1.4 .22 .03"',
+    'name="robotwin_hammer_collision" type="box" pos="-.04 0 -.008" size=".10 .020 .016" rgba="0 0 0 0" mass=".04" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"',
+  )
+  .replace(
+    'name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"',
+    `name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".04"/>
+      <!-- A visible, collidable tail extension gives the receiving Panda a
+           second grip zone across the two arms' reachable-workspace gap. -->
+      <geom name="robotwin_hammer_handle_extension" type="box" pos="-.16 0 -.008" size=".05 .020 .016" rgba=".07 .08 .09 1" mass=".01" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_receiver_guard_tail" type="box" pos="-.195 0 -.008" size=".004 .025 .020" rgba=".11 .12 .13 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_receiver_guard_head" type="box" pos="-.125 0 -.008" size=".004 .025 .020" rgba=".11 .12 .13 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <!-- Low-profile rubber guards bound the donor finger contact patch so the
+           hammer cannot slide lengthwise during lift or handover. -->
+      <geom name="robotwin_hammer_grip_guard_tail" type="box" pos="-.052 0 -.008" size=".004 .020 .016" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_grip_guard_head" type="box" pos=".003 0 -.008" size=".004 .020 .016" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_grip_guard_lower" type="box" pos="-.0245 0 -.028" size=".0275 .025 .004" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_grip_guard_upper" type="box" pos="-.0245 0 .012" size=".0275 .025 .004" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"`,
+  );
+
 export const createAssembly1SceneObjects = (includeTorqueDriverCradle = false) => [
   fixedBox('assembly_platform', [1.15, 1.15, .05], [0, 0, .05], [.25, .27, .29, 1]),
   fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
@@ -442,9 +480,8 @@ function createFrankaAssembly1SceneObjects() {
     fixedBox('assembly_platform', [1.15, 1.15, .05], [0, 0, .05], [.25, .27, .29, 1]),
     fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
     fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
-    fixedBox('tool_mat_hammer', [.2, .13, .006], [.53, -.42, .112], [.31, .27, .21, 1]),
-    fixedBox('hammer_pickup_cradle_tail', [.025, .04, .015], [.495, -.421, .133], [.17, .18, .19, 1]),
-    fixedBox('hammer_pickup_cradle_head', [.025, .05, .015], [.717, -.421, .129], [.17, .18, .19, 1]),
+    { ...fixedBox('hammer_pickup_cradle_tail', [.05, .04, .015], [.52, -.421, .109], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
+    { ...fixedBox('hammer_pickup_cradle_head', [.05, .05, .015], [.70, -.421, .101], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
     fixedBox('tool_mat_powered', [.16, .2, .01], [.65, 0, .19], [.27, .25, .22, 1]),
     fixedBox('tool_mat_manual', [.2, .13, .006], [-.53, -.42, .112], [.31, .27, .21, 1]),
   ];
@@ -457,6 +494,7 @@ function createPatches(
   northArmY,
   westArmX,
   workcellXml = SHARED_ASSEMBLY1_WORKCELL_XML,
+  gripperForceRange = '-100 100',
 ) {
   return [
     { target: 'panda.xml', replace: ['name="actuator8"', 'name="gripper"'] },
@@ -464,7 +502,7 @@ function createPatches(
       target: 'panda.xml',
       replace: [
         '<general class="panda" name="gripper" tendon="split" forcerange="-100 100" ctrlrange="0 255"\n      gainprm="0.01568627451 0 0" biasprm="0 -100 -10"/>',
-        '<general class="panda" name="gripper" tendon="split" forcerange="-100 100" ctrlrange="0 255"\n      gainprm=".23529411765 0 0" biasprm="0 -1500 -40"/>',
+        `<general class="panda" name="gripper" tendon="split" forcerange="${gripperForceRange}" ctrlrange="0 255"\n      gainprm=".23529411765 0 0" biasprm="0 -1500 -40"/>`,
       ],
     },
     {
@@ -472,6 +510,34 @@ function createPatches(
       replace: [
         '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445"/>\n        </default>',
         '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+      ],
+    },
+    {
+      target: 'panda.xml',
+      replace: [
+        '<default class="fingertip_pad_collision_2">\n          <geom type="box" size="0.003 0.002 0.003" pos="0.0055 0.002 0.05"/>\n        </default>',
+        '<default class="fingertip_pad_collision_2">\n          <geom type="box" size="0.003 0.002 0.003" pos="0.0055 0.002 0.05" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+      ],
+    },
+    {
+      target: 'panda.xml',
+      replace: [
+        '<default class="fingertip_pad_collision_3">\n          <geom type="box" size="0.003 0.002 0.003" pos="-0.0055 0.002 0.05"/>\n        </default>',
+        '<default class="fingertip_pad_collision_3">\n          <geom type="box" size="0.003 0.002 0.003" pos="-0.0055 0.002 0.05" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+      ],
+    },
+    {
+      target: 'panda.xml',
+      replace: [
+        '<default class="fingertip_pad_collision_4">\n          <geom type="box" size="0.003 0.002 0.0035" pos="0.0055 0.002 0.0395"/>\n        </default>',
+        '<default class="fingertip_pad_collision_4">\n          <geom type="box" size="0.003 0.002 0.0035" pos="0.0055 0.002 0.0395" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+      ],
+    },
+    {
+      target: 'panda.xml',
+      replace: [
+        '<default class="fingertip_pad_collision_5">\n          <geom type="box" size="0.003 0.002 0.0035" pos="-0.0055 0.002 0.0395"/>\n        </default>',
+        '<default class="fingertip_pad_collision_5">\n          <geom type="box" size="0.003 0.002 0.0035" pos="-0.0055 0.002 0.0395" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
       ],
     },
     {
@@ -507,6 +573,7 @@ function createLayout(
   westArmX = -RING_RADIUS,
   reachableFastenerStation = false,
   hammerPickupForArm2 = false,
+  gripperForceRange = '-100 100',
 ) {
   const workcellXml = reachableFastenerStation
     ? assembly1ReachableFastenerWorkcellXml()
@@ -524,7 +591,7 @@ function createLayout(
       ...(reachableFastenerStation ? { fasteners: [0.18, 0.48, 0.125] } : {}),
       ...(hammerPickupForArm2 ? {
         poweredTool: [0.65, 0, 0.238],
-        hammer: [0.642, -0.421, 0.171],
+        hammer: [0.642, -0.421, 0.144],
       } : {}),
     },
     xmlPatches: createPatches(
@@ -534,6 +601,7 @@ function createLayout(
       northArmY,
       westArmX,
       workcellXml,
+      gripperForceRange,
     ),
     sceneObjects: hammerPickupForArm2
       ? createFrankaAssembly1SceneObjects()
@@ -544,13 +612,14 @@ function createLayout(
 }
 
 export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
-  SHARED_ASSEMBLY1_ASSET_XML,
-  FRANKA_ASSEMBLY1_TOOL_XML,
+  ASSEMBLY2_ASSET_XML,
+  FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML,
   true,
   -0.3,
   0.85,
   -0.8,
   true,
   true,
+  '-180 180',
 );
 export const FRANKA_ASSEMBLY2_LAYOUT = createLayout(ASSEMBLY2_ASSET_XML, ASSEMBLY2_TOOL_XML);

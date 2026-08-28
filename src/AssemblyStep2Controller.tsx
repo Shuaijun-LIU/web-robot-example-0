@@ -240,16 +240,24 @@ function createRuntimePlan(
 }
 
 function contactsByFinger(model: MujocoModel, data: MujocoData, arms: RuntimeArmPlan[]) {
-  const result = new Map<number, Set<number>>();
+  const result = new Map<number, Map<number, number>>();
   for (const arm of arms) {
-    result.set(arm.leftFingerBodyId, new Set());
-    result.set(arm.rightFingerBodyId, new Set());
+    result.set(arm.leftFingerBodyId, new Map());
+    result.set(arm.rightFingerBodyId, new Map());
   }
+  const record = (fingerBody: number, oppositeBody: number, contactDistance: number) => {
+    const contacts = result.get(fingerBody);
+    if (!contacts) return;
+    const previous = contacts.get(oppositeBody);
+    if (previous === undefined || contactDistance < previous) {
+      contacts.set(oppositeBody, contactDistance);
+    }
+  };
   for (const contact of consumeMujocoContacts(data.contact, data.ncon)) {
     const firstBody = model.geom_bodyid[contact.geom1];
     const secondBody = model.geom_bodyid[contact.geom2];
-    result.get(firstBody)?.add(secondBody);
-    result.get(secondBody)?.add(firstBody);
+    record(firstBody, secondBody, contact.distance);
+    record(secondBody, firstBody, contact.distance);
   }
   return result;
 }
@@ -263,8 +271,10 @@ function armVerdicts(
 ) {
   const contacts = contactsByFinger(model, data, runtime.arms);
   return runtime.arms.map((arm, index) => {
-    const leftIds = [...(contacts.get(arm.leftFingerBodyId) ?? [])];
-    const rightIds = [...(contacts.get(arm.rightFingerBodyId) ?? [])];
+    const leftContacts = contacts.get(arm.leftFingerBodyId) ?? new Map<number, number>();
+    const rightContacts = contacts.get(arm.rightFingerBodyId) ?? new Map<number, number>();
+    const leftIds = [...leftContacts.keys()];
+    const rightIds = [...rightContacts.keys()];
     const oppositeIds = [...leftIds, ...rightIds];
     if (leftIds.includes(arm.targetBodyId)) lastTargetContactAt[index].left = data.time;
     if (rightIds.includes(arm.targetBodyId)) lastTargetContactAt[index].right = data.time;
@@ -291,6 +301,8 @@ function armVerdicts(
       verticalDisplacement: Math.abs(current.position[2] - baseline.position[2]),
       leftTargetContactAge,
       rightTargetContactAge,
+      leftTargetContactDistance: leftContacts.get(arm.targetBodyId) ?? null,
+      rightTargetContactDistance: rightContacts.get(arm.targetBodyId) ?? null,
     };
     const verdict = evaluateAssemblyStep2Grasp({
       targetBody: arm.targetBody,
@@ -307,7 +319,9 @@ function armVerdicts(
         : ASSEMBLY1_STEP2_LIMITS.minimumAperture,
       maximumVerticalDisplacement: arm.targetBody === 'cross_member'
         ? ASSEMBLY1_STEP2_LIMITS.crossMemberVerticalDisplacement
-        : ASSEMBLY1_STEP2_LIMITS.verticalDisplacement,
+        : arm.targetBody === 'double_face_hammer'
+          ? ASSEMBLY1_STEP2_LIMITS.hammerVerticalDisplacement
+          : ASSEMBLY1_STEP2_LIMITS.verticalDisplacement,
       maximumRotationDegrees: arm.targetBody === 'double_face_hammer'
         ? ASSEMBLY1_STEP2_LIMITS.hammerRotationDegrees
         : ASSEMBLY1_STEP2_LIMITS.objectRotationDegrees,

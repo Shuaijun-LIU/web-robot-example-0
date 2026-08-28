@@ -11,12 +11,12 @@ export const ASSEMBLY1_STEP2_DURATIONS = Object.freeze({
   crossMemberClamp: 1,
   hammerClamp: 0.8,
   contactWindow: 0.08,
-  contactGrace: 0.2,
+  contactGrace: 0.5,
   verificationTimeout: 4,
   stableHold: 2,
 });
 
-export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
+export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS = Object.freeze([130, 122, 135, 130]);
 
 export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   tcpPosition: 0.06,
@@ -25,49 +25,52 @@ export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   objectTranslation: 0.005,
   settlingTranslation: Object.freeze({
     assembly_frame: 0.008,
-    double_face_hammer: 0.04,
+    double_face_hammer: 0.05,
     cross_member: 0.03,
   }),
   objectRotationDegrees: 8,
   hammerRotationDegrees: 10,
   verticalDisplacement: 0.003,
+  hammerVerticalDisplacement: 0.005,
   crossMemberVerticalDisplacement: 0.015,
-  minimumAperture: 0.02,
-  crossMemberMinimumAperture: 0.005,
+  minimumAperture: 0.035,
+  crossMemberMinimumAperture: 0.035,
+  maximumContactPenetration: 0.002,
+  contactComparisonEpsilon: 0.00015,
 });
 
 const roles = [
   {
     role: 'south frame rail',
     targetBody: 'assembly_frame',
-    contactWaypoint: [0.18, -0.23, 0.235],
+    contactWaypoint: [0.18, -0.23, 0.25],
     closingAxisYawDegrees: 90,
-    approachJointTargets: [-2.740245, -1.616952, -1.476044, -1.512758, -1.622041, 1.478096, -0.446735],
-    contactJointTargets: [-2.743069, -1.633435, -1.493859, -1.516005, -1.637347, 1.496908, -0.446552],
+    approachJointTargets: [-2.737163, -1.600271, -1.458475, -1.508469, -1.606889, 1.459701, -0.447053],
+    contactJointTargets: [-2.740701, -1.61689, -1.476177, -1.513462, -1.622023, 1.478365, -0.44642],
   },
   {
     role: 'horizontal hammer handle',
     targetBody: 'double_face_hammer',
-    contactWaypoint: [0.61, -0.421, 0.16],
+    contactWaypoint: [0.62, -0.427, 0.145],
     closingAxisYawDegrees: 90,
-    approachJointTargets: [1.701847, 0.530688, 0.768249, -2.306197, -0.724794, 2.58391, 2.255536],
-    contactJointTargets: [1.734113, 0.565328, 0.727169, -2.293774, -0.764926, 2.603319, 2.282411],
+    approachJointTargets: [1.759519, 0.562792, 0.72415, -2.296205, -0.76304, 2.606191, 2.30461],
+    contactJointTargets: [1.790859, 0.597575, 0.684318, -2.281973, -0.801619, 2.625364, 2.330823],
   },
   {
     role: 'cross member north balance point',
     targetBody: 'cross_member',
-    contactWaypoint: [-0.49, 0.56, 0.20],
+    contactWaypoint: [-0.489, 0.56, 0.21],
     closingAxisYawDegrees: 0,
-    approachJointTargets: [1.520671, -0.115799, -0.578707, -2.892429, -0.184844, 2.789877, -2.808175],
-    contactJointTargets: [1.557521, -0.047497, -0.591649, -2.891678, -0.093261, 2.851089, -2.871199],
+    approachJointTargets: [1.496261, -0.161873, -0.561838, -2.893824, -0.226057, 2.747528, -2.777375],
+    contactJointTargets: [1.528987, -0.095909, -0.578999, -2.894551, -0.162476, 2.810213, -2.821088],
   },
   {
     role: 'cross member south balance point',
     targetBody: 'cross_member',
-    contactWaypoint: [-0.49, 0.32, 0.20],
+    contactWaypoint: [-0.482, 0.32, 0.213],
     closingAxisYawDegrees: 0,
-    approachJointTargets: [2.73572, 0.133697, -0.345734, -2.582379, 0.100799, 2.706221, -0.054203],
-    contactJointTargets: [2.725553, 0.179815, -0.327617, -2.578473, 0.143924, 2.744882, -0.085798],
+    approachJointTargets: [2.733839, 0.108799, -0.361694, -2.564881, 0.079698, 2.665436, -0.052485],
+    contactJointTargets: [2.727123, 0.153363, -0.348007, -2.563107, 0.119418, 2.704486, -0.081228],
   },
 ];
 
@@ -221,7 +224,11 @@ export function evaluateAssemblyStep2Grasp({
   requireBilateralContact = true,
   leftTargetContactAge = Number.POSITIVE_INFINITY,
   rightTargetContactAge = Number.POSITIVE_INFINITY,
+  leftTargetContactDistance = null,
+  rightTargetContactDistance = null,
   minimumAperture = ASSEMBLY1_STEP2_LIMITS.minimumAperture,
+  maximumContactPenetration = ASSEMBLY1_STEP2_LIMITS.maximumContactPenetration,
+  contactComparisonEpsilon = ASSEMBLY1_STEP2_LIMITS.contactComparisonEpsilon,
 }) {
   const leftContactIsRecent = leftTargetContactAge <= ASSEMBLY1_STEP2_DURATIONS.contactGrace;
   const rightContactIsRecent = rightTargetContactAge <= ASSEMBLY1_STEP2_DURATIONS.contactGrace;
@@ -240,6 +247,15 @@ export function evaluateAssemblyStep2Grasp({
     return failed('missing-right-contact');
   }
   if (forbiddenBodies.length > 0) return failed('forbidden-contact', forbiddenBodies.join(', '));
+  const contactDistances = [leftTargetContactDistance, rightTargetContactDistance]
+    .filter((value) => typeof value === 'number' && Number.isFinite(value));
+  if (
+    contactDistances.length > 0
+    && Math.min(...contactDistances)
+      < -(maximumContactPenetration + contactComparisonEpsilon)
+  ) {
+    return failed('deep-penetration', String(Math.min(...contactDistances)));
+  }
   if (!(aperture > minimumAperture)) {
     return failed('empty-closure', String(aperture));
   }

@@ -6,8 +6,8 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 300_000);
 const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step3-released.png');
-const step2GripperClampControls = [48, 96, 24, 24];
-const finalGripperControls = [48, 96, 255, 255];
+const step2GripperClampControls = [130, 122, 135, 130];
+const finalGripperControls = [130, 122, 255, 255];
 
 function distance(first, second) {
   return Math.hypot(...first.map((value, index) => value - second[index]));
@@ -103,9 +103,17 @@ try {
     () => window.robotDemo.getAssemblyStep2Diagnostics(),
   );
   if (!step2Diagnostics || step2Diagnostics.phase !== 'complete') {
+    const failureContacts = await page.evaluate(() => window.robotDemo.getContacts().filter(
+      ({ body1, body2 }) => /^r[0-3]_(?:left|right)_finger$/.test(body1)
+        || /^r[0-3]_(?:left|right)_finger$/.test(body2),
+    ));
     throw new Error(
       `Step 2 ended in ${step2Diagnostics?.phase ?? 'missing diagnostics'}: `
-      + JSON.stringify(step2Diagnostics?.failure ?? null),
+      + JSON.stringify({
+        failure: step2Diagnostics?.failure ?? null,
+        arms: step2Diagnostics?.arms ?? null,
+        contacts: failureContacts,
+      }),
     );
   }
   if (await buttons.nth(2).isDisabled()) throw new Error('Step 3 did not unlock');
@@ -210,7 +218,9 @@ try {
   if (!result.trace || result.trace.maximumZ - result.trace.initial[2] < 0.08) {
     throw new Error(`Cross-member lift was not observed: ${JSON.stringify(result.trace)}`);
   }
-  if (result.trace.maximumHammerZ - result.trace.initialHammer[2] < 0.12) {
+  // Step 3 now uses the compact 60 mm TCP staging lift; the grasp offset makes
+  // the hammer body's measured rise about 48 mm.  Require a real 40 mm lift.
+  if (result.trace.maximumHammerZ - result.trace.initialHammer[2] < 0.04) {
     throw new Error(`Hammer lift was not observed: ${JSON.stringify(result.trace)}`);
   }
   if (result.trace.maximumPlanarTravel < 0.35) {
@@ -230,6 +240,16 @@ try {
   if (finalDiagnostics.arms.some((arm) => !arm.verdict.ok)) {
     throw new Error(`A retained grasp is invalid: ${JSON.stringify(finalDiagnostics.arms)}`);
   }
+  for (const arm of finalDiagnostics.arms) {
+    for (const contactDistance of [
+      arm.leftTargetContactDistance,
+      arm.rightTargetContactDistance,
+    ]) {
+      if (typeof contactDistance === 'number' && contactDistance < -0.00215) {
+        throw new Error(`${arm.armKey} penetration is ${contactDistance}m`);
+      }
+    }
+  }
   for (let arm = 0; arm < 4; arm += 1) {
     if (Math.abs(result.ctrl[arm * 8 + 7] - finalGripperControls[arm]) > 1e-6) {
       throw new Error(`Arm ${arm + 1} did not reach its final gripper command`);
@@ -247,9 +267,12 @@ try {
     throw new Error(`Cross-member body is ${finalBodyOffset}m from its installed pose`);
   }
   const finalHammer = result.positions.double_face_hammer;
+  // Step 3 now keeps the hammer at a compact pickup-side staging pose so Arm 4
+  // can receive it in Step 4.  The old 360 mm floor belonged to the retired
+  // high handover pose and rejected a valid, physically retained 48 mm lift.
   if (finalHammer[0] < 0.55 || finalHammer[0] > 0.78
     || finalHammer[1] < -0.50 || finalHammer[1] > -0.30
-    || finalHammer[2] < 0.36) {
+    || finalHammer[2] < 0.175) {
     throw new Error(`Hammer did not reach the collision-free pickup-side staging pose: ${finalHammer}`);
   }
   const hammerRotation = quaternionAngleDegrees(

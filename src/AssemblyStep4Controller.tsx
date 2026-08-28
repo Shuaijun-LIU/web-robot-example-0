@@ -9,7 +9,10 @@ import {
 } from 'mujoco-react';
 import type { MujocoData, MujocoModel } from 'mujoco-react';
 
-import { consumeMujocoContacts } from './mujocoContact.js';
+import {
+  consumeMujocoContacts,
+  isPassiveRetainingContactGeom,
+} from './mujocoContact.js';
 import { ASSEMBLY1_STEP2_ARMS, quaternionAngularDistanceDegrees } from './assemblyStep2.js';
 import {
   ASSEMBLY1_STEP4_ARMS,
@@ -80,6 +83,14 @@ function quaternion4(values: Float64Array, index: number): [number, number, numb
 
 function distance(first: readonly number[], second: readonly number[]) {
   return Math.hypot(...first.map((value, index) => value - second[index]));
+}
+
+function nameAt(model: MujocoModel, address: number) {
+  let name = '';
+  for (let index = address; model.names[index] !== 0; index += 1) {
+    name += String.fromCharCode(model.names[index]);
+  }
+  return name;
 }
 
 function planningFailure(code: string, detail: string): AssemblyStep4Failure {
@@ -225,19 +236,39 @@ function targetContacts(
 ) {
   let left = false;
   let right = false;
+  let leftDistance: number | null = null;
+  let rightDistance: number | null = null;
   for (const contact of consumeMujocoContacts(data.contact, data.ncon)) {
     const firstBody = model.geom_bodyid[contact.geom1];
     const secondBody = model.geom_bodyid[contact.geom2];
+    const targetGeomId = firstBody === targetBodyId ? contact.geom1 : contact.geom2;
+    const passiveRetainer = isPassiveRetainingContactGeom(
+      nameAt(model, model.name_geomadr[targetGeomId]),
+    );
     if (
       (firstBody === leftFingerBodyId && secondBody === targetBodyId)
       || (secondBody === leftFingerBodyId && firstBody === targetBodyId)
-    ) left = true;
+    ) {
+      left = true;
+      if (!passiveRetainer) {
+        leftDistance = leftDistance === null
+          ? contact.distance
+          : Math.min(leftDistance, contact.distance);
+      }
+    }
     if (
       (firstBody === rightFingerBodyId && secondBody === targetBodyId)
       || (secondBody === rightFingerBodyId && firstBody === targetBodyId)
-    ) right = true;
+    ) {
+      right = true;
+      if (!passiveRetainer) {
+        rightDistance = rightDistance === null
+          ? contact.distance
+          : Math.min(rightDistance, contact.distance);
+      }
+    }
   }
-  return { left, right };
+  return { left, right, leftDistance, rightDistance };
 }
 
 function sampleRuntime(
@@ -316,6 +347,18 @@ function sampleRuntime(
     hammerGrasp = { ok: false, code: 'missing-hammer-left-contact', armKey: 'r3' };
   } else if (!hammerRightRecent) {
     hammerGrasp = { ok: false, code: 'missing-hammer-right-contact', armKey: 'r3' };
+  } else if (
+    [hammerContacts.leftDistance, hammerContacts.rightDistance]
+      .some((value) => (
+        typeof value === 'number'
+        && value < -ASSEMBLY1_STEP4_LIMITS.maximumContactPenetration
+      ))
+  ) {
+    const deepest = Math.min(
+      ...[hammerContacts.leftDistance, hammerContacts.rightDistance]
+        .filter((value): value is number => typeof value === 'number'),
+    );
+    hammerGrasp = { ok: false, code: 'deep-penetration', armKey: 'r3', detail: String(deepest) };
   } else if (!(hammerAperture > ASSEMBLY1_STEP4_LIMITS.minimumToolAperture)) {
     hammerGrasp = { ok: false, code: 'empty-closure', armKey: 'r3' };
   }
@@ -336,6 +379,8 @@ function sampleRuntime(
     hammerAperture,
     hammerLeftContact: hammerContacts.left,
     hammerRightContact: hammerContacts.right,
+    hammerLeftContactDistance: hammerContacts.leftDistance,
+    hammerRightContactDistance: hammerContacts.rightDistance,
   };
 }
 
@@ -481,6 +526,8 @@ export function AssemblyStep4Controller({
       hammerAperture: sample.hammerAperture,
       hammerLeftContact: sample.hammerLeftContact,
       hammerRightContact: sample.hammerRightContact,
+      hammerLeftContactDistance: sample.hammerLeftContactDistance,
+      hammerRightContactDistance: sample.hammerRightContactDistance,
     };
     if (nextMachine.phase === 'error') {
       runtimeRef.current = null;

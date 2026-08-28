@@ -17,9 +17,12 @@ const valid = {
 
 test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () => {
   assert.equal(typeof step4.createAssemblyStep4Machine, 'function');
-  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.minimumToolAperture, 0.012);
-  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.donorEntry, 96);
-  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.tool, 96);
+  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.minimumToolAperture, 0.035);
+  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumContactPenetration, 0.002);
+  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.frame, 130);
+  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.donorEntry, 122);
+  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.tool, 122);
+  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool, 127);
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.pregrasp, 80);
   assert.equal(step4.ASSEMBLY1_STEP4_ARMS.length, 4);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_ARMS.map(({ key, role }) => [key, role]), [
@@ -90,6 +93,52 @@ test('Step 4 stops if the fastener grasp is lost during transfer', () => {
   assert.deepEqual(failure.failure, { code: 'fastener-grasp-lost', armKey: 'r2' });
 });
 
+test('Step 4 completes hammer release before requiring the fastener grasp', () => {
+  const hammerOnly = {
+    ...valid,
+    fastenerGrasp: { ok: false, code: 'missing-finger-contact', armKey: 'r2' },
+  };
+  let machine = {
+    phase: 'handover-verification',
+    phaseElapsed: 0,
+    continuousValidSeconds: 0,
+    lastInvalidVerdict: null,
+    failure: null,
+  };
+  machine = step4.advanceAssemblyStep4Machine(
+    machine,
+    step4.ASSEMBLY1_STEP4_DURATIONS.verificationWindow,
+    hammerOnly,
+  );
+  assert.equal(machine.phase, 'hammer-release');
+  machine = step4.advanceAssemblyStep4Machine(
+    machine,
+    step4.ASSEMBLY1_STEP4_DURATIONS.hammerRelease,
+    hammerOnly,
+  );
+  assert.equal(machine.phase, 'donor-clear');
+  machine = step4.advanceAssemblyStep4Machine(
+    machine,
+    step4.ASSEMBLY1_STEP4_DURATIONS.donorClear,
+    hammerOnly,
+  );
+  assert.equal(machine.phase, 'fastener-tighten');
+});
+
+test('Step 4 still requires the fastener grasp before lifting it', () => {
+  const failure = step4.advanceAssemblyStep4Machine({
+    phase: 'lift',
+    phaseElapsed: 0,
+    continuousValidSeconds: 0,
+    failure: null,
+  }, 0.01, {
+    ...valid,
+    fastenerGrasp: { ok: false, code: 'missing-finger-contact', armKey: 'r2' },
+  });
+  assert.equal(failure.phase, 'error');
+  assert.deepEqual(failure.failure, { code: 'missing-finger-contact', armKey: 'r2' });
+});
+
 test('Step 4 placement verification tolerates settling before a continuous valid hold', () => {
   let machine = {
     phase: 'placement-verification',
@@ -158,7 +207,7 @@ test('Step 4 closes receiver and fastener grippers together before donor release
   }, plans);
   assert.deepEqual(
     donorTighten.arms.map(({ gripperTarget }) => gripperTarget),
-    [48, 96, 255, 255],
+    [130, 122, 255, 255],
   );
 
   const clamp = step4.createAssemblyStep4ControlFrame({
@@ -167,7 +216,7 @@ test('Step 4 closes receiver and fastener grippers together before donor release
     continuousValidSeconds: 0,
     failure: null,
   }, plans);
-  assert.deepEqual(clamp.arms.map(({ gripperTarget }) => gripperTarget), [48, 96, 167.5, 175.5]);
+  assert.deepEqual(clamp.arms.map(({ gripperTarget }) => gripperTarget), [130, 122, 167.5, 191]);
 
   const donorRelease = step4.createAssemblyStep4ControlFrame({
     phase: 'hammer-release',
@@ -175,7 +224,7 @@ test('Step 4 closes receiver and fastener grippers together before donor release
     continuousValidSeconds: 0,
     failure: null,
   }, plans);
-  assert.deepEqual(donorRelease.arms.map(({ gripperTarget }) => gripperTarget), [48, 175.5, 80, 96]);
+  assert.deepEqual(donorRelease.arms.map(({ gripperTarget }) => gripperTarget), [130, 188.5, 80, 127]);
 
   const release = step4.createAssemblyStep4ControlFrame({
     phase: 'fastener-release',
@@ -183,7 +232,7 @@ test('Step 4 closes receiver and fastener grippers together before donor release
     continuousValidSeconds: 0,
     failure: null,
   }, plans);
-  assert.deepEqual(release.arms.map(({ gripperTarget }) => gripperTarget), [48, 255, 162.5, 96]);
+  assert.deepEqual(release.arms.map(({ gripperTarget }) => gripperTarget), [130, 255, 162.5, 127]);
 
   const complete = step4.createAssemblyStep4ControlFrame({
     phase: 'complete',
@@ -191,7 +240,7 @@ test('Step 4 closes receiver and fastener grippers together before donor release
     continuousValidSeconds: 0,
     failure: null,
   }, plans);
-  assert.deepEqual(complete.arms.map(({ gripperTarget }) => gripperTarget), [48, 255, 255, 96]);
+  assert.deepEqual(complete.arms.map(({ gripperTarget }) => gripperTarget), [130, 255, 255, 127]);
   assert.deepEqual(complete.arms[1].jointTargets, Array(7).fill(16));
   assert.deepEqual(complete.arms[2].jointTargets, Array(7).fill(26));
   assert.deepEqual(complete.arms[3].jointTargets, Array(7).fill(37));

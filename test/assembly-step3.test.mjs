@@ -22,13 +22,13 @@ import {
 
 test('Step 3 preserves the measured dual-grasp span while moving to the interface', () => {
   assert.deepEqual(ASSEMBLY1_STEP3_WAYPOINTS, {
-    start: [[-0.49, 0.56, 0.20], [-0.49, 0.32, 0.20]],
+    start: [[-0.489, 0.56, 0.21], [-0.482, 0.32, 0.213]],
     lift: [[-0.49, 0.5675, 0.38], [-0.49, 0.3125, 0.38]],
     transferA: [[-0.245, 0.3475, 0.38], [-0.245, 0.0925, 0.38]],
     transferMid: [[-0.1225, 0.2375, 0.37], [-0.1225, -0.0175, 0.37]],
     hover: [[0, 0.1275, 0.34], [0, -0.1275, 0.34]],
-    descentMid: [[0, 0.1275, 0.295], [0, -0.1275, 0.295]],
-    aligned: [[0.006, 0.1275, 0.278], [0.002, -0.1275, 0.278]],
+    descentMid: [[0, 0.1275, 0.315], [0, -0.1275, 0.315]],
+    aligned: [[0.006, 0.1275, 0.292], [0.002, -0.1275, 0.292]],
   });
   assert.ok(Math.abs(
     ASSEMBLY1_STEP3_WAYPOINTS.start[0][1]
@@ -38,12 +38,14 @@ test('Step 3 preserves the measured dual-grasp span while moving to the interfac
   for (const pair of Object.values(ASSEMBLY1_STEP3_WAYPOINTS).slice(1)) {
     assert.ok(Math.abs(pair[0][1] - pair[1][1] - 0.255) < 1e-12);
   }
-  assert.deepEqual(ASSEMBLY1_STEP3_GRIPPER_CLAMPS, [48, 96, 24, 24]);
-  assert.deepEqual(ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS, [48, 96, 24, 24]);
+  assert.deepEqual(ASSEMBLY1_STEP3_GRIPPER_CLAMPS, [130, 122, 135, 130]);
+  assert.deepEqual(ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS, [130, 122, 135, 130]);
   assert.deepEqual(ASSEMBLY1_STEP3_LIMITS, {
-    minimumAperture: 0.02,
-    hammerMinimumAperture: 0.012,
-    crossMemberMinimumAperture: 0.005,
+    minimumAperture: 0.035,
+    hammerMinimumAperture: 0.035,
+    crossMemberMinimumAperture: 0.035,
+    maximumContactPenetration: 0.002,
+    contactComparisonEpsilon: 0.00015,
     frameTranslation: 0.008,
     holePlanarDistance: 0.04,
     holeVerticalOffset: 0.025,
@@ -78,20 +80,24 @@ test('every Step 3 transport waypoint contains a generated Panda joint solution'
 
 test('Step 3 lifts Arm 2 hammer vertically into a collision-free staging pose', () => {
   assert.deepEqual(ASSEMBLY1_STEP3_HAMMER_WAYPOINTS, {
-    start: [0.61, -0.421, 0.16],
-    lift: [0.61, -0.421, 0.34],
-    handover: [0.61, -0.421, 0.40],
+    start: [0.62, -0.427, 0.145],
+    prelift: [0.62, -0.427, 0.155],
+    lift: [0.62, -0.427, 0.205],
+    liftPath: [0.155, 0.165, 0.175, 0.185, 0.195, 0.205].map((z) => [0.62, -0.427, z]),
+    handover: [0.62, -0.427, 0.205],
+    handoverPath: [[0.62, -0.427, 0.205]],
   });
   assert.equal(ASSEMBLY1_STEP3_HAMMER_ARM.key, 'r1');
   assert.equal(ASSEMBLY1_STEP3_HAMMER_ARM.armIndex, 1);
   for (const target of [
+    ASSEMBLY1_STEP3_HAMMER_ARM.preliftJointTargets,
     ASSEMBLY1_STEP3_HAMMER_ARM.liftJointTargets,
     ASSEMBLY1_STEP3_HAMMER_ARM.handoverJointTargets,
   ]) {
     assert.equal(target.length, 7);
     assert.ok(target.every(Number.isFinite));
   }
-  assert.notDeepEqual(
+  assert.deepEqual(
     ASSEMBLY1_STEP3_HAMMER_ARM.liftJointTargets,
     ASSEMBLY1_STEP3_HAMMER_ARM.handoverJointTargets,
   );
@@ -206,6 +212,7 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
     descentMid: Array(7).fill(index * 10 + 7),
     aligned: Array(7).fill(index * 10 + 8),
     home: Array(7).fill(index * 10 + 9),
+    hammerPrelift: Array(7).fill(index * 10 + 1),
     hammerLift: Array(7).fill(index * 10 + 2),
     hammerHandover: Array(7).fill(index * 10 + 4),
   }));
@@ -220,7 +227,7 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
   assert.deepEqual(frame.arms[1].jointTargets, Array(7).fill(13));
   assert.deepEqual(frame.arms[2].jointTargets, Array(7).fill(23));
   assert.deepEqual(frame.arms[3].jointTargets, Array(7).fill(33));
-  assert.deepEqual(frame.arms.map((arm) => arm.gripperTarget), [48, 96, 24, 24]);
+  assert.deepEqual(frame.arms.map((arm) => arm.gripperTarget), [130, 122, 135, 130]);
 
   const transferMidFrame = createAssemblyStep3ControlFrame({
     phase: 'transfer-b',
@@ -240,6 +247,21 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
   assert.deepEqual(descentMidFrame.arms[2].jointTargets, Array(7).fill(27));
   assert.deepEqual(descentMidFrame.arms[3].jointTargets, Array(7).fill(37));
 
+  const cartesianPlans = plans.map((plan, index) => index === 2 ? {
+    ...plan,
+    transportLiftPath: [Array(7).fill(20), Array(7).fill(21), Array(7).fill(22)],
+    transportAPath: [Array(7).fill(22), Array(7).fill(26), Array(7).fill(30)],
+    transportBPath: [Array(7).fill(30), Array(7).fill(34), Array(7).fill(38)],
+    transportDescentPath: [Array(7).fill(38), Array(7).fill(42), Array(7).fill(46)],
+  } : plan);
+  const cartesianTransferFrame = createAssemblyStep3ControlFrame({
+    phase: 'transfer-a',
+    phaseElapsed: ASSEMBLY1_STEP3_DURATIONS.transferA / 2,
+    continuousValidSeconds: 0,
+    failure: null,
+  }, cartesianPlans);
+  assert.deepEqual(cartesianTransferFrame.arms[2].jointTargets, Array(7).fill(26));
+
   const releaseFrame = createAssemblyStep3ControlFrame({
     phase: 'release',
     phaseElapsed: ASSEMBLY1_STEP3_DURATIONS.release / 2,
@@ -247,7 +269,7 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
     reseatAttempts: 0,
     failure: null,
   }, plans);
-  assert.deepEqual(releaseFrame.arms.map((arm) => arm.gripperTarget), [48, 96, 139.5, 139.5]);
+  assert.deepEqual(releaseFrame.arms.map((arm) => arm.gripperTarget), [130, 122, 195, 192.5]);
 
   const retreatFrame = createAssemblyStep3ControlFrame({
     phase: 'retreat',
@@ -258,7 +280,7 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
   }, plans);
   assert.deepEqual(retreatFrame.arms[3].jointTargets, Array(7).fill(38.5));
   assert.deepEqual(retreatFrame.arms[2].jointTargets, Array(7).fill(28.5));
-  assert.deepEqual(retreatFrame.arms.map((arm) => arm.gripperTarget), [48, 96, 255, 255]);
+  assert.deepEqual(retreatFrame.arms.map((arm) => arm.gripperTarget), [130, 122, 255, 255]);
 
   const completeFrame = createAssemblyStep3ControlFrame({
     phase: 'complete',
@@ -278,7 +300,9 @@ test('Step 3 transport requires bilateral target contact and a non-empty apertur
     leftContactBodies: ['cross_member'],
     rightContactBodies: ['cross_member'],
     forbiddenBodies: [],
-    aperture: 0.03,
+    aperture: 0.04,
+    leftTargetContactDistance: -0.001,
+    rightTargetContactDistance: -0.001,
   };
   assert.deepEqual(evaluateAssemblyStep3Transport(valid), { ok: true });
   assert.equal(evaluateAssemblyStep3Transport({ ...valid, leftContactBodies: [] }).code,
@@ -287,14 +311,22 @@ test('Step 3 transport requires bilateral target contact and a non-empty apertur
     'missing-right-contact');
   assert.equal(evaluateAssemblyStep3Transport({ ...valid, forbiddenBodies: ['parts_tray'] }).code,
     'forbidden-contact');
-  assert.equal(evaluateAssemblyStep3Transport({ ...valid, aperture: 0.02 }).code,
+  assert.equal(evaluateAssemblyStep3Transport({ ...valid, aperture: 0.035 }).code,
     'empty-closure');
+  assert.deepEqual(evaluateAssemblyStep3Transport({
+    ...valid,
+    rightTargetContactDistance: -0.0021,
+  }), { ok: true });
+  assert.equal(evaluateAssemblyStep3Transport({
+    ...valid,
+    rightTargetContactDistance: -0.0022,
+  }).code, 'deep-penetration');
   assert.deepEqual(evaluateAssemblyStep3Transport({
     ...valid,
     targetBody: 'double_face_hammer',
     leftContactBodies: ['double_face_hammer'],
     rightContactBodies: ['double_face_hammer'],
-    aperture: 0.0199,
+    aperture: 0.04,
     minimumAperture: ASSEMBLY1_STEP3_LIMITS.hammerMinimumAperture,
   }), { ok: true });
   assert.deepEqual(evaluateAssemblyStep3Transport({
@@ -302,7 +334,7 @@ test('Step 3 transport requires bilateral target contact and a non-empty apertur
     targetBody: 'cross_member',
     leftContactBodies: ['cross_member'],
     rightContactBodies: ['cross_member'],
-    aperture: 0.008,
+    aperture: 0.04,
     minimumAperture: ASSEMBLY1_STEP3_LIMITS.crossMemberMinimumAperture,
   }), { ok: true });
   assert.deepEqual(evaluateAssemblyStep3Transport({
@@ -375,6 +407,24 @@ test('Step 3 stops on a lost physical grasp and preserves the current gripper co
   ]);
   assert.deepEqual(Array.from(controls.slice(0, 4)), [0.1, 0.2, 0.3, 37]);
   assert.deepEqual(Array.from(controls.slice(8, 12)), [1.1, 1.2, 1.3, 81]);
+});
+
+test('Step 3 allows only the initial lift transient to recover physical contact', () => {
+  const invalid = { all: { ok: false, code: 'missing-left-contact', armKey: 'r1' } };
+  let machine = {
+    phase: 'lift',
+    phaseElapsed: 0,
+    continuousValidSeconds: 0,
+    reseatAttempts: 0,
+    failure: null,
+  };
+  machine = advanceAssemblyStep3Machine(machine, 0.8, invalid);
+  assert.equal(machine.phase, 'lift');
+  machine = advanceAssemblyStep3Machine(machine, 0.5, invalid);
+  assert.equal(machine.phase, 'lift');
+  machine = advanceAssemblyStep3Machine(machine, 0.01, invalid);
+  assert.equal(machine.phase, 'error');
+  assert.equal(machine.failure.code, 'missing-left-contact');
 });
 
 test('Step 3 complete state remains contingent on the retained hammer grasp', () => {

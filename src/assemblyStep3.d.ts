@@ -23,6 +23,7 @@ export type AssemblyStep3FailureCode =
   | 'missing-left-contact'
   | 'missing-right-contact'
   | 'forbidden-contact'
+  | 'deep-penetration'
   | 'empty-closure'
   | 'frame-drift'
   | 'cross-member-rotation'
@@ -67,6 +68,13 @@ export interface AssemblyStep3ArmPlan {
   home: readonly number[];
   hammerLift: readonly number[];
   hammerHandover: readonly number[];
+  hammerPrelift: readonly number[];
+  hammerLiftPath?: readonly (readonly number[])[];
+  hammerHandoverPath?: readonly (readonly number[])[];
+  transportLiftPath?: readonly (readonly number[])[];
+  transportAPath?: readonly (readonly number[])[];
+  transportBPath?: readonly (readonly number[])[];
+  transportDescentPath?: readonly (readonly number[])[];
 }
 
 export interface AssemblyStep3State {
@@ -80,6 +88,8 @@ export interface AssemblyStep3ArmDiagnostics {
   leftContactBodies: string[];
   rightContactBodies: string[];
   aperture: number;
+  leftTargetContactDistance: number | null;
+  rightTargetContactDistance: number | null;
   gripperControl: number;
   verdict: AssemblyStep3Verdict;
 }
@@ -104,8 +114,9 @@ export const ASSEMBLY1_STEP3_DURATIONS: Readonly<{
   graspCheckWindow: 0.25;
   verificationTimeout: 4;
   lift: 3;
-  transferA: 4.5;
-  transferB: 4.5;
+  liftContactGrace: 1.2;
+  transferA: 6.5;
+  transferB: 6.5;
   alignedDescent: 3;
   alignedHold: 1;
   reseatLift: 1.2;
@@ -116,26 +127,32 @@ export const ASSEMBLY1_STEP3_DURATIONS: Readonly<{
   placedHold: 1;
 }>;
 
-export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
-export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
+export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS: readonly [130, 122, 135, 130];
+export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS: readonly [130, 122, 135, 130];
 export const ASSEMBLY1_STEP3_HOME_JOINT_TARGETS: readonly number[];
 export const ASSEMBLY1_STEP3_HAMMER_WAYPOINTS: Readonly<{
   start: readonly [number, number, number];
+  prelift: readonly [number, number, number];
   lift: readonly [number, number, number];
+  liftPath: readonly (readonly [number, number, number])[];
   handover: readonly [number, number, number];
+  handoverPath: readonly (readonly [number, number, number])[];
 }>;
 export const ASSEMBLY1_STEP3_HAMMER_ARM: Readonly<{
   key: 'r1';
   armIndex: 1;
   closingAxisYawDegrees: 90;
+  preliftJointTargets: readonly number[];
   liftJointTargets: readonly number[];
   handoverJointTargets: readonly number[];
 }>;
 
 export const ASSEMBLY1_STEP3_LIMITS: Readonly<{
-  minimumAperture: 0.02;
-  hammerMinimumAperture: 0.012;
-  crossMemberMinimumAperture: 0.005;
+  minimumAperture: 0.035;
+  hammerMinimumAperture: 0.035;
+  crossMemberMinimumAperture: 0.035;
+  maximumContactPenetration: 0.002;
+  contactComparisonEpsilon: 0.00015;
   frameTranslation: 0.008;
   holePlanarDistance: 0.04;
   holeVerticalOffset: 0.025;
@@ -166,8 +183,12 @@ export function evaluateAssemblyStep3Transport(input: {
   rightContactBodies: string[];
   forbiddenBodies: string[];
   aperture: number;
+  leftTargetContactDistance?: number | null;
+  rightTargetContactDistance?: number | null;
   requireBilateralContact?: boolean;
   minimumAperture?: number;
+  maximumContactPenetration?: number;
+  contactComparisonEpsilon?: number;
 }): AssemblyStep3Verdict;
 
 export function evaluateAssemblyStep3Alignment(input: {

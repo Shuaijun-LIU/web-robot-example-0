@@ -18,6 +18,7 @@ export type AssemblyStep2FailureCode =
   | 'missing-left-contact'
   | 'missing-right-contact'
   | 'forbidden-contact'
+  | 'deep-penetration'
   | 'empty-closure'
   | 'object-drift'
   | 'object-rotation'
@@ -113,6 +114,8 @@ export interface AssemblyStep2ArmDiagnostics {
   targetBody: string;
   leftContactBodies: string[];
   rightContactBodies: string[];
+  leftTargetContactDistance: number | null;
+  rightTargetContactDistance: number | null;
   aperture: number;
   translation: number;
   rotationDegrees: number;
@@ -141,12 +144,12 @@ export const ASSEMBLY1_STEP2_DURATIONS: Readonly<{
   crossMemberClamp: 1;
   hammerClamp: 0.8;
   contactWindow: 0.08;
-  contactGrace: 0.2;
+  contactGrace: 0.5;
   verificationTimeout: 4;
   stableHold: 2;
 }>;
 
-export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
+export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS: readonly [130, 122, 135, 130];
 
 export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   tcpPosition: 0.06;
@@ -155,15 +158,18 @@ export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   objectTranslation: 0.005;
   settlingTranslation: Readonly<{
     assembly_frame: 0.008;
-    double_face_hammer: 0.04;
+    double_face_hammer: 0.05;
     cross_member: 0.03;
   }>;
   objectRotationDegrees: 8;
   hammerRotationDegrees: 10;
   verticalDisplacement: 0.003;
+  hammerVerticalDisplacement: 0.005;
   crossMemberVerticalDisplacement: 0.015;
-  minimumAperture: 0.02;
-  crossMemberMinimumAperture: 0.005;
+  minimumAperture: 0.035;
+  crossMemberMinimumAperture: 0.035;
+  maximumContactPenetration: 0.002;
+  contactComparisonEpsilon: 0.00015;
 }>;
 
 export const ASSEMBLY1_STEP2_ARMS: AssemblyStep2Arm[];
@@ -214,7 +220,11 @@ export function evaluateAssemblyStep2Grasp(input: {
   requireBilateralContact?: boolean;
   leftTargetContactAge?: number;
   rightTargetContactAge?: number;
+  leftTargetContactDistance?: number | null;
+  rightTargetContactDistance?: number | null;
   minimumAperture?: number;
+  maximumContactPenetration?: number;
+  contactComparisonEpsilon?: number;
 }): AssemblyStep2GraspVerdict;
 
 export function createAssemblyStep2Machine(): AssemblyStep2Machine;

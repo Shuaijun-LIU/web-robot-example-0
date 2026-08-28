@@ -1,3 +1,9 @@
+export function isPassiveRetainingContactGeom(name) {
+  return name.startsWith('cross_member_grip_lower_guard_')
+    || name.startsWith('cross_member_grip_upper_guard_')
+    || name.startsWith('robotwin_hammer_grip_guard_');
+}
+
 /**
  * Read the scalar fields needed from an embind mjContact and immediately free
  * its temporary handle. `MjContactVec.get()` returns an owned JS wrapper; if
@@ -8,7 +14,7 @@ export function consumeMujocoContact(getContactAt, index) {
   const contact = getContactAt(index);
   if (!contact) return null;
   try {
-    return { geom1: contact.geom1, geom2: contact.geom2 };
+    return { geom1: contact.geom1, geom2: contact.geom2, distance: contact.dist };
   } finally {
     contact.delete?.();
   }

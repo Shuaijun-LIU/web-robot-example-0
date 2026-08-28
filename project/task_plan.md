@@ -26,9 +26,9 @@
 - [x] Phase 15: Implement and production-verify Step 2 physical contact and clamped hold
 - [x] Phase 16: Unitree Action Lab dynamic models, actuator choreography, browser verification, and visual artifacts
 - [x] Phase 17: Implement and production-verify Step 3 dual-arm cross-member placement
-- [ ] Phase 18: Robust Step 2/3 verification, Step 3 release, and Step 4 first-fastener staging
+- [ ] Phase 18: Robust Step 2/3 verification, Step 3 release, and Step 4 first-fastener staging (hammer lift/handover complete; fastener path pending)
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 18 implementation; static contracts and builds pass, but Step 4 physical lift retention remains unresolved in browser verification.
+- Current phase: Phase 18 implementation; Step 3 physical release/home and Step 4 contact-only hammer handover pass, while the full fastener insertion/strike path still needs browser regression.
 - Blockers: None.

@@ -7,6 +7,7 @@ import {
   FRANKA_ASSEMBLY1_LAYOUT,
   FRANKA_ASSEMBLY2_LAYOUT,
   FRANKA_ASSEMBLY_INTERFACE,
+  SHARED_ASSEMBLY1_TOOL_XML,
 } from '../src/frankaAssemblyLayouts.js';
 
 const layoutXml = (layout) => layout.xmlPatches
@@ -26,7 +27,7 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
         : [0.53, -0.42, 0.135],
       manualTool: [-0.53, -0.42, 0.13],
       hammer: layout === FRANKA_ASSEMBLY1_LAYOUT
-        ? [0.642, -0.421, 0.171]
+        ? [0.642, -0.421, 0.144]
         : [0.65, 0, 0.229],
       fasteners: layout === FRANKA_ASSEMBLY1_LAYOUT
         ? [0.18, 0.48, 0.125]
@@ -109,6 +110,13 @@ test('cross-member target rests on top of the frame instead of intersecting its 
   assert.ok(crossMemberBottom >= frameTop - 1e-9);
 });
 
+test('Assembly1 south frame rail exposes a nominal 50 mm physical grasp profile', () => {
+  assert.match(
+    layoutXml(FRANKA_ASSEMBLY1_LAYOUT),
+    /name="frame_rail_south_outer"[^>]*size="\.34 \.018 \.025"/,
+  );
+});
+
 test('cross-member uses underside grasp pockets and integral hollow round/square plates', () => {
   const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
   const pickupGuides = {
@@ -133,10 +141,13 @@ test('cross-member uses underside grasp pockets and integral hollow round/square
   assert.doesNotMatch(xml, /cross_member_grip_cap_(?:north|south)/);
   for (const side of ['north', 'south']) {
     assert.match(xml, new RegExp(
-      `name="cross_member_grip_recess_bridge_${side}"[^>]*size="\\.014 \\.025 \\.012"[^>]*friction="10 2 1"[^>]*condim="6"`,
+      `name="cross_member_grip_recess_bridge_${side}"[^>]*size="\\.012 \\.025 \\.012"[^>]*friction="10 2 1"[^>]*condim="6"[^>]*solref="\\.002 1"`,
     ));
     assert.match(xml, new RegExp(
-      `name="cross_member_grip_lower_guard_${side}"[^>]*size="\\.020 \\.021 \\.004"[^>]*mass="\\.002"[^>]*friction="10 2 1"[^>]*condim="6"`,
+      `name="cross_member_grip_lower_guard_${side}"[^>]*size="\\.026 \\.021 \\.004"[^>]*mass="\\.002"[^>]*friction="10 2 1"[^>]*condim="6"`,
+    ));
+    assert.match(xml, new RegExp(
+      `name="cross_member_grip_upper_guard_${side}"[^>]*pos="0 ${side === 'north' ? '\\.1275' : '-\\.1275'} \\.024"[^>]*size="\\.026 \\.021 \\.004"[^>]*mass="\\.002"[^>]*friction="10 2 1"[^>]*condim="6"`,
     ));
     for (const opening of ['left', 'right']) {
       assert.match(xml, new RegExp(
@@ -145,7 +156,7 @@ test('cross-member uses underside grasp pockets and integral hollow round/square
     }
     for (const flange of ['left', 'right']) {
       assert.match(xml, new RegExp(
-        `name="cross_member_flange_${flange}_${side}_grip_recess"[^>]*pos="[^\"]+ -?0?\\.1275 0?\\.006"[^>]*size="\\.014 0?\\.025 0?\\.012"[^>]*friction="10 2 1"[^>]*condim="6"`,
+        `name="cross_member_flange_${flange}_${side}_grip_recess"[^>]*pos="[^\"]+ -?0?\\.1275 0?\\.006"[^>]*size="\\.0045 0?\\.025 0?\\.012"[^>]*friction="10 2 1"[^>]*condim="6"[^>]*solref="\\.002 1"`,
       ));
     }
     for (const edge of ['outer', 'inner', 'left', 'center', 'right']) {
@@ -161,33 +172,30 @@ test('cross-member uses underside grasp pockets and integral hollow round/square
   }
 });
 
-test('Assembly1 exposes stable faceted hand tools with recognizable detail', () => {
+test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy tool set', () => {
   const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
-  assert.match(xml, /mesh="manual_screwdriver_octagonal_handle"/);
-  assert.match(xml, /<joint name="manual_screwdriver_free" type="free" damping="\.08"\/>/);
+  for (const tool of ['screwdriver', 'drill', 'hammer']) {
+    for (const role of ['primary', 'dark', 'metal']) {
+      assert.match(xml, new RegExp(`mesh="robotwin_${tool}_${role}"`));
+    }
+    assert.match(xml, new RegExp(`name="robotwin_${tool}_collision"`));
+  }
+  assert.doesNotMatch(xml, /manual_screwdriver_octagonal_handle|hammer_handle_core/);
+  assert.match(SHARED_ASSEMBLY1_TOOL_XML, /manual_screwdriver_octagonal_handle/);
+  assert.match(SHARED_ASSEMBLY1_TOOL_XML, /name="hammer_handle_core"/);
   assert.match(
     xml,
-    /name="manual_screwdriver_handle"[^>]*contype="0"[^>]*conaffinity="0"/,
-  );
-  assert.match(
-    xml,
-    /name="manual_screwdriver_handle_collision" type="box"[^>]*size="\.072 \.022 \.022"/,
-  );
-  assert.match(xml, /name="torque_driver_trigger"/);
-  assert.match(xml, /name="torque_driver_vent_/);
-  assert.match(
-    xml,
-    /<body name="torque_driver" pos="\.65 0 \.238" euler="90 0 0">/,
+    /<body name="torque_driver" pos="\.65 0 \.222">/,
   );
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'hammer_pickup_cradle_tail'
-      && JSON.stringify(size) === JSON.stringify([.025, .04, .015])
-      && JSON.stringify(position) === JSON.stringify([.495, -.421, .133]),
+      && JSON.stringify(size) === JSON.stringify([.05, .04, .015])
+      && JSON.stringify(position) === JSON.stringify([.52, -.421, .109]),
   ));
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'hammer_pickup_cradle_head'
-      && JSON.stringify(size) === JSON.stringify([.025, .05, .015])
-      && JSON.stringify(position) === JSON.stringify([.717, -.421, .129]),
+      && JSON.stringify(size) === JSON.stringify([.05, .05, .015])
+      && JSON.stringify(position) === JSON.stringify([.70, -.421, .101]),
   ));
   assert.ok(!FRANKA_ASSEMBLY2_LAYOUT.sceneObjects.some(
     ({ name }) => name.startsWith('torque_driver_cradle_'),
@@ -196,33 +204,65 @@ test('Assembly1 exposes stable faceted hand tools with recognizable detail', () 
     layoutXml(FRANKA_ASSEMBLY2_LAYOUT),
     /<body name="torque_driver" pos="\.53 -\.42 \.166" euler="90 0 0">/,
   );
-  assert.match(xml, /<body name="double_face_hammer" pos="\.642 -\.421 \.171">/);
-  assert.match(xml, /name="hammer_eye"/);
+  assert.ok(!FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(({ name }) => name === 'tool_mat_hammer'));
+  assert.match(xml, /<body name="double_face_hammer" pos="\.642 -\.421 \.148">/);
   assert.match(
     xml,
-    /name="hammer_handle_grip"[^>]*pos="-\.0655 0 -\.005"[^>]*size="\.0905 \.021 \.018"[^>]*mass="\.003"[^>]*friction="10 2 1"[^>]*condim="6"/,
+    /name="robotwin_hammer_collision" type="box"[^>]*pos="-\.04 0 -\.008"[^>]*size="\.10 \.020 \.016"[^>]*mass="\.04"[^>]*friction="10 2 1"[^>]*condim="6"[^>]*solref="\.002 1"/,
   );
-  assert.match(xml, /name="hammer_handle_core"[^>]*mass="\.003"/);
-  for (const guard of ['upper', 'lower']) {
-    assert.match(xml, new RegExp(
-      `name="hammer_grip_${guard}_guard"[^>]*size="\\.045 \\.026 \\.004"[^>]*mass="\\.001"[^>]*friction="10 2 1"[^>]*condim="6"`,
-    ));
-  }
-  assert.match(xml, /name="hammer_cheek"/);
-  assert.match(xml, /name="hammer_striking_face_a" type="cylinder"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
-  assert.match(xml, /name="hammer_striking_face_a"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
-  assert.match(xml, /name="hammer_striking_face_b"[^>]*fromto="\.075 \.053 0 \.075 \.073 0"/);
-  assert.doesNotMatch(xml, /claw/i);
+  assert.match(
+    xml,
+    /name="robotwin_hammer_handle_extension"[^>]*pos="-\.16 0 -\.008"[^>]*size="\.05 \.020 \.016"[^>]*friction="10 2 1"/,
+  );
+  assert.match(xml, /name="robotwin_hammer_receiver_guard_tail"[^>]*pos="-\.195 0 -\.008"/);
+  assert.match(xml, /name="robotwin_hammer_receiver_guard_head"[^>]*pos="-\.125 0 -\.008"/);
+  assert.match(xml, /name="robotwin_hammer_head_collision"[^>]*mass="\.04"/);
+  assert.match(
+    xml,
+    /name="robotwin_hammer_grip_guard_tail" type="box"[^>]*pos="-\.052 0 -\.008"[^>]*size="\.004 \.020 \.016"[^>]*friction="10 2 1"[^>]*condim="6"/,
+  );
+  assert.match(
+    xml,
+    /name="robotwin_hammer_grip_guard_head" type="box"[^>]*pos="\.003 0 -\.008"[^>]*size="\.004 \.020 \.016"[^>]*friction="10 2 1"[^>]*condim="6"/,
+  );
+  assert.match(
+    xml,
+    /name="robotwin_hammer_grip_guard_lower" type="box"[^>]*pos="-\.0245 0 -\.028"[^>]*size="\.0275 \.025 \.004"/,
+  );
+  assert.match(
+    xml,
+    /name="robotwin_hammer_grip_guard_upper" type="box"[^>]*pos="-\.0245 0 \.012"[^>]*size="\.0275 \.025 \.004"/,
+  );
+  assert.doesNotMatch(xml, /<body name="claw_hammer"/);
 });
 
-test('both Assembly layouts strengthen physical finger contact without attachment', () => {
+test('Assembly layouts strengthen physical finger contact without attachment', () => {
+  assert.match(
+    layoutXml(FRANKA_ASSEMBLY1_LAYOUT),
+    /name="gripper" tendon="split" forcerange="-180 180"/,
+  );
+  assert.match(
+    layoutXml(FRANKA_ASSEMBLY2_LAYOUT),
+    /name="gripper" tendon="split" forcerange="-100 100"/,
+  );
+  assert.match(
+    layoutXml(FRANKA_ASSEMBLY1_LAYOUT),
+    /gainprm="\.23529411765 0 0" biasprm="0 -1500 -40"/,
+  );
+  assert.match(
+    layoutXml(FRANKA_ASSEMBLY2_LAYOUT),
+    /gainprm="\.23529411765 0 0" biasprm="0 -1500 -40"/,
+  );
   for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
     const xml = layoutXml(layout);
-    assert.match(xml, /gainprm="\.23529411765 0 0" biasprm="0 -1500 -40"/);
-    assert.match(
-      xml,
-      /fingertip_pad_collision_1[\s\S]*friction="10 \.5 \.1" condim="6" solref="\.002 1"/,
-    );
+    for (let pad = 1; pad <= 5; pad += 1) {
+      assert.match(
+        xml,
+        new RegExp(
+          `fingertip_pad_collision_${pad}[\\s\\S]*?friction="10 \\.5 \\.1" condim="6" solref="\\.002 1"`,
+        ),
+      );
+    }
     assert.doesNotMatch(xml, /weld|equality[^>]*tool|attach_tool|magnet/i);
   }
 });

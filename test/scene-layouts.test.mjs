@@ -60,14 +60,20 @@ test('Franka assembly scene stages a frame, installable parts, separated tools, 
       ...expectedStations,
       ...(layout === FRANKA_ASSEMBLY1_LAYOUT ? {
         poweredTool: [0.65, 0, 0.238],
-        hammer: [0.642, -0.421, 0.171],
+        hammer: [0.642, -0.421, 0.144],
         fasteners: [0.18, 0.48, 0.125],
       } : {}),
     });
     const sceneNames = layout.sceneObjects.map(({ name }) => name);
     assert.ok(sceneNames.includes('assembly_platform'));
     assert.ok(sceneNames.includes('handover_pad'));
-    assert.ok(sceneNames.includes('tool_mat_hammer'));
+    if (layout === FRANKA_ASSEMBLY1_LAYOUT) {
+      assert.ok(sceneNames.includes('hammer_pickup_cradle_tail'));
+      assert.ok(sceneNames.includes('hammer_pickup_cradle_head'));
+      assert.equal(sceneNames.includes('tool_mat_hammer'), false);
+    } else {
+      assert.ok(sceneNames.includes('tool_mat_hammer'));
+    }
     assert.equal(sceneNames.some((name) => name.endsWith('_cube')), false);
 
     const workcellXml = layout.xmlPatches
@@ -134,6 +140,10 @@ test('XLeRobot uses two opposing robots and an arm-height table', () => {
 
 test('runtime configs consume all five shared layout definitions', async () => {
   const source = await readFile(new URL('../src/configs.ts', import.meta.url), 'utf8');
+  const assembly1Config = source.slice(
+    source.indexOf('frankaAssembly1:'),
+    source.indexOf('frankaAssembly2:'),
+  );
 
   assert.match(source, /FRANKA_LAYOUT\.xmlPatches/);
   assert.match(source, /FRANKA_ASSEMBLY1_LAYOUT\.xmlPatches/);
@@ -143,6 +153,7 @@ test('runtime configs consume all five shared layout definitions', async () => {
   assert.match(source, /controlTargets:\s*createFrankaTargets\(\)/);
   assert.match(source, /frankaAssembly1:[\s\S]*controlFamily:\s*'franka'/);
   assert.match(source, /frankaAssembly2:[\s\S]*controlFamily:\s*'franka'/);
+  assert.match(assembly1Config, /src:\s*FRANKA_ASSEMBLY2_BASE/);
   assert.match(source, /controlTargets:\s*createSO101Targets\(\)/);
   assert.match(source, /controlTargets:\s*createXLeRobotTargets\(\)/);
 });

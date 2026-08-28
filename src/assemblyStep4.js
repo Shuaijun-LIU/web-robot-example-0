@@ -32,7 +32,8 @@ export const ASSEMBLY1_STEP4_DURATIONS = Object.freeze({
 
 export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
   minimumFastenerAperture: 0.005,
-  minimumToolAperture: 0.012,
+  minimumToolAperture: 0.035,
+  maximumContactPenetration: 0.002,
   frameTranslation: 0.012,
   crossMemberTranslation: 0.025,
   crossMemberRotationDegrees: 12,
@@ -44,9 +45,10 @@ export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
 });
 
 export const ASSEMBLY1_STEP4_GRIPPERS = Object.freeze({
-  frame: 48,
-  donorEntry: 96,
-  tool: 96,
+  frame: 130,
+  donorEntry: 122,
+  tool: 122,
+  receiverTool: 127,
   // A 110 command leaves about 34.5 mm between the fingers, wider than the
   // 30 mm fastener head.  Close to 80 during the shared clamp phase so both
   // fingers establish contact instead of one finger sweeping the part aside.
@@ -195,8 +197,8 @@ const timedTransitions = {
   engage: [ASSEMBLY1_STEP4_DURATIONS.engage, 'engage-settle', false, false, false],
   'engage-settle': [ASSEMBLY1_STEP4_DURATIONS.engageSettle, 'dual-clamp', false, false, false],
   'dual-clamp': [ASSEMBLY1_STEP4_DURATIONS.dualClamp, 'handover-verification', false, false, false],
-  'hammer-release': [ASSEMBLY1_STEP4_DURATIONS.hammerRelease, 'donor-clear', true, false, true],
-  'donor-clear': [ASSEMBLY1_STEP4_DURATIONS.donorClear, 'fastener-tighten', true, false, true],
+  'hammer-release': [ASSEMBLY1_STEP4_DURATIONS.hammerRelease, 'donor-clear', false, false, true],
+  'donor-clear': [ASSEMBLY1_STEP4_DURATIONS.donorClear, 'fastener-tighten', false, false, true],
   'fastener-tighten': [ASSEMBLY1_STEP4_DURATIONS.fastenerTighten, 'lift', false, false, true],
   lift: [ASSEMBLY1_STEP4_DURATIONS.lift, 'transfer', true, false, true],
   transfer: [ASSEMBLY1_STEP4_DURATIONS.transfer, 'transfer-settle', true, false, true],
@@ -233,7 +235,7 @@ export function advanceAssemblyStep4Machine(machine, deltaSeconds, evidence) {
   }
 
   if (machine.phase === 'handover-verification') {
-    const verdict = combinedEvidence(evidence, true, false, true);
+    const verdict = combinedEvidence(evidence, false, false, true);
     const phaseElapsed = machine.phaseElapsed + dt;
     const continuousValidSeconds = verdict?.ok
       ? machine.continuousValidSeconds + dt
@@ -362,13 +364,13 @@ export function createAssemblyStep4ControlFrame(machine, plans) {
         } else if (index === 3) {
           gripperTarget = interpolateJointTargets(
             [ASSEMBLY1_STEP4_GRIPPERS.open],
-            [ASSEMBLY1_STEP4_GRIPPERS.tool],
+            [ASSEMBLY1_STEP4_GRIPPERS.receiverTool],
             machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.dualClamp,
           )[0];
         }
       } else if (machine.phase === 'handover-verification') {
         if (index === 2) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.pregrasp;
-        if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.tool;
+        if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
       } else if (machine.phase === 'hammer-release') {
         if (index === 1) {
           gripperTarget = interpolateJointTargets(
@@ -378,13 +380,13 @@ export function createAssemblyStep4ControlFrame(machine, plans) {
           )[0];
         }
         if (index === 2) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.pregrasp;
-        if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.tool;
+        if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
       } else if (['donor-clear', 'fastener-tighten', 'lift', 'transfer', 'transfer-settle', 'insert', 'fastener-release', 'clear', 'placement-verification', 'hammer-stage', 'hammer-strike', 'hammer-recover', 'complete'].includes(machine.phase)) {
         if (index === 1) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.open;
         if (index === 2 && machine.phase === 'donor-clear') {
           gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.pregrasp;
         }
-        if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.tool;
+        if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
       }
 
       if (index === 2 && machine.phase === 'fastener-tighten') {

@@ -304,6 +304,7 @@ for (const [transportIndex, contract] of ASSEMBLY1_STEP3_TRANSPORT_ARMS.entries(
 
   const targets = {};
   for (const [waypointName, recordedName] of [
+    ['prelift', 'preliftJointTargets'],
     ['lift', 'liftJointTargets'],
     ['handover', 'handoverJointTargets'],
   ]) {

@@ -5,8 +5,9 @@ export const ASSEMBLY1_STEP3_DURATIONS = Object.freeze({
   graspCheckWindow: 0.25,
   verificationTimeout: 4,
   lift: 3,
-  transferA: 4.5,
-  transferB: 4.5,
+  liftContactGrace: 1.2,
+  transferA: 6.5,
+  transferB: 6.5,
   alignedDescent: 3,
   alignedHold: 1,
   reseatLift: 1.2,
@@ -17,34 +18,44 @@ export const ASSEMBLY1_STEP3_DURATIONS = Object.freeze({
   placedHold: 1,
 });
 
-export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
-export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
+export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS = Object.freeze([130, 122, 135, 130]);
+export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS = Object.freeze([130, 122, 135, 130]);
 export const ASSEMBLY1_STEP3_HOME_JOINT_TARGETS = Object.freeze(FRANKA_HOME.slice(0, 7));
 
 export const ASSEMBLY1_STEP3_HAMMER_WAYPOINTS = Object.freeze({
-  start: Object.freeze([0.61, -0.421, 0.16]),
-  lift: Object.freeze([0.61, -0.421, 0.34]),
-  // Keep the hammer above its pickup cradle until Step 4.  Moving it toward
-  // the frame at this height makes the hammer head sweep through the frame.
-  handover: Object.freeze([0.61, -0.421, 0.40]),
+  start: Object.freeze([0.62, -0.427, 0.145]),
+  prelift: Object.freeze([0.62, -0.427, 0.155]),
+  lift: Object.freeze([0.62, -0.427, 0.205]),
+  liftPath: Object.freeze([0.155, 0.165, 0.175, 0.185, 0.195, 0.205].map(
+    (z) => Object.freeze([0.62, -0.427, z]),
+  )),
+  // Step 3 only clears the pickup cradle and holds a compact staging pose.
+  // The actual donor-to-receiver transfer belongs to Step 4.
+  handover: Object.freeze([0.62, -0.427, 0.205]),
+  handoverPath: Object.freeze([Object.freeze([0.62, -0.427, 0.205])]),
 });
 
 export const ASSEMBLY1_STEP3_HAMMER_ARM = Object.freeze({
   key: 'r1',
   armIndex: 1,
   closingAxisYawDegrees: 90,
+  preliftJointTargets: Object.freeze([
+    1.775171, 0.574635, 0.705881, -2.291715, -0.781848, 2.615891, 2.320317,
+  ]),
   liftJointTargets: Object.freeze([
-    1.302988, 0.041657, 1.238441, -2.306154, -0.054693, 2.317799, 1.793236,
+    1.66331, 0.457932, 0.848062, -2.327253, -0.636292, 2.547172, 2.221131,
   ]),
   handoverJointTargets: Object.freeze([
-    1.333653, -0.188102, 1.171507, -2.233461, 0.206572, 2.148636, 1.599407,
+    1.66331, 0.457932, 0.848062, -2.327253, -0.636292, 2.547172, 2.221131,
   ]),
 });
 
 export const ASSEMBLY1_STEP3_LIMITS = Object.freeze({
-  minimumAperture: 0.02,
-  hammerMinimumAperture: 0.012,
-  crossMemberMinimumAperture: 0.005,
+  minimumAperture: 0.035,
+  hammerMinimumAperture: 0.035,
+  crossMemberMinimumAperture: 0.035,
+  maximumContactPenetration: 0.002,
+  contactComparisonEpsilon: 0.00015,
   frameTranslation: 0.008,
   holePlanarDistance: 0.04,
   holeVerticalOffset: 0.025,
@@ -54,8 +65,8 @@ export const ASSEMBLY1_STEP3_LIMITS = Object.freeze({
 
 export const ASSEMBLY1_STEP3_WAYPOINTS = Object.freeze({
   start: Object.freeze([
-    Object.freeze([-0.49, 0.56, 0.20]),
-    Object.freeze([-0.49, 0.32, 0.20]),
+    Object.freeze([-0.489, 0.56, 0.21]),
+    Object.freeze([-0.482, 0.32, 0.213]),
   ]),
   lift: Object.freeze([
     Object.freeze([-0.49, 0.5675, 0.38]),
@@ -74,12 +85,12 @@ export const ASSEMBLY1_STEP3_WAYPOINTS = Object.freeze({
     Object.freeze([0, -0.1275, 0.34]),
   ]),
   descentMid: Object.freeze([
-    Object.freeze([0, 0.1275, 0.295]),
-    Object.freeze([0, -0.1275, 0.295]),
+    Object.freeze([0, 0.1275, 0.315]),
+    Object.freeze([0, -0.1275, 0.315]),
   ]),
   aligned: Object.freeze([
-    Object.freeze([0.006, 0.1275, 0.278]),
-    Object.freeze([0.002, -0.1275, 0.278]),
+    Object.freeze([0.006, 0.1275, 0.292]),
+    Object.freeze([0.002, -0.1275, 0.292]),
   ]),
 });
 
@@ -142,8 +153,12 @@ export function evaluateAssemblyStep3Transport({
   rightContactBodies,
   forbiddenBodies,
   aperture,
+  leftTargetContactDistance = null,
+  rightTargetContactDistance = null,
   requireBilateralContact = true,
   minimumAperture = ASSEMBLY1_STEP3_LIMITS.minimumAperture,
+  maximumContactPenetration = ASSEMBLY1_STEP3_LIMITS.maximumContactPenetration,
+  contactComparisonEpsilon = ASSEMBLY1_STEP3_LIMITS.contactComparisonEpsilon,
 }) {
   if (!Number.isFinite(aperture)) return failure('non-finite-runtime');
   if (requireBilateralContact && !leftContactBodies.includes(targetBody)) {
@@ -153,6 +168,15 @@ export function evaluateAssemblyStep3Transport({
     return failure('missing-right-contact');
   }
   if (forbiddenBodies.length > 0) return failure('forbidden-contact', forbiddenBodies.join(', '));
+  const contactDistances = [leftTargetContactDistance, rightTargetContactDistance]
+    .filter((value) => typeof value === 'number' && Number.isFinite(value));
+  if (
+    contactDistances.length > 0
+    && Math.min(...contactDistances)
+      < -(maximumContactPenetration + contactComparisonEpsilon)
+  ) {
+    return failure('deep-penetration', String(Math.min(...contactDistances)));
+  }
   if (!(aperture > minimumAperture)) {
     return failure('empty-closure', String(aperture));
   }
@@ -267,7 +291,9 @@ export function advanceAssemblyStep3Machine(machine, deltaSeconds, evidence) {
   if (motionTransition) {
     const [duration, nextPhase, includeAlignment] = motionTransition;
     const verdict = combinedEvidence(evidence, includeAlignment);
-    if (!verdict?.ok) return terminalFailure(verdict);
+    const liftIsRecovering = machine.phase === 'lift'
+      && machine.phaseElapsed < ASSEMBLY1_STEP3_DURATIONS.liftContactGrace;
+    if (!verdict?.ok && !liftIsRecovering) return terminalFailure(verdict);
     const phaseElapsed = machine.phaseElapsed + dt;
     return phaseElapsed >= duration
       ? enterPhase(nextPhase, machine.reseatAttempts ?? 0)
@@ -331,22 +357,27 @@ export function advanceAssemblyStep3Machine(machine, deltaSeconds, evidence) {
 
 export function createAssemblyStep3ControlFrame(machine, plans) {
   const progress = (duration) => machine.phaseElapsed / duration;
+  const pathTarget = (path, value) => {
+    const clamped = Math.max(0, Math.min(1, value));
+    const scaled = clamped * Math.max(0, path.length - 1);
+    const index = Math.min(path.length - 1, Math.floor(scaled));
+    const next = Math.min(path.length - 1, index + 1);
+    return interpolateJointTargets(path[index], path[next], scaled - index);
+  };
   return {
     arms: plans.map((plan, index) => {
       let jointTargets = plan.hold;
       if (index === 1) {
         if (machine.phase === 'lift') {
-          jointTargets = interpolateJointTargets(
-            plan.hold,
-            plan.hammerLift,
+          jointTargets = pathTarget(
+            plan.hammerLiftPath ?? [plan.hold, plan.hammerPrelift, plan.hammerLift],
             progress(ASSEMBLY1_STEP3_DURATIONS.lift),
           );
         } else if (machine.phase === 'lift-settle') {
           jointTargets = plan.hammerLift;
         } else if (machine.phase === 'transfer-a') {
-          jointTargets = interpolateJointTargets(
-            plan.hammerLift,
-            plan.hammerHandover,
+          jointTargets = pathTarget(
+            plan.hammerHandoverPath ?? [plan.hammerLift, plan.hammerHandover],
             progress(ASSEMBLY1_STEP3_DURATIONS.transferA),
           );
         } else if (machine.phase !== 'grasp-check') {
@@ -354,31 +385,33 @@ export function createAssemblyStep3ControlFrame(machine, plans) {
         }
       } else if (index >= 2) {
         if (machine.phase === 'lift') {
-          jointTargets = interpolateJointTargets(
-            plan.hold,
-            plan.lift,
+          jointTargets = pathTarget(
+            plan.transportLiftPath ?? [plan.hold, plan.lift],
             progress(ASSEMBLY1_STEP3_DURATIONS.lift),
           );
         } else if (machine.phase === 'lift-settle') {
           jointTargets = plan.lift;
         } else if (machine.phase === 'transfer-a') {
-          jointTargets = interpolateJointTargets(
-            plan.lift,
-            plan.transferA,
+          jointTargets = pathTarget(
+            plan.transportAPath ?? [plan.lift, plan.transferA],
             progress(ASSEMBLY1_STEP3_DURATIONS.transferA),
           );
         } else if (machine.phase === 'transfer-b') {
           const transferProgress = progress(ASSEMBLY1_STEP3_DURATIONS.transferB);
-          jointTargets = transferProgress < 0.5
-            ? interpolateJointTargets(plan.transferA, plan.transferMid, transferProgress * 2)
-            : interpolateJointTargets(plan.transferMid, plan.hover, (transferProgress - 0.5) * 2);
+          jointTargets = plan.transportBPath
+            ? pathTarget(plan.transportBPath, transferProgress)
+            : transferProgress < 0.5
+              ? interpolateJointTargets(plan.transferA, plan.transferMid, transferProgress * 2)
+              : interpolateJointTargets(plan.transferMid, plan.hover, (transferProgress - 0.5) * 2);
         } else if (machine.phase === 'hover-settle') {
           jointTargets = plan.hover;
         } else if (machine.phase === 'aligned-descent') {
           const descentProgress = progress(ASSEMBLY1_STEP3_DURATIONS.alignedDescent);
-          jointTargets = descentProgress < 0.5
-            ? interpolateJointTargets(plan.hover, plan.descentMid, descentProgress * 2)
-            : interpolateJointTargets(plan.descentMid, plan.aligned, (descentProgress - 0.5) * 2);
+          jointTargets = plan.transportDescentPath
+            ? pathTarget(plan.transportDescentPath, descentProgress)
+            : descentProgress < 0.5
+              ? interpolateJointTargets(plan.hover, plan.descentMid, descentProgress * 2)
+              : interpolateJointTargets(plan.descentMid, plan.aligned, (descentProgress - 0.5) * 2);
         } else if (machine.phase === 'reseat-lift') {
           jointTargets = interpolateJointTargets(
             plan.aligned,

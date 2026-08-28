@@ -17,7 +17,15 @@ declare global {
       getSiteOrientations(names: string[]): Record<string, number[]>;
       getBodyOrientations(names: string[]): Record<string, [number, number, number, number]>;
       getJointPositions(names: string[]): Record<string, number>;
-      getContacts(): Array<{ geom1: number; geom2: number; body1: string; body2: string }>;
+      getContacts(): Array<{
+        geom1: number;
+        geom2: number;
+        geomName1: string;
+        geomName2: string;
+        distance: number;
+        body1: string;
+        body2: string;
+      }>;
       reset(): void;
       moveIkTargetBy(x: number, y: number, z: number): boolean;
       runAssemblyStep1(): boolean;

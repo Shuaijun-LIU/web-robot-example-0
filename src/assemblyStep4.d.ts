@@ -58,6 +58,8 @@ export interface AssemblyStep4RuntimeDiagnostics {
   hammerAperture: number;
   hammerLeftContact: boolean;
   hammerRightContact: boolean;
+  hammerLeftContactDistance: number | null;
+  hammerRightContactDistance: number | null;
 }
 
 export const ASSEMBLY1_STEP4_DURATIONS: Readonly<Record<string, number>>;

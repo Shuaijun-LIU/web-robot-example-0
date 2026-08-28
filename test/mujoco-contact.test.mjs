@@ -1,17 +1,30 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { consumeMujocoContact, consumeMujocoContacts } from '../src/mujocoContact.js';
+import {
+  consumeMujocoContact,
+  consumeMujocoContacts,
+  isPassiveRetainingContactGeom,
+} from '../src/mujocoContact.js';
+
+test('passive anti-slip retainers are distinguished from primary grasp surfaces', () => {
+  assert.equal(isPassiveRetainingContactGeom('cross_member_grip_lower_guard_south'), true);
+  assert.equal(isPassiveRetainingContactGeom('cross_member_grip_upper_guard_north'), true);
+  assert.equal(isPassiveRetainingContactGeom('robotwin_hammer_grip_guard_tail'), true);
+  assert.equal(isPassiveRetainingContactGeom('cross_member_flange_right_south_grip_recess'), false);
+  assert.equal(isPassiveRetainingContactGeom('robotwin_hammer_collision'), false);
+});
 
 test('contact reads release the temporary WASM handle', () => {
   let deletes = 0;
   const pair = consumeMujocoContact(() => ({
     geom1: 12,
     geom2: 34,
+    dist: -0.00125,
     delete: () => { deletes += 1; },
   }), 0);
 
-  assert.deepEqual(pair, { geom1: 12, geom2: 34 });
+  assert.deepEqual(pair, { geom1: 12, geom2: 34, distance: -0.00125 });
   assert.equal(deletes, 1);
 });
 
@@ -35,8 +48,8 @@ test('contact array reads release both item handles and the vector wrapper', () 
   let itemDeletes = 0;
   let vectorDeletes = 0;
   const contacts = [
-    { geom1: 1, geom2: 2, delete: () => { itemDeletes += 1; } },
-    { geom1: 3, geom2: 4, delete: () => { itemDeletes += 1; } },
+    { geom1: 1, geom2: 2, dist: -0.0004, delete: () => { itemDeletes += 1; } },
+    { geom1: 3, geom2: 4, dist: 0, delete: () => { itemDeletes += 1; } },
   ];
   const vector = {
     get: (index) => contacts[index],
@@ -44,8 +57,8 @@ test('contact array reads release both item handles and the vector wrapper', () 
   };
 
   assert.deepEqual(consumeMujocoContacts(vector, contacts.length), [
-    { geom1: 1, geom2: 2 },
-    { geom1: 3, geom2: 4 },
+    { geom1: 1, geom2: 2, distance: -0.0004 },
+    { geom1: 3, geom2: 4, distance: 0 },
   ]);
   assert.equal(itemDeletes, 2);
   assert.equal(vectorDeletes, 1);

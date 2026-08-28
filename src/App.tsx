@@ -318,6 +318,9 @@ function SceneChildren({
         return {
           geom1: contact.geom1,
           geom2: contact.geom2,
+          geomName1: modelName(model, model.name_geomadr[contact.geom1]),
+          geomName2: modelName(model, model.name_geomadr[contact.geom2]),
+          distance: contact.distance,
           body1: modelName(model, model.name_bodyadr[body1]),
           body2: modelName(model, model.name_bodyadr[body2]),
         };

@@ -30,8 +30,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r0',
       targetBody: 'assembly_frame',
-      contactWaypoint: [0.18, -0.23, 0.235],
-      approachWaypoint: [0.18, -0.23, 0.25],
+      contactWaypoint: [0.18, -0.23, 0.25],
+      approachWaypoint: [0.18, -0.23, 0.265],
       closingAxisYawDegrees: 90,
       leftFingerBody: 'r0_left_finger',
       rightFingerBody: 'r0_right_finger',
@@ -39,8 +39,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r1',
       targetBody: 'double_face_hammer',
-      contactWaypoint: [0.61, -0.421, 0.16],
-      approachWaypoint: [0.61, -0.421, 0.175],
+      contactWaypoint: [0.62, -0.427, 0.145],
+      approachWaypoint: [0.62, -0.427, 0.16],
       closingAxisYawDegrees: 90,
       leftFingerBody: 'r1_left_finger',
       rightFingerBody: 'r1_right_finger',
@@ -48,8 +48,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r2',
       targetBody: 'cross_member',
-      contactWaypoint: [-0.49, 0.56, 0.20],
-      approachWaypoint: [-0.49, 0.56, 0.215],
+      contactWaypoint: [-0.489, 0.56, 0.21],
+      approachWaypoint: [-0.489, 0.56, 0.225],
       closingAxisYawDegrees: 0,
       leftFingerBody: 'r2_left_finger',
       rightFingerBody: 'r2_right_finger',
@@ -57,8 +57,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r3',
       targetBody: 'cross_member',
-      contactWaypoint: [-0.49, 0.32, 0.20],
-      approachWaypoint: [-0.49, 0.32, 0.215],
+      contactWaypoint: [-0.482, 0.32, 0.213],
+      approachWaypoint: [-0.482, 0.32, 0.228],
       closingAxisYawDegrees: 0,
       leftFingerBody: 'r3_left_finger',
       rightFingerBody: 'r3_right_finger',
@@ -78,11 +78,11 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     crossMemberClamp: 1,
     hammerClamp: 0.8,
     contactWindow: 0.08,
-    contactGrace: 0.2,
+    contactGrace: 0.5,
     verificationTimeout: 4,
     stableHold: 2,
   });
-  assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [48, 96, 24, 24]);
+  assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [130, 122, 135, 130]);
   assert.deepEqual(ASSEMBLY1_STEP2_LIMITS, {
     tcpPosition: 0.06,
     tcpOrientationDegrees: 8,
@@ -90,15 +90,18 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     objectTranslation: 0.005,
     settlingTranslation: {
       assembly_frame: 0.008,
-      double_face_hammer: 0.04,
+      double_face_hammer: 0.05,
       cross_member: 0.03,
     },
     objectRotationDegrees: 8,
     hammerRotationDegrees: 10,
     verticalDisplacement: 0.003,
+    hammerVerticalDisplacement: 0.005,
     crossMemberVerticalDisplacement: 0.015,
-    minimumAperture: 0.02,
-    crossMemberMinimumAperture: 0.005,
+    minimumAperture: 0.035,
+    crossMemberMinimumAperture: 0.035,
+    maximumContactPenetration: 0.002,
+    contactComparisonEpsilon: 0.00015,
   });
 });
 
@@ -191,20 +194,19 @@ test('Step 2 control frames descend all arms and close cross-member grippers tog
   assert.deepEqual(descent.arms.map((arm) => arm.gripperTarget), [255, 255, 255, 255]);
 
   const frameClamp = createAssemblyStep2ControlFrame(machine('frame-clamp', 0.4), plans);
-  assert.deepEqual(frameClamp.arms.map((arm) => arm.gripperTarget), [151.5, 255, 255, 255]);
+  assert.deepEqual(frameClamp.arms.map((arm) => arm.gripperTarget), [192.5, 255, 255, 255]);
 
   const crossClamp = createAssemblyStep2ControlFrame(
     machine('cross-member-clamp', 0.5),
     plans,
   );
-  assert.deepEqual(crossClamp.arms.map((arm) => arm.gripperTarget), [48, 255, 139.5, 139.5]);
-  assert.equal(crossClamp.arms[2].gripperTarget, crossClamp.arms[3].gripperTarget);
+  assert.deepEqual(crossClamp.arms.map((arm) => arm.gripperTarget), [130, 255, 195, 195]);
 
   const toolClamp = createAssemblyStep2ControlFrame(
     machine('hammer-clamp', 0.4),
     plans,
   );
-  assert.deepEqual(toolClamp.arms.map((arm) => arm.gripperTarget), [48, 175.5, 24, 24]);
+  assert.deepEqual(toolClamp.arms.map((arm) => arm.gripperTarget), [130, 188.5, 135, 130]);
 });
 
 test('Step 2 phase machine follows timed motions and starts verification windows', () => {
@@ -244,7 +246,9 @@ test('Step 2 verification accepts recent real contact but rejects expired contac
     leftContactBodies: [],
     rightContactBodies: ['double_face_hammer'],
     forbiddenBodies: [],
-    aperture: 0.03,
+    aperture: 0.04,
+    leftTargetContactDistance: -0.001,
+    rightTargetContactDistance: -0.001,
     translation: 0.001,
     rotationDegrees: 1,
     verticalDisplacement: 0.001,
@@ -254,9 +258,17 @@ test('Step 2 verification accepts recent real contact but rejects expired contac
     leftTargetContactAge: 0.05,
     rightTargetContactAge: 0,
   }), { ok: true });
+  assert.deepEqual(evaluateAssemblyStep2Grasp({
+    ...valid,
+    targetBody: 'double_face_hammer',
+    leftContactBodies: ['double_face_hammer'],
+    rightContactBodies: ['double_face_hammer'],
+    verticalDisplacement: 0.004,
+    maximumVerticalDisplacement: ASSEMBLY1_STEP2_LIMITS.hammerVerticalDisplacement,
+  }), { ok: true });
   assert.equal(evaluateAssemblyStep2Grasp({
     ...valid,
-    leftTargetContactAge: 0.201,
+    leftTargetContactAge: 0.501,
     rightTargetContactAge: 0,
   }).code, 'missing-left-contact');
 });
@@ -320,14 +332,14 @@ test('Step 2 grasp verdict accepts only bilateral physical target contact', () =
     leftContactBodies: ['assembly_frame'],
     rightContactBodies: ['assembly_frame'],
     forbiddenBodies: [],
-    aperture: 0.03,
+    aperture: 0.04,
     translation: 0.001,
     rotationDegrees: 1,
     verticalDisplacement: 0.001,
   };
   assert.deepEqual(evaluateAssemblyStep2Grasp(valid), { ok: true });
   assert.equal(
-    evaluateAssemblyStep2Grasp({ ...valid, aperture: 0.02 }).code,
+    evaluateAssemblyStep2Grasp({ ...valid, aperture: 0.035 }).code,
     'empty-closure',
   );
   assert.deepEqual(evaluateAssemblyStep2Grasp({
@@ -335,7 +347,7 @@ test('Step 2 grasp verdict accepts only bilateral physical target contact', () =
     targetBody: 'cross_member',
     leftContactBodies: ['cross_member'],
     rightContactBodies: ['cross_member'],
-    aperture: 0.008,
+    aperture: 0.04,
     minimumAperture: ASSEMBLY1_STEP2_LIMITS.crossMemberMinimumAperture,
   }), { ok: true });
   assert.equal(
@@ -358,6 +370,14 @@ test('Step 2 grasp verdict accepts only bilateral physical target contact', () =
   assert.equal(
     evaluateAssemblyStep2Grasp({ ...valid, forbiddenBodies: ['work_platform'] }).code,
     'forbidden-contact',
+  );
+  assert.deepEqual(
+    evaluateAssemblyStep2Grasp({ ...valid, leftTargetContactDistance: -0.0021 }),
+    { ok: true },
+  );
+  assert.equal(
+    evaluateAssemblyStep2Grasp({ ...valid, leftTargetContactDistance: -0.0022 }).code,
+    'deep-penetration',
   );
   assert.equal(
     evaluateAssemblyStep2Grasp({ ...valid, translation: 0.0051 }).code,

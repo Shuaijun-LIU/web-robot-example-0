@@ -5,6 +5,8 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 600_000);
+const handoverOnly = process.env.HANDOVER_ONLY === '1';
+const diagnoseHandover = process.env.DIAGNOSE_HANDOVER === '1';
 const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step4-fastener-staged.png');
 
 const browser = await chromium.launch({
@@ -66,7 +68,7 @@ async function runStep(buttons, index, datasetName, diagnosticsName) {
   if (result.status !== 'complete') {
     throw new Error(
       `Step ${index + 1} ended in ${result.status}: `
-      + JSON.stringify(result.diagnostics?.failure ?? null),
+      + JSON.stringify(result.diagnostics ?? null),
     );
   }
   return result.diagnostics;
@@ -130,6 +132,7 @@ try {
           donorTcp: sites.r1_tcp,
           tcp: sites.r2_tcp,
           hammerTcp: sites.r3_tcp,
+          hammer: window.robotDemo.getBodyPositions(['double_face_hammer']).double_face_hammer,
           fastener: [...diagnostics.fastenerPosition],
           aperture: diagnostics.fastenerAperture,
         });
@@ -137,6 +140,89 @@ try {
     }, 20);
   });
 
+  if (handoverOnly) {
+    await buttons.nth(3).click();
+    if (diagnoseHandover) {
+      await page.waitForFunction(
+        () => window.robotDemo?.getAssemblyStep4Diagnostics?.()?.phase
+          === 'handover-verification',
+        null,
+        { timeout },
+      );
+      const sample = await page.evaluate(() => ({
+        diagnostics: window.robotDemo.getAssemblyStep4Diagnostics(),
+        hammer: window.robotDemo.getBodyPositions(['double_face_hammer']).double_face_hammer,
+        hammerOrientation: window.robotDemo.getBodyOrientations(['double_face_hammer']).double_face_hammer,
+        sites: window.robotDemo.getSitePositions(['r1_tcp', 'r3_tcp']),
+        fingers: window.robotDemo.getBodyPositions([
+          'r1_left_finger',
+          'r1_right_finger',
+          'r3_left_finger',
+          'r3_right_finger',
+        ]),
+        contacts: window.robotDemo.getContacts().filter(({ body1, body2 }) => (
+          body1 === 'double_face_hammer' || body2 === 'double_face_hammer'
+        )),
+      }));
+      console.log(JSON.stringify({ status: 'DIAGNOSTIC', sample }, null, 2));
+      process.exitCode = 0;
+      await browser.close();
+      process.exit();
+    }
+    await page.waitForFunction(() => {
+      const phase = window.robotDemo?.getAssemblyStep4Diagnostics?.()?.phase;
+      return phase === 'error' || [
+        'donor-clear',
+        'fastener-tighten',
+        'lift',
+        'transfer',
+        'transfer-settle',
+        'insert',
+        'fastener-release',
+        'clear',
+        'placement-verification',
+        'hammer-stage',
+        'hammer-strike',
+        'hammer-recover',
+        'complete',
+      ].includes(phase);
+    }, null, { timeout });
+    // Sample while the receiver is holding the hammer and the donor has just
+    // cleared. Waiting into the fastener lift would mix two independent checks.
+    await page.waitForTimeout(400);
+    const handover = await page.evaluate(() => ({
+      diagnostics: window.robotDemo.getAssemblyStep4Diagnostics(),
+      trace: window.__assemblyStep4Trace,
+      ctrl: window.robotDemo.getCtrl(),
+      hammer: window.robotDemo.getBodyPositions(['double_face_hammer']).double_face_hammer,
+    }));
+    await page.evaluate(() => window.clearInterval(window.__assemblyStep4TraceTimer));
+    if (handover.diagnostics?.phase === 'error') {
+      throw new Error(`Hammer handover failed: ${JSON.stringify(handover.diagnostics.failure)}`);
+    }
+    if (!handover.trace?.sawHammerLeftContact || !handover.trace?.sawHammerRightContact) {
+      throw new Error(`Bilateral hammer handover contact was not observed: ${JSON.stringify(handover.trace)}`);
+    }
+    if (!handover.diagnostics?.hammerLeftContact || !handover.diagnostics?.hammerRightContact) {
+      throw new Error(`Receiver did not retain bilateral hammer contact: ${JSON.stringify(handover.diagnostics)}`);
+    }
+    for (const distanceValue of [
+      handover.diagnostics.hammerLeftContactDistance,
+      handover.diagnostics.hammerRightContactDistance,
+    ]) {
+      if (typeof distanceValue === 'number' && distanceValue < -0.00215) {
+        throw new Error(`Hammer handover penetration is ${distanceValue}m`);
+      }
+    }
+    if (handover.ctrl[15] < 250 || Math.abs(handover.ctrl[31] - 127) > 1e-6) {
+      throw new Error(`Hammer gripper transfer is incomplete: ${handover.ctrl[15]}/${handover.ctrl[31]}`);
+    }
+    if (handover.hammer[2] < 0.30) {
+      throw new Error(`Hammer fell during handover: ${handover.hammer}`);
+    }
+    if (browserFailures.length > 0) throw new Error(browserFailures.join('\n'));
+    console.log(JSON.stringify({ status: 'PASS', handover }, null, 2));
+  } else {
   const diagnostics = await runStep(
     buttons,
     3,
@@ -173,7 +259,7 @@ try {
   if (result.diagnostics.frameTranslation > 0.0125) {
     throw new Error(`Assembly stability failed: ${JSON.stringify(result.diagnostics)}`);
   }
-  const expectedGrippers = [48, 255, 255, 96];
+  const expectedGrippers = [130, 255, 255, 127];
   for (let arm = 0; arm < expectedGrippers.length; arm += 1) {
     if (Math.abs(result.ctrl[arm * 8 + 7] - expectedGrippers[arm]) > 1e-6) {
       throw new Error(`Arm ${arm + 1} final gripper command is invalid`);
@@ -191,6 +277,7 @@ try {
     trace: result.trace,
     screenshot: screenshotPath,
   }, null, 2));
+  }
 } catch (error) {
   const pageState = await page.evaluate(() => ({
     step1: document.documentElement.dataset.assemblyStep1Status,

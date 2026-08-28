@@ -154,7 +154,7 @@ export const robots: Record<string, RobotEntry> = {
     label: 'Franka Assembly1',
     controlFamily: 'franka',
     config: {
-      src: FRANKA_REMOTE_BASE,
+      src: FRANKA_ASSEMBLY2_BASE,
       sceneFile: 'scene.xml',
       homeJoints: FRANKA_ASSEMBLY1_LAYOUT.homeJoints,
       xmlPatches: FRANKA_ASSEMBLY1_LAYOUT.xmlPatches,

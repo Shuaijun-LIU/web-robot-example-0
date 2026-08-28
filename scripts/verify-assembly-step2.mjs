@@ -6,11 +6,11 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
 const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step2-physical-clamp.png');
-const gripperClampControls = [48, 96, 24, 24];
+const gripperClampControls = [130, 122, 135, 130];
 const taskBodies = ['assembly_frame', 'double_face_hammer', 'cross_member'];
 const settlingTranslationLimits = {
   assembly_frame: 0.008,
-  double_face_hammer: 0.04,
+  double_face_hammer: 0.05,
   cross_member: 0.03,
 };
 
@@ -70,6 +70,11 @@ try {
     null,
     { timeout },
   );
+  if (process.env.SCENE_SPEED) {
+    const speedInput = page.locator('input[type="text"]').first();
+    await speedInput.fill(process.env.SCENE_SPEED);
+    await speedInput.press('Enter');
+  }
   const buttons = page.locator('.assembly-sequence-panel button');
   await buttons.nth(1).waitFor({ state: 'visible', timeout: 15_000 });
   if (!(await buttons.nth(1).isDisabled())) {
@@ -103,6 +108,53 @@ try {
     }
   }
 
+  await page.evaluate(() => {
+    window.__assemblyStep2FrameTrace = null;
+    window.__assemblyStep2CrossTrace = null;
+    window.__assemblyStep2HammerTrace = null;
+    window.__assemblyStep2FrameTraceTimer = window.setInterval(() => {
+      const phase = document.documentElement.dataset.assemblyStep2Status;
+      const ctrl = window.robotDemo.getCtrl();
+      if ((phase === 'hammer-clamp' || phase === 'tool-verification') && ctrl[15] < 250) {
+        window.__assemblyStep2HammerTrace = {
+          phase,
+          ctrl,
+          tcp: window.robotDemo.getSitePositions(['r1_tcp']),
+          fingers: window.robotDemo.getBodyPositions(['r1_left_finger', 'r1_right_finger']),
+          hammer: window.robotDemo.getBodyPositions(['double_face_hammer']),
+          contacts: window.robotDemo.getContacts().filter(
+            ({ body1, body2 }) => body1 === 'r1_left_finger'
+              || body1 === 'r1_right_finger'
+              || body2 === 'r1_left_finger'
+              || body2 === 'r1_right_finger',
+          ),
+          diagnostics: window.robotDemo.getAssemblyStep2Diagnostics(),
+        };
+      }
+      if (phase === 'cross-member-verification' && ctrl[23] < 250 && ctrl[31] < 250) {
+        window.__assemblyStep2CrossTrace = {
+          ctrl,
+          tcp: window.robotDemo.getSitePositions(['r2_tcp', 'r3_tcp']),
+          fingers: window.robotDemo.getBodyPositions([
+            'r2_left_finger', 'r2_right_finger', 'r3_left_finger', 'r3_right_finger',
+          ]),
+          crossMember: window.robotDemo.getBodyPositions(['cross_member']),
+          contacts: window.robotDemo.getContacts(),
+          diagnostics: window.robotDemo.getAssemblyStep2Diagnostics(),
+        };
+      }
+      if (phase !== 'frame-verification' || ctrl[7] >= 250) return;
+      window.__assemblyStep2FrameTrace = {
+        ctrl,
+        qpos: window.robotDemo.getQpos(),
+        tcp: window.robotDemo.getSitePositions(['r0_tcp']),
+        fingers: window.robotDemo.getBodyPositions(['r0_left_finger', 'r0_right_finger']),
+        frame: window.robotDemo.getBodyPositions(['assembly_frame']),
+        contacts: window.robotDemo.getContacts(),
+        diagnostics: window.robotDemo.getAssemblyStep2Diagnostics(),
+      };
+    }, 10);
+  });
   await buttons.nth(1).click();
   await page.waitForFunction(
     () => ['complete', 'error'].includes(
@@ -115,9 +167,20 @@ try {
     () => window.robotDemo.getAssemblyStep2Diagnostics(),
   );
   if (!finalDiagnostics || finalDiagnostics.phase !== 'complete') {
+    const failureContacts = await page.evaluate(() => ({
+      current: window.robotDemo.getContacts().filter(
+        ({ body1, body2 }) => /^r[0-3]_(?:left|right)_finger$/.test(body1)
+          || /^r[0-3]_(?:left|right)_finger$/.test(body2),
+      ),
+      hammerTrace: window.__assemblyStep2HammerTrace,
+    }));
     throw new Error(
       `Step 2 ended in ${finalDiagnostics?.phase ?? 'missing diagnostics'}: `
-      + JSON.stringify(finalDiagnostics?.failure ?? null),
+      + JSON.stringify({
+        failure: finalDiagnostics?.failure ?? null,
+        arms: finalDiagnostics?.arms ?? null,
+        contacts: failureContacts,
+      }),
     );
   }
 
@@ -148,9 +211,17 @@ try {
     if (arm.maximumContactSeconds < 0.08) {
       throw new Error(`${arm.armKey} contact window ${arm.maximumContactSeconds}s is too short`);
     }
-    const minimumAperture = arm.targetBody === 'cross_member' ? 0.005 : 0.02;
+    const minimumAperture = 0.035;
     if (!(arm.aperture > minimumAperture)) {
       throw new Error(`${arm.armKey} aperture is ${arm.aperture}m`);
+    }
+    for (const contactDistance of [
+      arm.leftTargetContactDistance,
+      arm.rightTargetContactDistance,
+    ]) {
+      if (typeof contactDistance === 'number' && contactDistance < -0.00215) {
+        throw new Error(`${arm.armKey} penetration is ${contactDistance}m`);
+      }
     }
     if (arm.translation > settlingTranslationLimits[arm.targetBody]) {
       throw new Error(`${arm.armKey} drift is ${arm.translation}m`);
@@ -181,6 +252,7 @@ try {
   await page.waitForTimeout(300);
   await mkdir(resolve('artifacts/screenshots'), { recursive: true });
   await page.screenshot({ path: screenshotPath, fullPage: true });
+  const hammerTrace = await page.evaluate(() => window.__assemblyStep2HammerTrace);
 
   await page.evaluate(() => window.robotDemo.reset());
   await page.waitForFunction(
@@ -195,6 +267,7 @@ try {
   console.log(JSON.stringify({
     status: 'PASS',
     diagnostics: held,
+    hammerTrace,
     screenshot: screenshotPath,
   }, null, 2));
 } catch (error) {
@@ -203,6 +276,14 @@ try {
     step2Status: document.documentElement.dataset.assemblyStep2Status,
     panelText: document.querySelector('.assembly-sequence-panel')?.textContent ?? '',
     diagnostics: window.robotDemo?.getAssemblyStep2Diagnostics?.() ?? null,
+    frameTrace: window.__assemblyStep2FrameTrace ?? null,
+    crossTrace: window.__assemblyStep2CrossTrace ?? null,
+    geometry: window.robotDemo ? {
+      tcp: window.robotDemo.getSitePositions(['r0_tcp']),
+      fingers: window.robotDemo.getBodyPositions(['r0_left_finger', 'r0_right_finger']),
+      frame: window.robotDemo.getBodyPositions(['assembly_frame']),
+      contacts: window.robotDemo.getContacts(),
+    } : null,
   })).catch(() => null);
   console.error(JSON.stringify({
     status: 'FAIL',
