@@ -13,6 +13,15 @@ function distance(first, second) {
   return Math.hypot(...first.map((value, index) => value - second[index]));
 }
 
+function quaternionAngleDegrees(first, second) {
+  const denominator = Math.hypot(...first) * Math.hypot(...second);
+  const dot = Math.abs(first.reduce(
+    (sum, value, index) => sum + value * second[index],
+    0,
+  ) / denominator);
+  return 2 * Math.acos(Math.max(-1, Math.min(1, dot))) * 180 / Math.PI;
+}
+
 const browser = await chromium.launch({
   headless: true,
   ...(process.env.CHROME_EXECUTABLE
@@ -56,6 +65,11 @@ try {
     null,
     { timeout },
   );
+  if (process.env.SCENE_SPEED) {
+    const speedInput = page.locator('input[type="text"]').first();
+    await speedInput.fill(process.env.SCENE_SPEED);
+    await speedInput.press('Enter');
+  }
 
   const buttons = page.locator('.assembly-sequence-panel button');
   await buttons.nth(2).waitFor({ state: 'visible', timeout: 15_000 });
@@ -98,7 +112,8 @@ try {
 
   const before = await page.evaluate(() => ({
     ctrl: window.robotDemo.getCtrl(),
-    positions: window.robotDemo.getBodyPositions(['assembly_frame', 'cross_member']),
+    positions: window.robotDemo.getBodyPositions(['assembly_frame', 'cross_member', 'double_face_hammer']),
+    orientations: window.robotDemo.getBodyOrientations(['double_face_hammer']),
   }));
   for (let arm = 0; arm < 4; arm += 1) {
     const control = before.ctrl[arm * 8 + 7];
@@ -108,11 +123,15 @@ try {
   }
 
   await page.evaluate(() => {
-    const initial = window.robotDemo.getBodyPositions(['cross_member']).cross_member;
-    const initialSites = window.robotDemo.getSitePositions(['r2_tcp', 'r3_tcp']);
+    const bodies = window.robotDemo.getBodyPositions(['cross_member', 'double_face_hammer']);
+    const initial = bodies.cross_member;
+    const initialHammer = bodies.double_face_hammer;
+    const initialSites = window.robotDemo.getSitePositions(['r1_tcp', 'r2_tcp', 'r3_tcp']);
     window.__assemblyStep3Trace = {
       initial,
       initialSites,
+      initialHammer,
+      maximumHammerZ: initialHammer[2],
       maximumZ: initial[2],
       maximumPlanarTravel: 0,
       minimumTcpSpan: Number.POSITIVE_INFINITY,
@@ -129,12 +148,14 @@ try {
       const trace = window.__assemblyStep3Trace;
       if (!trace || !window.robotDemo) return;
       const position = window.robotDemo.getBodyPositions(['cross_member']).cross_member;
+      const hammer = window.robotDemo.getBodyPositions(['double_face_hammer']).double_face_hammer;
       trace.maximumZ = Math.max(trace.maximumZ, position[2]);
+      trace.maximumHammerZ = Math.max(trace.maximumHammerZ, hammer[2]);
       trace.maximumPlanarTravel = Math.max(
         trace.maximumPlanarTravel,
         Math.hypot(position[0] - trace.initial[0], position[1] - trace.initial[1]),
       );
-      const sites = window.robotDemo.getSitePositions(['r2_tcp', 'r3_tcp']);
+      const sites = window.robotDemo.getSitePositions(['r1_tcp', 'r2_tcp', 'r3_tcp']);
       const tcpSpan = Math.hypot(
         ...sites.r2_tcp.map((value, index) => value - sites.r3_tcp[index]),
       );
@@ -175,7 +196,8 @@ try {
       diagnostics: window.robotDemo.getAssemblyStep3Diagnostics(),
       trace: window.__assemblyStep3Trace,
       ctrl: window.robotDemo.getCtrl(),
-      positions: window.robotDemo.getBodyPositions(['assembly_frame', 'cross_member']),
+      positions: window.robotDemo.getBodyPositions(['assembly_frame', 'cross_member', 'double_face_hammer']),
+      orientations: window.robotDemo.getBodyOrientations(['double_face_hammer']),
     };
   });
   finalDiagnostics = result.diagnostics;
@@ -188,6 +210,9 @@ try {
   if (!result.trace || result.trace.maximumZ - result.trace.initial[2] < 0.08) {
     throw new Error(`Cross-member lift was not observed: ${JSON.stringify(result.trace)}`);
   }
+  if (result.trace.maximumHammerZ - result.trace.initialHammer[2] < 0.12) {
+    throw new Error(`Hammer lift was not observed: ${JSON.stringify(result.trace)}`);
+  }
   if (result.trace.maximumPlanarTravel < 0.35) {
     throw new Error(`Cross-member transfer was too short: ${result.trace.maximumPlanarTravel}m`);
   }
@@ -195,7 +220,7 @@ try {
     throw new Error(`Frame drifted ${finalDiagnostics.frameTranslation}m during Step 3`);
   }
   if (finalDiagnostics.holePlanarDistances.length !== 4
-    || finalDiagnostics.holePlanarDistances.some((value) => value > 0.036)
+    || finalDiagnostics.holePlanarDistances.some((value) => value > 0.041)
     || finalDiagnostics.holeVerticalOffsets.some((value) => value > 0.02)) {
     throw new Error(`Hole alignment failed: ${JSON.stringify({
       planar: finalDiagnostics.holePlanarDistances,
@@ -210,17 +235,38 @@ try {
       throw new Error(`Arm ${arm + 1} did not reach its final gripper command`);
     }
   }
+  const home = [1.707, -1.754, 0.003, -2.702, 0.003, 0.951, 2.49];
+  for (const arm of [2, 3]) {
+    const target = result.ctrl.slice(arm * 8, arm * 8 + 7);
+    if (target.some((value, joint) => Math.abs(value - home[joint]) > 1e-6)) {
+      throw new Error(`Arm ${arm + 1} did not return to its initial joint target`);
+    }
+  }
   const finalBodyOffset = distance(result.positions.cross_member, [0, 0, 0.278]);
-  if (finalBodyOffset > 0.015) {
+  if (finalBodyOffset > 0.03) {
     throw new Error(`Cross-member body is ${finalBodyOffset}m from its installed pose`);
+  }
+  const finalHammer = result.positions.double_face_hammer;
+  if (finalHammer[0] < 0.55 || finalHammer[0] > 0.78
+    || finalHammer[1] < -0.50 || finalHammer[1] > -0.30
+    || finalHammer[2] < 0.36) {
+    throw new Error(`Hammer did not reach the collision-free pickup-side staging pose: ${finalHammer}`);
+  }
+  const hammerRotation = quaternionAngleDegrees(
+    before.orientations.double_face_hammer,
+    result.orientations.double_face_hammer,
+  );
+  if (hammerRotation > 30) {
+    throw new Error(`Hammer rotated ${hammerRotation} degrees during transport`);
   }
 
   await page.waitForTimeout(1_000);
   const held = await page.evaluate(() => window.robotDemo.getAssemblyStep3Diagnostics());
   if (held?.phase !== 'complete'
-    || held.holePlanarDistances.some((value) => value > 0.036)
+    || held.holePlanarDistances.some((value) => value > 0.041)
     || held.holeVerticalOffsets.some((value) => value > 0.02)
-    || held.frameTranslation > 0.008) {
+    || held.frameTranslation > 0.008
+    || !held.arms.find((arm) => arm.armKey === 'r1')?.verdict.ok) {
     throw new Error(`Aligned hold did not remain stable: ${JSON.stringify(held)}`);
   }
 

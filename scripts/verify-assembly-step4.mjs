@@ -81,6 +81,11 @@ try {
     null,
     { timeout },
   );
+  if (process.env.SCENE_SPEED) {
+    const speedInput = page.locator('input[type="text"]').first();
+    await speedInput.fill(process.env.SCENE_SPEED);
+    await speedInput.press('Enter');
+  }
   const buttons = page.locator('.assembly-sequence-panel button');
   await buttons.nth(3).waitFor({ state: 'visible', timeout });
   if (!(await buttons.nth(1).isDisabled())
@@ -95,7 +100,7 @@ try {
 
   const before = await page.evaluate(() => ({
     fastener: window.robotDemo.getBodyPositions(['fastener_1']).fastener_1,
-    receiver: window.robotDemo.getSitePositions(['frame_receiver_ne']).frame_receiver_ne,
+    receiver: window.robotDemo.getSitePositions(['frame_receiver_nw']).frame_receiver_nw,
   }));
   beforeStep4 = before;
   await page.evaluate(() => {
@@ -104,6 +109,8 @@ try {
       phaseSamples: [],
       sawLeftContact: false,
       sawRightContact: false,
+      sawHammerLeftContact: false,
+      sawHammerRightContact: false,
       maximumFastenerZ: Number.NEGATIVE_INFINITY,
     };
     window.__assemblyStep4TraceTimer = window.setInterval(() => {
@@ -112,12 +119,17 @@ try {
       if (!diagnostics || !trace) return;
       trace.sawLeftContact ||= diagnostics.fastenerLeftContact;
       trace.sawRightContact ||= diagnostics.fastenerRightContact;
+      trace.sawHammerLeftContact ||= diagnostics.hammerLeftContact;
+      trace.sawHammerRightContact ||= diagnostics.hammerRightContact;
       trace.maximumFastenerZ = Math.max(trace.maximumFastenerZ, diagnostics.fastenerPosition[2]);
       if (trace.phases.at(-1) !== diagnostics.phase) {
+        const sites = window.robotDemo.getSitePositions(['r1_tcp', 'r2_tcp', 'r3_tcp']);
         trace.phases.push(diagnostics.phase);
         trace.phaseSamples.push({
           phase: diagnostics.phase,
-          tcp: window.robotDemo.getSitePositions(['r2_tcp']).r2_tcp,
+          donorTcp: sites.r1_tcp,
+          tcp: sites.r2_tcp,
+          hammerTcp: sites.r3_tcp,
           fastener: [...diagnostics.fastenerPosition],
           aperture: diagnostics.fastenerAperture,
         });
@@ -146,6 +158,9 @@ try {
   if (!result.trace?.sawLeftContact || !result.trace?.sawRightContact) {
     throw new Error(`Bilateral fastener contact was not observed: ${JSON.stringify(result.trace)}`);
   }
+  if (!result.trace.sawHammerLeftContact || !result.trace.sawHammerRightContact) {
+    throw new Error(`Bilateral hammer handover contact was not observed: ${JSON.stringify(result.trace)}`);
+  }
   if (result.trace.maximumFastenerZ - before.fastener[2] < 0.12) {
     throw new Error(`Fastener lift was too short: ${JSON.stringify(result.trace)}`);
   }
@@ -158,7 +173,7 @@ try {
   if (result.diagnostics.frameTranslation > 0.0125) {
     throw new Error(`Assembly stability failed: ${JSON.stringify(result.diagnostics)}`);
   }
-  const expectedGrippers = [48, 96, 255, 255];
+  const expectedGrippers = [48, 255, 255, 96];
   for (let arm = 0; arm < expectedGrippers.length; arm += 1) {
     if (Math.abs(result.ctrl[arm * 8 + 7] - expectedGrippers[arm]) > 1e-6) {
       throw new Error(`Arm ${arm + 1} final gripper command is invalid`);
@@ -188,6 +203,11 @@ try {
       tcp: window.robotDemo.getSitePositions(['r2_tcp']),
       fingers: window.robotDemo.getBodyPositions(['r2_left_finger', 'r2_right_finger']),
       fastener: window.robotDemo.getBodyPositions(['fastener_1']),
+      hammerTcp: window.robotDemo.getSitePositions(['r3_tcp']),
+      hammerFingers: window.robotDemo.getBodyPositions(['r3_left_finger', 'r3_right_finger']),
+      donorTcp: window.robotDemo.getSitePositions(['r1_tcp']),
+      donorFingers: window.robotDemo.getBodyPositions(['r1_left_finger', 'r1_right_finger']),
+      hammer: window.robotDemo.getBodyPositions(['double_face_hammer']),
     } : null,
     trace: window.__assemblyStep4Trace ?? null,
   })).catch(() => null);

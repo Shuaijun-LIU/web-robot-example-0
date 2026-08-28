@@ -39,9 +39,9 @@ const step3PhaseCopy: Record<AssemblyStep3Phase, string> = {
   idle: '等待第二步完成',
   planning: '正在验证搬运前置条件',
   'grasp-check': '正在确认四处物理夹持',
-  lift: 'Arm 3 / Arm 4 正在同步抬升横梁',
+  lift: 'Arm 2 正在抬起锤子，Arm 3 / Arm 4 同步抬升横梁',
   'lift-settle': '横梁已离开料盘，正在验证双臂保持',
-  'transfer-a': '正在执行横梁搬运前半程',
+  'transfer-a': 'Arm 2 将锤子移至安全暂存位，横梁同步搬运',
   'transfer-b': '正在将横梁送至框架正上方',
   'hover-settle': '正在框架上方稳定横梁',
   'aligned-descent': '正在缓慢下降并对准安装孔',
@@ -51,15 +51,15 @@ const step3PhaseCopy: Record<AssemblyStep3Phase, string> = {
   'reseat-descent': '正在执行一次慢速重新落位',
   release: '对孔已确认，Arms 3 / 4 正在松开横梁',
   'release-settle': '横梁已释放，正在等待物理落稳',
-  retreat: 'Arms 3 / 4 正在撤离安装区域',
+  retreat: 'Arms 3 / 4 正在撤离并返回初始位置',
   'placed-verification': '正在验证无夹持状态下的横梁稳定性',
-  complete: '第三步已完成：横梁已落位，Arms 3 / 4 已释放',
+  complete: '第三步已完成：锤子已暂存，横梁已落位，Arms 3 / 4 已返回初始位置',
   error: '第三步失败',
 };
 
 function step3ButtonCopy(phase: AssemblyStep3Phase) {
   if (phase === 'idle') return '执行第三步：双臂搬运并对孔';
-  if (phase === 'complete') return '第三步已完成：横梁已落位并释放';
+  if (phase === 'complete') return '第三步已完成：锤子已暂存，横梁已落位';
   if (phase === 'error') return '第三步执行失败';
   return '正在执行第三步…';
 }
@@ -67,22 +67,25 @@ function step3ButtonCopy(phase: AssemblyStep3Phase) {
 const step4PhaseCopy: Record<AssemblyStep4Phase, string> = {
   idle: '等待第三步完成',
   planning: '正在验证紧固件安装前置条件',
-  prepare: '四臂正在切换至紧固件安装分工位',
-  engage: 'Arm 3 接近紧固件，Arm 4 保持安全待命位',
-  'engage-settle': 'Arm 3 正在稳定紧固件预抓取姿态',
-  'fastener-clamp': 'Arm 3 正在物理夹持第一颗紧固件',
-  'fastener-verification': '正在验证紧固件双侧接触',
+  'donor-tighten': 'Arm 2 原地增加锤柄夹持力，准备实体交接',
+  prepare: 'Arm 3 接近紧固件，Arm 4 接近 Arm 2 手中的锤子',
+  engage: 'Arm 3 对准紧固件，Arm 4 对准锤柄接取位',
+  'engage-settle': '正在稳定紧固件与锤子交接姿态',
+  'dual-clamp': 'Arm 3 夹持紧固件，同时 Arm 4 夹持锤柄',
+  'handover-verification': '正在验证 Arm 3 紧固件抓取与 Arm 4 锤子双侧接触',
+  'hammer-release': '交接已确认，Arm 2 正在松开锤柄',
+  'donor-clear': 'Arm 2 正在撤离交接区，Arm 4 持锤退至安全位',
   'fastener-tighten': 'Arm 3 正在逐步增加紧固件夹持力',
   lift: 'Arm 3 正在从料盘抬起紧固件',
   transfer: 'Arm 3 正在将紧固件搬运至安装孔上方',
   'transfer-settle': 'Arm 3 正在安装孔上方稳定紧固件',
-  insert: 'Arm 3 正在将紧固件插入东北侧接口',
+  insert: 'Arm 3 正在将紧固件插入西北侧接口',
   'fastener-release': '紧固件已到位，Arm 3 正在松开夹爪',
-  clear: 'Arm 3 正在撤离，Arm 4 继续支撑横梁',
+  clear: 'Arm 3 正在撤离，Arm 4 继续持锤等待',
   'placement-verification': '正在验证紧固件无夹持落位状态',
-  'hammer-stage': 'Arm 2 正在将锤头移至紧固件上方',
-  'hammer-strike': 'Arm 2 正在下击紧固件',
-  'hammer-recover': 'Arm 2 正在抬锤并离开安装接口',
+  'hammer-stage': 'Arm 4 正在将锤头移至紧固件上方',
+  'hammer-strike': 'Arm 4 正在下击紧固件',
+  'hammer-recover': 'Arm 4 正在抬锤并离开安装接口',
   complete: '第四步已完成：紧固件已落位并完成锤击',
   error: '第四步失败',
 };

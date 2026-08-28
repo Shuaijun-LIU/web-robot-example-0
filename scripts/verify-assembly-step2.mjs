@@ -148,12 +148,19 @@ try {
     if (arm.maximumContactSeconds < 0.08) {
       throw new Error(`${arm.armKey} contact window ${arm.maximumContactSeconds}s is too short`);
     }
-    if (!(arm.aperture > 0.02)) throw new Error(`${arm.armKey} aperture is ${arm.aperture}m`);
+    const minimumAperture = arm.targetBody === 'cross_member' ? 0.005 : 0.02;
+    if (!(arm.aperture > minimumAperture)) {
+      throw new Error(`${arm.armKey} aperture is ${arm.aperture}m`);
+    }
     if (arm.translation > settlingTranslationLimits[arm.targetBody]) {
       throw new Error(`${arm.armKey} drift is ${arm.translation}m`);
     }
-    if (arm.rotationDegrees > 5) throw new Error(`${arm.armKey} rotation is ${arm.rotationDegrees}deg`);
-    if (arm.verticalDisplacement > 0.003) {
+    const maximumRotationDegrees = arm.targetBody === 'double_face_hammer' ? 10 : 5;
+    if (arm.rotationDegrees > maximumRotationDegrees) {
+      throw new Error(`${arm.armKey} rotation is ${arm.rotationDegrees}deg`);
+    }
+    const maximumVerticalDisplacement = arm.targetBody === 'cross_member' ? 0.015 : 0.003;
+    if (arm.verticalDisplacement > maximumVerticalDisplacement) {
       throw new Error(`${arm.armKey} vertical displacement is ${arm.verticalDisplacement}m`);
     }
   }

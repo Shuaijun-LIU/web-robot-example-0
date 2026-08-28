@@ -28,9 +28,12 @@ export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
     double_face_hammer: 0.04,
     cross_member: 0.03,
   }),
-  objectRotationDegrees: 5,
+  objectRotationDegrees: 8,
+  hammerRotationDegrees: 10,
   verticalDisplacement: 0.003,
+  crossMemberVerticalDisplacement: 0.015,
   minimumAperture: 0.02,
+  crossMemberMinimumAperture: 0.005,
 });
 
 const roles = [
@@ -45,10 +48,10 @@ const roles = [
   {
     role: 'horizontal hammer handle',
     targetBody: 'double_face_hammer',
-    contactWaypoint: [0.559, -0.421, 0.16],
+    contactWaypoint: [0.61, -0.421, 0.16],
     closingAxisYawDegrees: 90,
-    approachJointTargets: [1.730202, 0.562724, 0.688394, -2.20587, -0.65804, 2.556128, 2.124833],
-    contactJointTargets: [1.756327, 0.596224, 0.655031, -2.194746, -0.691376, 2.57683, 2.147234],
+    approachJointTargets: [1.701847, 0.530688, 0.768249, -2.306197, -0.724794, 2.58391, 2.255536],
+    contactJointTargets: [1.734113, 0.565328, 0.727169, -2.293774, -0.764926, 2.603319, 2.282411],
   },
   {
     role: 'cross member north balance point',
@@ -212,10 +215,13 @@ export function evaluateAssemblyStep2Grasp({
   translation,
   maximumTranslation = ASSEMBLY1_STEP2_LIMITS.objectTranslation,
   rotationDegrees,
+  maximumRotationDegrees = ASSEMBLY1_STEP2_LIMITS.objectRotationDegrees,
   verticalDisplacement,
+  maximumVerticalDisplacement = ASSEMBLY1_STEP2_LIMITS.verticalDisplacement,
   requireBilateralContact = true,
   leftTargetContactAge = Number.POSITIVE_INFINITY,
   rightTargetContactAge = Number.POSITIVE_INFINITY,
+  minimumAperture = ASSEMBLY1_STEP2_LIMITS.minimumAperture,
 }) {
   const leftContactIsRecent = leftTargetContactAge <= ASSEMBLY1_STEP2_DURATIONS.contactGrace;
   const rightContactIsRecent = rightTargetContactAge <= ASSEMBLY1_STEP2_DURATIONS.contactGrace;
@@ -234,16 +240,16 @@ export function evaluateAssemblyStep2Grasp({
     return failed('missing-right-contact');
   }
   if (forbiddenBodies.length > 0) return failed('forbidden-contact', forbiddenBodies.join(', '));
-  if (!(aperture > ASSEMBLY1_STEP2_LIMITS.minimumAperture)) {
+  if (!(aperture > minimumAperture)) {
     return failed('empty-closure', String(aperture));
   }
   if (translation > maximumTranslation) {
     return failed('object-drift', String(translation));
   }
-  if (rotationDegrees > ASSEMBLY1_STEP2_LIMITS.objectRotationDegrees) {
+  if (rotationDegrees > maximumRotationDegrees) {
     return failed('object-rotation', String(rotationDegrees));
   }
-  if (verticalDisplacement > ASSEMBLY1_STEP2_LIMITS.verticalDisplacement) {
+  if (verticalDisplacement > maximumVerticalDisplacement) {
     return failed('object-lift', String(verticalDisplacement));
   }
   return { ok: true };

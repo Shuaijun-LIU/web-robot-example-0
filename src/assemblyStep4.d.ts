@@ -1,6 +1,7 @@
 export type AssemblyStep4Phase =
-  | 'idle' | 'planning' | 'prepare' | 'engage' | 'engage-settle' | 'fastener-clamp'
-  | 'fastener-verification' | 'fastener-tighten' | 'lift' | 'transfer' | 'transfer-settle' | 'insert'
+  | 'idle' | 'planning' | 'donor-tighten' | 'prepare' | 'engage' | 'engage-settle' | 'dual-clamp'
+  | 'handover-verification' | 'hammer-release' | 'donor-clear'
+  | 'fastener-tighten' | 'lift' | 'transfer' | 'transfer-settle' | 'insert'
   | 'fastener-release' | 'clear' | 'placement-verification'
   | 'hammer-stage' | 'hammer-strike' | 'hammer-recover'
   | 'complete' | 'error';
@@ -54,6 +55,9 @@ export interface AssemblyStep4RuntimeDiagnostics {
   fastenerAperture: number;
   fastenerLeftContact: boolean;
   fastenerRightContact: boolean;
+  hammerAperture: number;
+  hammerLeftContact: boolean;
+  hammerRightContact: boolean;
 }
 
 export const ASSEMBLY1_STEP4_DURATIONS: Readonly<Record<string, number>>;
@@ -72,7 +76,12 @@ export function createAssemblyStep4Machine(): AssemblyStep4Machine;
 export function advanceAssemblyStep4Machine(
   machine: AssemblyStep4Machine,
   deltaSeconds: number,
-  evidence: { all?: AssemblyStep4Verdict; fastenerGrasp?: AssemblyStep4Verdict; placement?: AssemblyStep4Verdict },
+  evidence: {
+    all?: AssemblyStep4Verdict;
+    fastenerGrasp?: AssemblyStep4Verdict;
+    hammerGrasp?: AssemblyStep4Verdict;
+    placement?: AssemblyStep4Verdict;
+  },
 ): AssemblyStep4Machine;
 export function createAssemblyStep4ControlFrame(
   machine: AssemblyStep4Machine,

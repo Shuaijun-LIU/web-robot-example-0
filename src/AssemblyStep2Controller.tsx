@@ -47,8 +47,8 @@ const FORBIDDEN_BODY_NAMES = [
   'double_face_hammer',
   'torque_driver',
   'tool_mat',
-  'hammer_pickup_cradle_west',
-  'hammer_pickup_cradle_east',
+  'hammer_pickup_cradle_tail',
+  'hammer_pickup_cradle_head',
 ];
 
 interface RuntimeArmPlan extends AssemblyStep2ArmPlan {
@@ -302,6 +302,15 @@ function armVerdicts(
       requireBilateralContact,
       leftTargetContactAge,
       rightTargetContactAge,
+      minimumAperture: arm.targetBody === 'cross_member'
+        ? ASSEMBLY1_STEP2_LIMITS.crossMemberMinimumAperture
+        : ASSEMBLY1_STEP2_LIMITS.minimumAperture,
+      maximumVerticalDisplacement: arm.targetBody === 'cross_member'
+        ? ASSEMBLY1_STEP2_LIMITS.crossMemberVerticalDisplacement
+        : ASSEMBLY1_STEP2_LIMITS.verticalDisplacement,
+      maximumRotationDegrees: arm.targetBody === 'double_face_hammer'
+        ? ASSEMBLY1_STEP2_LIMITS.hammerRotationDegrees
+        : ASSEMBLY1_STEP2_LIMITS.objectRotationDegrees,
     });
     const taggedVerdict: AssemblyStep2GraspVerdict = verdict.ok
       ? verdict

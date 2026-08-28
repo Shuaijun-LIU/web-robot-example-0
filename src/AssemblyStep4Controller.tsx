@@ -46,10 +46,14 @@ interface RuntimePlan {
   frameBodyId: number;
   crossMemberBodyId: number;
   fastenerBodyId: number;
+  hammerBodyId: number;
   receiverSiteId: number;
   fastenerFingerQposAddresses: [number, number];
   fastenerLeftFingerBodyId: number;
   fastenerRightFingerBodyId: number;
+  hammerFingerQposAddresses: [number, number];
+  hammerLeftFingerBodyId: number;
+  hammerRightFingerBodyId: number;
   frameBaseline: [number, number, number];
   crossMemberBaseline: [number, number, number];
   crossMemberBaselineQuaternion: [number, number, number, number];
@@ -103,28 +107,39 @@ function createRuntimePlan(
   const frameBodyId = findBodyByName(model, 'assembly_frame');
   const crossMemberBodyId = findBodyByName(model, 'cross_member');
   const fastenerBodyId = findBodyByName(model, 'fastener_1');
-  const receiverSiteId = findSiteByName(model, 'frame_receiver_ne');
+  const hammerBodyId = findBodyByName(model, 'double_face_hammer');
+  const receiverSiteId = findSiteByName(model, 'frame_receiver_nw');
   const fastenerArm = ASSEMBLY1_STEP2_ARMS[2];
+  const hammerArm = ASSEMBLY1_STEP2_ARMS[3];
   const fastenerFingerJointIds = fastenerArm.fingerJointNames.map(
     (name) => findJointByName(model, name),
   );
   const fastenerLeftFingerBodyId = findBodyByName(model, fastenerArm.leftFingerBody);
   const fastenerRightFingerBodyId = findBodyByName(model, fastenerArm.rightFingerBody);
+  const hammerFingerJointIds = hammerArm.fingerJointNames.map(
+    (name) => findJointByName(model, name),
+  );
+  const hammerLeftFingerBodyId = findBodyByName(model, hammerArm.leftFingerBody);
+  const hammerRightFingerBodyId = findBodyByName(model, hammerArm.rightFingerBody);
   if (
     frameBodyId < 0
     || crossMemberBodyId < 0
     || fastenerBodyId < 0
+    || hammerBodyId < 0
     || receiverSiteId < 0
     || fastenerFingerJointIds.some((id) => id < 0)
     || fastenerLeftFingerBodyId < 0
     || fastenerRightFingerBodyId < 0
+    || hammerFingerJointIds.some((id) => id < 0)
+    || hammerLeftFingerBodyId < 0
+    || hammerRightFingerBodyId < 0
   ) {
     return { plan: null, failure: planningFailure('missing-resource', 'Step 4 workcell') };
   }
 
   const expectedGrippers = [
     ASSEMBLY1_STEP4_GRIPPERS.frame,
-    ASSEMBLY1_STEP4_GRIPPERS.tool,
+    ASSEMBLY1_STEP4_GRIPPERS.donorEntry,
     ASSEMBLY1_STEP4_GRIPPERS.open,
     ASSEMBLY1_STEP4_GRIPPERS.open,
   ];
@@ -179,6 +194,7 @@ function createRuntimePlan(
       frameBodyId,
       crossMemberBodyId,
       fastenerBodyId,
+      hammerBodyId,
       receiverSiteId,
       fastenerFingerQposAddresses: [
         model.jnt_qposadr[fastenerFingerJointIds[0]],
@@ -186,6 +202,12 @@ function createRuntimePlan(
       ],
       fastenerLeftFingerBodyId,
       fastenerRightFingerBodyId,
+      hammerFingerQposAddresses: [
+        model.jnt_qposadr[hammerFingerJointIds[0]],
+        model.jnt_qposadr[hammerFingerJointIds[1]],
+      ],
+      hammerLeftFingerBodyId,
+      hammerRightFingerBodyId,
       frameBaseline: vector3(data.xpos, frameBodyId),
       crossMemberBaseline: vector3(data.xpos, crossMemberBodyId),
       crossMemberBaselineQuaternion: quaternion4(data.xquat, crossMemberBodyId),
@@ -194,10 +216,12 @@ function createRuntimePlan(
   };
 }
 
-function fastenerContacts(
+function targetContacts(
   model: MujocoModel,
   data: MujocoData,
-  runtime: RuntimePlan,
+  targetBodyId: number,
+  leftFingerBodyId: number,
+  rightFingerBodyId: number,
 ) {
   let left = false;
   let right = false;
@@ -205,12 +229,12 @@ function fastenerContacts(
     const firstBody = model.geom_bodyid[contact.geom1];
     const secondBody = model.geom_bodyid[contact.geom2];
     if (
-      (firstBody === runtime.fastenerLeftFingerBodyId && secondBody === runtime.fastenerBodyId)
-      || (secondBody === runtime.fastenerLeftFingerBodyId && firstBody === runtime.fastenerBodyId)
+      (firstBody === leftFingerBodyId && secondBody === targetBodyId)
+      || (secondBody === leftFingerBodyId && firstBody === targetBodyId)
     ) left = true;
     if (
-      (firstBody === runtime.fastenerRightFingerBodyId && secondBody === runtime.fastenerBodyId)
-      || (secondBody === runtime.fastenerRightFingerBodyId && firstBody === runtime.fastenerBodyId)
+      (firstBody === rightFingerBodyId && secondBody === targetBodyId)
+      || (secondBody === rightFingerBodyId && firstBody === targetBodyId)
     ) right = true;
   }
   return { left, right };
@@ -220,11 +244,29 @@ function sampleRuntime(
   model: MujocoModel,
   data: MujocoData,
   runtime: RuntimePlan,
-  lastContactTimes: { left: number; right: number },
+  lastContactTimes: {
+    fastener: { left: number; right: number };
+    hammer: { left: number; right: number };
+  },
 ) {
-  const contacts = fastenerContacts(model, data, runtime);
-  if (contacts.left) lastContactTimes.left = data.time;
-  if (contacts.right) lastContactTimes.right = data.time;
+  const fastenerContacts = targetContacts(
+    model,
+    data,
+    runtime.fastenerBodyId,
+    runtime.fastenerLeftFingerBodyId,
+    runtime.fastenerRightFingerBodyId,
+  );
+  const hammerContacts = targetContacts(
+    model,
+    data,
+    runtime.hammerBodyId,
+    runtime.hammerLeftFingerBodyId,
+    runtime.hammerRightFingerBodyId,
+  );
+  if (fastenerContacts.left) lastContactTimes.fastener.left = data.time;
+  if (fastenerContacts.right) lastContactTimes.fastener.right = data.time;
+  if (hammerContacts.left) lastContactTimes.hammer.left = data.time;
+  if (hammerContacts.right) lastContactTimes.hammer.right = data.time;
   const frameTranslation = distance(
     vector3(data.xpos, runtime.frameBodyId),
     runtime.frameBaseline,
@@ -245,8 +287,8 @@ function sampleRuntime(
   const fastenerAperture = data.qpos[runtime.fastenerFingerQposAddresses[0]]
     + data.qpos[runtime.fastenerFingerQposAddresses[1]];
   let fastenerGrasp: AssemblyStep4Verdict = { ok: true };
-  const leftRecent = data.time - lastContactTimes.left <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
-  const rightRecent = data.time - lastContactTimes.right <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
+  const leftRecent = data.time - lastContactTimes.fastener.left <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
+  const rightRecent = data.time - lastContactTimes.fastener.right <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
   if (!leftRecent && !rightRecent) {
     fastenerGrasp = { ok: false, code: 'missing-finger-contact', armKey: 'r2' };
   } else if (!(fastenerAperture > ASSEMBLY1_STEP4_LIMITS.minimumFastenerAperture)) {
@@ -263,9 +305,24 @@ function sampleRuntime(
     fastenerPlanarDistance,
     fastenerHeight,
   });
+  const hammerAperture = data.qpos[runtime.hammerFingerQposAddresses[0]]
+    + data.qpos[runtime.hammerFingerQposAddresses[1]];
+  const hammerLeftRecent = data.time - lastContactTimes.hammer.left
+    <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
+  const hammerRightRecent = data.time - lastContactTimes.hammer.right
+    <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
+  let hammerGrasp: AssemblyStep4Verdict = { ok: true };
+  if (!hammerLeftRecent) {
+    hammerGrasp = { ok: false, code: 'missing-hammer-left-contact', armKey: 'r3' };
+  } else if (!hammerRightRecent) {
+    hammerGrasp = { ok: false, code: 'missing-hammer-right-contact', armKey: 'r3' };
+  } else if (!(hammerAperture > ASSEMBLY1_STEP4_LIMITS.minimumToolAperture)) {
+    hammerGrasp = { ok: false, code: 'empty-closure', armKey: 'r3' };
+  }
   return {
     all,
     fastenerGrasp,
+    hammerGrasp,
     placement,
     frameTranslation,
     crossMemberTranslation,
@@ -274,8 +331,11 @@ function sampleRuntime(
     fastenerPlanarDistance,
     fastenerHeight,
     fastenerAperture,
-    fastenerLeftContact: contacts.left,
-    fastenerRightContact: contacts.right,
+    fastenerLeftContact: fastenerContacts.left,
+    fastenerRightContact: fastenerContacts.right,
+    hammerAperture,
+    hammerLeftContact: hammerContacts.left,
+    hammerRightContact: hammerContacts.right,
   };
 }
 
@@ -299,7 +359,10 @@ export function AssemblyStep4Controller({
   const runtimeRef = useRef<RuntimePlan | null>(null);
   const machineRef = useRef<AssemblyStep4Machine | null>(null);
   const lastTimeRef = useRef<number | null>(null);
-  const lastContactTimesRef = useRef({ left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY });
+  const lastContactTimesRef = useRef({
+    fastener: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
+    hammer: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
+  });
   const completedRequestRef = useRef(0);
   const stateCallbackRef = useRef(onStateChange);
   const reportedPhaseRef = useRef<AssemblyStep4State['phase']>('idle');
@@ -309,7 +372,10 @@ export function AssemblyStep4Controller({
     runtimeRef.current = null;
     machineRef.current = null;
     lastTimeRef.current = null;
-    lastContactTimesRef.current = { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY };
+    lastContactTimesRef.current = {
+      fastener: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
+      hammer: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
+    };
     diagnosticsRef.current = null;
     completedRequestRef.current = requestId;
     reportedPhaseRef.current = 'idle';
@@ -342,7 +408,10 @@ export function AssemblyStep4Controller({
     runtimeRef.current = plan;
     machineRef.current = machine;
     lastTimeRef.current = data.time;
-    lastContactTimesRef.current = { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY };
+    lastContactTimesRef.current = {
+      fastener: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
+      hammer: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
+    };
     ownershipRef.current = 'step4';
     stateCallbackRef.current({ phase: machine.phase, failure: null });
     reportedPhaseRef.current = machine.phase;
@@ -358,8 +427,11 @@ export function AssemblyStep4Controller({
     lastTimeRef.current = data.time;
     const sample = sampleRuntime(model, data, runtime, lastContactTimesRef.current);
     const nextMachine = advanceAssemblyStep4Machine(machine, deltaSeconds, {
-      all: ['prepare', 'engage'].includes(machine.phase) ? { ok: true } : sample.all,
+      all: ['donor-tighten', 'prepare', 'engage'].includes(machine.phase)
+        ? { ok: true }
+        : sample.all,
       fastenerGrasp: sample.fastenerGrasp,
+      hammerGrasp: sample.hammerGrasp,
       placement: sample.placement,
     });
     if (machine.phase === 'prepare' && nextMachine.phase === 'engage') {
@@ -367,7 +439,7 @@ export function AssemblyStep4Controller({
       runtime.crossMemberBaseline = vector3(data.xpos, runtime.crossMemberBodyId);
       runtime.crossMemberBaselineQuaternion = quaternion4(data.xquat, runtime.crossMemberBodyId);
     }
-    if (machine.phase === 'engage' && nextMachine.phase === 'fastener-clamp') {
+    if (machine.phase === 'engage-settle' && nextMachine.phase === 'dual-clamp') {
       runtime.frameBaseline = vector3(data.xpos, runtime.frameBodyId);
       runtime.crossMemberBaseline = vector3(data.xpos, runtime.crossMemberBodyId);
       runtime.crossMemberBaselineQuaternion = quaternion4(data.xquat, runtime.crossMemberBodyId);
@@ -406,6 +478,9 @@ export function AssemblyStep4Controller({
       fastenerAperture: sample.fastenerAperture,
       fastenerLeftContact: sample.fastenerLeftContact,
       fastenerRightContact: sample.fastenerRightContact,
+      hammerAperture: sample.hammerAperture,
+      hammerLeftContact: sample.hammerLeftContact,
+      hammerRightContact: sample.hammerRightContact,
     };
     if (nextMachine.phase === 'error') {
       runtimeRef.current = null;

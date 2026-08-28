@@ -111,16 +111,33 @@ test('cross-member target rests on top of the frame instead of intersecting its 
 
 test('cross-member uses underside grasp pockets and integral hollow round/square plates', () => {
   const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
+  const pickupGuides = {
+    west: ['.043 0 .07', '.005 .05 .01'],
+    east: ['.117 0 .07', '.005 .05 .01'],
+    north: ['.08 .262 .07', '.08 .005 .01'],
+    south: ['.08 -.262 .07', '.08 .005 .01'],
+  };
+  for (const [name, [position, size]] of Object.entries(pickupGuides)) {
+    assert.match(xml, new RegExp(
+      `name="cross_member_pickup_guide_${name}"[^>]*pos="${position}"[^>]*size="${size}"[^>]*friction="2 \.2 \.03"`,
+    ));
+  }
   for (const name of [
     'cross_member_grip_stop_north_outer',
     'cross_member_grip_stop_north_inner',
     'cross_member_grip_stop_south_outer',
     'cross_member_grip_stop_south_inner',
   ]) {
-    assert.match(xml, new RegExp(`name="${name}"[^>]*mass="\\.01"`));
+    assert.match(xml, new RegExp(`name="${name}"[^>]*mass="\\.005"`));
   }
   assert.doesNotMatch(xml, /cross_member_grip_cap_(?:north|south)/);
   for (const side of ['north', 'south']) {
+    assert.match(xml, new RegExp(
+      `name="cross_member_grip_recess_bridge_${side}"[^>]*size="\\.014 \\.025 \\.012"[^>]*friction="10 2 1"[^>]*condim="6"`,
+    ));
+    assert.match(xml, new RegExp(
+      `name="cross_member_grip_lower_guard_${side}"[^>]*size="\\.020 \\.021 \\.004"[^>]*mass="\\.002"[^>]*friction="10 2 1"[^>]*condim="6"`,
+    ));
     for (const opening of ['left', 'right']) {
       assert.match(xml, new RegExp(
         `name="cross_member_${side}_hole_${opening}"[^>]*rgba="0 0 0 0"`,
@@ -128,7 +145,7 @@ test('cross-member uses underside grasp pockets and integral hollow round/square
     }
     for (const flange of ['left', 'right']) {
       assert.match(xml, new RegExp(
-        `name="cross_member_flange_${flange}_${side}_grip_recess"[^>]*pos="[^\"]+ -?0?\\.1275 0?\\.006"[^>]*size="\\.009 0?\\.025 0?\\.012"`,
+        `name="cross_member_flange_${flange}_${side}_grip_recess"[^>]*pos="[^\"]+ -?0?\\.1275 0?\\.006"[^>]*size="\\.014 0?\\.025 0?\\.012"[^>]*friction="10 2 1"[^>]*condim="6"`,
       ));
     }
     for (const edge of ['outer', 'inner', 'left', 'center', 'right']) {
@@ -163,10 +180,14 @@ test('Assembly1 exposes stable faceted hand tools with recognizable detail', () 
     /<body name="torque_driver" pos="\.65 0 \.238" euler="90 0 0">/,
   );
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
-    ({ name }) => name === 'hammer_pickup_cradle_west',
+    ({ name, size, position }) => name === 'hammer_pickup_cradle_tail'
+      && JSON.stringify(size) === JSON.stringify([.025, .04, .015])
+      && JSON.stringify(position) === JSON.stringify([.495, -.421, .133]),
   ));
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
-    ({ name }) => name === 'hammer_pickup_cradle_east',
+    ({ name, size, position }) => name === 'hammer_pickup_cradle_head'
+      && JSON.stringify(size) === JSON.stringify([.025, .05, .015])
+      && JSON.stringify(position) === JSON.stringify([.717, -.421, .129]),
   ));
   assert.ok(!FRANKA_ASSEMBLY2_LAYOUT.sceneObjects.some(
     ({ name }) => name.startsWith('torque_driver_cradle_'),
@@ -177,6 +198,16 @@ test('Assembly1 exposes stable faceted hand tools with recognizable detail', () 
   );
   assert.match(xml, /<body name="double_face_hammer" pos="\.642 -\.421 \.171">/);
   assert.match(xml, /name="hammer_eye"/);
+  assert.match(
+    xml,
+    /name="hammer_handle_grip"[^>]*pos="-\.0655 0 -\.005"[^>]*size="\.0905 \.021 \.018"[^>]*mass="\.003"[^>]*friction="10 2 1"[^>]*condim="6"/,
+  );
+  assert.match(xml, /name="hammer_handle_core"[^>]*mass="\.003"/);
+  for (const guard of ['upper', 'lower']) {
+    assert.match(xml, new RegExp(
+      `name="hammer_grip_${guard}_guard"[^>]*size="\\.045 \\.026 \\.004"[^>]*mass="\\.001"[^>]*friction="10 2 1"[^>]*condim="6"`,
+    ));
+  }
   assert.match(xml, /name="hammer_cheek"/);
   assert.match(xml, /name="hammer_striking_face_a" type="cylinder"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);
   assert.match(xml, /name="hammer_striking_face_a"[^>]*fromto="\.075 -\.053 0 \.075 -\.073 0"/);

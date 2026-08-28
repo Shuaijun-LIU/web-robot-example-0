@@ -6,7 +6,10 @@ import * as THREE from 'three';
 
 import { topDownTcpQuaternion } from '../src/assemblyStep1.js';
 import { ASSEMBLY1_STEP2_ARMS } from '../src/assemblyStep2.js';
-import { ASSEMBLY1_STEP3_TRANSPORT_ARMS } from '../src/assemblyStep3.js';
+import {
+  ASSEMBLY1_STEP3_HAMMER_ARM,
+  ASSEMBLY1_STEP3_HOME_JOINT_TARGETS,
+} from '../src/assemblyStep3.js';
 import {
   ASSEMBLY1_STEP4_ARMS,
   ASSEMBLY1_STEP4_WAYPOINTS,
@@ -30,8 +33,8 @@ const tasks = [
   {
     key: 'r1',
     closingAxisYawDegrees: ASSEMBLY1_STEP2_ARMS[1].closingAxisYawDegrees,
-    start: ASSEMBLY1_STEP2_ARMS[1].contactJointTargets,
-    waypoints: ['prepare', 'clear', 'ready', 'strike'],
+    start: ASSEMBLY1_STEP3_HAMMER_ARM.handoverJointTargets,
+    waypoints: ['prepare', 'engage', 'clear'],
     orientationFor(name, initialWorldQuaternion) {
       return initialWorldQuaternion;
     },
@@ -39,8 +42,19 @@ const tasks = [
   {
     key: 'r2',
     closingAxisYawDegrees: 0,
-    start: ASSEMBLY1_STEP3_TRANSPORT_ARMS[0].hoverJointTargets,
+    // Preserve the previously browser-verified outer-elbow approach branch
+    // while correcting the fingertip/TCP offset at the fastener station.
+    start: [0.172531, -0.48162, 2.077161, -1.957658, 0.503064, 2.145132, -1.914507],
     waypoints: ['prepare', 'engage', 'lift', 'transfer', 'insert', 'clear'],
+    orientationFor(_name, initialWorldQuaternion) {
+      return initialWorldQuaternion;
+    },
+  },
+  {
+    key: 'r3',
+    closingAxisYawDegrees: 90,
+    start: ASSEMBLY1_STEP3_HOME_JOINT_TARGETS,
+    waypoints: ['prepare', 'engage', 'clear', 'ready', 'strike'],
     orientationFor(_name, initialWorldQuaternion) {
       return initialWorldQuaternion;
     },

@@ -82,6 +82,12 @@ test('Assembly1 is the initial scene shown on page entry', async () => {
   assert.match(source, /robot:\s*\{\s*value:\s*'frankaAssembly1'/);
 });
 
+test('Franka assembly scenes do not require a network HDR before becoming interactive', async () => {
+  const appSource = await readFile(new URL('../src/App.tsx', import.meta.url), 'utf8');
+  assert.match(appSource, /robotKey\.startsWith\('frankaAssembly'\)/);
+  assert.match(appSource, /<color attach="background"/);
+});
+
 test('Assembly1 exposes one four-step sequence panel and deterministic Step 4 diagnostics', async () => {
   const [appSource, panelSource, step4ControllerSource] = await Promise.all([
     readFile(appPath, 'utf8'),
@@ -106,16 +112,16 @@ test('Assembly1 exposes one four-step sequence panel and deterministic Step 4 di
   assert.match(panelSource, /第一步已完成/);
   assert.match(panelSource, /第二步已完成：四处物理夹持已建立/);
   assert.match(panelSource, /执行第三步：双臂搬运并对孔/);
-  assert.match(panelSource, /第三步已完成：横梁已落位并释放/);
+  assert.match(panelSource, /第三步已完成：锤子已暂存，横梁已落位/);
   assert.match(panelSource, /执行第四步：拾取并插入第一颗紧固件/);
-  assert.match(panelSource, /Arm 2 正在下击紧固件/);
+  assert.match(panelSource, /Arm 4 正在下击紧固件/);
   assert.match(panelSource, /第四步已完成：紧固件已落位并完成锤击/);
   assert.match(panelSource, /请 Reset 后重试/);
   assert.match(step4ControllerSource, /useBeforePhysicsStep/);
   assert.match(step4ControllerSource, /consumeMujocoContacts/);
   assert.match(step4ControllerSource, /machine\.phase === 'prepare'/);
   assert.match(step4ControllerSource, /nextMachine\.phase === 'engage'/);
-  assert.match(step4ControllerSource, /nextMachine\.phase === 'fastener-clamp'/);
+  assert.match(step4ControllerSource, /nextMachine\.phase === 'dual-clamp'/);
   assert.doesNotMatch(step4ControllerSource, /data\.qpos\[[^\]]+\]\s*=/);
 });
 

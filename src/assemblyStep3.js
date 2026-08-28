@@ -1,4 +1,5 @@
 import { interpolateJointTargets } from './assemblyStep1.js';
+import { FRANKA_HOME } from './sceneLayouts.js';
 
 export const ASSEMBLY1_STEP3_DURATIONS = Object.freeze({
   graspCheckWindow: 0.25,
@@ -12,16 +13,40 @@ export const ASSEMBLY1_STEP3_DURATIONS = Object.freeze({
   reseatDescent: 1.5,
   release: 0.8,
   releaseSettle: 0.5,
-  retreat: 1.5,
+  retreat: 3,
   placedHold: 1,
 });
 
 export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
+export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS = Object.freeze([48, 96, 24, 24]);
+export const ASSEMBLY1_STEP3_HOME_JOINT_TARGETS = Object.freeze(FRANKA_HOME.slice(0, 7));
+
+export const ASSEMBLY1_STEP3_HAMMER_WAYPOINTS = Object.freeze({
+  start: Object.freeze([0.61, -0.421, 0.16]),
+  lift: Object.freeze([0.61, -0.421, 0.34]),
+  // Keep the hammer above its pickup cradle until Step 4.  Moving it toward
+  // the frame at this height makes the hammer head sweep through the frame.
+  handover: Object.freeze([0.61, -0.421, 0.40]),
+});
+
+export const ASSEMBLY1_STEP3_HAMMER_ARM = Object.freeze({
+  key: 'r1',
+  armIndex: 1,
+  closingAxisYawDegrees: 90,
+  liftJointTargets: Object.freeze([
+    1.302988, 0.041657, 1.238441, -2.306154, -0.054693, 2.317799, 1.793236,
+  ]),
+  handoverJointTargets: Object.freeze([
+    1.333653, -0.188102, 1.171507, -2.233461, 0.206572, 2.148636, 1.599407,
+  ]),
+});
 
 export const ASSEMBLY1_STEP3_LIMITS = Object.freeze({
   minimumAperture: 0.02,
+  hammerMinimumAperture: 0.012,
+  crossMemberMinimumAperture: 0.005,
   frameTranslation: 0.008,
-  holePlanarDistance: 0.035,
+  holePlanarDistance: 0.04,
   holeVerticalOffset: 0.025,
   seatedVerticalOffset: 0.02,
   comparisonEpsilon: 0.001,
@@ -118,6 +143,7 @@ export function evaluateAssemblyStep3Transport({
   forbiddenBodies,
   aperture,
   requireBilateralContact = true,
+  minimumAperture = ASSEMBLY1_STEP3_LIMITS.minimumAperture,
 }) {
   if (!Number.isFinite(aperture)) return failure('non-finite-runtime');
   if (requireBilateralContact && !leftContactBodies.includes(targetBody)) {
@@ -127,7 +153,7 @@ export function evaluateAssemblyStep3Transport({
     return failure('missing-right-contact');
   }
   if (forbiddenBodies.length > 0) return failure('forbidden-contact', forbiddenBodies.join(', '));
-  if (!(aperture > ASSEMBLY1_STEP3_LIMITS.minimumAperture)) {
+  if (!(aperture > minimumAperture)) {
     return failure('empty-closure', String(aperture));
   }
   return { ok: true };
@@ -232,7 +258,10 @@ const verificationTransitions = {
 };
 
 export function advanceAssemblyStep3Machine(machine, deltaSeconds, evidence) {
-  if (machine.phase === 'complete' || machine.phase === 'error') return machine;
+  if (machine.phase === 'error') return machine;
+  if (machine.phase === 'complete') {
+    return evidence.all?.ok ? machine : terminalFailure(evidence.all);
+  }
   const dt = Math.max(0, deltaSeconds);
   const motionTransition = motionTransitions[machine.phase];
   if (motionTransition) {
@@ -305,7 +334,25 @@ export function createAssemblyStep3ControlFrame(machine, plans) {
   return {
     arms: plans.map((plan, index) => {
       let jointTargets = plan.hold;
-      if (index >= 2) {
+      if (index === 1) {
+        if (machine.phase === 'lift') {
+          jointTargets = interpolateJointTargets(
+            plan.hold,
+            plan.hammerLift,
+            progress(ASSEMBLY1_STEP3_DURATIONS.lift),
+          );
+        } else if (machine.phase === 'lift-settle') {
+          jointTargets = plan.hammerLift;
+        } else if (machine.phase === 'transfer-a') {
+          jointTargets = interpolateJointTargets(
+            plan.hammerLift,
+            plan.hammerHandover,
+            progress(ASSEMBLY1_STEP3_DURATIONS.transferA),
+          );
+        } else if (machine.phase !== 'grasp-check') {
+          jointTargets = plan.hammerHandover;
+        }
+      } else if (index >= 2) {
         if (machine.phase === 'lift') {
           jointTargets = interpolateJointTargets(
             plan.hold,
@@ -347,7 +394,7 @@ export function createAssemblyStep3ControlFrame(machine, plans) {
         } else if (machine.phase === 'retreat') {
           jointTargets = interpolateJointTargets(
             plan.aligned,
-            plan.hover,
+            plan.home,
             progress(ASSEMBLY1_STEP3_DURATIONS.retreat),
           );
         } else if (
@@ -358,7 +405,7 @@ export function createAssemblyStep3ControlFrame(machine, plans) {
         ) {
           jointTargets = plan.aligned;
         } else if (machine.phase === 'placed-verification' || machine.phase === 'complete') {
-          jointTargets = plan.hover;
+          jointTargets = plan.home;
         }
       }
       let gripperTarget = ASSEMBLY1_STEP3_GRIPPER_CLAMPS[index];

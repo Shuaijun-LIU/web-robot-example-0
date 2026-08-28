@@ -1,7 +1,7 @@
 export const ASSEMBLY1_STEP1_PHASE_DURATION = 1.5;
 export const ASSEMBLY1_STEP1_SETTLE_DURATION = 3;
 export const ASSEMBLY1_GRIPPER_OPEN = 255;
-export const ASSEMBLY1_STEP1_IK_VERSION = 'installation-clearance-v4';
+export const ASSEMBLY1_STEP1_IK_VERSION = 'dynamic-centered-hammer-grasp-v10';
 
 export function topDownTcpQuaternion(closingAxisYawDegrees) {
   const halfTurn = (closingAxisYawDegrees + 90) * Math.PI / 360;
@@ -20,11 +20,11 @@ const roles = [
   },
   {
     role: 'horizontal hammer handle',
-    highWaypoint: [0.559, -0.421, 0.48],
-    finalWaypoint: [0.559, -0.421, 0.28],
+    highWaypoint: [0.61, -0.421, 0.48],
+    finalWaypoint: [0.61, -0.421, 0.28],
     closingAxisYawDegrees: 90,
-    highJointTargets: [1.391776, -0.105437, 1.034431, -2.00286, 0.098109, 1.948539, 1.601918],
-    finalJointTargets: [1.540117, 0.325783, 0.926499, -2.230769, -0.38426, 2.394071, 1.942869],
+    highJointTargets: [1.375447, -0.320432, 1.060973, -2.099078, 0.298101, 1.925046, 1.52242],
+    finalJointTargets: [1.409512, 0.27973, 1.120638, -2.339038, -0.387314, 2.426404, 2.027343],
   },
   {
     role: 'cross member north balance point',

@@ -838,7 +838,9 @@ export function App() {
         <Debug showSites={debug.sites} showJoints={debug.joints} />
 
         {/* Scene decoration — lights, environment, grid */}
-        <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />
+        {robotKey.startsWith('frankaAssembly')
+          ? <color attach="background" args={['#d8d2b5']} />
+          : <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />}
         <ambientLight intensity={0.4} />
         <directionalLight position={[2, -2, 5]} intensity={1.5} castShadow />
         <directionalLight position={[-1, 1, 3]} intensity={0.3} />

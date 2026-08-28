@@ -64,6 +64,9 @@ export interface AssemblyStep3ArmPlan {
   hover: readonly number[];
   descentMid: readonly number[];
   aligned: readonly number[];
+  home: readonly number[];
+  hammerLift: readonly number[];
+  hammerHandover: readonly number[];
 }
 
 export interface AssemblyStep3State {
@@ -109,16 +112,32 @@ export const ASSEMBLY1_STEP3_DURATIONS: Readonly<{
   reseatDescent: 1.5;
   release: 0.8;
   releaseSettle: 0.5;
-  retreat: 1.5;
+  retreat: 3;
   placedHold: 1;
 }>;
 
 export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
+export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS: readonly [48, 96, 24, 24];
+export const ASSEMBLY1_STEP3_HOME_JOINT_TARGETS: readonly number[];
+export const ASSEMBLY1_STEP3_HAMMER_WAYPOINTS: Readonly<{
+  start: readonly [number, number, number];
+  lift: readonly [number, number, number];
+  handover: readonly [number, number, number];
+}>;
+export const ASSEMBLY1_STEP3_HAMMER_ARM: Readonly<{
+  key: 'r1';
+  armIndex: 1;
+  closingAxisYawDegrees: 90;
+  liftJointTargets: readonly number[];
+  handoverJointTargets: readonly number[];
+}>;
 
 export const ASSEMBLY1_STEP3_LIMITS: Readonly<{
   minimumAperture: 0.02;
+  hammerMinimumAperture: 0.012;
+  crossMemberMinimumAperture: 0.005;
   frameTranslation: 0.008;
-  holePlanarDistance: 0.03;
+  holePlanarDistance: 0.04;
   holeVerticalOffset: 0.025;
   seatedVerticalOffset: 0.02;
   comparisonEpsilon: 0.001;
@@ -148,6 +167,7 @@ export function evaluateAssemblyStep3Transport(input: {
   forbiddenBodies: string[];
   aperture: number;
   requireBilateralContact?: boolean;
+  minimumAperture?: number;
 }): AssemblyStep3Verdict;
 
 export function evaluateAssemblyStep3Alignment(input: {

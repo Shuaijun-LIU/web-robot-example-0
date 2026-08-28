@@ -13,7 +13,7 @@ test('committed Pages artifact contains the released Step 3 flow and Step 4 cont
   const bundle = await readFile(new URL(`../docs/assets/${scriptPath}`, import.meta.url), 'utf8');
   assert.ok(bundle.includes('release-settle'), 'Pages bundle must include Step 3 release settling');
   assert.ok(
-    bundle.includes('第三步已完成：横梁已落位并释放'),
+    bundle.includes('第三步已完成：锤子已暂存，横梁已落位'),
     'Pages bundle must include the released Step 3 completion state',
   );
   assert.ok(

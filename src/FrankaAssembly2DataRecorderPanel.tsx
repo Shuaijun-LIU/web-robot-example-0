@@ -151,6 +151,10 @@ function hasKeyboardTarget(target: EventTarget | null) {
   return tag === 'input' || tag === 'textarea' || tag === 'select';
 }
 
+function armDisplayLabel(armKey: string, targets: ControlTarget[]) {
+  return targets.find((target) => target.key === armKey)?.label ?? armKey;
+}
+
 function parseArmProfiles(
   model: MujocoModel,
   targets: ControlTarget[],
@@ -621,7 +625,9 @@ export function FrankaAssembly2DataRecorderPanel({
       <section className="franka-recorder-panel" aria-label="Franka Assembly2 示教采集">
       <div className="franka-recorder-panel__title">Franka Assembly2 数据采集</div>
       <div className="franka-recorder-panel__line">
-        可采集机械臂：{armProfiles.length > 0 ? armProfiles.map((profile) => profile.armKey).join(' / ') : '未解析'}
+        可采集机械臂：{armProfiles.length > 0
+          ? armProfiles.map((profile) => armDisplayLabel(profile.armKey, targets)).join(' / ')
+          : '未解析'}
       </div>
       <div className="franka-recorder-panel__line">
         当前对象：{objectProfiles.map((obj) => obj.name).join(' / ') || '未解析'}
@@ -665,7 +671,7 @@ export function FrankaAssembly2DataRecorderPanel({
                 checked={selectedArms[armKey]}
                 onChange={toggleArm}
               />
-              {armKey.toUpperCase()}
+              {armDisplayLabel(armKey, targets)}
             </label>
           ))}
         </div>

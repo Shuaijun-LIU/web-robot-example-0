@@ -39,8 +39,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r1',
       targetBody: 'double_face_hammer',
-      contactWaypoint: [0.559, -0.421, 0.16],
-      approachWaypoint: [0.559, -0.421, 0.175],
+      contactWaypoint: [0.61, -0.421, 0.16],
+      approachWaypoint: [0.61, -0.421, 0.175],
       closingAxisYawDegrees: 90,
       leftFingerBody: 'r1_left_finger',
       rightFingerBody: 'r1_right_finger',
@@ -93,9 +93,12 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
       double_face_hammer: 0.04,
       cross_member: 0.03,
     },
-    objectRotationDegrees: 5,
+    objectRotationDegrees: 8,
+    hammerRotationDegrees: 10,
     verticalDisplacement: 0.003,
+    crossMemberVerticalDisplacement: 0.015,
     minimumAperture: 0.02,
+    crossMemberMinimumAperture: 0.005,
   });
 });
 
@@ -327,6 +330,14 @@ test('Step 2 grasp verdict accepts only bilateral physical target contact', () =
     evaluateAssemblyStep2Grasp({ ...valid, aperture: 0.02 }).code,
     'empty-closure',
   );
+  assert.deepEqual(evaluateAssemblyStep2Grasp({
+    ...valid,
+    targetBody: 'cross_member',
+    leftContactBodies: ['cross_member'],
+    rightContactBodies: ['cross_member'],
+    aperture: 0.008,
+    minimumAperture: ASSEMBLY1_STEP2_LIMITS.crossMemberMinimumAperture,
+  }), { ok: true });
   assert.equal(
     evaluateAssemblyStep2Grasp({ ...valid, leftContactBodies: [] }).code,
     'missing-left-contact',
@@ -361,13 +372,29 @@ test('Step 2 grasp verdict accepts only bilateral physical target contact', () =
     { ok: true },
   );
   assert.equal(
-    evaluateAssemblyStep2Grasp({ ...valid, rotationDegrees: 5.1 }).code,
+    evaluateAssemblyStep2Grasp({ ...valid, rotationDegrees: 8.1 }).code,
     'object-rotation',
   );
+  assert.deepEqual(evaluateAssemblyStep2Grasp({
+    ...valid,
+    targetBody: 'double_face_hammer',
+    leftContactBodies: ['double_face_hammer'],
+    rightContactBodies: ['double_face_hammer'],
+    rotationDegrees: 9,
+    maximumRotationDegrees: 10,
+  }), { ok: true });
   assert.equal(
     evaluateAssemblyStep2Grasp({ ...valid, verticalDisplacement: 0.0031 }).code,
     'object-lift',
   );
+  assert.deepEqual(evaluateAssemblyStep2Grasp({
+    ...valid,
+    targetBody: 'cross_member',
+    leftContactBodies: ['cross_member'],
+    rightContactBodies: ['cross_member'],
+    verticalDisplacement: 0.004,
+    maximumVerticalDisplacement: 0.015,
+  }), { ok: true });
 });
 
 test('quaternion angle is sign symmetric and reported in degrees', () => {

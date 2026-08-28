@@ -83,20 +83,24 @@ function cleanDecimal(value) {
 
 function recessedCrossMemberFlangesXml() {
   const segments = [
-    ['south_outer', -0.19875, 0.04625, 0, 0.018, 0.034],
-    ['south_grip_recess', -0.1275, 0.025, 0.006, 0.012, 0.012],
-    ['center', 0, 0.1025, 0, 0.018, 0.075],
-    ['north_grip_recess', 0.1275, 0.025, 0.006, 0.012, 0.012],
-    ['north_outer', 0.19875, 0.04625, 0, 0.018, 0.034],
+    ['south_outer', -0.19875, 0.04625, 0, 0.018, 0.0085],
+    ['south_grip_recess', -0.1275, 0.025, 0.006, 0.012, 0.003],
+    ['center', 0, 0.1025, 0, 0.018, 0.01875],
+    ['north_grip_recess', 0.1275, 0.025, 0.006, 0.012, 0.003],
+    ['north_outer', 0.19875, 0.04625, 0, 0.018, 0.0085],
   ];
   return [
     ['left', -0.016, '.56 .58 .59 1'],
     ['right', 0.016, '.68 .69 .69 1'],
-  ].flatMap(([flange, x, rgba]) => segments.map(([name, y, halfY, z, halfZ, mass]) => (
-    `<geom name="cross_member_flange_${flange}_${name}" type="box" `
-    + `pos="${x} ${y} ${z}" size=".009 ${halfY} ${halfZ}" `
-    + `rgba="${rgba}" mass="${mass}" friction="1.2 .2 .02"/>`
-  ))).join('\n      ');
+  ].flatMap(([flange, x, rgba]) => segments.map(([name, y, halfY, z, halfZ, mass]) => {
+    const halfX = name.includes('grip_recess') ? '.014' : '.009';
+    const contact = name.includes('grip_recess')
+      ? 'friction="10 2 1" condim="6"'
+      : 'friction="1.2 .2 .02"';
+    return `<geom name="cross_member_flange_${flange}_${name}" type="box" `
+      + `pos="${x} ${y} ${z}" size="${halfX} ${halfY} ${halfZ}" `
+      + `rgba="${rgba}" mass="${mass}" ${contact}/>`;
+  })).join('\n      ');
 }
 
 function connectorInterfaceXml(side, y) {
@@ -114,7 +118,7 @@ function connectorInterfaceXml(side, y) {
   ].map(([name, x, pieceY, size]) => (
     `<geom name="cross_member_${side}_plate_${name}" type="box" `
     + `pos="${x} ${pieceY} .033" size="${size}" `
-    + 'rgba=".24 .27 .29 1" mass=".008"/>'
+    + 'rgba=".24 .27 .29 1" mass=".002"/>'
   )).join('\n      ');
   const circleCenterX = -0.038;
   const circleRadius = 0.015;
@@ -125,7 +129,7 @@ function connectorInterfaceXml(side, y) {
     const segmentY = cleanDecimal(y + circleRadius * Math.sin(angle));
     return `<geom name="cross_member_${side}_round_opening_segment_${String(index + 1).padStart(2, '0')}" `
       + `type="box" pos="${x} ${segmentY} .033" size=".005 .003 .015" `
-      + `euler="0 0 ${angleDegrees + 90}" rgba=".24 .27 .29 1" mass=".004"/>`;
+      + `euler="0 0 ${angleDegrees + 90}" rgba=".24 .27 .29 1" mass=".001"/>`;
   }).join('\n      ');
   const squareOpening = `<site name="cross_member_${side}_square_opening" `
     + `pos=".04 ${y} .033" type="box" size=".012 .012 .002" rgba="0 0 0 0"/>`;
@@ -263,7 +267,7 @@ export const SHARED_ASSEMBLY1_TOOL_XML = `
     <body name="double_face_hammer" pos=".65 0 .229" euler="0 0 180">
       <freejoint/>
       <geom name="hammer_handle_core" type="box" pos="-.045 0 -.005" size=".105 .014 .014" rgba=".43 .22 .08 1" mass=".1" friction="1.4 .22 .03"/>
-      <geom name="hammer_handle_grip" type="box" pos="-.083 0 -.005" size=".073 .021 .018" rgba=".11 .12 .13 1" mass=".12"/>
+      <geom name="hammer_handle_grip" type="box" pos="-.083 0 -.005" size=".073 .021 .018" rgba=".11 .12 .13 1" mass=".12" friction="10 2 1" condim="6"/>
       <geom name="hammer_eye" type="cylinder" fromto=".048 0 0 .102 0 0" size=".021" rgba=".18 .19 .2 1" mass=".08"/>
       <geom name="hammer_cheek" type="box" pos=".075 0 0" size=".032 .03 .025" rgba=".32 .33 .34 1" mass=".18"/>
       <geom name="hammer_face_neck_a" type="cylinder" fromto=".075 -.030 0 .075 -.053 0" size=".019" rgba=".36 .37 .38 1" mass=".04"/>
@@ -281,20 +285,54 @@ const FRANKA_ASSEMBLY1_TOOL_XML = SHARED_ASSEMBLY1_TOOL_XML
     '<body name="double_face_hammer" pos=".65 0 .229" euler="0 0 180">',
     '<body name="double_face_hammer" pos=".642 -.421 .171">',
   )
-  .replace('mass=".1" friction="1.4 .22 .03"', 'mass=".05" friction="2 .3 .04"')
-  .replace('mass=".12"/>\n      <geom name="hammer_eye"', 'mass=".08"/>\n      <geom name="hammer_eye"')
-  .replace('mass=".08"/>\n      <geom name="hammer_cheek"', 'mass=".04"/>\n      <geom name="hammer_cheek"')
-  .replace('mass=".18"/>\n      <geom name="hammer_face_neck_a"', 'mass=".08"/>\n      <geom name="hammer_face_neck_a"')
-  .replaceAll('mass=".04"/>\n      <geom name="hammer_striking_face_', 'mass=".025"/>\n      <geom name="hammer_striking_face_')
-  .replaceAll('mass=".08"/>', 'mass=".04"/>');
+  .replace(
+    'name="hammer_handle_grip" type="box" pos="-.083 0 -.005" size=".073 .021 .018"',
+    'name="hammer_handle_grip" type="box" pos="-.0655 0 -.005" size=".0905 .021 .018"',
+  )
+  .replace('mass=".1" friction="1.4 .22 .03"', 'mass=".003" friction="2 .3 .04"')
+  .replace(
+    'mass=".12" friction="10 2 1" condim="6"/>\n      <geom name="hammer_eye"',
+    'mass=".003" friction="10 2 1" condim="6"/>\n      <geom name="hammer_eye"',
+  )
+  .replace('mass=".08"/>\n      <geom name="hammer_cheek"', 'mass=".002"/>\n      <geom name="hammer_cheek"')
+  .replace('mass=".18"/>\n      <geom name="hammer_face_neck_a"', 'mass=".004"/>\n      <geom name="hammer_face_neck_a"')
+  .replaceAll('mass=".04"/>\n      <geom name="hammer_striking_face_', 'mass=".001"/>\n      <geom name="hammer_striking_face_')
+  .replaceAll('mass=".08"/>', 'mass=".002"/>')
+  .replace(
+    '<geom name="hammer_handle_grip" type="box" pos="-.0655 0 -.005" size=".0905 .021 .018" rgba=".11 .12 .13 1" mass=".003" friction="10 2 1" condim="6"/>',
+    `<geom name="hammer_handle_grip" type="box" pos="-.0655 0 -.005" size=".0905 .021 .018" rgba=".11 .12 .13 1" mass=".003" friction="10 2 1" condim="6"/>
+      <geom name="hammer_grip_upper_guard" type="box" pos="-.0655 0 .017" size=".045 .026 .004" rgba=".08 .09 .1 1" mass=".001" friction="10 2 1" condim="6"/>
+      <geom name="hammer_grip_lower_guard" type="box" pos="-.0655 0 -.027" size=".045 .026 .004" rgba=".08 .09 .1 1" mass=".001" friction="10 2 1" condim="6"/>`,
+  );
 
 function assembly1ReachableFastenerWorkcellXml() {
   return SHARED_ASSEMBLY1_WORKCELL_XML
     .replace(
+      `<geom name="cross_member_stand_south" type="box" pos=".08 -.20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>
+      <geom name="cross_member_stand_north" type="box" pos=".08 .20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>`,
+      `<geom name="cross_member_stand_south" type="box" pos=".08 -.20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>
+      <geom name="cross_member_stand_north" type="box" pos=".08 .20 .041" size=".045 .025 .031" rgba=".16 .18 .2 1"/>
+      <!-- Passive pickup guides keep the free beam centered while it settles;
+           all four are low and remain behind when the beam is lifted. -->
+      <geom name="cross_member_pickup_guide_west" type="box" pos=".043 0 .07" size=".005 .05 .01" rgba=".16 .18 .2 1" friction="2 .2 .03"/>
+      <geom name="cross_member_pickup_guide_east" type="box" pos=".117 0 .07" size=".005 .05 .01" rgba=".16 .18 .2 1" friction="2 .2 .03"/>
+      <geom name="cross_member_pickup_guide_north" type="box" pos=".08 .262 .07" size=".08 .005 .01" rgba=".16 .18 .2 1" friction="2 .2 .03"/>
+      <geom name="cross_member_pickup_guide_south" type="box" pos=".08 -.262 .07" size=".08 .005 .01" rgba=".16 .18 .2 1" friction="2 .2 .03"/>`,
+    )
+    .replace(
       `<geom name="cross_member_flange_left" type="box" pos="-.016 0 0" size=".009 .245 .018" rgba=".56 .58 .59 1" mass=".18" friction="1.2 .2 .02"/>
       <geom name="cross_member_flange_right" type="box" pos=".016 0 0" size=".009 .245 .018" rgba=".68 .69 .69 1" mass=".18" friction="1.2 .2 .02"/>`,
-      recessedCrossMemberFlangesXml(),
+      `${recessedCrossMemberFlangesXml()}
+      <!-- Solid underside bridges stop the fingers entering the extrusion gap;
+           they remain recessed and do not obstruct upward gripper withdrawal. -->
+      <geom name="cross_member_grip_recess_bridge_north" type="box" pos="0 .1275 .006" size=".014 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6"/>
+      <geom name="cross_member_grip_recess_bridge_south" type="box" pos="0 -.1275 .006" size=".014 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6"/>
+      <!-- Bottom-only shoulders mechanically retain the beam during carry;
+           there is deliberately no top cap, so open fingers can retreat upward. -->
+      <geom name="cross_member_grip_lower_guard_north" type="box" pos="0 .1275 -.010" size=".020 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6"/>
+      <geom name="cross_member_grip_lower_guard_south" type="box" pos="0 -.1275 -.010" size=".020 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6"/>`,
     )
+    .replaceAll('mass=".01" friction="2 .2 .03"', 'mass=".005" friction="2 .2 .03"')
     .replace(
       `<geom name="cross_member_north_plate_mount" type="box" pos="0 .215 .025" size=".076 .024 .007" rgba=".31 .34 .36 1" mass=".015" friction="1.2 .2 .02"/>
       <geom name="cross_member_north_plate_outer" type="box" pos="0 .239 .04" size=".076 .006 .008" rgba=".24 .27 .29 1" mass=".015"/>
@@ -405,8 +443,8 @@ function createFrankaAssembly1SceneObjects() {
     fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
     fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
     fixedBox('tool_mat_hammer', [.2, .13, .006], [.53, -.42, .112], [.31, .27, .21, 1]),
-    fixedBox('hammer_pickup_cradle_west', [.008, .05, .015], [.495, -.421, .133], [.17, .18, .19, 1]),
-    fixedBox('hammer_pickup_cradle_east', [.008, .05, .015], [.675, -.421, .133], [.17, .18, .19, 1]),
+    fixedBox('hammer_pickup_cradle_tail', [.025, .04, .015], [.495, -.421, .133], [.17, .18, .19, 1]),
+    fixedBox('hammer_pickup_cradle_head', [.025, .05, .015], [.717, -.421, .129], [.17, .18, .19, 1]),
     fixedBox('tool_mat_powered', [.16, .2, .01], [.65, 0, .19], [.27, .25, .22, 1]),
     fixedBox('tool_mat_manual', [.2, .13, .006], [-.53, -.42, .112], [.31, .27, .21, 1]),
   ];

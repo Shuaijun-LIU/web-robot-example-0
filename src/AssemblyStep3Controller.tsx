@@ -12,7 +12,9 @@ import type { MujocoData, MujocoModel } from 'mujoco-react';
 import { consumeMujocoContacts } from './mujocoContact.js';
 import { ASSEMBLY1_STEP2_ARMS, quaternionAngularDistanceDegrees } from './assemblyStep2.js';
 import {
-  ASSEMBLY1_STEP3_GRIPPER_CLAMPS,
+  ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS,
+  ASSEMBLY1_STEP3_HAMMER_ARM,
+  ASSEMBLY1_STEP3_HOME_JOINT_TARGETS,
   ASSEMBLY1_STEP3_LIMITS,
   ASSEMBLY1_STEP3_TRANSPORT_ARMS,
   advanceAssemblyStep3Machine,
@@ -56,8 +58,8 @@ const FORBIDDEN_BODY_NAMES = [
   'double_face_hammer',
   'torque_driver',
   'tool_mat',
-  'hammer_pickup_cradle_west',
-  'hammer_pickup_cradle_east',
+  'hammer_pickup_cradle_tail',
+  'hammer_pickup_cradle_head',
 ];
 
 interface RuntimeArm {
@@ -177,12 +179,15 @@ function createRuntimePlan(
     ) {
       return { plan: null, failure: planningFailure('missing-resource', arm.key) };
     }
-    if (Math.abs(data.ctrl[arm.gripperActuatorIndex] - ASSEMBLY1_STEP3_GRIPPER_CLAMPS[index]) > 1e-6) {
+    if (Math.abs(data.ctrl[arm.gripperActuatorIndex] - ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS[index]) > 1e-6) {
       return { plan: null, failure: planningFailure('invalid-precondition', `${arm.key} gripper`) };
     }
     const qposAddresses = jointIds.map((jointId) => model.jnt_qposadr[jointId]);
     const hold = qposAddresses.map((address) => data.qpos[address]);
     const transport = ASSEMBLY1_STEP3_TRANSPORT_ARMS.find(({ armIndex }) => armIndex === index);
+    const hammer = ASSEMBLY1_STEP3_HAMMER_ARM.armIndex === index
+      ? ASSEMBLY1_STEP3_HAMMER_ARM
+      : null;
     const generatedTargets = transport
       ? [
         transport.liftJointTargets,
@@ -192,7 +197,9 @@ function createRuntimePlan(
         transport.descentMidJointTargets,
         transport.alignedJointTargets,
       ]
-      : [];
+      : hammer
+        ? [hammer.liftJointTargets, hammer.handoverJointTargets]
+        : [];
     if (
       !solutionIsWithinLimits(model, jointIds, hold)
       || generatedTargets.some((target) => !solutionIsWithinLimits(model, jointIds, target))
@@ -222,6 +229,9 @@ function createRuntimePlan(
       hover: transport?.hoverJointTargets ?? hold,
       descentMid: transport?.descentMidJointTargets ?? hold,
       aligned: transport?.alignedJointTargets ?? hold,
+      home: index >= 2 ? ASSEMBLY1_STEP3_HOME_JOINT_TARGETS : hold,
+      hammerLift: hammer?.liftJointTargets ?? hold,
+      hammerHandover: hammer?.handoverJointTargets ?? hold,
     });
   }
 
@@ -280,7 +290,12 @@ function sampleRuntime(
       rightContactBodies: rightIds.map((bodyId) => bodyName(model, bodyId)),
       forbiddenBodies,
       aperture,
-      requireBilateralContact,
+      requireBilateralContact: requireBilateralContact || arm.targetBody === 'double_face_hammer',
+      minimumAperture: arm.targetBody === 'double_face_hammer'
+        ? ASSEMBLY1_STEP3_LIMITS.hammerMinimumAperture
+        : arm.targetBody === 'cross_member'
+          ? ASSEMBLY1_STEP3_LIMITS.crossMemberMinimumAperture
+          : ASSEMBLY1_STEP3_LIMITS.minimumAperture,
     });
     return {
       armKey: arm.armKey,

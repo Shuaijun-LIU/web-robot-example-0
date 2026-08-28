@@ -158,9 +158,12 @@ export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
     double_face_hammer: 0.04;
     cross_member: 0.03;
   }>;
-  objectRotationDegrees: 5;
+  objectRotationDegrees: 8;
+  hammerRotationDegrees: 10;
   verticalDisplacement: 0.003;
+  crossMemberVerticalDisplacement: 0.015;
   minimumAperture: 0.02;
+  crossMemberMinimumAperture: 0.005;
 }>;
 
 export const ASSEMBLY1_STEP2_ARMS: AssemblyStep2Arm[];
@@ -205,10 +208,13 @@ export function evaluateAssemblyStep2Grasp(input: {
   translation: number;
   maximumTranslation?: number;
   rotationDegrees: number;
+  maximumRotationDegrees?: number;
   verticalDisplacement: number;
+  maximumVerticalDisplacement?: number;
   requireBilateralContact?: boolean;
   leftTargetContactAge?: number;
   rightTargetContactAge?: number;
+  minimumAperture?: number;
 }): AssemblyStep2GraspVerdict;
 
 export function createAssemblyStep2Machine(): AssemblyStep2Machine;

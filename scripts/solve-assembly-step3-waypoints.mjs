@@ -7,6 +7,8 @@ import * as THREE from 'three';
 import { topDownTcpQuaternion } from '../src/assemblyStep1.js';
 import { ASSEMBLY1_STEP2_ARMS } from '../src/assemblyStep2.js';
 import {
+  ASSEMBLY1_STEP3_HAMMER_ARM,
+  ASSEMBLY1_STEP3_HAMMER_WAYPOINTS,
   ASSEMBLY1_STEP3_TRANSPORT_ARMS,
   ASSEMBLY1_STEP3_WAYPOINTS,
 } from '../src/assemblyStep3.js';
@@ -257,6 +259,104 @@ for (const [transportIndex, contract] of ASSEMBLY1_STEP3_TRANSPORT_ARMS.entries(
         contract[recordedTargetNames[waypointName]],
         jointTargets,
       ),
+    };
+  }
+  results.push({
+    key: arm.key,
+    armIndex: contract.armIndex,
+    closingAxisYawDegrees: contract.closingAxisYawDegrees,
+    startPositionError: Number(startError.position.toFixed(6)),
+    startOrientationErrorDegrees: Number(startError.orientationDegrees.toFixed(6)),
+    targets,
+  });
+}
+
+{
+  const contract = ASSEMBLY1_STEP3_HAMMER_ARM;
+  const arm = ASSEMBLY1_STEP2_ARMS[contract.armIndex];
+  const frame = attachmentFrames[contract.armIndex];
+  let currentQ = [...arm.contactJointTargets];
+  const worldQuaternion = new THREE.Quaternion(
+    ...topDownTcpQuaternion(contract.closingAxisYawDegrees),
+  ).normalize();
+  const baseQuaternion = new THREE.Quaternion().setFromAxisAngle(
+    new THREE.Vector3(0, 0, 1),
+    frame.yaw,
+  );
+  const targetQuaternion = baseQuaternion.clone().invert().multiply(worldQuaternion).normalize();
+  const startTarget = worldToRobot(ASSEMBLY1_STEP3_HAMMER_WAYPOINTS.start, frame);
+  const startError = evaluatePose({
+    mujoco,
+    model,
+    data,
+    siteId,
+    qposAddresses,
+    solution: currentQ,
+    targetPosition: startTarget,
+    targetQuaternion,
+  });
+  if (startError.position > 0.01 || startError.orientationDegrees > 5) {
+    throw new Error(
+      `${arm.key} Step 2 hammer contact is not a valid Step 3 start `
+      + `(${startError.position}m/${startError.orientationDegrees}deg)`,
+    );
+  }
+
+  const targets = {};
+  for (const [waypointName, recordedName] of [
+    ['lift', 'liftJointTargets'],
+    ['handover', 'handoverJointTargets'],
+  ]) {
+    const worldTarget = ASSEMBLY1_STEP3_HAMMER_WAYPOINTS[waypointName];
+    const localTarget = worldToRobot(worldTarget, frame);
+    const solution = solveSelectedIk({
+      mujoco,
+      model,
+      data,
+      siteId,
+      qposAddresses,
+      currentQ,
+      targetPosition: new THREE.Vector3(...localTarget),
+      targetQuaternion,
+      maxIterations: 1200,
+      damping: 0.008,
+    });
+    if (!solution) throw new Error(`${arm.key}/${waypointName} did not produce a solution`);
+    const bounded = solution.map((value, joint) => fitJointAngleToRange(
+      value,
+      limits[joint][0],
+      limits[joint][1],
+    ));
+    const error = evaluatePose({
+      mujoco,
+      model,
+      data,
+      siteId,
+      qposAddresses,
+      solution: bounded,
+      targetPosition: localTarget,
+      targetQuaternion,
+    });
+    const withinLimits = bounded.every((value, joint) => (
+      Number.isFinite(value)
+      && value >= limits[joint][0]
+      && value <= limits[joint][1]
+    ));
+    if (error.position > 0.012 || error.orientationDegrees > 6 || !withinLimits) {
+      throw new Error(
+        `${arm.key}/${waypointName} exceeds tolerance `
+        + `(${error.position}m/${error.orientationDegrees}deg, limits=${withinLimits})`,
+      );
+    }
+    currentQ = bounded;
+    const jointTargets = rounded(bounded);
+    targets[waypointName] = {
+      worldTarget,
+      jointTargets,
+      positionError: Number(error.position.toFixed(6)),
+      orientationErrorDegrees: Number(error.orientationDegrees.toFixed(6)),
+      withinLimits,
+      matchesContract: arraysMatch(contract[recordedName], jointTargets),
     };
   }
   results.push({

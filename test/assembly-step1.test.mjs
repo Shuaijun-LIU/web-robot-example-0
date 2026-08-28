@@ -41,8 +41,8 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
       },
       {
         role: 'horizontal hammer handle',
-        highWaypoint: [0.559, -0.421, 0.48],
-        finalWaypoint: [0.559, -0.421, 0.28],
+        highWaypoint: [0.61, -0.421, 0.48],
+        finalWaypoint: [0.61, -0.421, 0.28],
         closingAxisYawDegrees: 90,
       },
       {
@@ -95,7 +95,7 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
 });
 
 test('Assembly1 Step 1 uses the verified grasp-ready IK generation', () => {
-  assert.equal(assemblyStep1.ASSEMBLY1_STEP1_IK_VERSION, 'installation-clearance-v4');
+  assert.equal(assemblyStep1.ASSEMBLY1_STEP1_IK_VERSION, 'dynamic-centered-hammer-grasp-v10');
   for (const arm of ASSEMBLY1_STEP1_ARMS) {
     assert.equal(arm.highJointTargets.length, 7);
     assert.equal(arm.finalJointTargets.length, 7);

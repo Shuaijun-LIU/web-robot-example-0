@@ -149,6 +149,14 @@ for (let index = 0; index < qposAddresses.length; index += 1) {
 mujoco.mj_forward(model, data);
 
 const results = [];
+// Arm 2 has two valid top-down IK branches at the hammer station.  Seeding the
+// outer-elbow branch keeps its links outside the central beam transport lane.
+const hammerOuterElbowSeed = [
+  1.398051, -0.349402, 1.04701, -2.11562, 0.321445, 1.91947, 1.519115,
+];
+const hammerOuterElbowFinalSeed = [
+  1.401823, 0.260949, 1.142315, -2.359012, -0.368989, 2.435911, 2.031493,
+];
 
 for (const [index, arm] of ASSEMBLY1_STEP1_ARMS.entries()) {
   const worldQuaternion = new THREE.Quaternion(...arm.tcpQuaternion).normalize();
@@ -159,7 +167,7 @@ for (const [index, arm] of ASSEMBLY1_STEP1_ARMS.entries()) {
   const targetQuaternion = baseQuaternion.clone().invert().multiply(worldQuaternion).normalize();
   const highTarget = worldToRobot(arm.highWaypoint, attachmentFrames[index]);
   const finalTarget = worldToRobot(arm.finalWaypoint, attachmentFrames[index]);
-  const currentQ = FRANKA_HOME.slice(0, 7);
+  const currentQ = index === 1 ? [...hammerOuterElbowSeed] : FRANKA_HOME.slice(0, 7);
   const shared = { mujoco, model, data, siteId, qposAddresses, targetQuaternion };
   const high = solveSelectedIk({
     ...shared,
@@ -189,7 +197,7 @@ for (const [index, arm] of ASSEMBLY1_STEP1_ARMS.entries()) {
   });
   const final = solveSelectedIk({
     ...shared,
-    currentQ: boundedHigh,
+    currentQ: index === 1 ? [...hammerOuterElbowFinalSeed] : boundedHigh,
     targetPosition: new THREE.Vector3(...finalTarget),
     maxIterations: 250,
   });
