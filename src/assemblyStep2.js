@@ -51,10 +51,10 @@ const roles = [
   {
     role: 'horizontal hammer handle',
     targetBody: 'double_face_hammer',
-    contactWaypoint: [0.62, -0.427, 0.145],
+    contactWaypoint: [0.66, -0.427, 0.145],
     closingAxisYawDegrees: 90,
-    approachJointTargets: [1.759519, 0.562792, 0.72415, -2.296205, -0.76304, 2.606191, 2.30461],
-    contactJointTargets: [1.790859, 0.597575, 0.684318, -2.281973, -0.801619, 2.625364, 2.330823],
+    approachJointTargets: [1.804632, 0.520419, 0.730142, -2.366401, -0.766533, 2.64432, 2.381962],
+    contactJointTargets: [1.839231, 0.556831, 0.686063, -2.351205, -0.809501, 2.662951, 2.411283],
   },
   {
     role: 'cross member north balance point',

@@ -39,8 +39,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r1',
       targetBody: 'double_face_hammer',
-      contactWaypoint: [0.62, -0.427, 0.145],
-      approachWaypoint: [0.62, -0.427, 0.16],
+      contactWaypoint: [0.66, -0.427, 0.145],
+      approachWaypoint: [0.66, -0.427, 0.16],
       closingAxisYawDegrees: 90,
       leftFingerBody: 'r1_left_finger',
       rightFingerBody: 'r1_right_finger',

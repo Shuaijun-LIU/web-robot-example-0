@@ -44,11 +44,13 @@ test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () 
   assert.notDeepEqual(fastener.jointTargets.engage, fastener.jointTargets.insert);
   assert.notDeepEqual(receiver.jointTargets.hold, receiver.jointTargets.engage);
   assert.notDeepEqual(receiver.jointTargets.ready, receiver.jointTargets.strike);
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r1.prepare, [0.30, -0.18, 0.45]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r1.prepare, [0.48, -0.28, 0.56]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r1.engage, [0.095, 0, 0.40]);
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.engage, [0.115, 0.39, 0.16]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.prepare, [0.095, 0.38, 0.34]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.engage, [0.095, 0.38, 0.16]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.prepare, [-0.015, 0.02, 0.44]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.engage, [-0.015, 0.02, 0.40]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.clear, [-0.08, 0.02, 0.45]);
 });
 
 test('Step 4 receives the hammer while picking the fastener, then inserts and strikes', () => {

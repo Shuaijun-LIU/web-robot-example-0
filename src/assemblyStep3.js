@@ -23,16 +23,16 @@ export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS = Object.freeze([130, 122, 135
 export const ASSEMBLY1_STEP3_HOME_JOINT_TARGETS = Object.freeze(FRANKA_HOME.slice(0, 7));
 
 export const ASSEMBLY1_STEP3_HAMMER_WAYPOINTS = Object.freeze({
-  start: Object.freeze([0.62, -0.427, 0.145]),
-  prelift: Object.freeze([0.62, -0.427, 0.155]),
-  lift: Object.freeze([0.62, -0.427, 0.205]),
+  start: Object.freeze([0.66, -0.427, 0.145]),
+  prelift: Object.freeze([0.66, -0.427, 0.155]),
+  lift: Object.freeze([0.66, -0.427, 0.205]),
   liftPath: Object.freeze([0.155, 0.165, 0.175, 0.185, 0.195, 0.205].map(
-    (z) => Object.freeze([0.62, -0.427, z]),
+    (z) => Object.freeze([0.66, -0.427, z]),
   )),
   // Step 3 only clears the pickup cradle and holds a compact staging pose.
   // The actual donor-to-receiver transfer belongs to Step 4.
-  handover: Object.freeze([0.62, -0.427, 0.205]),
-  handoverPath: Object.freeze([Object.freeze([0.62, -0.427, 0.205])]),
+  handover: Object.freeze([0.66, -0.427, 0.205]),
+  handoverPath: Object.freeze([Object.freeze([0.66, -0.427, 0.205])]),
 });
 
 export const ASSEMBLY1_STEP3_HAMMER_ARM = Object.freeze({
@@ -40,13 +40,13 @@ export const ASSEMBLY1_STEP3_HAMMER_ARM = Object.freeze({
   armIndex: 1,
   closingAxisYawDegrees: 90,
   preliftJointTargets: Object.freeze([
-    1.775171, 0.574635, 0.705881, -2.291715, -0.781848, 2.615891, 2.320317,
+    1.822889, 0.53305, 0.708867, -2.3615, -0.788638, 2.654589, 2.400483,
   ]),
   liftJointTargets: Object.freeze([
-    1.66331, 0.457932, 0.848062, -2.327253, -0.636292, 2.547172, 2.221131,
+    1.691515, 0.408384, 0.874409, -2.40033, -0.616672, 2.584932, 2.279926,
   ]),
   handoverJointTargets: Object.freeze([
-    1.66331, 0.457932, 0.848062, -2.327253, -0.636292, 2.547172, 2.221131,
+    1.691515, 0.408384, 0.874409, -2.40033, -0.616672, 2.584932, 2.279926,
   ]),
 });
 

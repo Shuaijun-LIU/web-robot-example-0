@@ -376,10 +376,16 @@ function assembly1ReachableFastenerWorkcellXml() {
       '<geom name="fastener_tray_floor" type="box" size=".18 .18 .01"',
       '<geom name="fastener_tray_floor" type="box" pos="0 0 -.03" size=".18 .18 .04"',
     )
-    .replace('name="fastener_1" pos=".50 .36 .152"', 'name="fastener_1" pos=".12 .42 .152"')
-    .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".22 .42 .152"')
-    .replace('name="fastener_3" pos=".50 .48 .152"', 'name="fastener_3" pos=".12 .54 .152"')
-    .replace('name="fastener_4" pos=".60 .48 .152"', 'name="fastener_4" pos=".22 .54 .152"');
+    // Keep the active fastener alone on the south side of the tray.  The two
+    // spares stay together at the north edge, outside the closing fingers'
+    // approach corridor.
+    .replace('name="fastener_1" pos=".50 .36 .152"', 'name="fastener_1" pos=".10 .38 .152"')
+    .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".14 .55 .152"')
+    .replace('name="fastener_3" pos=".50 .48 .152"', 'name="fastener_3" pos=".24 .55 .152"')
+    .replace(
+      '    <body name="fastener_4" pos=".60 .48 .152"><freejoint/><geom name="fastener_4_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/><geom name="fastener_4_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/></body>',
+      '',
+    );
 }
 
 const ASSEMBLY2_ASSET_XML = `
@@ -438,26 +444,15 @@ const FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML = ASSEMBLY2_TOOL_XML
   )
   .replace(
     '<body name="claw_hammer" pos=".65 0 .229">',
-    '<body name="double_face_hammer" pos=".642 -.421 .148">',
+    '<body name="double_face_hammer" pos=".642 -.421 .147" gravcomp=".99">',
   )
   .replace(
     'name="robotwin_hammer_collision" type="capsule" fromto="-.14 0 -.008 .06 0 -.008" size=".02" rgba="0 0 0 0" mass=".16" friction="1.4 .22 .03"',
-    'name="robotwin_hammer_collision" type="box" pos="-.04 0 -.008" size=".10 .020 .016" rgba="0 0 0 0" mass=".04" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"',
+    'name="robotwin_hammer_collision" type="box" pos="-.05 0 -.008" size=".11 .020 .016" rgba="0 0 0 0" mass=".025" friction="20 3 1" condim="6" solref=".002 1" solimp=".95 .99 .001"',
   )
   .replace(
     'name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"',
-    `name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".04"/>
-      <!-- A visible, collidable tail extension gives the receiving Panda a
-           second grip zone across the two arms' reachable-workspace gap. -->
-      <geom name="robotwin_hammer_handle_extension" type="box" pos="-.16 0 -.008" size=".05 .020 .016" rgba=".07 .08 .09 1" mass=".01" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_receiver_guard_tail" type="box" pos="-.195 0 -.008" size=".004 .025 .020" rgba=".11 .12 .13 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_receiver_guard_head" type="box" pos="-.125 0 -.008" size=".004 .025 .020" rgba=".11 .12 .13 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <!-- Low-profile rubber guards bound the donor finger contact patch so the
-           hammer cannot slide lengthwise during lift or handover. -->
-      <geom name="robotwin_hammer_grip_guard_tail" type="box" pos="-.052 0 -.008" size=".004 .020 .016" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_grip_guard_head" type="box" pos=".003 0 -.008" size=".004 .020 .016" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_grip_guard_lower" type="box" pos="-.0245 0 -.028" size=".0275 .025 .004" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_grip_guard_upper" type="box" pos="-.0245 0 .012" size=".0275 .025 .004" rgba=".08 .09 .10 1" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"`,
+    'name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".025" friction="20 3 1"',
   );
 
 export const createAssembly1SceneObjects = (includeTorqueDriverCradle = false) => [
@@ -480,9 +475,11 @@ function createFrankaAssembly1SceneObjects() {
     fixedBox('assembly_platform', [1.15, 1.15, .05], [0, 0, .05], [.25, .27, .29, 1]),
     fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
     fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
-    { ...fixedBox('hammer_pickup_cradle_tail', [.05, .04, .015], [.52, -.421, .109], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
-    { ...fixedBox('hammer_pickup_cradle_head', [.05, .05, .015], [.70, -.421, .101], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
-    fixedBox('tool_mat_powered', [.16, .2, .01], [.65, 0, .19], [.27, .25, .22, 1]),
+    { ...fixedBox('hammer_pickup_cradle_tail', [.035, .04, .015], [.50, -.421, .108], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
+    { ...fixedBox('hammer_pickup_cradle_head', [.035, .05, .015], [.745, -.421, .106], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
+    // Match Assembly2's low tool mat so the drill battery starts 1 mm above it
+    // instead of intersecting the old raised shelf.
+    fixedBox('tool_mat_powered', [.2, .13, .006], [.65, 0, .112], [.31, .27, .21, 1]),
     fixedBox('tool_mat_manual', [.2, .13, .006], [-.53, -.42, .112], [.31, .27, .21, 1]),
   ];
 }

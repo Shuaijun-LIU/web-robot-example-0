@@ -12,7 +12,7 @@ export const ASSEMBLY1_STEP4_DURATIONS = Object.freeze({
   engageSettle: 3,
   dualClamp: 1.5,
   hammerRelease: 0.8,
-  donorClear: 2,
+  donorClear: 3,
   fastenerTighten: 5,
   verificationWindow: 0.2,
   contactGrace: 0.75,
@@ -59,7 +59,8 @@ export const ASSEMBLY1_STEP4_GRIPPERS = Object.freeze({
 
 export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
   r1: Object.freeze({
-    prepare: Object.freeze([0.30, -0.18, 0.45]),
+    // Lift clear of Arm 1's south-frame hold before crossing to the handover.
+    prepare: Object.freeze([0.48, -0.28, 0.56]),
     engage: Object.freeze([0.095, 0, 0.40]),
     clear: Object.freeze([0.46, -0.10, 0.45]),
   }),
@@ -67,9 +68,9 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
     // The Panda TCP is roughly 30 mm behind the physical finger pads in this
     // orientation.  Offset south and slightly west so both pads close around
     // the 30 mm fastener head instead of one pad sweeping it aside.
-    prepare: Object.freeze([0.115, 0.39, 0.34]),
-    engage: Object.freeze([0.115, 0.39, 0.16]),
-    lift: Object.freeze([0.115, 0.39, 0.40]),
+    prepare: Object.freeze([0.095, 0.38, 0.34]),
+    engage: Object.freeze([0.095, 0.38, 0.16]),
+    lift: Object.freeze([0.095, 0.38, 0.40]),
     transfer: Object.freeze([-0.04, 0.215, 0.43]),
     insert: Object.freeze([-0.04, 0.215, 0.29]),
     clear: Object.freeze([-0.10, 0.35, 0.44]),
@@ -77,7 +78,7 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
   r3: Object.freeze({
     prepare: Object.freeze([-0.015, 0.02, 0.44]),
     engage: Object.freeze([-0.015, 0.02, 0.40]),
-    clear: Object.freeze([-0.12, 0.08, 0.45]),
+    clear: Object.freeze([-0.08, 0.02, 0.45]),
     ready: Object.freeze([-0.25, 0.215, 0.41]),
     strike: Object.freeze([-0.25, 0.215, 0.35]),
   }),
@@ -118,9 +119,9 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     role: 'hammer handover donor',
     closingAxisYawDegrees: 90,
     jointTargets: targets(holds[1], {
-      prepare: [1.157142, 0.305927, 0.795861, -1.722408, -0.231751, 1.93218, 1.226666],
-      engage: [1.558404, 1.079203, 0.044088, -0.466945, -0.039084, 1.575101, 0.792853],
-      clear: [1.698143, -0.304484, 0.089632, -2.348099, 0.030022, 2.043414, 0.984635],
+      prepare: [1.30281, -0.26288, 0.758352, -1.941548, 0.182977, 1.746831, 1.225902],
+      engage: [1.56001, 1.079141, 0.038372, -0.466959, -0.034016, 1.575146, 0.791887],
+      clear: [1.706103, -0.304286, 0.082212, -2.34812, 0.027529, 2.043481, 0.986646],
     }),
   }),
   Object.freeze({
@@ -128,12 +129,12 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     armIndex: 2,
     role: 'fastener pickup and insertion',
     jointTargets: targets(holds[2], {
-      prepare: [0.073933, -0.536314, 2.113671, -1.879544, 0.534672, 2.110019, -1.964995],
-      engage: [-0.125202, -0.820445, 2.392948, -1.886877, 0.802016, 2.377185, -2.115963],
-      lift: [0.112454, -0.451261, 2.05785, -1.820968, 0.438653, 2.006641, -1.906512],
-      transfer: [-0.456726, -0.651346, 2.149446, -1.4471, 0.548932, 1.805163, -2.265575],
-      insert: [-0.484171, -0.78883, 2.25253, -1.597063, 0.671086, 2.054394, -2.338392],
-      clear: [0.181851, 0.136814, 1.809115, -2.079331, -0.148766, 2.04078, -1.866059],
+      prepare: [0.058339, -0.521862, 2.100415, -1.903207, 0.528153, 2.119648, -1.998912],
+      engage: [-0.151316, -0.808911, 2.390753, -1.909513, 0.804221, 2.387364, -2.156384],
+      lift: [0.099609, -0.433254, 2.04317, -1.84515, 0.426799, 2.016808, -1.936757],
+      transfer: [-0.45711, -0.651149, 2.149997, -1.446971, 0.548559, 1.805186, -2.265369],
+      insert: [-0.484461, -0.788574, 2.252976, -1.597089, 0.670667, 2.054564, -2.338187],
+      clear: [0.180297, 0.136685, 1.810612, -2.07954, -0.148602, 2.040914, -1.866167],
     }),
   }),
   Object.freeze({
@@ -144,9 +145,9 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     jointTargets: targets(holds[3], {
       prepare: [-1.615043, -1.026006, -2.894244, -0.465278, -0.212472, 1.495639, -2.289955],
       engage: [-1.614529, -1.073949, -2.897069, -0.473746, -0.214538, 1.534482, -2.289185],
-      clear: [-1.703553, -0.443765, -2.823195, -1.428873, -0.140335, 1.84872, -2.160632],
-      ready: [-1.595525, -0.160565, -2.724549, -1.934765, -0.074376, 2.079056, -1.932282],
-      strike: [-1.587963, -0.231146, -2.733246, -2.008228, -0.113806, 2.217128, -1.906121],
+      clear: [-1.746301, -0.588679, -2.842664, -1.200944, -0.167456, 1.76472, -2.248007],
+      ready: [-1.604736, -0.162246, -2.714626, -1.933028, -0.076783, 2.077257, -1.930649],
+      strike: [-1.5971, -0.232094, -2.723609, -2.008133, -0.116801, 2.216852, -1.904085],
     }),
   }),
 ]);

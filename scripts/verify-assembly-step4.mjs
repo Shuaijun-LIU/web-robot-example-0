@@ -100,12 +100,30 @@ try {
   await runStep(buttons, 1, 'assemblyStep2Status', 'getAssemblyStep2Diagnostics');
   await runStep(buttons, 2, 'assemblyStep3Status', 'getAssemblyStep3Diagnostics');
 
-  const before = await page.evaluate(() => ({
-    fastener: window.robotDemo.getBodyPositions(['fastener_1']).fastener_1,
-    receiver: window.robotDemo.getSitePositions(['frame_receiver_nw']).frame_receiver_nw,
-  }));
+  const before = await page.evaluate(() => {
+    const fasteners = window.robotDemo.getBodyPositions([
+      'fastener_1',
+      'fastener_2',
+      'fastener_3',
+    ]);
+    return {
+      fastener: fasteners.fastener_1,
+      spareFasteners: {
+        fastener_2: fasteners.fastener_2,
+        fastener_3: fasteners.fastener_3,
+      },
+      receiver: window.robotDemo.getSitePositions(['frame_receiver_nw']).frame_receiver_nw,
+      drillSupportContacts: window.robotDemo.getContacts().filter(({ body1, body2 }) => (
+        (body1 === 'torque_driver' && body2 === 'tool_mat_powered')
+        || (body2 === 'torque_driver' && body1 === 'tool_mat_powered')
+      )),
+    };
+  });
+  if (before.drillSupportContacts.some(({ distance }) => distance < -0.002)) {
+    throw new Error(`Drill support penetration is too deep: ${JSON.stringify(before.drillSupportContacts)}`);
+  }
   beforeStep4 = before;
-  await page.evaluate(() => {
+  await page.evaluate((spareFasteners) => {
     window.__assemblyStep4Trace = {
       phases: [],
       phaseSamples: [],
@@ -114,6 +132,8 @@ try {
       sawHammerLeftContact: false,
       sawHammerRightContact: false,
       maximumFastenerZ: Number.NEGATIVE_INFINITY,
+      maximumSpareTranslation: 0,
+      arm1Arm2Contacts: [],
     };
     window.__assemblyStep4TraceTimer = window.setInterval(() => {
       const diagnostics = window.robotDemo?.getAssemblyStep4Diagnostics?.();
@@ -124,6 +144,27 @@ try {
       trace.sawHammerLeftContact ||= diagnostics.hammerLeftContact;
       trace.sawHammerRightContact ||= diagnostics.hammerRightContact;
       trace.maximumFastenerZ = Math.max(trace.maximumFastenerZ, diagnostics.fastenerPosition[2]);
+      const contacts = window.robotDemo.getContacts();
+      for (const contact of contacts) {
+        const pair = [contact.body1, contact.body2];
+        if (
+          pair.some((name) => name.startsWith('r0_'))
+          && pair.some((name) => name.startsWith('r1_'))
+          && trace.arm1Arm2Contacts.length < 12
+        ) {
+          trace.arm1Arm2Contacts.push(contact);
+        }
+      }
+      const sparePositions = window.robotDemo.getBodyPositions(['fastener_2', 'fastener_3']);
+      for (const name of ['fastener_2', 'fastener_3']) {
+        const initial = spareFasteners[name];
+        const current = sparePositions[name];
+        if (!initial || !current) continue;
+        trace.maximumSpareTranslation = Math.max(
+          trace.maximumSpareTranslation,
+          Math.hypot(...current.map((value, axis) => value - initial[axis])),
+        );
+      }
       if (trace.phases.at(-1) !== diagnostics.phase) {
         const sites = window.robotDemo.getSitePositions(['r1_tcp', 'r2_tcp', 'r3_tcp']);
         trace.phases.push(diagnostics.phase);
@@ -138,7 +179,7 @@ try {
         });
       }
     }, 20);
-  });
+  }, before.spareFasteners);
 
   if (handoverOnly) {
     await buttons.nth(3).click();
@@ -206,6 +247,9 @@ try {
     if (!handover.diagnostics?.hammerLeftContact || !handover.diagnostics?.hammerRightContact) {
       throw new Error(`Receiver did not retain bilateral hammer contact: ${JSON.stringify(handover.diagnostics)}`);
     }
+    if (handover.trace?.arm1Arm2Contacts?.length > 0) {
+      throw new Error(`Arm 2 touched Arm 1: ${JSON.stringify(handover.trace.arm1Arm2Contacts)}`);
+    }
     for (const distanceValue of [
       handover.diagnostics.hammerLeftContactDistance,
       handover.diagnostics.hammerRightContactDistance,
@@ -246,6 +290,12 @@ try {
   }
   if (!result.trace.sawHammerLeftContact || !result.trace.sawHammerRightContact) {
     throw new Error(`Bilateral hammer handover contact was not observed: ${JSON.stringify(result.trace)}`);
+  }
+  if (result.trace.arm1Arm2Contacts.length > 0) {
+    throw new Error(`Arm 2 touched Arm 1: ${JSON.stringify(result.trace.arm1Arm2Contacts)}`);
+  }
+  if (result.trace.maximumSpareTranslation > 0.005) {
+    throw new Error(`A spare fastener was disturbed by ${result.trace.maximumSpareTranslation}m`);
   }
   if (result.trace.maximumFastenerZ - before.fastener[2] < 0.12) {
     throw new Error(`Fastener lift was too short: ${JSON.stringify(result.trace)}`);

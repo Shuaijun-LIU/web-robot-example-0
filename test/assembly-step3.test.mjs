@@ -80,12 +80,12 @@ test('every Step 3 transport waypoint contains a generated Panda joint solution'
 
 test('Step 3 lifts Arm 2 hammer vertically into a collision-free staging pose', () => {
   assert.deepEqual(ASSEMBLY1_STEP3_HAMMER_WAYPOINTS, {
-    start: [0.62, -0.427, 0.145],
-    prelift: [0.62, -0.427, 0.155],
-    lift: [0.62, -0.427, 0.205],
-    liftPath: [0.155, 0.165, 0.175, 0.185, 0.195, 0.205].map((z) => [0.62, -0.427, z]),
-    handover: [0.62, -0.427, 0.205],
-    handoverPath: [[0.62, -0.427, 0.205]],
+    start: [0.66, -0.427, 0.145],
+    prelift: [0.66, -0.427, 0.155],
+    lift: [0.66, -0.427, 0.205],
+    liftPath: [0.155, 0.165, 0.175, 0.185, 0.195, 0.205].map((z) => [0.66, -0.427, z]),
+    handover: [0.66, -0.427, 0.205],
+    handoverPath: [[0.66, -0.427, 0.205]],
   });
   assert.equal(ASSEMBLY1_STEP3_HAMMER_ARM.key, 'r1');
   assert.equal(ASSEMBLY1_STEP3_HAMMER_ARM.armIndex, 1);
