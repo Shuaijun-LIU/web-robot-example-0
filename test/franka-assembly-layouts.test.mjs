@@ -14,6 +14,30 @@ const layoutXml = (layout) => layout.xmlPatches
   .map((patch) => [patch.inject, patch.replace?.[1]].filter(Boolean).join('\n'))
   .join('\n');
 
+async function objBounds(tool, scale, rotateXDegrees = 0, offset = [0, 0, 0]) {
+  const vertices = [];
+  const radians = rotateXDegrees * Math.PI / 180;
+  for (const role of ['primary', 'dark', 'metal']) {
+    const asset = await readFile(
+      new URL(`../public/assets/franka-assembly2/tools/robotwin-${tool}-${role}.obj`, import.meta.url),
+      'utf8',
+    );
+    for (const line of asset.split('\n')) {
+      if (!line.startsWith('v ')) continue;
+      const [x, y, z] = line.slice(2).trim().split(/\s+/).map(Number);
+      vertices.push([
+        x * scale + offset[0],
+        (y * Math.cos(radians) - z * Math.sin(radians)) * scale + offset[1],
+        (y * Math.sin(radians) + z * Math.cos(radians)) * scale + offset[2],
+      ]);
+    }
+  }
+  return [0, 1, 2].map((axis) => ({
+    min: Math.min(...vertices.map((vertex) => vertex[axis])),
+    max: Math.max(...vertices.map((vertex) => vertex[axis])),
+  }));
+}
+
 test('both assembly strategies preserve the same four-arm workcell envelope', () => {
   for (const layout of [FRANKA_ASSEMBLY1_LAYOUT, FRANKA_ASSEMBLY2_LAYOUT]) {
     assert.equal(layout.instanceCount, 4);
@@ -23,11 +47,11 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
       frame: [0, 0, 0.275],
       parts: [-0.56, 0.42, 0.125],
       poweredTool: layout === FRANKA_ASSEMBLY1_LAYOUT
-        ? [0.65, 0, 0.238]
-        : [0.53, -0.42, 0.135],
+        ? [0.65, 0, 0.146]
+        : [0.53, -0.42, 0.146],
       manualTool: [-0.53, -0.42, 0.13],
       hammer: layout === FRANKA_ASSEMBLY1_LAYOUT
-        ? [0.642, -0.421, 0.144]
+        ? [0.642, -0.421, 0.198]
         : [0.65, 0, 0.229],
       fasteners: layout === FRANKA_ASSEMBLY1_LAYOUT
         ? [0.18, 0.48, 0.125]
@@ -37,7 +61,7 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
   }
 });
 
-test('Assembly1 isolates one target fastener from two spare fasteners in Arm 3 reach', () => {
+test('Assembly1 isolates and physically seats one target fastener for a vertical pickup', () => {
   const assembly1Xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
   const assembly2Xml = layoutXml(FRANKA_ASSEMBLY2_LAYOUT);
   assert.match(assembly1Xml, /<body name="fastener_tray" pos="\.18 \.48 \.11">/);
@@ -47,6 +71,12 @@ test('Assembly1 isolates one target fastener from two spare fasteners in Arm 3 r
   assert.match(assembly1Xml, /<body name="fastener_2" pos="\.14 \.55 \.152">/);
   assert.match(assembly1Xml, /<body name="fastener_3" pos="\.24 \.55 \.152">/);
   assert.doesNotMatch(assembly1Xml, /<body name="fastener_4"/);
+  assert.match(assembly1Xml, /<body name="fastener_1_pick_fixture" pos="\.10 \.38 \.12">/);
+  assert.equal((assembly1Xml.match(/name="fastener_1_pick_fixture_segment_/g) ?? []).length, 8);
+  assert.equal((assembly1Xml.match(/fastener_1_pick_fixture_segment_[^>]+friction="\.3 \.02 \.001"/g) ?? []).length, 8);
+  assert.equal((assembly1Xml.match(/fastener_1_pick_fixture_segment_[^>]+pos="[^"]+ \.002" size="\.005 \.0025 \.002"/g) ?? []).length, 8);
+  assert.match(assembly1Xml, /fastener_1_pick_fixture_segment_1[^>]+pos="0?\.01 0 \.002"/);
+  assert.match(assembly1Xml, /fastener_1_pick_fixture_segment_3[^>]+pos="0 0?\.01 \.002"/);
   for (let fastener = 1; fastener <= 3; fastener += 1) {
     assert.match(
       assembly1Xml,
@@ -57,6 +87,14 @@ test('Assembly1 isolates one target fastener from two spare fasteners in Arm 3 r
       new RegExp(`name="fastener_${fastener}_head" type="cylinder" pos="0 0 \\.032" size="\\.015 \\.007"[^>]*mass="\\.006"`),
     );
   }
+  assert.match(
+    assembly1Xml,
+    /name="fastener_1_head"[^>]*friction="10 2 1"[^>]*condim="6"[^>]*priority="1"[^>]*solref="\.001 1"[^>]*solimp="\.99 \.999 \.0001"/,
+  );
+  assert.doesNotMatch(
+    assembly2Xml,
+    /name="fastener_1_head"[^>]*priority="1"/,
+  );
   assert.doesNotMatch(assembly1Xml, /fastener_1_retention_cap|fastener_1_guide_/);
   assert.match(assembly2Xml, /<body name="fastener_tray" pos="\.56 \.42 \.11">/);
   assert.match(assembly2Xml, /<body name="fastener_1" pos="\.50 \.36 \.152">/);
@@ -180,24 +218,26 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
     for (const role of ['primary', 'dark', 'metal']) {
       assert.match(xml, new RegExp(`mesh="robotwin_${tool}_${role}"`));
     }
-    assert.match(xml, new RegExp(`name="robotwin_${tool}_collision"`));
   }
+  assert.match(xml, /name="robotwin_screwdriver_collision"/);
+  assert.match(xml, /name="robotwin_drill_housing_collision"/);
+  assert.match(xml, /name="robotwin_hammer_handle_collision"/);
   assert.doesNotMatch(xml, /manual_screwdriver_octagonal_handle|hammer_handle_core/);
   assert.match(SHARED_ASSEMBLY1_TOOL_XML, /manual_screwdriver_octagonal_handle/);
   assert.match(SHARED_ASSEMBLY1_TOOL_XML, /name="hammer_handle_core"/);
   assert.match(
     xml,
-    /<body name="torque_driver" pos="\.65 0 \.222">/,
+    /<body name="torque_driver" pos="\.65 0 \.146" euler="90 0 0">/,
   );
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'hammer_pickup_cradle_tail'
-      && JSON.stringify(size) === JSON.stringify([.035, .04, .015])
-      && JSON.stringify(position) === JSON.stringify([.50, -.421, .108]),
+      && JSON.stringify(size) === JSON.stringify([.028, .035, .037])
+      && JSON.stringify(position) === JSON.stringify([.565, -.421, .137]),
   ));
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'hammer_pickup_cradle_head'
-      && JSON.stringify(size) === JSON.stringify([.035, .05, .015])
-      && JSON.stringify(position) === JSON.stringify([.745, -.421, .106]),
+      && JSON.stringify(size) === JSON.stringify([.028, .05, .036])
+      && JSON.stringify(position) === JSON.stringify([.717, -.421, .136]),
   ));
   assert.ok(!FRANKA_ASSEMBLY2_LAYOUT.sceneObjects.some(
     ({ name }) => name.startsWith('torque_driver_cradle_'),
@@ -207,12 +247,21 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
     /<body name="torque_driver" pos="\.53 -\.42 \.166" euler="90 0 0">/,
   );
   assert.ok(!FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(({ name }) => name === 'tool_mat_hammer'));
-  assert.match(xml, /<body name="double_face_hammer" pos="\.642 -\.421 \.147" gravcomp="\.99">/);
+  assert.match(xml, /<body name="double_face_hammer" pos="\.642 -\.421 \.198">/);
+  assert.doesNotMatch(xml, /double_face_hammer[^>]*gravcomp/);
   assert.match(
     xml,
-    /name="robotwin_hammer_collision" type="box"[^>]*pos="-\.05 0 -\.008"[^>]*size="\.11 \.020 \.016"[^>]*mass="\.025"[^>]*friction="20 3 1"[^>]*condim="6"[^>]*solref="\.002 1"/,
+    /name="robotwin_hammer_handle_collision" type="box"[^>]*pos="-\.0125 0 -\.008"[^>]*size="\.0475 \.024 \.015"[^>]*mass="\.009"[^>]*friction="10 2 1"[^>]*condim="6"/,
   );
-  assert.match(xml, /name="robotwin_hammer_head_collision"[^>]*mass="\.025"[^>]*friction="20 3 1"/);
+  assert.match(xml, /name="robotwin_hammer_handle_inner_shoulder_collision"[^>]*pos="-\.0665 0 -\.008"[^>]*size="\.0065 \.024 \.015"[^>]*mass="\.001"/);
+  assert.match(xml, /name="robotwin_hammer_handle_receiver_waist_collision"[^>]*pos="-\.084 0 -\.010"[^>]*size="\.016 \.018 \.011"[^>]*mass="\.002"/);
+  assert.match(xml, /name="robotwin_hammer_handle_receiver_upper_rib_collision"[^>]*pos="-\.084 0 \.004"[^>]*size="\.016 \.024 \.003"[^>]*mass="\.0008"/);
+  assert.match(xml, /name="robotwin_hammer_handle_receiver_lower_rib_collision"[^>]*pos="-\.084 0 -\.020"[^>]*size="\.016 \.024 \.003"[^>]*mass="\.0008"/);
+  assert.match(xml, /name="robotwin_hammer_handle_outer_shoulder_collision"[^>]*pos="-\.100 0 -\.008"[^>]*size="\.005 \.024 \.015"[^>]*mass="\.001"/);
+  assert.doesNotMatch(xml, /robotwin_hammer_tail_stop_collision/);
+  assert.match(xml, /name="robotwin_hammer_head_collision"[^>]*pos="\.075 0 -\.008"[^>]*size="\.029 \.074 \.018"[^>]*mass="\.006"/);
+  assert.match(xml, /name="hammer_donor_grasp"[^>]*pos="\.033 0 -\.008"/);
+  assert.match(xml, /name="hammer_receiver_grasp"[^>]*pos="-\.09 0 -\.008"/);
   assert.doesNotMatch(xml, /robotwin_hammer_(?:handle_extension|receiver_guard|grip_guard)/);
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'tool_mat_powered'
@@ -220,6 +269,35 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
       && JSON.stringify(position) === JSON.stringify([.65, 0, .112]),
   ));
   assert.doesNotMatch(xml, /<body name="claw_hammer"/);
+});
+
+test('RoboTwin drill and hammer collision supports coincide with their visible geometry', async () => {
+  const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
+  const drillBounds = await objBounds('drill', .105);
+  const drillBody = /<body name="torque_driver" pos="\.65 0 ([\d.]+)" euler="90 0 0">/.exec(xml);
+  const drillSideCollision = /name="robotwin_drill_housing_collision"[^>]*size="[\d.]+ ([\d.]+) [\d.]+"/.exec(xml);
+  assert.ok(drillBody && drillSideCollision);
+  const drillBodyHeight = Number(drillBody[1]);
+  const drillCollisionHalfHeight = Number(drillSideCollision[1]);
+  const mat = FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.find(({ name }) => name === 'tool_mat_powered');
+  const matTop = mat.position[2] + mat.size[2];
+  assert.ok(Math.abs(drillBodyHeight + drillBounds[1].min - matTop) < .001);
+  assert.ok(Math.abs(drillBodyHeight - drillCollisionHalfHeight - matTop) < .001);
+
+  const hammerBounds = await objBounds('hammer', .11, 90, [0, 0, -.008]);
+  const hammerBodyHeight = .198;
+  const tail = FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.find(
+    ({ name }) => name === 'hammer_pickup_cradle_tail',
+  );
+  const head = FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.find(
+    ({ name }) => name === 'hammer_pickup_cradle_head',
+  );
+  assert.ok(Math.abs(tail.position[2] + tail.size[2] - (hammerBodyHeight - .024)) < .0021);
+  assert.ok(Math.abs(head.position[2] + head.size[2] - (hammerBodyHeight + hammerBounds[2].min)) < .0021);
+  const visibleWorldMinX = .642 + hammerBounds[0].min;
+  const visibleWorldMaxX = .642 + hammerBounds[0].max;
+  assert.ok(tail.position[0] + tail.size[0] > visibleWorldMinX);
+  assert.ok(head.position[0] - head.size[0] < visibleWorldMaxX);
 });
 
 test('Assembly layouts strengthen physical finger contact without attachment', () => {
@@ -259,12 +337,23 @@ test('Assembly automation avoids delayed per-frame gravity-force feedback', asyn
   assert.doesNotMatch(assembly1Xml, /forcerange="-220 220"/);
   assert.doesNotMatch(assembly2Xml, /forcerange="-220 220"/);
 
-  const [step1Controller, step2Controller] = await Promise.all([
+  const [step1Controller, step2Controller, step4Controller] = await Promise.all([
     readFile(new URL('../src/AssemblyStep1Controller.tsx', import.meta.url), 'utf8'),
     readFile(new URL('../src/AssemblyStep2Controller.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../src/AssemblyStep4Controller.tsx', import.meta.url), 'utf8'),
   ]);
   assert.doesNotMatch(step1Controller, /qfrc_applied|qfrc_bias/);
   assert.doesNotMatch(step2Controller, /qfrc_applied|qfrc_bias/);
+  for (const geom of [
+    'robotwin_hammer_handle_collision',
+    'robotwin_hammer_handle_inner_shoulder_collision',
+    'robotwin_hammer_handle_receiver_waist_collision',
+    'robotwin_hammer_handle_receiver_upper_rib_collision',
+    'robotwin_hammer_handle_receiver_lower_rib_collision',
+    'robotwin_hammer_handle_outer_shoulder_collision',
+  ]) {
+    assert.match(step4Controller, new RegExp(`['"]${geom}['"]`));
+  }
 });
 
 test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geometry', async () => {
@@ -274,7 +363,6 @@ test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geomet
     /name="robotwin_drill_grip_collision" type="box"[^>]*size="\.026 \.023 \.045"[^>]*friction="1\.5 \.25 \.03"/,
   );
   for (const tool of ['screwdriver', 'drill', 'hammer']) {
-    assert.match(xml, new RegExp(`name="robotwin_${tool}_collision"`));
     const colors = [];
     for (const role of ['primary', 'dark', 'metal']) {
       assert.match(xml, new RegExp(`mesh="robotwin_${tool}_${role}"`));
@@ -292,6 +380,9 @@ test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geomet
     }
     assert.equal(new Set(colors).size, 3, `${tool} must expose three visible colors`);
   }
+  assert.match(xml, /name="robotwin_screwdriver_collision"/);
+  assert.match(xml, /name="robotwin_drill_housing_collision"/);
+  assert.match(xml, /name="robotwin_hammer_collision"/);
 });
 
 test('both scenes expose realistic extrusion slots and paired interface sites', () => {

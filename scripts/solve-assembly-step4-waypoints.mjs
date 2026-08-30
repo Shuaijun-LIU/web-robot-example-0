@@ -45,14 +45,24 @@ const tasks = [
     // Preserve the previously browser-verified outer-elbow approach branch
     // while correcting the fingertip/TCP offset at the fastener station.
     start: [0.172531, -0.48162, 2.077161, -1.957658, 0.503064, 2.145132, -1.914507],
-    waypoints: ['prepare', 'engage', 'lift', 'transfer', 'insert', 'clear'],
+    waypoints: [
+      'prepare',
+      'engage',
+      ...ASSEMBLY1_STEP4_WAYPOINTS.r2.liftPath.map((_, index) => `liftPath${index}`),
+      'transfer',
+      'insert',
+      'clear',
+    ],
     orientationFor(_name, initialWorldQuaternion) {
       return initialWorldQuaternion;
     },
   },
   {
     key: 'r3',
-    closingAxisYawDegrees: 90,
+    closingAxisYawDegrees: -90,
+    // The receiver starts Step 4 at the Step 3 home pose.  Seed from that pose
+    // and use the equivalent symmetric gripper orientation so IK cannot jump
+    // back to the long-sweep west-arm branch.
     start: ASSEMBLY1_STEP3_HOME_JOINT_TARGETS,
     waypoints: ['prepare', 'engage', 'clear', 'ready', 'strike'],
     orientationFor(_name, initialWorldQuaternion) {
@@ -211,7 +221,12 @@ for (const task of tasks) {
   const targets = {};
 
   for (const waypointName of task.waypoints) {
-    const worldTarget = ASSEMBLY1_STEP4_WAYPOINTS[task.key][waypointName];
+    const liftPathIndex = waypointName.startsWith('liftPath')
+      ? Number(waypointName.slice('liftPath'.length))
+      : null;
+    const worldTarget = liftPathIndex === null
+      ? ASSEMBLY1_STEP4_WAYPOINTS[task.key][waypointName]
+      : ASSEMBLY1_STEP4_WAYPOINTS[task.key].liftPath[liftPathIndex];
     const localTarget = worldToRobot(worldTarget, frame);
     const worldQuaternion = task.orientationFor(waypointName, initialWorldQuaternion.clone());
     const targetQuaternion = baseQuaternion.clone().invert().multiply(worldQuaternion).normalize();
@@ -262,7 +277,12 @@ for (const task of tasks) {
       positionError: Number(error.position.toFixed(6)),
       orientationErrorDegrees: Number(error.orientationDegrees.toFixed(6)),
       withinLimits,
-      matchesContract: arraysMatch(contract.jointTargets[waypointName], jointTargets),
+      matchesContract: arraysMatch(
+        liftPathIndex === null
+          ? contract.jointTargets[waypointName]
+          : contract.liftPathJointTargets?.[liftPathIndex],
+        jointTargets,
+      ),
     };
   }
   results.push({ key: task.key, armIndex, targets });

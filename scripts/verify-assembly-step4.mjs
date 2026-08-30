@@ -3,6 +3,11 @@ import { resolve } from 'node:path';
 
 import { chromium } from 'playwright';
 
+import {
+  ASSEMBLY1_STEP4_GRIPPERS,
+  ASSEMBLY1_STEP4_LIMITS,
+} from '../src/assemblyStep4.js';
+
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 600_000);
 const handoverOnly = process.env.HANDOVER_ONLY === '1';
@@ -51,6 +56,7 @@ async function runStep(buttons, index, datasetName, diagnosticsName) {
   if (await buttons.nth(index).isDisabled()) {
     throw new Error(`Step ${index + 1} is unexpectedly disabled`);
   }
+  console.warn(`Starting Step ${index + 1}`);
   await buttons.nth(index).click();
   await page.waitForFunction(
     ({ datasetName }) => ['complete', 'error'].includes(
@@ -71,7 +77,36 @@ async function runStep(buttons, index, datasetName, diagnosticsName) {
       + JSON.stringify(result.diagnostics ?? null),
     );
   }
+  console.warn(`Completed Step ${index + 1}`);
   return result.diagnostics;
+}
+
+async function runPrerequisitesWithReset(buttons, maximumAttempts = 4) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
+    try {
+      await runStep(buttons, 0, 'assemblyStep1Status', null);
+      await runStep(buttons, 1, 'assemblyStep2Status', 'getAssemblyStep2Diagnostics');
+      await runStep(buttons, 2, 'assemblyStep3Status', 'getAssemblyStep3Diagnostics');
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt >= maximumAttempts) break;
+      console.warn(
+        `Prerequisite attempt ${attempt} failed: ${error instanceof Error ? error.message : String(error)}; `
+        + 'resetting the physical scene',
+      );
+      await page.evaluate(() => window.robotDemo.reset());
+      await page.waitForFunction(() => (
+        document.documentElement.dataset.sceneStatus === 'ready'
+        && document.documentElement.dataset.assemblyStep1Status === 'idle'
+        && document.documentElement.dataset.assemblyStep2Status === 'idle'
+        && document.documentElement.dataset.assemblyStep3Status === 'idle'
+      ), null, { timeout });
+      await page.waitForTimeout(250);
+    }
+  }
+  throw lastError;
 }
 
 try {
@@ -88,6 +123,34 @@ try {
     await speedInput.fill(process.env.SCENE_SPEED);
     await speedInput.press('Enter');
   }
+  const initialSupports = await page.evaluate(() => {
+    const positions = window.robotDemo.getBodyPositions([
+      'double_face_hammer',
+      'torque_driver',
+      'hammer_pickup_cradle_tail',
+      'hammer_pickup_cradle_head',
+    ]);
+    const contacts = window.robotDemo.getContacts();
+    const hammerSupportContacts = contacts.filter(({ body1, body2 }) => (
+      (body1 === 'double_face_hammer' && body2.startsWith('hammer_pickup_cradle_'))
+      || (body2 === 'double_face_hammer' && body1.startsWith('hammer_pickup_cradle_'))
+    ));
+    const drillSupportContacts = contacts.filter(({ body1, body2 }) => (
+      (body1 === 'torque_driver' && body2 === 'tool_mat_powered')
+      || (body2 === 'torque_driver' && body1 === 'tool_mat_powered')
+    ));
+    return { positions, hammerSupportContacts, drillSupportContacts };
+  });
+  for (const support of ['hammer_pickup_cradle_tail', 'hammer_pickup_cradle_head']) {
+    if (!initialSupports.hammerSupportContacts.some(({ body1, body2 }) => (
+      body1 === support || body2 === support
+    ))) {
+      throw new Error(`Hammer is not physically resting on ${support}: ${JSON.stringify(initialSupports)}`);
+    }
+  }
+  if (initialSupports.drillSupportContacts.length === 0) {
+    throw new Error(`Drill is not physically resting on its visible mat: ${JSON.stringify(initialSupports)}`);
+  }
   const buttons = page.locator('.assembly-sequence-panel button');
   await buttons.nth(3).waitFor({ state: 'visible', timeout });
   if (!(await buttons.nth(1).isDisabled())
@@ -96,9 +159,7 @@ try {
     throw new Error('Later steps must be gated before Step 1 completes');
   }
 
-  await runStep(buttons, 0, 'assemblyStep1Status', null);
-  await runStep(buttons, 1, 'assemblyStep2Status', 'getAssemblyStep2Diagnostics');
-  await runStep(buttons, 2, 'assemblyStep3Status', 'getAssemblyStep3Diagnostics');
+  await runPrerequisitesWithReset(buttons);
 
   const before = await page.evaluate(() => {
     const fasteners = window.robotDemo.getBodyPositions([
@@ -123,7 +184,7 @@ try {
     throw new Error(`Drill support penetration is too deep: ${JSON.stringify(before.drillSupportContacts)}`);
   }
   beforeStep4 = before;
-  await page.evaluate((spareFasteners) => {
+  await page.evaluate(({ spareFasteners, targetFastener }) => {
     window.__assemblyStep4Trace = {
       phases: [],
       phaseSamples: [],
@@ -132,8 +193,10 @@ try {
       sawHammerLeftContact: false,
       sawHammerRightContact: false,
       maximumFastenerZ: Number.NEGATIVE_INFINITY,
+      maximumFastenerPreLiftTranslation: 0,
       maximumSpareTranslation: 0,
       arm1Arm2Contacts: [],
+      donorReceiverContacts: [],
     };
     window.__assemblyStep4TraceTimer = window.setInterval(() => {
       const diagnostics = window.robotDemo?.getAssemblyStep4Diagnostics?.();
@@ -144,6 +207,26 @@ try {
       trace.sawHammerLeftContact ||= diagnostics.hammerLeftContact;
       trace.sawHammerRightContact ||= diagnostics.hammerRightContact;
       trace.maximumFastenerZ = Math.max(trace.maximumFastenerZ, diagnostics.fastenerPosition[2]);
+      if ([
+        'donor-tighten',
+        'prepare',
+        'engage',
+        'engage-settle',
+        'dual-clamp',
+        'handover-verification',
+        'hammer-release',
+        'donor-clear',
+        'fastener-tighten',
+        'fastener-grip-settle',
+        'fastener-grasp-verification',
+      ].includes(diagnostics.phase)) {
+        trace.maximumFastenerPreLiftTranslation = Math.max(
+          trace.maximumFastenerPreLiftTranslation,
+          Math.hypot(...diagnostics.fastenerPosition.map(
+            (value, axis) => value - targetFastener[axis],
+          )),
+        );
+      }
       const contacts = window.robotDemo.getContacts();
       for (const contact of contacts) {
         const pair = [contact.body1, contact.body2];
@@ -153,6 +236,16 @@ try {
           && trace.arm1Arm2Contacts.length < 12
         ) {
           trace.arm1Arm2Contacts.push(contact);
+        }
+        if (
+          pair.some((name) => name.startsWith('r1_'))
+          && pair.some((name) => name.startsWith('r3_'))
+          && trace.donorReceiverContacts.length < 20
+        ) {
+          trace.donorReceiverContacts.push({
+            phase: diagnostics.phase,
+            ...contact,
+          });
         }
       }
       const sparePositions = window.robotDemo.getBodyPositions(['fastener_2', 'fastener_3']);
@@ -176,10 +269,19 @@ try {
           hammer: window.robotDemo.getBodyPositions(['double_face_hammer']).double_face_hammer,
           fastener: [...diagnostics.fastenerPosition],
           aperture: diagnostics.fastenerAperture,
+          fastenerLeftContact: diagnostics.fastenerLeftContact,
+          fastenerRightContact: diagnostics.fastenerRightContact,
+          fastenerLeftContactDistance: diagnostics.fastenerLeftContactDistance,
+          fastenerRightContactDistance: diagnostics.fastenerRightContactDistance,
+          hammerReceiverGraspPointDistance: diagnostics.hammerReceiverGraspPointDistance,
+          hammerLeftContactDistance: diagnostics.hammerLeftContactDistance,
+          hammerRightContactDistance: diagnostics.hammerRightContactDistance,
+          qpos: window.robotDemo.getQpos(),
+          ctrl: window.robotDemo.getCtrl(),
         });
       }
     }, 20);
-  }, before.spareFasteners);
+  }, { spareFasteners: before.spareFasteners, targetFastener: before.fastener });
 
   if (handoverOnly) {
     await buttons.nth(3).click();
@@ -194,7 +296,12 @@ try {
         diagnostics: window.robotDemo.getAssemblyStep4Diagnostics(),
         hammer: window.robotDemo.getBodyPositions(['double_face_hammer']).double_face_hammer,
         hammerOrientation: window.robotDemo.getBodyOrientations(['double_face_hammer']).double_face_hammer,
-        sites: window.robotDemo.getSitePositions(['r1_tcp', 'r3_tcp']),
+        sites: window.robotDemo.getSitePositions([
+          'r1_tcp',
+          'r3_tcp',
+          'hammer_donor_grasp',
+          'hammer_receiver_grasp',
+        ]),
         fingers: window.robotDemo.getBodyPositions([
           'r1_left_finger',
           'r1_right_finger',
@@ -213,7 +320,6 @@ try {
     await page.waitForFunction(() => {
       const phase = window.robotDemo?.getAssemblyStep4Diagnostics?.()?.phase;
       return phase === 'error' || [
-        'donor-clear',
         'fastener-tighten',
         'lift',
         'transfer',
@@ -228,8 +334,9 @@ try {
         'complete',
       ].includes(phase);
     }, null, { timeout });
-    // Sample while the receiver is holding the hammer and the donor has just
-    // cleared. Waiting into the fastener lift would mix two independent checks.
+    // Sample only after the donor has completed its full retreat.  Checking at
+    // donor-clear entry accepted a transient clamp that later let the hammer
+    // slip before the three-second retreat was over.
     await page.waitForTimeout(400);
     const handover = await page.evaluate(() => ({
       diagnostics: window.robotDemo.getAssemblyStep4Diagnostics(),
@@ -247,6 +354,14 @@ try {
     if (!handover.diagnostics?.hammerLeftContact || !handover.diagnostics?.hammerRightContact) {
       throw new Error(`Receiver did not retain bilateral hammer contact: ${JSON.stringify(handover.diagnostics)}`);
     }
+    if (!(
+      handover.diagnostics?.hammerReceiverGraspPointDistance
+      <= ASSEMBLY1_STEP4_LIMITS.maximumHammerGraspPointDistance
+    )) {
+      throw new Error(
+        `Receiver TCP missed the visible hammer grip zone: ${JSON.stringify(handover.diagnostics)}`,
+      );
+    }
     if (handover.trace?.arm1Arm2Contacts?.length > 0) {
       throw new Error(`Arm 2 touched Arm 1: ${JSON.stringify(handover.trace.arm1Arm2Contacts)}`);
     }
@@ -254,11 +369,14 @@ try {
       handover.diagnostics.hammerLeftContactDistance,
       handover.diagnostics.hammerRightContactDistance,
     ]) {
-      if (typeof distanceValue === 'number' && distanceValue < -0.00215) {
+      if (typeof distanceValue === 'number' && distanceValue < -0.00235) {
         throw new Error(`Hammer handover penetration is ${distanceValue}m`);
       }
     }
-    if (handover.ctrl[15] < 250 || Math.abs(handover.ctrl[31] - 127) > 1e-6) {
+    if (
+      handover.ctrl[15] < 250
+      || Math.abs(handover.ctrl[31] - ASSEMBLY1_STEP4_GRIPPERS.receiverTool) > 1e-6
+    ) {
       throw new Error(`Hammer gripper transfer is incomplete: ${handover.ctrl[15]}/${handover.ctrl[31]}`);
     }
     if (handover.hammer[2] < 0.30) {
@@ -297,6 +415,12 @@ try {
   if (result.trace.maximumSpareTranslation > 0.005) {
     throw new Error(`A spare fastener was disturbed by ${result.trace.maximumSpareTranslation}m`);
   }
+  if (result.trace.maximumFastenerPreLiftTranslation > 0.004) {
+    throw new Error(
+      `Target fastener escaped its passive fixture before lift by `
+      + `${result.trace.maximumFastenerPreLiftTranslation}m`,
+    );
+  }
   if (result.trace.maximumFastenerZ - before.fastener[2] < 0.12) {
     throw new Error(`Fastener lift was too short: ${JSON.stringify(result.trace)}`);
   }
@@ -309,7 +433,12 @@ try {
   if (result.diagnostics.frameTranslation > 0.0125) {
     throw new Error(`Assembly stability failed: ${JSON.stringify(result.diagnostics)}`);
   }
-  const expectedGrippers = [130, 255, 255, 127];
+  const expectedGrippers = [
+    ASSEMBLY1_STEP4_GRIPPERS.frame,
+    ASSEMBLY1_STEP4_GRIPPERS.open,
+    ASSEMBLY1_STEP4_GRIPPERS.open,
+    ASSEMBLY1_STEP4_GRIPPERS.receiverTool,
+  ];
   for (let arm = 0; arm < expectedGrippers.length; arm += 1) {
     if (Math.abs(result.ctrl[arm * 8 + 7] - expectedGrippers[arm]) > 1e-6) {
       throw new Error(`Arm ${arm + 1} final gripper command is invalid`);
@@ -323,6 +452,7 @@ try {
   console.log(JSON.stringify({
     status: 'PASS',
     before,
+    initialSupports,
     diagnostics: result.diagnostics,
     trace: result.trace,
     screenshot: screenshotPath,

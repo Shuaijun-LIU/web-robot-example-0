@@ -127,8 +127,8 @@ export const ASSEMBLY1_STEP3_DURATIONS: Readonly<{
   placedHold: 1;
 }>;
 
-export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS: readonly [130, 122, 135, 130];
-export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS: readonly [130, 122, 135, 130];
+export const ASSEMBLY1_STEP3_GRIPPER_CLAMPS: readonly [130, 130, 135, 130];
+export const ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS: readonly [130, 130, 135, 130];
 export const ASSEMBLY1_STEP3_HOME_JOINT_TARGETS: readonly number[];
 export const ASSEMBLY1_STEP3_HAMMER_WAYPOINTS: Readonly<{
   start: readonly [number, number, number];

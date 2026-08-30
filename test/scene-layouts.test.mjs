@@ -48,7 +48,7 @@ test('Franka assembly scene stages a frame, installable parts, separated tools, 
   const expectedStations = {
     frame: [0, 0, 0.275],
     parts: [-0.56, 0.42, 0.125],
-    poweredTool: [0.53, -0.42, 0.135],
+    poweredTool: [0.53, -0.42, 0.146],
     manualTool: [-0.53, -0.42, 0.13],
     hammer: [0.65, 0, 0.229],
     fasteners: [0.56, 0.42, 0.125],
@@ -59,8 +59,8 @@ test('Franka assembly scene stages a frame, installable parts, separated tools, 
     assert.deepEqual(layout.taskStations, {
       ...expectedStations,
       ...(layout === FRANKA_ASSEMBLY1_LAYOUT ? {
-        poweredTool: [0.65, 0, 0.238],
-        hammer: [0.642, -0.421, 0.144],
+        poweredTool: [0.65, 0, 0.146],
+        hammer: [0.642, -0.421, 0.198],
         fasteners: [0.18, 0.48, 0.125],
       } : {}),
     });

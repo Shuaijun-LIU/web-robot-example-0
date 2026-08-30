@@ -33,6 +33,7 @@ import { AssemblyStep2Controller } from './AssemblyStep2Controller';
 import { AssemblyStep3Controller } from './AssemblyStep3Controller';
 import { AssemblyStep4Controller } from './AssemblyStep4Controller';
 import { AssemblySequencePanel } from './AssemblySequencePanel';
+import { Assembly1PoseCapturePanel } from './Assembly1PoseCapturePanel';
 import { FrankaAssembly2DataRecorderPanel } from './FrankaAssembly2DataRecorderPanel';
 import type { AssemblyStep1Status } from './assemblyStep1.js';
 import { ASSEMBLY1_STEP2_ARMS } from './assemblyStep2.js';
@@ -184,6 +185,7 @@ function SceneChildren({
   assemblyStep3State,
   assemblyStep4RequestId,
   assemblyStep4State,
+  manualPoseMode,
   assemblyOwnershipRef,
   step1SnapshotRef,
   step2DiagnosticsRef,
@@ -219,6 +221,7 @@ function SceneChildren({
   assemblyStep3State: AssemblyStep3State;
   assemblyStep4RequestId: number;
   assemblyStep4State: AssemblyStep4State;
+  manualPoseMode: boolean;
   assemblyOwnershipRef: React.MutableRefObject<'manual' | 'step1' | 'step2' | 'step3' | 'step4'>;
   step1SnapshotRef: React.MutableRefObject<AssemblyStep1CompletionSnapshot | null>;
   step2DiagnosticsRef: React.MutableRefObject<AssemblyStep2RuntimeDiagnostics | null>;
@@ -246,10 +249,11 @@ function SceneChildren({
     || assemblyStep2State.phase !== 'idle'
     || assemblyStep3State.phase !== 'idle'
     || assemblyStep4State.phase !== 'idle';
+  const assemblyControlsLocked = assemblyAutomationActive && !manualPoseMode;
   const { controller: ik, resolvedSiteName } = useSelectedIkController(
     target,
     resetGeneration,
-    assemblyAutomationActive,
+    assemblyControlsLocked,
   );
 
   useEffect(() => {
@@ -376,7 +380,7 @@ function SceneChildren({
 
   return (
     <>
-      {ik && showGizmo && !assemblyAutomationActive && (
+      {ik && showGizmo && !assemblyControlsLocked && (
         <IkGizmo
           key={`gizmo-${target.key}`}
           controller={ik}
@@ -389,7 +393,7 @@ function SceneChildren({
         <FrankaController
           key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}`}
           target={target}
-          enabled={!assemblyAutomationActive}
+          enabled={!assemblyControlsLocked}
           initiallyOpen={assemblyStep1Status === 'complete'}
         />
       )}
@@ -397,7 +401,7 @@ function SceneChildren({
         <IndustrialArmController
           key={`industrial-${target.key}`}
           target={target}
-          enabled={!assemblyAutomationActive}
+          enabled={!assemblyControlsLocked}
         />
       )}
       {target.controlMode === 'planar-mobile' && (
@@ -507,6 +511,7 @@ export function App() {
   );
   const [unitreeActionRequestId, setUnitreeActionRequestId] = useState(0);
   const [sceneReady, setSceneReady] = useState(false);
+  const [manualPoseMode, setManualPoseMode] = useState(false);
   const assemblyOwnershipRef = useRef<'manual' | 'step1' | 'step2' | 'step3' | 'step4'>('manual');
   const step1SnapshotRef = useRef<AssemblyStep1CompletionSnapshot | null>(null);
   const step2DiagnosticsRef = useRef<AssemblyStep2RuntimeDiagnostics | null>(null);
@@ -544,10 +549,12 @@ export function App() {
     || assemblyStep2State.phase !== 'idle'
     || assemblyStep3State.phase !== 'idle'
     || assemblyStep4State.phase !== 'idle';
+  const assemblyControlsLocked = assemblyAutomationActive && !manualPoseMode;
   const isUnitreeActionScene = robotKey === 'unitreeActionLab';
 
   const handleRunAssemblyStep1 = useCallback(() => {
     if (robotKey !== 'frankaAssembly1' || assemblyStep1Status !== 'idle') return false;
+    setManualPoseMode(false);
     setAssemblyStep1Status('planning');
     setAssemblyStep1RequestId((requestId) => requestId + 1);
     return true;
@@ -560,6 +567,7 @@ export function App() {
       || assemblyStep2State.phase !== 'idle'
       || !step1SnapshotRef.current
     ) return false;
+    setManualPoseMode(false);
     setAssemblyStep2State({ phase: 'planning', failure: null });
     setAssemblyStep2RequestId((requestId) => requestId + 1);
     return true;
@@ -571,6 +579,7 @@ export function App() {
       || assemblyStep2State.phase !== 'complete'
       || assemblyStep3State.phase !== 'idle'
     ) return false;
+    setManualPoseMode(false);
     setAssemblyStep3State({ phase: 'planning', failure: null });
     setAssemblyStep3RequestId((requestId) => requestId + 1);
     return true;
@@ -582,6 +591,7 @@ export function App() {
       || assemblyStep3State.phase !== 'complete'
       || assemblyStep4State.phase !== 'idle'
     ) return false;
+    setManualPoseMode(false);
     setAssemblyStep4State({ phase: 'planning', failure: null });
     setAssemblyStep4RequestId((requestId) => requestId + 1);
     return true;
@@ -590,6 +600,7 @@ export function App() {
   const handleResetAssemblySequence = useCallback(() => {
     apiRef.current?.reset();
     assemblyOwnershipRef.current = 'manual';
+    setManualPoseMode(false);
     step1SnapshotRef.current = null;
     step2DiagnosticsRef.current = null;
     step3DiagnosticsRef.current = null;
@@ -601,6 +612,11 @@ export function App() {
     setUnitreeActionState(resetAction());
     unitreeActionDiagnosticsRef.current = null;
     setResetGeneration((generation) => generation + 1);
+  }, []);
+
+  const handleManualPoseModeChange = useCallback((enabled: boolean) => {
+    assemblyOwnershipRef.current = 'manual';
+    setManualPoseMode(enabled);
   }, []);
 
   const handleRunUnitreeAction = useCallback(() => {
@@ -665,6 +681,7 @@ export function App() {
     delete document.documentElement.dataset.unitreeActionPhase;
     delete document.documentElement.dataset.unitreeActionProgram;
     setSceneReady(false);
+    setManualPoseMode(false);
     assemblyOwnershipRef.current = 'manual';
     step1SnapshotRef.current = null;
     step2DiagnosticsRef.current = null;
@@ -800,6 +817,7 @@ export function App() {
           assemblyStep3State={assemblyStep3State}
           assemblyStep4RequestId={assemblyStep4RequestId}
           assemblyStep4State={assemblyStep4State}
+          manualPoseMode={manualPoseMode}
           assemblyOwnershipRef={assemblyOwnershipRef}
           step1SnapshotRef={step1SnapshotRef}
           step2DiagnosticsRef={step2DiagnosticsRef}
@@ -833,7 +851,7 @@ export function App() {
         )}
 
         {/* Opt-in interaction */}
-        {!assemblyAutomationActive && !isUnitreeActionScene && <DragInteraction />}
+        {!assemblyControlsLocked && !isUnitreeActionScene && <DragInteraction />}
         <ClickSelectOverlay />
 
         {/* Debug overlays */}
@@ -888,6 +906,14 @@ export function App() {
           onRunStep2={handleRunAssemblyStep2}
           onRunStep3={handleRunAssemblyStep3}
           onRunStep4={handleRunAssemblyStep4}
+        />
+      )}
+      {robotKey === 'frankaAssembly1' && (
+        <Assembly1PoseCapturePanel
+          sceneReady={sceneReady}
+          selectedControlTarget={controlTarget.key}
+          manualMode={manualPoseMode}
+          onManualModeChange={handleManualPoseModeChange}
         />
       )}
       {isUnitreeActionScene && (

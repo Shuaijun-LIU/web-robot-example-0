@@ -8,7 +8,7 @@ const RING_RADIUS = 0.9;
 const TASK_STATIONS = {
   frame: [0, 0, 0.275],
   parts: [-0.56, 0.42, 0.125],
-  poweredTool: [0.53, -0.42, 0.135],
+  poweredTool: [0.53, -0.42, 0.146],
   manualTool: [-0.53, -0.42, 0.13],
   hammer: [0.65, 0, 0.229],
   fasteners: [0.56, 0.42, 0.125],
@@ -138,6 +138,19 @@ function connectorInterfaceXml(side, y) {
 
 function hollowConnectorInterfacesXml() {
   return `${connectorInterfaceXml('north', 0.215)}\n      ${connectorInterfaceXml('south', -0.215)}`;
+}
+
+function fastenerPickFixtureXml() {
+  const segments = Array.from({ length: 8 }, (_, index) => {
+    const angleDegrees = index * 45;
+    const angle = angleDegrees * Math.PI / 180;
+    const x = cleanDecimal(.010 * Math.cos(angle));
+    const y = cleanDecimal(.010 * Math.sin(angle));
+    return `<geom name="fastener_1_pick_fixture_segment_${index + 1}" type="box" `
+      + `pos="${x} ${y} .002" size=".005 .0025 .002" euler="0 0 ${angleDegrees + 90}" `
+      + 'rgba=".22 .24 .25 1" friction=".3 .02 .001"/>';
+  }).join('\n      ');
+  return `<body name="fastener_1_pick_fixture" pos=".10 .38 .12">\n      ${segments}\n    </body>`;
 }
 
 export const SHARED_ASSEMBLY1_WORKCELL_XML = `
@@ -383,6 +396,18 @@ function assembly1ReachableFastenerWorkcellXml() {
     .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".14 .55 .152"')
     .replace('name="fastener_3" pos=".50 .48 .152"', 'name="fastener_3" pos=".24 .55 .152"')
     .replace(
+      '    <body name="fastener_1" pos=".10 .38 .152"><freejoint/>',
+      `    ${fastenerPickFixtureXml()}\n    <body name="fastener_1" pos=".10 .38 .152"><freejoint/>`,
+    )
+    // Give the picked fastener head a firm, high-friction contact law.  Its
+    // higher priority makes these parameters govern finger/head contacts,
+    // avoiding the soft-contact penetration that otherwise substitutes for
+    // real clamping force.  Shape, pose and free-joint dynamics are unchanged.
+    .replace(
+      'name="fastener_1_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"',
+      'name="fastener_1_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"',
+    )
+    .replace(
       '    <body name="fastener_4" pos=".60 .48 .152"><freejoint/><geom name="fastener_4_shaft" type="cylinder" size=".007 .025" rgba=".42 .43 .44 1" mass=".012"/><geom name="fastener_4_head" type="cylinder" pos="0 0 .032" size=".015 .007" rgba=".16 .17 .18 1" mass=".006"/></body>',
       '',
     );
@@ -417,14 +442,14 @@ const ASSEMBLY2_TOOL_XML = `
       <geom name="robotwin_screwdriver_collision" type="capsule" fromto="-.09 0 0 .04 0 0" size=".025" rgba="0 0 0 0" mass=".1" friction="1.5 .25 .03"/>
       <geom name="robotwin_screwdriver_shaft_collision" type="capsule" fromto=".04 0 0 .19 0 0" size=".006" rgba="0 0 0 0" mass=".03"/>
     </body>
-    <body name="torque_driver" pos=".53 -.42 .222">
+    <body name="torque_driver" pos=".53 -.42 .146" euler="90 0 0">
       <freejoint/>
       <geom name="robotwin_drill_primary_visual_geom" type="mesh" mesh="robotwin_drill_primary" material="robotwin_drill_primary_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
       <geom name="robotwin_drill_dark_visual_geom" type="mesh" mesh="robotwin_drill_dark" material="robotwin_drill_dark_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
       <geom name="robotwin_drill_metal_visual_geom" type="mesh" mesh="robotwin_drill_metal" material="robotwin_drill_metal_material" pos="0 0 -.018" contype="0" conaffinity="0" mass=".001"/>
-      <geom name="robotwin_drill_collision" type="box" pos="0 0 .045" size=".09 .04 .055" rgba="0 0 0 0" mass=".28" friction="1.3 .2 .02"/>
+      <geom name="robotwin_drill_housing_collision" type="box" pos="0 0 .025" size=".099 .028 .040" rgba="0 0 0 0" mass=".28" friction="1.3 .2 .02"/>
       <geom name="robotwin_drill_grip_collision" type="box" pos=".03 0 -.022" size=".026 .023 .045" rgba="0 0 0 0" mass=".12" friction="1.5 .25 .03"/>
-      <geom name="robotwin_drill_battery_collision" type="box" pos=".04 0 -.088" size=".055 .045 .015" rgba="0 0 0 0" mass=".12"/>
+      <geom name="robotwin_drill_battery_collision" type="box" pos=".04 0 -.086" size=".055 .028 .014" rgba="0 0 0 0" mass=".12" friction="1.3 .2 .02"/>
     </body>
     <body name="claw_hammer" pos=".65 0 .229">
       <freejoint/>
@@ -439,20 +464,31 @@ const ASSEMBLY2_TOOL_XML = `
 // stations. The legacy procedural tools above remain available to other layouts.
 const FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML = ASSEMBLY2_TOOL_XML
   .replace(
-    '<body name="torque_driver" pos=".53 -.42 .222">',
-    '<body name="torque_driver" pos=".65 0 .222">',
+    '<body name="torque_driver" pos=".53 -.42 .146" euler="90 0 0">',
+    '<body name="torque_driver" pos=".65 0 .146" euler="90 0 0">',
   )
   .replace(
     '<body name="claw_hammer" pos=".65 0 .229">',
-    '<body name="double_face_hammer" pos=".642 -.421 .147" gravcomp=".99">',
+    '<body name="double_face_hammer" pos=".642 -.421 .198">',
   )
   .replace(
     'name="robotwin_hammer_collision" type="capsule" fromto="-.14 0 -.008 .06 0 -.008" size=".02" rgba="0 0 0 0" mass=".16" friction="1.4 .22 .03"',
-    'name="robotwin_hammer_collision" type="box" pos="-.05 0 -.008" size=".11 .020 .016" rgba="0 0 0 0" mass=".025" friction="20 3 1" condim="6" solref=".002 1" solimp=".95 .99 .001"',
+    `name="robotwin_hammer_handle_collision" type="box" pos="-.0125 0 -.008" size=".0475 .024 .015" rgba="0 0 0 0" mass=".009" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_handle_inner_shoulder_collision" type="box" pos="-.0665 0 -.008" size=".0065 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <!-- The receiver grip is recessed inside the original 48 mm handle
+           envelope.  Its 32 mm length gives both Panda pads a full contact
+           patch; the integral top/bottom lips resist vertical slip without
+           adding an external guard or any non-contact attachment. -->
+      <geom name="robotwin_hammer_handle_receiver_waist_collision" type="box" pos="-.084 0 -.010" size=".016 .018 .011" rgba="0 0 0 0" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_handle_receiver_upper_rib_collision" type="box" pos="-.084 0 .004" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_handle_receiver_lower_rib_collision" type="box" pos="-.084 0 -.020" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="robotwin_hammer_handle_outer_shoulder_collision" type="box" pos="-.100 0 -.008" size=".005 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"`,
   )
   .replace(
     'name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"',
-    'name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".025" friction="20 3 1"',
+    `name="robotwin_hammer_head_collision" type="box" pos=".075 0 -.008" size=".029 .074 .018" rgba="0 0 0 0" mass=".006" friction="1 .1 .01"/>
+      <site name="hammer_donor_grasp" pos=".033 0 -.008" size=".003" rgba="0 0 0 0"/>
+      <site name="hammer_receiver_grasp" pos="-.09 0 -.008" size=".003" rgba="0 0 0 0"`,
   );
 
 export const createAssembly1SceneObjects = (includeTorqueDriverCradle = false) => [
@@ -475,10 +511,10 @@ function createFrankaAssembly1SceneObjects() {
     fixedBox('assembly_platform', [1.15, 1.15, .05], [0, 0, .05], [.25, .27, .29, 1]),
     fixedBox('platform_inset', [.82, .82, .006], [0, 0, .106], [.33, .35, .36, 1]),
     fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
-    { ...fixedBox('hammer_pickup_cradle_tail', [.035, .04, .015], [.50, -.421, .108], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
-    { ...fixedBox('hammer_pickup_cradle_head', [.035, .05, .015], [.745, -.421, .106], [.17, .18, .19, 1]), friction: '10 2 1', condim: 6, solref: '.002 1', solimp: '.95 .99 .001' },
-    // Match Assembly2's low tool mat so the drill battery starts 1 mm above it
-    // instead of intersecting the old raised shelf.
+    { ...fixedBox('hammer_pickup_cradle_tail', [.028, .035, .037], [.565, -.421, .137], [.17, .18, .19, 1]), friction: '.8 .05 .01', condim: 4, solref: '.004 1', solimp: '.95 .99 .001' },
+    { ...fixedBox('hammer_pickup_cradle_head', [.028, .05, .036], [.717, -.421, .136], [.17, .18, .19, 1]), friction: '.8 .05 .01', condim: 4, solref: '.004 1', solimp: '.95 .99 .001' },
+    // The drill lies on its side: the visible mesh and its collision primitives
+    // share the same 56 mm side profile and touch this mat at the same height.
     fixedBox('tool_mat_powered', [.2, .13, .006], [.65, 0, .112], [.31, .27, .21, 1]),
     fixedBox('tool_mat_manual', [.2, .13, .006], [-.53, -.42, .112], [.31, .27, .21, 1]),
   ];
@@ -587,8 +623,8 @@ function createLayout(
       ...TASK_STATIONS,
       ...(reachableFastenerStation ? { fasteners: [0.18, 0.48, 0.125] } : {}),
       ...(hammerPickupForArm2 ? {
-        poweredTool: [0.65, 0, 0.238],
-        hammer: [0.642, -0.421, 0.144],
+        poweredTool: [0.65, 0, 0.146],
+        hammer: [0.642, -0.421, 0.198],
       } : {}),
     },
     xmlPatches: createPatches(

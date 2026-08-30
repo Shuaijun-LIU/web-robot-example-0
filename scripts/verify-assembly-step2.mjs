@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 240_000);
 const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step2-physical-clamp.png');
-const gripperClampControls = [130, 122, 135, 130];
+const gripperClampControls = [130, 130, 135, 130];
 const taskBodies = ['assembly_frame', 'double_face_hammer', 'cross_member'];
 const settlingTranslationLimits = {
   assembly_frame: 0.008,

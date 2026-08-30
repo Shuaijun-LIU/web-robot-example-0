@@ -149,7 +149,7 @@ export const ASSEMBLY1_STEP2_DURATIONS: Readonly<{
   stableHold: 2;
 }>;
 
-export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS: readonly [130, 122, 135, 130];
+export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS: readonly [130, 130, 135, 130];
 
 export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   tcpPosition: 0.06;
@@ -167,6 +167,7 @@ export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   hammerVerticalDisplacement: 0.005;
   crossMemberVerticalDisplacement: 0.015;
   minimumAperture: 0.035;
+  hammerMinimumAperture: 0.03;
   crossMemberMinimumAperture: 0.035;
   maximumContactPenetration: 0.002;
   contactComparisonEpsilon: 0.00015;

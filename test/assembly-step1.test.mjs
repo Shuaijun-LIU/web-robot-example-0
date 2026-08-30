@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import * as assemblyStep1 from '../src/assemblyStep1.js';
+import { FRANKA_HOME } from '../src/sceneLayouts.js';
 
 const {
   ASSEMBLY1_GRIPPER_OPEN,
@@ -37,7 +38,7 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
         role: 'south frame rail',
         highWaypoint: [0.18, -0.23, 0.50],
         finalWaypoint: [0.18, -0.23, 0.33],
-        closingAxisYawDegrees: 90,
+        closingAxisYawDegrees: -90,
       },
       {
         role: 'horizontal hammer handle',
@@ -95,11 +96,21 @@ test('Assembly1 Step 1 assigns all four arms grasp-ready pre-grasp targets', () 
 });
 
 test('Assembly1 Step 1 uses the verified grasp-ready IK generation', () => {
-  assert.equal(assemblyStep1.ASSEMBLY1_STEP1_IK_VERSION, 'dynamic-centered-hammer-grasp-v10');
+  assert.equal(assemblyStep1.ASSEMBLY1_STEP1_IK_VERSION, 'short-path-symmetric-grasp-v11');
   for (const arm of ASSEMBLY1_STEP1_ARMS) {
     assert.equal(arm.highJointTargets.length, 7);
     assert.equal(arm.finalJointTargets.length, 7);
   }
+});
+
+test('Assembly1 Step 1 Arm 1 keeps the same TCP waypoints without a greater-than-180-degree joint sweep', () => {
+  const arm1 = ASSEMBLY1_STEP1_ARMS[0];
+  assert.deepEqual(arm1.highWaypoint, [0.18, -0.23, 0.50]);
+  assert.deepEqual(arm1.finalWaypoint, [0.18, -0.23, 0.33]);
+  assert.equal(arm1.closingAxisYawDegrees, -90);
+  assert.ok(arm1.highJointTargets.every(
+    (target, joint) => Math.abs(target - FRANKA_HOME[joint]) < Math.PI,
+  ));
 });
 
 test('Assembly1 Step 1 joint interpolation clamps and eases phase progress', () => {

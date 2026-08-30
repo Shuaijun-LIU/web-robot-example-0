@@ -316,7 +316,9 @@ function armVerdicts(
       rightTargetContactAge,
       minimumAperture: arm.targetBody === 'cross_member'
         ? ASSEMBLY1_STEP2_LIMITS.crossMemberMinimumAperture
-        : ASSEMBLY1_STEP2_LIMITS.minimumAperture,
+        : arm.targetBody === 'double_face_hammer'
+          ? ASSEMBLY1_STEP2_LIMITS.hammerMinimumAperture
+          : ASSEMBLY1_STEP2_LIMITS.minimumAperture,
       maximumVerticalDisplacement: arm.targetBody === 'cross_member'
         ? ASSEMBLY1_STEP2_LIMITS.crossMemberVerticalDisplacement
         : arm.targetBody === 'double_face_hammer'

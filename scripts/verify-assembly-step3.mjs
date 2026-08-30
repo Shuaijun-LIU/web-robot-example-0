@@ -6,8 +6,8 @@ import { chromium } from 'playwright';
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 300_000);
 const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step3-released.png');
-const step2GripperClampControls = [130, 122, 135, 130];
-const finalGripperControls = [130, 122, 255, 255];
+const step2GripperClampControls = [130, 130, 135, 130];
+const finalGripperControls = [130, 130, 255, 255];
 
 function distance(first, second) {
   return Math.hypot(...first.map((value, index) => value - second[index]));

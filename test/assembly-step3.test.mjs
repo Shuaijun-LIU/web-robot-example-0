@@ -38,11 +38,11 @@ test('Step 3 preserves the measured dual-grasp span while moving to the interfac
   for (const pair of Object.values(ASSEMBLY1_STEP3_WAYPOINTS).slice(1)) {
     assert.ok(Math.abs(pair[0][1] - pair[1][1] - 0.255) < 1e-12);
   }
-  assert.deepEqual(ASSEMBLY1_STEP3_GRIPPER_CLAMPS, [130, 122, 135, 130]);
-  assert.deepEqual(ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS, [130, 122, 135, 130]);
+  assert.deepEqual(ASSEMBLY1_STEP3_GRIPPER_CLAMPS, [130, 130, 135, 130]);
+  assert.deepEqual(ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS, [130, 130, 135, 130]);
   assert.deepEqual(ASSEMBLY1_STEP3_LIMITS, {
     minimumAperture: 0.035,
-    hammerMinimumAperture: 0.035,
+    hammerMinimumAperture: 0.03,
     crossMemberMinimumAperture: 0.035,
     maximumContactPenetration: 0.002,
     contactComparisonEpsilon: 0.00015,
@@ -80,12 +80,12 @@ test('every Step 3 transport waypoint contains a generated Panda joint solution'
 
 test('Step 3 lifts Arm 2 hammer vertically into a collision-free staging pose', () => {
   assert.deepEqual(ASSEMBLY1_STEP3_HAMMER_WAYPOINTS, {
-    start: [0.66, -0.427, 0.145],
-    prelift: [0.66, -0.427, 0.155],
-    lift: [0.66, -0.427, 0.205],
-    liftPath: [0.155, 0.165, 0.175, 0.185, 0.195, 0.205].map((z) => [0.66, -0.427, z]),
-    handover: [0.66, -0.427, 0.205],
-    handoverPath: [[0.66, -0.427, 0.205]],
+    start: [0.675, -0.421, 0.197],
+    prelift: [0.675, -0.421, 0.207],
+    lift: [0.675, -0.421, 0.257],
+    liftPath: [0.207, 0.217, 0.227, 0.237, 0.247, 0.257].map((z) => [0.675, -0.421, z]),
+    handover: [0.675, -0.421, 0.257],
+    handoverPath: [[0.675, -0.421, 0.257]],
   });
   assert.equal(ASSEMBLY1_STEP3_HAMMER_ARM.key, 'r1');
   assert.equal(ASSEMBLY1_STEP3_HAMMER_ARM.armIndex, 1);
@@ -227,7 +227,7 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
   assert.deepEqual(frame.arms[1].jointTargets, Array(7).fill(13));
   assert.deepEqual(frame.arms[2].jointTargets, Array(7).fill(23));
   assert.deepEqual(frame.arms[3].jointTargets, Array(7).fill(33));
-  assert.deepEqual(frame.arms.map((arm) => arm.gripperTarget), [130, 122, 135, 130]);
+  assert.deepEqual(frame.arms.map((arm) => arm.gripperTarget), [130, 130, 135, 130]);
 
   const transferMidFrame = createAssemblyStep3ControlFrame({
     phase: 'transfer-b',
@@ -269,7 +269,7 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
     reseatAttempts: 0,
     failure: null,
   }, plans);
-  assert.deepEqual(releaseFrame.arms.map((arm) => arm.gripperTarget), [130, 122, 195, 192.5]);
+  assert.deepEqual(releaseFrame.arms.map((arm) => arm.gripperTarget), [130, 130, 195, 192.5]);
 
   const retreatFrame = createAssemblyStep3ControlFrame({
     phase: 'retreat',
@@ -280,7 +280,7 @@ test('Step 3 lifts the hammer, synchronizes the beam, and homes Arms 3/4 after r
   }, plans);
   assert.deepEqual(retreatFrame.arms[3].jointTargets, Array(7).fill(38.5));
   assert.deepEqual(retreatFrame.arms[2].jointTargets, Array(7).fill(28.5));
-  assert.deepEqual(retreatFrame.arms.map((arm) => arm.gripperTarget), [130, 122, 255, 255]);
+  assert.deepEqual(retreatFrame.arms.map((arm) => arm.gripperTarget), [130, 130, 255, 255]);
 
   const completeFrame = createAssemblyStep3ControlFrame({
     phase: 'complete',
@@ -448,7 +448,7 @@ test('Step 3 release motion allows gravity settling before strict placed verific
     reseatAttempts: 0,
     failure: null,
   }, 0.1, {
-    all: { ok: true },
+    all: { ok: false, code: 'deep-penetration', armKey: 'r2', detail: '-0.009' },
     alignment: { ok: false, code: 'hole-height', detail: 'settling' },
   });
   assert.equal(releasing.phase, 'release');

@@ -1,7 +1,7 @@
 export const ASSEMBLY1_STEP1_PHASE_DURATION = 1.5;
 export const ASSEMBLY1_STEP1_SETTLE_DURATION = 3;
 export const ASSEMBLY1_GRIPPER_OPEN = 255;
-export const ASSEMBLY1_STEP1_IK_VERSION = 'dynamic-centered-hammer-grasp-v10';
+export const ASSEMBLY1_STEP1_IK_VERSION = 'short-path-symmetric-grasp-v11';
 
 export function topDownTcpQuaternion(closingAxisYawDegrees) {
   const halfTurn = (closingAxisYawDegrees + 90) * Math.PI / 360;
@@ -14,9 +14,11 @@ const roles = [
     role: 'south frame rail',
     highWaypoint: [0.18, -0.23, 0.50],
     finalWaypoint: [0.18, -0.23, 0.33],
-    closingAxisYawDegrees: 90,
-    highJointTargets: [-2.573928, -1.289455, -1.247694, -1.174015, -1.420985, 1.173492, -0.537856],
-    finalJointTargets: [-2.71468, -1.525629, -1.384456, -1.46819, -1.543915, 1.380128, -0.454438],
+    // The parallel gripper is 180-degree symmetric.  This equivalent yaw
+    // keeps the same rail closing axis while avoiding the opposite IK branch.
+    closingAxisYawDegrees: -90,
+    highJointTargets: [1.930559, 0.625991, -0.93255, -1.241597, 0.49131, 1.641015, 1.849847],
+    finalJointTargets: [1.96697, 0.736078, -0.863517, -1.532364, 0.59264, 1.988842, 1.770368],
   },
   {
     role: 'horizontal hammer handle',

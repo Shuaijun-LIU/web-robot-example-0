@@ -71,3 +71,19 @@
   - What: Replaced Assembly1 tool instances with the detailed Assembly2 RoboTwin assets, strengthened all Panda fingertip contact pads, stabilized the physical hammer lift, retained underside cross-member grasp pockets, and added a second visible hammer-handle grip zone across the two-Panda reach gap.
   - Verified: Step 3 physically completed cross-member placement/release and returned Arms 3/4 home. The Step 4 handover runner observed bilateral Arm 4 hammer contact, Arm 2 fully open at 255, Arm 4 holding at 127, 46.3 mm retained aperture, 0.359 m hammer height, and about 0.65 mm maximum penetration after donor release.
   - Open: Full Step 4 fastener pickup/insertion/strike remains a separate browser regression; only hammer lift and handover are complete in this entry.
+- 2026-08-30
+  - What: Corrected the false hammer-handover condition by requiring sustained bilateral Arm 4 contact plus a real aperture no wider than the nominal 48 mm handle. Kept the exchange fully contact-driven, and stabilized the active fastener in a passive fixture without scripted motion.
+  - Verified: The focused Step 4 suite passes 13/13. Browser evidence confirms the drill is physically supported within 0.177 mm penetration, the target fastener remains nearly stationary before grasp, and one prior run physically lifted it by about 200 mm while preserving bilateral contact.
+  - Open: The latest handover sample reaches donor retreat but the hammer and Arm 4 TCP sag about 26/22 mm and one pad reaches 2.401 mm penetration. Instrumentation for donor/receiver collision pairs and qpos-vs-ctrl was added; the diagnostic rerun was paused at the user's request before producing a terminal sample. No current changes are committed or pushed.
+- 2026-08-30
+  - What: Tested a user-directed light hammer and integral recessed receiver grip. Reduced total demo mass from about 62.2 g to 23.6 g and added a 32 mm × 36 mm waist within the original 48 mm handle envelope.
+  - Evidence: Arm 2/Arm 4 direct collision count stayed zero, but three receiver closure settings still produced either a missing pad or 3.84–4.01 mm edge penetration with about 26–28 mm hammer/TCP sag. This identifies incompatible dual-arm rigid grasp targets, not hammer mass or robot-body collision, as the remaining cause.
+  - Next: Stop parameter guessing. Add a loopback-only SSH-tunneled manual pose capture workflow so the user can set compatible Arm 2/Arm 4 IK poses and save server-readable qpos/TCP/contact snapshots. Current experiment remains local and dynamically unaccepted.
+- 2026-08-30
+  - What: Implemented the Assembly1 manual-pose workflow: visible manual-control toggle, named pose save button, complete four-arm/object/contact snapshot, and a loopback Vite endpoint with validated atomic JSON persistence.
+  - Verified: Unit/contract tests pass; TypeScript passes; the Node 22 production build passes. A headless browser loaded the 65-body scene, restored `r0_tcp` manual IK, and saved a readable 99-qpos/32-control snapshot through the actual endpoint.
+  - Next: User connects through the SSH tunnel and saves compatible `handover-approach`, `handover-clamp`, and `donor-clear` poses. Do not commit or push until instructed.
+- 2026-08-30
+  - What: Removed only the Step 1 Arm 1 and Step 4 Arm 4 long-sweep IK branches by using the parallel gripper's 180-degree symmetric pose; all TCP waypoints and other arms remain unchanged.
+  - Verified: Offline waypoint errors stay below 0.8 mm/0.15 degrees. Browser motion reduced Arm 1's maximum joint sweep from about 245 to 142.7 degrees and Arm 4's from about 274 to 159 degrees. Step 2 retained bilateral frame contact and Step 3 completed normally.
+  - Open: Step 4 still stops later on the separately recorded hammer deep-penetration gate (4.44 mm in this sample). No threshold or unrelated action was changed, and the current work remains local until the user requests a commit/push.

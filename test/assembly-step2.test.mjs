@@ -39,8 +39,8 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     {
       key: 'r1',
       targetBody: 'double_face_hammer',
-      contactWaypoint: [0.66, -0.427, 0.145],
-      approachWaypoint: [0.66, -0.427, 0.16],
+      contactWaypoint: [0.675, -0.421, 0.197],
+      approachWaypoint: [0.675, -0.421, 0.212],
       closingAxisYawDegrees: 90,
       leftFingerBody: 'r1_left_finger',
       rightFingerBody: 'r1_right_finger',
@@ -82,7 +82,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     verificationTimeout: 4,
     stableHold: 2,
   });
-  assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [130, 122, 135, 130]);
+  assert.deepEqual(ASSEMBLY1_STEP2_GRIPPER_CLAMPS, [130, 130, 135, 130]);
   assert.deepEqual(ASSEMBLY1_STEP2_LIMITS, {
     tcpPosition: 0.06,
     tcpOrientationDegrees: 8,
@@ -99,6 +99,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     hammerVerticalDisplacement: 0.005,
     crossMemberVerticalDisplacement: 0.015,
     minimumAperture: 0.035,
+    hammerMinimumAperture: 0.03,
     crossMemberMinimumAperture: 0.035,
     maximumContactPenetration: 0.002,
     contactComparisonEpsilon: 0.00015,
@@ -206,7 +207,7 @@ test('Step 2 control frames descend all arms and close cross-member grippers tog
     machine('hammer-clamp', 0.4),
     plans,
   );
-  assert.deepEqual(toolClamp.arms.map((arm) => arm.gripperTarget), [130, 188.5, 135, 130]);
+  assert.deepEqual(toolClamp.arms.map((arm) => arm.gripperTarget), [130, 192.5, 135, 130]);
 });
 
 test('Step 2 phase machine follows timed motions and starts verification windows', () => {

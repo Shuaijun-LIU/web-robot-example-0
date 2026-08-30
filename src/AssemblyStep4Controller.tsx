@@ -22,6 +22,7 @@ import {
   advanceAssemblyStep4Machine,
   createAssemblyStep4ControlFrame,
   createAssemblyStep4Machine,
+  evaluateAssemblyStep4HammerHandover,
   evaluateAssemblyStep4Placement,
   evaluateAssemblyStep4Stability,
 } from './assemblyStep4.js';
@@ -35,6 +36,15 @@ import type {
 } from './assemblyStep4.js';
 
 type AssemblyOwnership = 'manual' | 'step1' | 'step2' | 'step3' | 'step4';
+
+const HAMMER_GRASP_GEOMS = new Set([
+  'robotwin_hammer_handle_collision',
+  'robotwin_hammer_handle_inner_shoulder_collision',
+  'robotwin_hammer_handle_receiver_waist_collision',
+  'robotwin_hammer_handle_receiver_upper_rib_collision',
+  'robotwin_hammer_handle_receiver_lower_rib_collision',
+  'robotwin_hammer_handle_outer_shoulder_collision',
+]);
 
 interface RuntimeArm {
   armKey: string;
@@ -57,6 +67,8 @@ interface RuntimePlan {
   hammerFingerQposAddresses: [number, number];
   hammerLeftFingerBodyId: number;
   hammerRightFingerBodyId: number;
+  hammerReceiverGraspSiteId: number;
+  hammerReceiverTcpSiteId: number;
   frameBaseline: [number, number, number];
   crossMemberBaseline: [number, number, number];
   crossMemberBaselineQuaternion: [number, number, number, number];
@@ -120,6 +132,8 @@ function createRuntimePlan(
   const fastenerBodyId = findBodyByName(model, 'fastener_1');
   const hammerBodyId = findBodyByName(model, 'double_face_hammer');
   const receiverSiteId = findSiteByName(model, 'frame_receiver_nw');
+  const hammerReceiverGraspSiteId = findSiteByName(model, 'hammer_receiver_grasp');
+  const hammerReceiverTcpSiteId = findSiteByName(model, 'r3_tcp');
   const fastenerArm = ASSEMBLY1_STEP2_ARMS[2];
   const hammerArm = ASSEMBLY1_STEP2_ARMS[3];
   const fastenerFingerJointIds = fastenerArm.fingerJointNames.map(
@@ -138,6 +152,8 @@ function createRuntimePlan(
     || fastenerBodyId < 0
     || hammerBodyId < 0
     || receiverSiteId < 0
+    || hammerReceiverGraspSiteId < 0
+    || hammerReceiverTcpSiteId < 0
     || fastenerFingerJointIds.some((id) => id < 0)
     || fastenerLeftFingerBodyId < 0
     || fastenerRightFingerBodyId < 0
@@ -190,6 +206,9 @@ function createRuntimePlan(
       prepare: contract.jointTargets.prepare,
       engage: contract.jointTargets.engage,
       lift: contract.jointTargets.lift,
+      liftPath: contract.liftPathJointTargets
+        ? [contract.jointTargets.engage, ...contract.liftPathJointTargets]
+        : undefined,
       transfer: contract.jointTargets.transfer,
       insert: contract.jointTargets.insert,
       clear: contract.jointTargets.clear,
@@ -219,6 +238,8 @@ function createRuntimePlan(
       ],
       hammerLeftFingerBodyId,
       hammerRightFingerBodyId,
+      hammerReceiverGraspSiteId,
+      hammerReceiverTcpSiteId,
       frameBaseline: vector3(data.xpos, frameBodyId),
       crossMemberBaseline: vector3(data.xpos, crossMemberBodyId),
       crossMemberBaselineQuaternion: quaternion4(data.xquat, crossMemberBodyId),
@@ -233,6 +254,7 @@ function targetContacts(
   targetBodyId: number,
   leftFingerBodyId: number,
   rightFingerBodyId: number,
+  allowedTargetGeomNames: ReadonlySet<string> | null = null,
 ) {
   let left = false;
   let right = false;
@@ -242,8 +264,14 @@ function targetContacts(
     const firstBody = model.geom_bodyid[contact.geom1];
     const secondBody = model.geom_bodyid[contact.geom2];
     const targetGeomId = firstBody === targetBodyId ? contact.geom1 : contact.geom2;
+    const targetGeomName = nameAt(model, model.name_geomadr[targetGeomId]);
+    if (
+      allowedTargetGeomNames
+      && (firstBody === targetBodyId || secondBody === targetBodyId)
+      && !allowedTargetGeomNames.has(targetGeomName)
+    ) continue;
     const passiveRetainer = isPassiveRetainingContactGeom(
-      nameAt(model, model.name_geomadr[targetGeomId]),
+      targetGeomName,
     );
     if (
       (firstBody === leftFingerBodyId && secondBody === targetBodyId)
@@ -293,6 +321,7 @@ function sampleRuntime(
     runtime.hammerBodyId,
     runtime.hammerLeftFingerBodyId,
     runtime.hammerRightFingerBodyId,
+    HAMMER_GRASP_GEOMS,
   );
   if (fastenerContacts.left) lastContactTimes.fastener.left = data.time;
   if (fastenerContacts.right) lastContactTimes.fastener.right = data.time;
@@ -318,12 +347,43 @@ function sampleRuntime(
   const fastenerAperture = data.qpos[runtime.fastenerFingerQposAddresses[0]]
     + data.qpos[runtime.fastenerFingerQposAddresses[1]];
   let fastenerGrasp: AssemblyStep4Verdict = { ok: true };
+  let fastenerCurrentGrasp: AssemblyStep4Verdict = { ok: true };
   const leftRecent = data.time - lastContactTimes.fastener.left <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
   const rightRecent = data.time - lastContactTimes.fastener.right <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
   if (!leftRecent && !rightRecent) {
     fastenerGrasp = { ok: false, code: 'missing-finger-contact', armKey: 'r2' };
+  } else if (!leftRecent) {
+    fastenerGrasp = { ok: false, code: 'missing-left-contact', armKey: 'r2' };
+  } else if (!rightRecent) {
+    fastenerGrasp = { ok: false, code: 'missing-right-contact', armKey: 'r2' };
   } else if (!(fastenerAperture > ASSEMBLY1_STEP4_LIMITS.minimumFastenerAperture)) {
     fastenerGrasp = { ok: false, code: 'empty-closure', armKey: 'r2' };
+  }
+  if (!fastenerContacts.left && !fastenerContacts.right) {
+    fastenerCurrentGrasp = { ok: false, code: 'missing-finger-contact', armKey: 'r2' };
+  } else if (!fastenerContacts.left) {
+    fastenerCurrentGrasp = { ok: false, code: 'missing-left-contact', armKey: 'r2' };
+  } else if (!fastenerContacts.right) {
+    fastenerCurrentGrasp = { ok: false, code: 'missing-right-contact', armKey: 'r2' };
+  } else if (
+    [fastenerContacts.leftDistance, fastenerContacts.rightDistance]
+      .filter((value): value is number => typeof value === 'number' && Number.isFinite(value))
+      .some((value) => value < -(
+        ASSEMBLY1_STEP4_LIMITS.maximumContactPenetration
+        + ASSEMBLY1_STEP4_LIMITS.contactComparisonEpsilon
+      ))
+  ) {
+    fastenerCurrentGrasp = {
+      ok: false,
+      code: 'deep-penetration',
+      armKey: 'r2',
+      detail: String(Math.min(
+        fastenerContacts.leftDistance ?? 0,
+        fastenerContacts.rightDistance ?? 0,
+      )),
+    };
+  } else if (!(fastenerAperture > ASSEMBLY1_STEP4_LIMITS.minimumFastenerAperture)) {
+    fastenerCurrentGrasp = { ok: false, code: 'empty-closure', armKey: 'r2' };
   }
   const fastenerPosition = vector3(data.xpos, runtime.fastenerBodyId);
   const receiverPosition = vector3(data.site_xpos, runtime.receiverSiteId);
@@ -342,29 +402,22 @@ function sampleRuntime(
     <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
   const hammerRightRecent = data.time - lastContactTimes.hammer.right
     <= ASSEMBLY1_STEP4_DURATIONS.contactGrace;
-  let hammerGrasp: AssemblyStep4Verdict = { ok: true };
-  if (!hammerLeftRecent) {
-    hammerGrasp = { ok: false, code: 'missing-hammer-left-contact', armKey: 'r3' };
-  } else if (!hammerRightRecent) {
-    hammerGrasp = { ok: false, code: 'missing-hammer-right-contact', armKey: 'r3' };
-  } else if (
-    [hammerContacts.leftDistance, hammerContacts.rightDistance]
-      .some((value) => (
-        typeof value === 'number'
-        && value < -ASSEMBLY1_STEP4_LIMITS.maximumContactPenetration
-      ))
-  ) {
-    const deepest = Math.min(
-      ...[hammerContacts.leftDistance, hammerContacts.rightDistance]
-        .filter((value): value is number => typeof value === 'number'),
-    );
-    hammerGrasp = { ok: false, code: 'deep-penetration', armKey: 'r3', detail: String(deepest) };
-  } else if (!(hammerAperture > ASSEMBLY1_STEP4_LIMITS.minimumToolAperture)) {
-    hammerGrasp = { ok: false, code: 'empty-closure', armKey: 'r3' };
-  }
+  const hammerReceiverGraspPointDistance = distance(
+    vector3(data.site_xpos, runtime.hammerReceiverGraspSiteId),
+    vector3(data.site_xpos, runtime.hammerReceiverTcpSiteId),
+  );
+  const hammerGrasp = evaluateAssemblyStep4HammerHandover({
+    leftContact: hammerLeftRecent,
+    rightContact: hammerRightRecent,
+    aperture: hammerAperture,
+    receiverGraspPointDistance: hammerReceiverGraspPointDistance,
+    leftContactDistance: hammerContacts.leftDistance,
+    rightContactDistance: hammerContacts.rightDistance,
+  });
   return {
     all,
     fastenerGrasp,
+    fastenerCurrentGrasp,
     hammerGrasp,
     placement,
     frameTranslation,
@@ -376,11 +429,14 @@ function sampleRuntime(
     fastenerAperture,
     fastenerLeftContact: fastenerContacts.left,
     fastenerRightContact: fastenerContacts.right,
+    fastenerLeftContactDistance: fastenerContacts.leftDistance,
+    fastenerRightContactDistance: fastenerContacts.rightDistance,
     hammerAperture,
     hammerLeftContact: hammerContacts.left,
     hammerRightContact: hammerContacts.right,
     hammerLeftContactDistance: hammerContacts.leftDistance,
     hammerRightContactDistance: hammerContacts.rightDistance,
+    hammerReceiverGraspPointDistance,
   };
 }
 
@@ -476,6 +532,7 @@ export function AssemblyStep4Controller({
         ? { ok: true }
         : sample.all,
       fastenerGrasp: sample.fastenerGrasp,
+      fastenerCurrentGrasp: sample.fastenerCurrentGrasp,
       hammerGrasp: sample.hammerGrasp,
       placement: sample.placement,
     });
@@ -523,11 +580,14 @@ export function AssemblyStep4Controller({
       fastenerAperture: sample.fastenerAperture,
       fastenerLeftContact: sample.fastenerLeftContact,
       fastenerRightContact: sample.fastenerRightContact,
+      fastenerLeftContactDistance: sample.fastenerLeftContactDistance,
+      fastenerRightContactDistance: sample.fastenerRightContactDistance,
       hammerAperture: sample.hammerAperture,
       hammerLeftContact: sample.hammerLeftContact,
       hammerRightContact: sample.hammerRightContact,
       hammerLeftContactDistance: sample.hammerLeftContactDistance,
       hammerRightContactDistance: sample.hammerRightContactDistance,
+      hammerReceiverGraspPointDistance: sample.hammerReceiverGraspPointDistance,
     };
     if (nextMachine.phase === 'error') {
       runtimeRef.current = null;

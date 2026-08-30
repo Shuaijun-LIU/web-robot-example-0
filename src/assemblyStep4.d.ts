@@ -1,7 +1,8 @@
 export type AssemblyStep4Phase =
   | 'idle' | 'planning' | 'donor-tighten' | 'prepare' | 'engage' | 'engage-settle' | 'dual-clamp'
   | 'handover-verification' | 'hammer-release' | 'donor-clear'
-  | 'fastener-tighten' | 'lift' | 'transfer' | 'transfer-settle' | 'insert'
+  | 'fastener-tighten' | 'fastener-grip-settle' | 'fastener-grasp-verification'
+  | 'lift' | 'transfer' | 'transfer-settle' | 'insert'
   | 'fastener-release' | 'clear' | 'placement-verification'
   | 'hammer-stage' | 'hammer-strike' | 'hammer-recover'
   | 'complete' | 'error';
@@ -33,6 +34,7 @@ export interface AssemblyStep4ArmPlan {
   prepare: readonly number[];
   engage: readonly number[];
   lift: readonly number[];
+  liftPath?: readonly (readonly number[])[];
   transfer: readonly number[];
   insert: readonly number[];
   clear: readonly number[];
@@ -55,11 +57,14 @@ export interface AssemblyStep4RuntimeDiagnostics {
   fastenerAperture: number;
   fastenerLeftContact: boolean;
   fastenerRightContact: boolean;
+  fastenerLeftContactDistance: number | null;
+  fastenerRightContactDistance: number | null;
   hammerAperture: number;
   hammerLeftContact: boolean;
   hammerRightContact: boolean;
   hammerLeftContactDistance: number | null;
   hammerRightContactDistance: number | null;
+  hammerReceiverGraspPointDistance: number;
 }
 
 export const ASSEMBLY1_STEP4_DURATIONS: Readonly<Record<string, number>>;
@@ -72,6 +77,7 @@ export const ASSEMBLY1_STEP4_ARMS: ReadonlyArray<Readonly<{
   role: string;
   closingAxisYawDegrees?: number;
   jointTargets: Readonly<Record<string, readonly number[]>>;
+  liftPathJointTargets?: readonly (readonly number[])[];
 }>>;
 
 export function createAssemblyStep4Machine(): AssemblyStep4Machine;
@@ -81,6 +87,7 @@ export function advanceAssemblyStep4Machine(
   evidence: {
     all?: AssemblyStep4Verdict;
     fastenerGrasp?: AssemblyStep4Verdict;
+    fastenerCurrentGrasp?: AssemblyStep4Verdict;
     hammerGrasp?: AssemblyStep4Verdict;
     placement?: AssemblyStep4Verdict;
   },
@@ -97,4 +104,12 @@ export function evaluateAssemblyStep4Stability(input: {
 export function evaluateAssemblyStep4Placement(input: {
   fastenerPlanarDistance: number;
   fastenerHeight: number;
+}): AssemblyStep4Verdict;
+export function evaluateAssemblyStep4HammerHandover(input: {
+  leftContact: boolean;
+  rightContact: boolean;
+  aperture: number;
+  receiverGraspPointDistance: number;
+  leftContactDistance?: number | null;
+  rightContactDistance?: number | null;
 }): AssemblyStep4Verdict;

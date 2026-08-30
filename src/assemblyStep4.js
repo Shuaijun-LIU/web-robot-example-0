@@ -10,11 +10,20 @@ export const ASSEMBLY1_STEP4_DURATIONS = Object.freeze({
   prepare: 3,
   engage: 2,
   engageSettle: 3,
-  dualClamp: 1.5,
-  hammerRelease: 0.8,
+  dualClamp: 4,
+  // Keep both wrists stationary until the donor fingers physically clear the
+  // 48 mm handle; 0.8 s changed ctrl but left the real aperture near 46 mm.
+  hammerRelease: 2,
   donorClear: 3,
   fastenerTighten: 5,
-  verificationWindow: 0.2,
+  // MuJoCo's finger joints lag the actuator command.  Hold the pickup pose
+  // after closing so the real pads can settle on both sides before any lift.
+  fastenerGripSettle: 2,
+  fastenerVerificationWindow: 0.4,
+  fastenerVerificationTimeout: 3,
+  // Require a sustained bilateral grasp before the donor opens.  A single
+  // contact frame is not a handover and previously allowed the hammer to fall.
+  verificationWindow: 0.5,
   contactGrace: 0.75,
   verificationTimeout: 4,
   lift: 6,
@@ -32,8 +41,20 @@ export const ASSEMBLY1_STEP4_DURATIONS = Object.freeze({
 
 export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
   minimumFastenerAperture: 0.005,
-  minimumToolAperture: 0.035,
+  minimumToolAperture: 0.03,
+  // Bilateral touch is not a completed handover while the real fingers are
+  // still almost fully open.  Keep the donor closed until the receiver has
+  // physically settled around the 48 mm handle.
+  // Use the 48 mm nominal handle width as the closure boundary.  This accepts
+  // safe bilateral contact while remaining below the previously observed
+  // 49.5 mm false handover.
+  maximumToolAperture: 0.048,
   maximumContactPenetration: 0.002,
+  contactComparisonEpsilon: 0.0003,
+  // The receiver site remains within the 140 mm visible handle collision.
+  // Allow 35 mm for physical pitch settling under the offset hammer head;
+  // bilateral finger contact and penetration limits remain mandatory.
+  maximumHammerGraspPointDistance: 0.035,
   frameTranslation: 0.012,
   crossMemberTranslation: 0.025,
   crossMemberRotationDegrees: 12,
@@ -46,14 +67,18 @@ export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
 
 export const ASSEMBLY1_STEP4_GRIPPERS = Object.freeze({
   frame: 130,
-  donorEntry: 122,
-  tool: 122,
-  receiverTool: 127,
-  // A 110 command leaves about 34.5 mm between the fingers, wider than the
-  // 30 mm fastener head.  Close to 80 during the shared clamp phase so both
-  // fingers establish contact instead of one finger sweeping the part aside.
+  donorEntry: 130,
+  tool: 130,
+  // The receiver waist is 36 mm wide.  Command 115 maps close to that free
+  // aperture so the pads locate the handle while its integral lips carry the
+  // light hammer without excessive squeeze; there is no hidden attachment.
+  receiverTool: 115,
+  // Grip the broad 30 mm head.  This avoids driving the narrow 14 mm shaft
+  // sideways inside its passive fixture and provides a larger friction area.
   pregrasp: 80,
-  fastener: 70,
+  // Command below the 30 mm head width so the Panda tendon maintains about
+  // 2 N of normal clamping force instead of merely holding its contact pose.
+  fastener: 80,
   open: 255,
 });
 
@@ -61,24 +86,37 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
   r1: Object.freeze({
     // Lift clear of Arm 1's south-frame hold before crossing to the handover.
     prepare: Object.freeze([0.48, -0.28, 0.56]),
-    engage: Object.freeze([0.095, 0, 0.40]),
+    engage: Object.freeze([0.095, 0, 0.36]),
     clear: Object.freeze([0.46, -0.10, 0.45]),
   }),
   r2: Object.freeze({
     // The Panda TCP is roughly 30 mm behind the physical finger pads in this
     // orientation.  Offset south and slightly west so both pads close around
     // the 30 mm fastener head instead of one pad sweeping it aside.
-    prepare: Object.freeze([0.095, 0.38, 0.34]),
-    engage: Object.freeze([0.095, 0.38, 0.16]),
-    lift: Object.freeze([0.095, 0.38, 0.40]),
+    prepare: Object.freeze([0.095, 0.368, 0.34]),
+    // Align the full-height Panda pads with both sides of the fastener head.
+    engage: Object.freeze([0.095, 0.368, 0.195]),
+    lift: Object.freeze([0.095, 0.368, 0.40]),
+    liftPath: Object.freeze([0.215, 0.235, 0.26, 0.285, 0.315, 0.345, 0.3725, 0.40].map(
+      (z) => Object.freeze([0.095, 0.368, z]),
+    )),
     transfer: Object.freeze([-0.04, 0.215, 0.43]),
     insert: Object.freeze([-0.04, 0.215, 0.29]),
     clear: Object.freeze([-0.10, 0.35, 0.44]),
   }),
   r3: Object.freeze({
-    prepare: Object.freeze([-0.015, 0.02, 0.44]),
-    engage: Object.freeze([-0.015, 0.02, 0.40]),
-    clear: Object.freeze([-0.08, 0.02, 0.45]),
+    // The two arm bases have only a narrow shared workspace.  A lower exchange
+    // pose keeps both wrists inside the Panda reach envelope while remaining
+    // above the installed frame.
+    // The west arm is already at its reachable boundary.  Keep its proven IK
+    // branch and move the donor's exchange pose toward it instead, placing
+    // both receiver fingers inside the visible main handle.
+    prepare: Object.freeze([-0.015, 0.02, 0.40]),
+    engage: Object.freeze([-0.005, 0.02, 0.36]),
+    // Retreat horizontally toward the west base while preserving grasp
+    // height.  Raising 90 mm at the tail grip made the handle slide downward
+    // even though both pads remained force-closed.
+    clear: Object.freeze([-0.08, 0.02, 0.36]),
     ready: Object.freeze([-0.25, 0.215, 0.41]),
     strike: Object.freeze([-0.25, 0.215, 0.35]),
   }),
@@ -119,9 +157,9 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     role: 'hammer handover donor',
     closingAxisYawDegrees: 90,
     jointTargets: targets(holds[1], {
-      prepare: [1.30281, -0.26288, 0.758352, -1.941548, 0.182977, 1.746831, 1.225902],
-      engage: [1.56001, 1.079141, 0.038372, -0.466959, -0.034016, 1.575146, 0.791887],
-      clear: [1.706103, -0.304286, 0.082212, -2.34812, 0.027529, 2.043481, 0.986646],
+      prepare: [1.030521, -0.350888, 0.969274, -1.929556, 0.289892, 1.717324, 1.141062],
+      engage: [1.527871, 1.134992, 0.155012, -0.466222, -0.140873, 1.612328, 0.811969],
+      clear: [1.540314, -0.311957, 0.236518, -2.347164, 0.080314, 2.040706, 0.94411],
     }),
   }),
   Object.freeze({
@@ -129,25 +167,37 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     armIndex: 2,
     role: 'fastener pickup and insertion',
     jointTargets: targets(holds[2], {
-      prepare: [0.058339, -0.521862, 2.100415, -1.903207, 0.528153, 2.119648, -1.998912],
-      engage: [-0.151316, -0.808911, 2.390753, -1.909513, 0.804221, 2.387364, -2.156384],
-      lift: [0.099609, -0.433254, 2.04317, -1.84515, 0.426799, 2.016808, -1.936757],
-      transfer: [-0.45711, -0.651149, 2.149997, -1.446971, 0.548559, 1.805186, -2.265369],
-      insert: [-0.484461, -0.788574, 2.252976, -1.597089, 0.670667, 2.054564, -2.338187],
-      clear: [0.180297, 0.136685, 1.810612, -2.07954, -0.148602, 2.040914, -1.866167],
+      prepare: [0.017656, -0.547799, 2.117611, -1.864598, 0.542064, 2.103129, -2.015052],
+      engage: [-0.135986, -0.769199, 2.335743, -1.889583, 0.756709, 2.322619, -2.13635],
+      lift: [0.057474, -0.473012, 2.055218, -1.802036, 0.458798, 1.995036, -1.965205],
+      transfer: [-0.453194, -0.655485, 2.142507, -1.446036, 0.554667, 1.802605, -2.268325],
+      insert: [-0.480145, -0.792595, 2.246196, -1.596478, 0.677056, 2.051766, -2.34127],
+      clear: [0.197664, 0.146849, 1.796419, -2.079223, -0.160158, 2.039473, -1.85764],
     }),
+    liftPathJointTargets: Object.freeze([
+      [-0.115714, -0.735541, 2.306111, -1.895171, 0.728403, 2.295944, -2.1219],
+      [-0.094057, -0.702417, 2.275396, -1.898393, 0.698266, 2.26805, -2.10529],
+      [-0.067505, -0.662383, 2.237535, -1.898143, 0.660272, 2.232016, -2.084196],
+      [-0.041529, -0.624041, 2.200385, -1.89273, 0.621845, 2.193943, -2.06231],
+      [-0.011915, -0.580272, 2.157813, -1.879758, 0.576512, 2.146247, -2.036214],
+      [0.015602, -0.539331, 2.117971, -1.859241, 0.532428, 2.09554, -2.010155],
+      [0.038167, -0.504651, 2.084702, -1.833727, 0.494127, 2.046392, -1.98698],
+      [0.057474, -0.473012, 2.055218, -1.802036, 0.458798, 1.995036, -1.965205],
+    ].map((target) => Object.freeze(target))),
   }),
   Object.freeze({
     key: 'r3',
     armIndex: 3,
     role: 'hammer handover receiver and strike',
-    closingAxisYawDegrees: 90,
+    // Swap the symmetric parallel-gripper fingers to stay on the home-side IK
+    // branch.  The TCP positions and physical hammer closing axis are unchanged.
+    closingAxisYawDegrees: -90,
     jointTargets: targets(holds[3], {
-      prepare: [-1.615043, -1.026006, -2.894244, -0.465278, -0.212472, 1.495639, -2.289955],
-      engage: [-1.614529, -1.073949, -2.897069, -0.473746, -0.214538, 1.534482, -2.289185],
-      clear: [-1.746301, -0.588679, -2.842664, -1.200944, -0.167456, 1.76472, -2.248007],
-      ready: [-1.604736, -0.162246, -2.714626, -1.933028, -0.076783, 2.077257, -1.930649],
-      strike: [-1.5971, -0.232094, -2.723609, -2.008133, -0.116801, 2.216852, -1.904085],
+      prepare: [1.542368, 0.994106, 0.147813, -0.613454, -0.123885, 1.604321, 0.841908],
+      engage: [1.548911, 1.082248, 0.143083, -0.55641, -0.126551, 1.635867, 0.839053],
+      clear: [1.472091, 0.613897, 0.170212, -1.374233, -0.106505, 1.977726, 0.868703],
+      ready: [1.664112, 0.153013, 0.292018, -1.93517, -0.048652, 2.079354, 1.190441],
+      strike: [1.669601, 0.221726, 0.286449, -2.008656, -0.077762, 2.21936, 1.210963],
     }),
   }),
 ]);
@@ -200,7 +250,20 @@ const timedTransitions = {
   'dual-clamp': [ASSEMBLY1_STEP4_DURATIONS.dualClamp, 'handover-verification', false, false, false],
   'hammer-release': [ASSEMBLY1_STEP4_DURATIONS.hammerRelease, 'donor-clear', false, false, true],
   'donor-clear': [ASSEMBLY1_STEP4_DURATIONS.donorClear, 'fastener-tighten', false, false, true],
-  'fastener-tighten': [ASSEMBLY1_STEP4_DURATIONS.fastenerTighten, 'lift', false, false, true],
+  'fastener-tighten': [
+    ASSEMBLY1_STEP4_DURATIONS.fastenerTighten,
+    'fastener-grip-settle',
+    false,
+    false,
+    true,
+  ],
+  'fastener-grip-settle': [
+    ASSEMBLY1_STEP4_DURATIONS.fastenerGripSettle,
+    'fastener-grasp-verification',
+    false,
+    false,
+    true,
+  ],
   lift: [ASSEMBLY1_STEP4_DURATIONS.lift, 'transfer', true, false, true],
   transfer: [ASSEMBLY1_STEP4_DURATIONS.transfer, 'transfer-settle', true, false, true],
   'transfer-settle': [ASSEMBLY1_STEP4_DURATIONS.transferSettle, 'insert', true, false, true],
@@ -251,6 +314,27 @@ export function advanceAssemblyStep4Machine(machine, deltaSeconds, evidence) {
     return { ...machine, phaseElapsed, continuousValidSeconds, lastInvalidVerdict };
   }
 
+  if (machine.phase === 'fastener-grasp-verification') {
+    const currentFastenerEvidence = evidence.fastenerCurrentGrasp
+      ?? evidence.fastenerGrasp;
+    const verdict = combinedEvidence({
+      ...evidence,
+      fastenerGrasp: currentFastenerEvidence,
+    }, true, false, true);
+    const phaseElapsed = machine.phaseElapsed + dt;
+    const continuousValidSeconds = verdict?.ok
+      ? machine.continuousValidSeconds + dt
+      : 0;
+    const lastInvalidVerdict = verdict?.ok ? machine.lastInvalidVerdict : verdict;
+    if (continuousValidSeconds >= ASSEMBLY1_STEP4_DURATIONS.fastenerVerificationWindow) {
+      return enterPhase('lift');
+    }
+    if (phaseElapsed >= ASSEMBLY1_STEP4_DURATIONS.fastenerVerificationTimeout) {
+      return terminalFailure(verdict?.ok ? lastInvalidVerdict : verdict);
+    }
+    return { ...machine, phaseElapsed, continuousValidSeconds, lastInvalidVerdict };
+  }
+
   if (machine.phase === 'placement-verification') {
     const verdict = combinedEvidence(evidence, false, true, true);
     const phaseElapsed = machine.phaseElapsed + dt;
@@ -275,11 +359,19 @@ export function advanceAssemblyStep4Machine(machine, deltaSeconds, evidence) {
 
 function phaseTargets(machine, plan) {
   const progress = (duration) => machine.phaseElapsed / duration;
+  const pathTarget = (path, value) => {
+    const clamped = Math.max(0, Math.min(1, value));
+    const scaled = clamped * Math.max(0, path.length - 1);
+    const index = Math.min(path.length - 1, Math.floor(scaled));
+    const next = Math.min(path.length - 1, index + 1);
+    return interpolateJointTargets(path[index], path[next], scaled - index);
+  };
   if (machine.phase === 'donor-tighten') return plan.hold;
   if (machine.phase === 'prepare') {
     return interpolateJointTargets(plan.hold, plan.prepare, progress(ASSEMBLY1_STEP4_DURATIONS.prepare));
   }
   if (machine.phase === 'engage') {
+    if (plan.armKey === 'r2') return plan.prepare;
     return interpolateJointTargets(plan.prepare, plan.engage, progress(ASSEMBLY1_STEP4_DURATIONS.engage));
   }
   if (
@@ -288,10 +380,13 @@ function phaseTargets(machine, plan) {
     || machine.phase === 'handover-verification'
     || machine.phase === 'hammer-release'
   ) {
+    if (plan.armKey === 'r2') return plan.prepare;
     return plan.engage;
   }
   if (machine.phase === 'donor-clear') {
-    if (plan.armKey !== 'r1' && plan.armKey !== 'r3') return plan.engage;
+    if (plan.armKey === 'r2') return plan.prepare;
+    if (plan.armKey === 'r3') return plan.engage;
+    if (plan.armKey !== 'r1') return plan.engage;
     return interpolateJointTargets(
       plan.engage,
       plan.clear,
@@ -299,34 +394,65 @@ function phaseTargets(machine, plan) {
     );
   }
   if (machine.phase === 'fastener-tighten') {
-    return plan.armKey === 'r1' || plan.armKey === 'r3' ? plan.clear : plan.engage;
+    if (plan.armKey === 'r2') {
+      const descentProgress = Math.min(1, progress(ASSEMBLY1_STEP4_DURATIONS.fastenerTighten) / 0.7);
+      return interpolateJointTargets(plan.prepare, plan.engage, descentProgress);
+    }
+    if (plan.armKey === 'r3') {
+      // Keep the receiver motionless after the donor withdraws.  Separating
+      // handover from fastener pickup avoids applying a tangential load to the
+      // hammer while the other arm descends.
+      return plan.engage;
+    }
+    return plan.armKey === 'r1' ? plan.clear : plan.engage;
+  }
+  if (
+    machine.phase === 'fastener-grip-settle'
+    || machine.phase === 'fastener-grasp-verification'
+  ) {
+    if (plan.armKey === 'r1') return plan.clear;
+    if (plan.armKey === 'r3') return plan.engage;
+    return plan.engage;
   }
   if (machine.phase === 'lift') {
-    if (plan.armKey === 'r1' || plan.armKey === 'r3') return plan.clear;
+    if (plan.armKey === 'r1') return plan.clear;
+    if (plan.armKey === 'r3') return plan.engage;
+    if (plan.armKey === 'r2' && plan.liftPath?.length > 1) {
+      return pathTarget(plan.liftPath, progress(ASSEMBLY1_STEP4_DURATIONS.lift));
+    }
     return interpolateJointTargets(plan.engage, plan.lift, progress(ASSEMBLY1_STEP4_DURATIONS.lift));
   }
   if (machine.phase === 'transfer') {
-    if (plan.armKey === 'r1' || plan.armKey === 'r3') return plan.clear;
+    if (plan.armKey === 'r1') return plan.clear;
+    if (plan.armKey === 'r3') return plan.engage;
     return interpolateJointTargets(plan.lift, plan.transfer, progress(ASSEMBLY1_STEP4_DURATIONS.transfer));
   }
   if (machine.phase === 'transfer-settle') {
-    return plan.armKey === 'r1' || plan.armKey === 'r3' ? plan.clear : plan.transfer;
+    if (plan.armKey === 'r1') return plan.clear;
+    if (plan.armKey === 'r3') return plan.engage;
+    return plan.transfer;
   }
   if (machine.phase === 'insert') {
-    if (plan.armKey === 'r1' || plan.armKey === 'r3') return plan.clear;
+    if (plan.armKey === 'r1') return plan.clear;
+    if (plan.armKey === 'r3') return plan.engage;
     return interpolateJointTargets(plan.transfer, plan.insert, progress(ASSEMBLY1_STEP4_DURATIONS.insert));
   }
   if (machine.phase === 'fastener-release') {
-    return plan.armKey === 'r1' || plan.armKey === 'r3' ? plan.clear : plan.insert;
+    if (plan.armKey === 'r1') return plan.clear;
+    if (plan.armKey === 'r3') return plan.engage;
+    return plan.insert;
   }
   if (machine.phase === 'clear') {
-    if (plan.armKey === 'r1' || plan.armKey === 'r3') return plan.clear;
+    if (plan.armKey === 'r1') return plan.clear;
+    if (plan.armKey === 'r3') return plan.engage;
     return interpolateJointTargets(plan.insert, plan.clear, progress(ASSEMBLY1_STEP4_DURATIONS.clear));
   }
-  if (machine.phase === 'placement-verification') return plan.clear;
+  if (machine.phase === 'placement-verification') {
+    return plan.armKey === 'r3' ? plan.engage : plan.clear;
+  }
   if (machine.phase === 'hammer-stage') {
     if (plan.armKey !== 'r3') return plan.clear;
-    return interpolateJointTargets(plan.clear, plan.ready, progress(ASSEMBLY1_STEP4_DURATIONS.hammerStage));
+    return interpolateJointTargets(plan.engage, plan.ready, progress(ASSEMBLY1_STEP4_DURATIONS.hammerStage));
   }
   if (machine.phase === 'hammer-strike') {
     if (plan.armKey !== 'r3') return plan.clear;
@@ -356,13 +482,7 @@ export function createAssemblyStep4ControlFrame(machine, plans) {
           machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.donorTighten,
         )[0];
       } else if (machine.phase === 'dual-clamp') {
-        if (index === 2) {
-          gripperTarget = interpolateJointTargets(
-            [ASSEMBLY1_STEP4_GRIPPERS.open],
-            [ASSEMBLY1_STEP4_GRIPPERS.pregrasp],
-            machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.dualClamp,
-          )[0];
-        } else if (index === 3) {
+        if (index === 3) {
           gripperTarget = interpolateJointTargets(
             [ASSEMBLY1_STEP4_GRIPPERS.open],
             [ASSEMBLY1_STEP4_GRIPPERS.receiverTool],
@@ -370,7 +490,6 @@ export function createAssemblyStep4ControlFrame(machine, plans) {
           )[0];
         }
       } else if (machine.phase === 'handover-verification') {
-        if (index === 2) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.pregrasp;
         if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
       } else if (machine.phase === 'hammer-release') {
         if (index === 1) {
@@ -380,25 +499,24 @@ export function createAssemblyStep4ControlFrame(machine, plans) {
             machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.hammerRelease,
           )[0];
         }
-        if (index === 2) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.pregrasp;
         if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
-      } else if (['donor-clear', 'fastener-tighten', 'lift', 'transfer', 'transfer-settle', 'insert', 'fastener-release', 'clear', 'placement-verification', 'hammer-stage', 'hammer-strike', 'hammer-recover', 'complete'].includes(machine.phase)) {
+      } else if (['donor-clear', 'fastener-tighten', 'fastener-grip-settle', 'fastener-grasp-verification', 'lift', 'transfer', 'transfer-settle', 'insert', 'fastener-release', 'clear', 'placement-verification', 'hammer-stage', 'hammer-strike', 'hammer-recover', 'complete'].includes(machine.phase)) {
         if (index === 1) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.open;
-        if (index === 2 && machine.phase === 'donor-clear') {
-          gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.pregrasp;
-        }
         if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
       }
 
       if (index === 2 && machine.phase === 'fastener-tighten') {
-        gripperTarget = interpolateJointTargets(
-          [ASSEMBLY1_STEP4_GRIPPERS.pregrasp],
-          [ASSEMBLY1_STEP4_GRIPPERS.fastener],
-          machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.fastenerTighten,
-        )[0];
+        const phaseProgress = machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.fastenerTighten;
+        if (phaseProgress >= 0.7) {
+          gripperTarget = interpolateJointTargets(
+            [ASSEMBLY1_STEP4_GRIPPERS.open],
+            [ASSEMBLY1_STEP4_GRIPPERS.fastener],
+            (phaseProgress - 0.7) / 0.3,
+          )[0];
+        }
       } else if (
         index === 2
-        && ['lift', 'transfer', 'transfer-settle', 'insert'].includes(machine.phase)
+        && ['fastener-grip-settle', 'fastener-grasp-verification', 'lift', 'transfer', 'transfer-settle', 'insert'].includes(machine.phase)
       ) {
         gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.fastener;
       } else if (index === 2 && machine.phase === 'fastener-release') {
@@ -427,6 +545,57 @@ export function evaluateAssemblyStep4Stability({
   }
   if (frameTranslation > ASSEMBLY1_STEP4_LIMITS.frameTranslation + ASSEMBLY1_STEP4_LIMITS.comparisonEpsilon) {
     return { ok: false, code: 'frame-drift', detail: String(frameTranslation) };
+  }
+  return { ok: true };
+}
+
+export function evaluateAssemblyStep4HammerHandover({
+  leftContact,
+  rightContact,
+  aperture,
+  receiverGraspPointDistance,
+  leftContactDistance = null,
+  rightContactDistance = null,
+}) {
+  if (![aperture, receiverGraspPointDistance].every(Number.isFinite)) {
+    return { ok: false, code: 'non-finite-runtime', armKey: 'r3' };
+  }
+  if (!leftContact) return { ok: false, code: 'missing-hammer-left-contact', armKey: 'r3' };
+  if (!rightContact) return { ok: false, code: 'missing-hammer-right-contact', armKey: 'r3' };
+  if (receiverGraspPointDistance > ASSEMBLY1_STEP4_LIMITS.maximumHammerGraspPointDistance) {
+    return {
+      ok: false,
+      code: 'receiver-off-grasp-zone',
+      armKey: 'r3',
+      detail: String(receiverGraspPointDistance),
+    };
+  }
+  if (aperture > ASSEMBLY1_STEP4_LIMITS.maximumToolAperture) {
+    return {
+      ok: false,
+      code: 'receiver-not-closed',
+      armKey: 'r3',
+      detail: String(aperture),
+    };
+  }
+  const contactDistances = [leftContactDistance, rightContactDistance]
+    .filter((value) => typeof value === 'number' && Number.isFinite(value));
+  if (
+    contactDistances.length > 0
+    && Math.min(...contactDistances) < -(
+      ASSEMBLY1_STEP4_LIMITS.maximumContactPenetration
+      + ASSEMBLY1_STEP4_LIMITS.contactComparisonEpsilon
+    )
+  ) {
+    return {
+      ok: false,
+      code: 'deep-penetration',
+      armKey: 'r3',
+      detail: String(Math.min(...contactDistances)),
+    };
+  }
+  if (!(aperture > ASSEMBLY1_STEP4_LIMITS.minimumToolAperture)) {
+    return { ok: false, code: 'empty-closure', armKey: 'r3' };
   }
   return { ok: true };
 }

@@ -26,7 +26,7 @@ export interface AssemblyStep1ArmPlan {
 export const ASSEMBLY1_STEP1_PHASE_DURATION: number;
 export const ASSEMBLY1_STEP1_SETTLE_DURATION: number;
 export const ASSEMBLY1_GRIPPER_OPEN: number;
-export const ASSEMBLY1_STEP1_IK_VERSION: 'grasp-ready-v2';
+export const ASSEMBLY1_STEP1_IK_VERSION: 'short-path-symmetric-grasp-v11';
 export const ASSEMBLY1_STEP1_ARMS: AssemblyStep1Arm[];
 
 export function topDownTcpQuaternion(

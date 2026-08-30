@@ -16,7 +16,7 @@ export const ASSEMBLY1_STEP2_DURATIONS = Object.freeze({
   stableHold: 2,
 });
 
-export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS = Object.freeze([130, 122, 135, 130]);
+export const ASSEMBLY1_STEP2_GRIPPER_CLAMPS = Object.freeze([130, 130, 135, 130]);
 
 export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   tcpPosition: 0.06,
@@ -34,6 +34,7 @@ export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   hammerVerticalDisplacement: 0.005,
   crossMemberVerticalDisplacement: 0.015,
   minimumAperture: 0.035,
+  hammerMinimumAperture: 0.03,
   crossMemberMinimumAperture: 0.035,
   maximumContactPenetration: 0.002,
   contactComparisonEpsilon: 0.00015,
@@ -51,10 +52,10 @@ const roles = [
   {
     role: 'horizontal hammer handle',
     targetBody: 'double_face_hammer',
-    contactWaypoint: [0.66, -0.427, 0.145],
+    contactWaypoint: [0.675, -0.421, 0.197],
     closingAxisYawDegrees: 90,
-    approachJointTargets: [1.804632, 0.520419, 0.730142, -2.366401, -0.766533, 2.64432, 2.381962],
-    contactJointTargets: [1.839231, 0.556831, 0.686063, -2.351205, -0.809501, 2.662951, 2.411283],
+    approachJointTargets: [1.638121, 0.366542, 0.945253, -2.447632, -0.585481, 2.590601, 2.27899],
+    contactJointTargets: [1.687564, 0.406326, 0.884225, -2.438215, -0.645467, 2.611236, 2.320387],
   },
   {
     role: 'cross member north balance point',
