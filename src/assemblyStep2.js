@@ -45,9 +45,11 @@ const roles = [
     role: 'south frame rail',
     targetBody: 'assembly_frame',
     contactWaypoint: [0.18, -0.23, 0.25],
-    closingAxisYawDegrees: 90,
-    approachJointTargets: [-2.737163, -1.600271, -1.458475, -1.508469, -1.606889, 1.459701, -0.447053],
-    contactJointTargets: [-2.740701, -1.61689, -1.476177, -1.513462, -1.622023, 1.478365, -0.44642],
+    // Match Step 1's equivalent parallel-gripper orientation so Arm 1 stays
+    // on the same joint-space branch instead of winding around to +90°.
+    closingAxisYawDegrees: -90,
+    approachJointTargets: [1.942389, 0.815094, -0.809002, -1.570123, 0.654009, 2.095807, 1.73732],
+    contactJointTargets: [1.934841, 0.835522, -0.795011, -1.573686, 0.668658, 2.118614, 1.729869],
   },
   {
     role: 'horizontal hammer handle',

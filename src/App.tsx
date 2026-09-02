@@ -34,6 +34,9 @@ import { AssemblyStep3Controller } from './AssemblyStep3Controller';
 import { AssemblyStep4Controller } from './AssemblyStep4Controller';
 import { AssemblySequencePanel } from './AssemblySequencePanel';
 import { Assembly1PoseCapturePanel } from './Assembly1PoseCapturePanel';
+import { FrankaDemo1Panel } from './FrankaDemo1Panel';
+import { frankaDemo1DisplayAction, nextFrankaDemo1Action } from './frankaDemo1.js';
+import type { FrankaDemo1Action } from './frankaDemo1.js';
 import { FrankaAssembly2DataRecorderPanel } from './FrankaAssembly2DataRecorderPanel';
 import type { AssemblyStep1Status } from './assemblyStep1.js';
 import { ASSEMBLY1_STEP2_ARMS } from './assemblyStep2.js';
@@ -244,6 +247,7 @@ function SceneChildren({
   onSelectUnitreeActionProgram: (programId: UnitreeActionProgramId) => boolean;
 }) {
   const simulation = useMujoco();
+  const isAssembly1Scene = robotKey === 'frankaAssembly1' || robotKey === 'frankaDemo1';
   const assemblyAutomationActive = assemblyStep1Status === 'planning'
     || assemblyStep1Status === 'running'
     || assemblyStep2State.phase !== 'idle'
@@ -413,7 +417,7 @@ function SceneChildren({
       {controlFamily === 'xlerobot' && (
         <XLeRobotController key={`xlerobot-${target.key}`} target={target} ik={ik} />
       )}
-      {robotKey === 'frankaAssembly1' && (
+      {isAssembly1Scene && (
         <AssemblyStep1Controller
           requestId={assemblyStep1RequestId}
           resetGeneration={resetGeneration}
@@ -426,7 +430,7 @@ function SceneChildren({
           }}
         />
       )}
-      {robotKey === 'frankaAssembly1' && (
+      {isAssembly1Scene && (
         <AssemblyStep2Controller
           requestId={assemblyStep2RequestId}
           resetGeneration={resetGeneration}
@@ -437,7 +441,7 @@ function SceneChildren({
           onStateChange={onAssemblyStep2StateChange}
         />
       )}
-      {robotKey === 'frankaAssembly1' && (
+      {isAssembly1Scene && (
         <AssemblyStep3Controller
           requestId={assemblyStep3RequestId}
           resetGeneration={resetGeneration}
@@ -447,7 +451,7 @@ function SceneChildren({
           onStateChange={onAssemblyStep3StateChange}
         />
       )}
-      {robotKey === 'frankaAssembly1' && (
+      {isAssembly1Scene && (
         <AssemblyStep4Controller
           requestId={assemblyStep4RequestId}
           resetGeneration={resetGeneration}
@@ -474,6 +478,7 @@ const robotOptions = Object.fromEntries(
 
 const replicatedRootPatterns: Record<string, RegExp> = {
   franka: /^r\d+_link0$/,
+  frankaDemo1: /^r\d+_link0$/,
   frankaAssembly1: /^r\d+_link0$/,
   frankaAssembly2: /^r\d+_link0$/,
   piperAssembly1: /^r\d+_base_link$/,
@@ -512,6 +517,7 @@ export function App() {
   const [unitreeActionRequestId, setUnitreeActionRequestId] = useState(0);
   const [sceneReady, setSceneReady] = useState(false);
   const [manualPoseMode, setManualPoseMode] = useState(false);
+  const [frankaDemo1Active, setFrankaDemo1Active] = useState(false);
   const assemblyOwnershipRef = useRef<'manual' | 'step1' | 'step2' | 'step3' | 'step4'>('manual');
   const step1SnapshotRef = useRef<AssemblyStep1CompletionSnapshot | null>(null);
   const step2DiagnosticsRef = useRef<AssemblyStep2RuntimeDiagnostics | null>(null);
@@ -524,9 +530,10 @@ export function App() {
   // Drei's Stats type omits the null state that every DOM ref has before mount.
   const performanceStatsParentRef = performanceStatsRef as unknown as RefObject<HTMLElement>;
 
-  const { robot: robotKey } = useControls({
-    robot: { value: 'frankaAssembly1', options: robotOptions, label: 'Robot' },
-  });
+  const [robotControlValues, setRobotControl] = useControls(() => ({
+    robot: { value: 'frankaDemo1', options: robotOptions, label: 'Robot' },
+  }));
+  const robotKey = robotControlValues.robot;
 
   const entry = robots[robotKey];
   const controlTargetOptions = useMemo(
@@ -551,18 +558,20 @@ export function App() {
     || assemblyStep4State.phase !== 'idle';
   const assemblyControlsLocked = assemblyAutomationActive && !manualPoseMode;
   const isUnitreeActionScene = robotKey === 'unitreeActionLab';
+  const isAssembly1Scene = robotKey === 'frankaAssembly1' || robotKey === 'frankaDemo1';
+  const isFrankaDemo1 = robotKey === 'frankaDemo1';
 
   const handleRunAssemblyStep1 = useCallback(() => {
-    if (robotKey !== 'frankaAssembly1' || assemblyStep1Status !== 'idle') return false;
+    if (!isAssembly1Scene || assemblyStep1Status !== 'idle') return false;
     setManualPoseMode(false);
     setAssemblyStep1Status('planning');
     setAssemblyStep1RequestId((requestId) => requestId + 1);
     return true;
-  }, [assemblyStep1Status, robotKey]);
+  }, [assemblyStep1Status, isAssembly1Scene]);
 
   const handleRunAssemblyStep2 = useCallback(() => {
     if (
-      robotKey !== 'frankaAssembly1'
+      !isAssembly1Scene
       || assemblyStep1Status !== 'complete'
       || assemblyStep2State.phase !== 'idle'
       || !step1SnapshotRef.current
@@ -571,11 +580,11 @@ export function App() {
     setAssemblyStep2State({ phase: 'planning', failure: null });
     setAssemblyStep2RequestId((requestId) => requestId + 1);
     return true;
-  }, [assemblyStep1Status, assemblyStep2State.phase, robotKey]);
+  }, [assemblyStep1Status, assemblyStep2State.phase, isAssembly1Scene]);
 
   const handleRunAssemblyStep3 = useCallback(() => {
     if (
-      robotKey !== 'frankaAssembly1'
+      !isAssembly1Scene
       || assemblyStep2State.phase !== 'complete'
       || assemblyStep3State.phase !== 'idle'
     ) return false;
@@ -583,11 +592,11 @@ export function App() {
     setAssemblyStep3State({ phase: 'planning', failure: null });
     setAssemblyStep3RequestId((requestId) => requestId + 1);
     return true;
-  }, [assemblyStep2State.phase, assemblyStep3State.phase, robotKey]);
+  }, [assemblyStep2State.phase, assemblyStep3State.phase, isAssembly1Scene]);
 
   const handleRunAssemblyStep4 = useCallback(() => {
     if (
-      robotKey !== 'frankaAssembly1'
+      !isAssembly1Scene
       || assemblyStep3State.phase !== 'complete'
       || assemblyStep4State.phase !== 'idle'
     ) return false;
@@ -595,10 +604,11 @@ export function App() {
     setAssemblyStep4State({ phase: 'planning', failure: null });
     setAssemblyStep4RequestId((requestId) => requestId + 1);
     return true;
-  }, [assemblyStep3State.phase, assemblyStep4State.phase, robotKey]);
+  }, [assemblyStep3State.phase, assemblyStep4State.phase, isAssembly1Scene]);
 
   const handleResetAssemblySequence = useCallback(() => {
     apiRef.current?.reset();
+    setFrankaDemo1Active(false);
     assemblyOwnershipRef.current = 'manual';
     setManualPoseMode(false);
     step1SnapshotRef.current = null;
@@ -613,6 +623,37 @@ export function App() {
     unitreeActionDiagnosticsRef.current = null;
     setResetGeneration((generation) => generation + 1);
   }, []);
+
+  const frankaDemo1SequenceState = {
+    active: frankaDemo1Active && isFrankaDemo1,
+    sceneReady,
+    step1: assemblyStep1Status,
+    step2: assemblyStep2State.phase,
+    step3: assemblyStep3State.phase,
+    step4: assemblyStep4State.phase,
+  };
+  const frankaDemo1Action = nextFrankaDemo1Action(
+    frankaDemo1SequenceState,
+  ) as FrankaDemo1Action | null;
+  const frankaDemo1Display = frankaDemo1DisplayAction(
+    frankaDemo1SequenceState,
+  ) as FrankaDemo1Action | null;
+
+  useEffect(() => {
+    if (!isFrankaDemo1 || !frankaDemo1Active) return;
+    if (frankaDemo1Action === 'step1') handleRunAssemblyStep1();
+    else if (frankaDemo1Action === 'step2') handleRunAssemblyStep2();
+    else if (frankaDemo1Action === 'step3') handleRunAssemblyStep3();
+    else if (frankaDemo1Action === 'step4') handleRunAssemblyStep4();
+  }, [
+    frankaDemo1Action,
+    frankaDemo1Active,
+    handleRunAssemblyStep1,
+    handleRunAssemblyStep2,
+    handleRunAssemblyStep3,
+    handleRunAssemblyStep4,
+    isFrankaDemo1,
+  ]);
 
   const handleManualPoseModeChange = useCallback((enabled: boolean) => {
     assemblyOwnershipRef.current = 'manual';
@@ -682,6 +723,7 @@ export function App() {
     delete document.documentElement.dataset.unitreeActionProgram;
     setSceneReady(false);
     setManualPoseMode(false);
+    setFrankaDemo1Active(false);
     assemblyOwnershipRef.current = 'manual';
     step1SnapshotRef.current = null;
     step2DiagnosticsRef.current = null;
@@ -703,36 +745,36 @@ export function App() {
   }, [robotKey, unitreeActionState.phase, unitreeActionState.programId, unitreeActionState.status]);
 
   useEffect(() => {
-    if (robotKey === 'frankaAssembly1') {
+    if (isAssembly1Scene) {
       document.documentElement.dataset.assemblyStep1Status = assemblyStep1Status;
     } else {
       delete document.documentElement.dataset.assemblyStep1Status;
     }
-  }, [assemblyStep1Status, robotKey]);
+  }, [assemblyStep1Status, isAssembly1Scene]);
 
   useEffect(() => {
-    if (robotKey === 'frankaAssembly1') {
+    if (isAssembly1Scene) {
       document.documentElement.dataset.assemblyStep2Status = assemblyStep2State.phase;
     } else {
       delete document.documentElement.dataset.assemblyStep2Status;
     }
-  }, [assemblyStep2State.phase, robotKey]);
+  }, [assemblyStep2State.phase, isAssembly1Scene]);
 
   useEffect(() => {
-    if (robotKey === 'frankaAssembly1') {
+    if (isAssembly1Scene) {
       document.documentElement.dataset.assemblyStep3Status = assemblyStep3State.phase;
     } else {
       delete document.documentElement.dataset.assemblyStep3Status;
     }
-  }, [assemblyStep3State.phase, robotKey]);
+  }, [assemblyStep3State.phase, isAssembly1Scene]);
 
   useEffect(() => {
-    if (robotKey === 'frankaAssembly1') {
+    if (isAssembly1Scene) {
       document.documentElement.dataset.assemblyStep4Status = assemblyStep4State.phase;
     } else {
       delete document.documentElement.dataset.assemblyStep4Status;
     }
-  }, [assemblyStep4State.phase, robotKey]);
+  }, [assemblyStep4State.phase, isAssembly1Scene]);
 
   const handleSceneReady = useCallback((api: MujocoSimAPI) => {
     const bodies = api.getBodies();
@@ -770,6 +812,7 @@ export function App() {
   return (
     <MujocoProvider>
       <Leva
+        hidden={isFrankaDemo1}
         theme={{ sizes: { rootWidth: '320px', controlWidth: '185px' } }}
       />
       <MujocoCanvas
@@ -807,7 +850,7 @@ export function App() {
           controlFamily={entry.controlFamily}
           target={controlTarget}
           resetGeneration={resetGeneration}
-          showGizmo={sim.gizmo && !isUnitreeActionScene}
+          showGizmo={sim.gizmo && !isUnitreeActionScene && !isFrankaDemo1}
           gizmoScale={entry.gizmoScale}
           assemblyStep1RequestId={assemblyStep1RequestId}
           assemblyStep1Status={assemblyStep1Status}
@@ -851,15 +894,15 @@ export function App() {
         )}
 
         {/* Opt-in interaction */}
-        {!assemblyControlsLocked && !isUnitreeActionScene && <DragInteraction />}
-        <ClickSelectOverlay />
+        {!assemblyControlsLocked && !isUnitreeActionScene && !isFrankaDemo1 && <DragInteraction />}
+        {!isFrankaDemo1 && <ClickSelectOverlay />}
 
         {/* Debug overlays */}
         <ContactMarkers visible={debug.contacts} />
         <Debug showSites={debug.sites} showJoints={debug.joints} />
 
         {/* Scene decoration — lights, environment, grid */}
-        {robotKey.startsWith('frankaAssembly')
+        {robotKey.startsWith('frankaAssembly') || isFrankaDemo1
           ? <color attach="background" args={['#d8d2b5']} />
           : <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />}
         <ambientLight intensity={0.4} />
@@ -870,19 +913,21 @@ export function App() {
           rotation={[Math.PI / 2, 0, 0]}
           position={[0, 0, 0.001]}
         />
-        <Stats parent={performanceStatsParentRef} showPanel={0} />
-        <Stats parent={performanceStatsParentRef} showPanel={1} />
-        <Stats parent={performanceStatsParentRef} showPanel={2} />
+        {!isFrankaDemo1 && <Stats parent={performanceStatsParentRef} showPanel={0} />}
+        {!isFrankaDemo1 && <Stats parent={performanceStatsParentRef} showPanel={1} />}
+        {!isFrankaDemo1 && <Stats parent={performanceStatsParentRef} showPanel={2} />}
       </MujocoCanvas>
 
       {/* HTML overlay — outside R3F canvas */}
-      <div
-        ref={performanceStatsRef}
-        className="performance-stats"
-        aria-label="Performance statistics: frames per second, frame time, and memory"
-      >
-        <span className="performance-stats__label">Scene performance</span>
-      </div>
+      {!isFrankaDemo1 && (
+        <div
+          ref={performanceStatsRef}
+          className="performance-stats"
+          aria-label="Performance statistics: frames per second, frame time, and memory"
+        >
+          <span className="performance-stats__label">Scene performance</span>
+        </div>
+      )}
       {robotKey === 'frankaAssembly1' && (
         <AssemblySequencePanel
           step1Status={assemblyStep1Status}
@@ -908,6 +953,18 @@ export function App() {
           onRunStep4={handleRunAssemblyStep4}
         />
       )}
+      {isFrankaDemo1 && (
+        <FrankaDemo1Panel
+          action={frankaDemo1Display}
+          active={frankaDemo1Active}
+          sceneReady={sceneReady}
+          page={robotKey}
+          pages={robotOptions}
+          onPageChange={(page) => setRobotControl({ robot: page })}
+          onPlay={() => setFrankaDemo1Active(true)}
+          onReset={handleResetAssemblySequence}
+        />
+      )}
       {robotKey === 'frankaAssembly1' && (
         <Assembly1PoseCapturePanel
           sceneReady={sceneReady}
@@ -927,14 +984,14 @@ export function App() {
           onProgramChange={handleSelectUnitreeActionProgram}
         />
       )}
-      {!isUnitreeActionScene && (
+      {!isUnitreeActionScene && !isFrankaDemo1 && (
         <KeyboardHelp
           robotKey={entry.controlFamily}
           controlTargetLabel={controlTarget.label}
           controlMode={controlTarget.controlMode}
         />
       )}
-      <GitHubLink />
+      {!isFrankaDemo1 && <GitHubLink />}
     </MujocoProvider>
   );
 }

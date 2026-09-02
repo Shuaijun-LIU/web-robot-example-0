@@ -16,6 +16,7 @@ import {
   quaternionAngularDistanceDegrees,
   releaseAssemblyStep2Controls,
 } from '../src/assemblyStep2.js';
+import { ASSEMBLY1_STEP1_ARMS } from '../src/assemblyStep1.js';
 
 test('Step 2 assigns exact physical contact geometry to all four arms', () => {
   assert.deepEqual(ASSEMBLY1_STEP2_ARMS.map((arm) => ({
@@ -32,7 +33,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
       targetBody: 'assembly_frame',
       contactWaypoint: [0.18, -0.23, 0.25],
       approachWaypoint: [0.18, -0.23, 0.265],
-      closingAxisYawDegrees: 90,
+      closingAxisYawDegrees: -90,
       leftFingerBody: 'r0_left_finger',
       rightFingerBody: 'r0_right_finger',
     },
@@ -133,6 +134,16 @@ test('every Step 2 waypoint contains a complete generated Panda solution', () =>
     assert.ok(arm.approachJointTargets.every(Number.isFinite));
     assert.ok(arm.contactJointTargets.every(Number.isFinite));
   }
+});
+
+test('Arm 1 keeps the Step 1 IK branch when Step 2 begins', () => {
+  const step1Final = ASSEMBLY1_STEP1_ARMS[0].finalJointTargets;
+  const step2Approach = ASSEMBLY1_STEP2_ARMS[0].approachJointTargets;
+  const maximumDirectSweep = Math.max(
+    ...step1Final.map((value, joint) => Math.abs(step2Approach[joint] - value)),
+  );
+  assert.equal(ASSEMBLY1_STEP2_ARMS[0].closingAxisYawDegrees, -90);
+  assert.ok(maximumDirectSweep < 0.8, `Arm 1 direct sweep is ${maximumDirectSweep} rad`);
 });
 
 test('Step 2 gripper interpolation uses clamped smoothstep', () => {

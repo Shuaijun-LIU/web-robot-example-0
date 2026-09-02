@@ -150,6 +150,21 @@ export const robots: Record<string, RobotEntry> = {
     controlTargets: createXLeRobotTargets(),
   },
 
+  frankaDemo1: {
+    label: 'Franka Demo1',
+    controlFamily: 'franka',
+    config: {
+      src: FRANKA_ASSEMBLY2_BASE,
+      sceneFile: 'scene.xml',
+      homeJoints: FRANKA_ASSEMBLY1_LAYOUT.homeJoints,
+      xmlPatches: FRANKA_ASSEMBLY1_LAYOUT.xmlPatches,
+      sceneObjects: FRANKA_ASSEMBLY1_LAYOUT.sceneObjects,
+    },
+    camera: FRANKA_ASSEMBLY1_LAYOUT.camera,
+    orbitTarget: FRANKA_ASSEMBLY1_LAYOUT.orbitTarget,
+    controlTargets: createFrankaTargets(),
+  },
+
   frankaAssembly1: {
     label: 'Franka Assembly1',
     controlFamily: 'franka',

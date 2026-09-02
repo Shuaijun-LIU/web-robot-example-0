@@ -87,3 +87,7 @@
   - What: Removed only the Step 1 Arm 1 and Step 4 Arm 4 long-sweep IK branches by using the parallel gripper's 180-degree symmetric pose; all TCP waypoints and other arms remain unchanged.
   - Verified: Offline waypoint errors stay below 0.8 mm/0.15 degrees. Browser motion reduced Arm 1's maximum joint sweep from about 245 to 142.7 degrees and Arm 4's from about 274 to 159 degrees. Step 2 retained bilateral frame contact and Step 3 completed normally.
   - Open: Step 4 still stops later on the separately recorded hammer deep-penetration gate (4.44 mm in this sample). No threshold or unrelated action was changed, and the current work remains local until the user requests a commit/push.
+- 2026-09-02
+  - What: Fixed static-host pose export, kept Step 2 Arm 1 on the Step 1 `-90°` IK branch, and added the English-only `Franka Demo1` presentation page with Page/Play/Reset and automatic four-step sequencing.
+  - Verified: A production Pages build downloaded a valid four-TCP JSON without calling the development endpoint. A real browser showed only the three requested controls, measured only `0.1093 rad` maximum Arm 1 joint change across the Step 1→2 boundary, completed all four Step 2 physical grasp verdicts, and automatically entered Step 3 planning.
+  - Boundary: The new page reuses all existing physical state machines and stops on their errors; Step 3/4 trajectories and validation thresholds were not changed.

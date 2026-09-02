@@ -76,10 +76,10 @@ test('Home Lab can expand the floor grid and switches keyboard help for mobile t
   assert.match(helpSource, /A\/D — Turn left\/right/);
 });
 
-test('Assembly1 is the initial scene shown on page entry', async () => {
+test('Franka Demo1 is the initial page shown on entry', async () => {
   const source = await readFile(appPath, 'utf8');
 
-  assert.match(source, /robot:\s*\{\s*value:\s*'frankaAssembly1'/);
+  assert.match(source, /robot:\s*\{\s*value:\s*'frankaDemo1'/);
 });
 
 test('Franka assembly scenes do not require a network HDR before becoming interactive', async () => {

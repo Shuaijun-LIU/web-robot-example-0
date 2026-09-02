@@ -462,3 +462,83 @@
   font-size: 0.66rem;
   line-height: 1.4;
 }
+
+.franka-demo1-panel {
+  position: fixed;
+  z-index: 30;
+  top: 1.25rem;
+  left: 1.25rem;
+  width: min(22rem, calc(100vw - 2.5rem));
+  border: 1px solid rgb(90 96 102 / 38%);
+  border-radius: 0.75rem;
+  padding: 0.9rem;
+  background: rgb(39 42 45 / 92%);
+  box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 20%);
+  color: #f2f1ed;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.franka-demo1-panel__title {
+  margin-bottom: 0.7rem;
+  font-size: 1rem;
+  font-weight: 720;
+  letter-spacing: 0.02em;
+}
+
+.franka-demo1-panel__page {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.7rem;
+  color: #cbc9c3;
+  font-size: 0.75rem;
+}
+
+.franka-demo1-panel select,
+.franka-demo1-panel button {
+  min-height: 2.15rem;
+  border: 1px solid rgb(191 188 177 / 28%);
+  border-radius: 0.48rem;
+  background: #55585a;
+  color: #fff;
+  font: inherit;
+}
+
+.franka-demo1-panel select {
+  min-width: 0;
+  padding: 0 0.55rem;
+}
+
+.franka-demo1-panel__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  margin-top: 0.7rem;
+}
+
+.franka-demo1-panel button {
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 680;
+}
+
+.franka-demo1-panel button:hover:not(:disabled) {
+  background: #65696c;
+}
+
+.franka-demo1-panel button:disabled {
+  cursor: default;
+  opacity: 0.48;
+}
+
+.franka-demo1-panel__status {
+  min-height: 1.2rem;
+  margin-top: 0.68rem;
+  color: #c7c5be;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.franka-demo1-panel__status--error {
+  color: #e6aaa4;
+}

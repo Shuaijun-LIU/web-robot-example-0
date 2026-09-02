@@ -53,3 +53,12 @@ export function createAssembly1PoseSnapshot(robotDemo, {
     contacts: robotDemo.getContacts(),
   };
 }
+
+export function createManualPoseDownload(snapshot) {
+  const label = sanitizePoseLabel(snapshot?.label);
+  return {
+    filename: `franka-assembly1-${label}.json`,
+    mimeType: 'application/json',
+    contents: `${JSON.stringify(snapshot, null, 2)}\n`,
+  };
+}

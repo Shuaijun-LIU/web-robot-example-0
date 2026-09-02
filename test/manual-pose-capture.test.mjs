@@ -8,6 +8,7 @@ import {
   createAssembly1PoseSnapshot,
   sanitizePoseLabel,
 } from '../src/manualPoseCapture.js';
+import * as manualPoseCapture from '../src/manualPoseCapture.js';
 import { persistManualPoseSnapshot } from '../scripts/manualPoseCapturePlugin.mjs';
 
 test('manual pose labels are filesystem-safe and reject traversal', () => {
@@ -58,6 +59,21 @@ test('Assembly1 pose snapshot captures controls, four TCPs, objects, joints, and
   assert.ok(Object.hasOwn(snapshot.bodyPositions, 'fastener_3'));
   assert.equal(snapshot.contacts.length, 1);
   assert.equal(calls[0][1].length, 4);
+});
+
+test('manual pose snapshots produce a browser-downloadable JSON artifact on static hosting', () => {
+  assert.equal(typeof manualPoseCapture.createManualPoseDownload, 'function');
+  const snapshot = {
+    schemaVersion: 'franka-assembly1-manual-pose-v1',
+    scene: 'frankaAssembly1',
+    label: 'handover-clamp',
+    capturedAt: '2026-09-02T10:00:00.000Z',
+  };
+  const artifact = manualPoseCapture.createManualPoseDownload(snapshot);
+  assert.equal(artifact.filename, 'franka-assembly1-handover-clamp.json');
+  assert.equal(artifact.mimeType, 'application/json');
+  assert.deepEqual(JSON.parse(artifact.contents), snapshot);
+  assert.match(artifact.contents, /\n  "label": "handover-clamp"/);
 });
 
 test('server persistence writes only under artifacts/manual-poses using an atomic JSON file', async () => {

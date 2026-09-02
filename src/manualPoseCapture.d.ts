@@ -39,3 +39,8 @@ export function createAssembly1PoseSnapshot(
   robotDemo: ManualPoseRobotDiagnostics,
   options: Assembly1PoseSnapshotOptions,
 ): Assembly1PoseSnapshot;
+export function createManualPoseDownload(snapshot: Assembly1PoseSnapshot): {
+  filename: string;
+  mimeType: 'application/json';
+  contents: string;
+};

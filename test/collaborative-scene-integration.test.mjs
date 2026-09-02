@@ -50,7 +50,7 @@ test('runtime registers the independent two-robot Unitree action scene', async (
   assert.match(source, /unitreeActionLab:\s*{[\s\S]*?homeJoints:\s*UNITREE_ACTION_LAB_LAYOUT\.homeJoints/);
   assert.match(source, /unitreeActionLab:\s*{[\s\S]*?controlTargets:\s*createUnitreeActionTargets\(\)/);
   assert.match(app, /unitreeActionLab:\s*\/\^\(g1_pelvis\|go2_base\)\$\//);
-  assert.match(app, /robot:\s*{\s*value:\s*'frankaAssembly1'/);
+  assert.match(app, /robot:\s*{\s*value:\s*'frankaDemo1'/);
 });
 
 test('vendored room robots are visual static models without control or free fall', async () => {
@@ -65,13 +65,13 @@ test('vendored room robots are visual static models without control or free fall
   }
 });
 
-test('scene diagnostics count the copied physical roots and preserve Assembly1 as default', async () => {
+test('scene diagnostics count the copied physical roots and preserve Demo1 as default', async () => {
   const source = await readFile(files.app, 'utf8');
 
   assert.match(source, /so101Gearbox:\s*\/\^r\\d\+_Base\$\//);
   assert.match(source, /so101HomeLab:\s*\/\^r\\d\+_Base\$\//);
   assert.match(source, /xlerobotKitting:\s*\/\^r\\d\+_chassis\$\//);
-  assert.match(source, /robot:\s*{\s*value:\s*'frankaAssembly1'/);
+  assert.match(source, /robot:\s*{\s*value:\s*'frankaDemo1'/);
 });
 
 test('offline compiler knows both collaboration layouts and root body types', async () => {

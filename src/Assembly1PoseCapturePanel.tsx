@@ -1,5 +1,8 @@
 import { useCallback, useState } from 'react';
-import { createAssembly1PoseSnapshot } from './manualPoseCapture.js';
+import {
+  createAssembly1PoseSnapshot,
+  createManualPoseDownload,
+} from './manualPoseCapture.js';
 
 interface Assembly1PoseCapturePanelProps {
   sceneReady: boolean;
@@ -35,16 +38,32 @@ export function Assembly1PoseCapturePanel({
         label,
         selectedControlTarget,
       });
-      const response = await fetch('/__manual-pose-capture', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(snapshot),
-      });
-      const result = await response.json() as SaveResponse;
-      if (!response.ok || !result.ok || !result.path) {
-        throw new Error(result.error ?? `保存请求失败（HTTP ${response.status}）`);
+      const artifact = createManualPoseDownload(snapshot);
+      const objectUrl = URL.createObjectURL(new Blob([artifact.contents], {
+        type: artifact.mimeType,
+      }));
+      const anchor = document.createElement('a');
+      anchor.href = objectUrl;
+      anchor.download = artifact.filename;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(objectUrl);
+
+      if (import.meta.env.DEV) {
+        const response = await fetch('/__manual-pose-capture', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(snapshot),
+        });
+        const result = await response.json() as SaveResponse;
+        if (!response.ok || !result.ok || !result.path) {
+          throw new Error(result.error ?? `保存请求失败（HTTP ${response.status}）`);
+        }
+        setMessage(`已下载：${artifact.filename}；服务器已保存：${result.path}`);
+      } else {
+        setMessage(`已下载：${artifact.filename}`);
       }
-      setMessage(`已保存：${result.path}`);
     } catch (error) {
       setHasError(true);
       setMessage(error instanceof Error ? error.message : String(error));
