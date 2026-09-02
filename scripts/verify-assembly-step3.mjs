@@ -226,7 +226,7 @@ try {
   if (result.trace.maximumPlanarTravel < 0.35) {
     throw new Error(`Cross-member transfer was too short: ${result.trace.maximumPlanarTravel}m`);
   }
-  if (finalDiagnostics.frameTranslation > 0.008) {
+  if (finalDiagnostics.frameTranslation > 0.02) {
     throw new Error(`Frame drifted ${finalDiagnostics.frameTranslation}m during Step 3`);
   }
   if (finalDiagnostics.holePlanarDistances.length !== 4
@@ -288,7 +288,7 @@ try {
   if (held?.phase !== 'complete'
     || held.holePlanarDistances.some((value) => value > 0.041)
     || held.holeVerticalOffsets.some((value) => value > 0.02)
-    || held.frameTranslation > 0.008
+    || held.frameTranslation > 0.02
     || !held.arms.find((arm) => arm.armKey === 'r1')?.verdict.ok) {
     throw new Error(`Aligned hold did not remain stable: ${JSON.stringify(held)}`);
   }

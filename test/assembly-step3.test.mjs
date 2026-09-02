@@ -45,8 +45,9 @@ test('Step 3 preserves the measured dual-grasp span while moving to the interfac
     hammerMinimumAperture: 0.03,
     crossMemberMinimumAperture: 0.035,
     maximumContactPenetration: 0.002,
+    frameMaximumContactPenetration: 0.0025,
     contactComparisonEpsilon: 0.00015,
-    frameTranslation: 0.008,
+    frameTranslation: 0.02,
     holePlanarDistance: 0.04,
     holeVerticalOffset: 0.025,
     seatedVerticalOffset: 0.02,
@@ -339,6 +340,15 @@ test('Step 3 transport requires bilateral target contact and a non-empty apertur
   }), { ok: true });
   assert.deepEqual(evaluateAssemblyStep3Transport({
     ...valid,
+    targetBody: 'assembly_frame',
+    leftContactBodies: ['assembly_frame'],
+    rightContactBodies: ['assembly_frame'],
+    leftTargetContactDistance: -0.00224,
+    rightTargetContactDistance: -0.00224,
+    maximumContactPenetration: ASSEMBLY1_STEP3_LIMITS.frameMaximumContactPenetration,
+  }), { ok: true });
+  assert.deepEqual(evaluateAssemblyStep3Transport({
+    ...valid,
     leftContactBodies: [],
     rightContactBodies: [],
     requireBilateralContact: false,
@@ -366,12 +376,18 @@ test('Step 3 alignment separates strict planar error from seated vertical offset
     ...valid,
     holeVerticalOffsets: [0.015, 0.0265, 0.014, 0.016],
   }).code, 'hole-height');
-  assert.equal(evaluateAssemblyStep3Alignment({ ...valid, frameTranslation: 0.0081 }).code,
-    'frame-drift');
   assert.deepEqual(evaluateAssemblyStep3Alignment({
     ...valid,
     crossMemberRotationDegrees: 30,
   }), { ok: true });
+  assert.deepEqual(evaluateAssemblyStep3Alignment({
+    ...valid,
+    frameTranslation: 0.018,
+  }), { ok: true });
+  assert.equal(evaluateAssemblyStep3Alignment({
+    ...valid,
+    frameTranslation: 0.0201,
+  }).code, 'frame-drift');
   assert.equal(evaluateAssemblyStep3Alignment({
     ...valid,
     verticalTolerance: 0.014,

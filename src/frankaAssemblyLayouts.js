@@ -344,13 +344,13 @@ function assembly1ReachableFastenerWorkcellXml() {
            they remain recessed and do not obstruct upward gripper withdrawal. -->
       <geom name="cross_member_grip_recess_bridge_north" type="box" pos="0 .1275 .006" size=".012 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
       <geom name="cross_member_grip_recess_bridge_south" type="box" pos="0 -.1275 .006" size=".012 .025 .012" rgba=".61 .63 .64 1" mass=".005" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <!-- Recess shoulders mechanically retain the beam during carry.  The
-           upper shoulders are narrower than the fully open Panda aperture, so
-           the fingers can still release sideways and retreat after placement. -->
+      <!-- Recess shoulders mechanically retain the beam during carry.  Keep
+           the upper shoulders inside the fingertip envelope so the Panda hand
+           can reach the installed height without pushing the beam or frame. -->
       <geom name="cross_member_grip_lower_guard_north" type="box" pos="0 .1275 -.010" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
       <geom name="cross_member_grip_lower_guard_south" type="box" pos="0 -.1275 -.010" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="cross_member_grip_upper_guard_north" type="box" pos="0 .1275 .024" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="cross_member_grip_upper_guard_south" type="box" pos="0 -.1275 .024" size=".026 .021 .004" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>`,
+      <geom name="cross_member_grip_upper_guard_north" type="box" pos="0 .1275 .012" size=".026 .021 .002" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+      <geom name="cross_member_grip_upper_guard_south" type="box" pos="0 -.1275 .012" size=".026 .021 .002" rgba=".48 .50 .51 1" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>`,
     )
     .replaceAll('mass=".01" friction="2 .2 .03"', 'mass=".005" friction="2 .2 .03"')
     .replace(

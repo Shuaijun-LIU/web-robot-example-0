@@ -187,7 +187,7 @@ test('cross-member uses underside grasp pockets and integral hollow round/square
       `name="cross_member_grip_lower_guard_${side}"[^>]*size="\\.026 \\.021 \\.004"[^>]*mass="\\.002"[^>]*friction="10 2 1"[^>]*condim="6"`,
     ));
     assert.match(xml, new RegExp(
-      `name="cross_member_grip_upper_guard_${side}"[^>]*pos="0 ${side === 'north' ? '\\.1275' : '-\\.1275'} \\.024"[^>]*size="\\.026 \\.021 \\.004"[^>]*mass="\\.002"[^>]*friction="10 2 1"[^>]*condim="6"`,
+      `name="cross_member_grip_upper_guard_${side}"[^>]*pos="0 ${side === 'north' ? '\\.1275' : '-\\.1275'} \\.012"[^>]*size="\\.026 \\.021 \\.002"[^>]*mass="\\.002"[^>]*friction="10 2 1"[^>]*condim="6"`,
     ));
     for (const opening of ['left', 'right']) {
       assert.match(xml, new RegExp(

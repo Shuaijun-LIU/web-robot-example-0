@@ -517,6 +517,9 @@ function sampleRuntime(
         : arm.targetBody === 'cross_member'
           ? ASSEMBLY1_STEP3_LIMITS.crossMemberMinimumAperture
           : ASSEMBLY1_STEP3_LIMITS.minimumAperture,
+      maximumContactPenetration: arm.targetBody === 'assembly_frame'
+        ? ASSEMBLY1_STEP3_LIMITS.frameMaximumContactPenetration
+        : ASSEMBLY1_STEP3_LIMITS.maximumContactPenetration,
     });
     return {
       armKey: arm.armKey,

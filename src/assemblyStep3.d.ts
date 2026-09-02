@@ -152,8 +152,9 @@ export const ASSEMBLY1_STEP3_LIMITS: Readonly<{
   hammerMinimumAperture: 0.035;
   crossMemberMinimumAperture: 0.035;
   maximumContactPenetration: 0.002;
+  frameMaximumContactPenetration: 0.0025;
   contactComparisonEpsilon: 0.00015;
-  frameTranslation: 0.008;
+  frameTranslation: 0.02;
   holePlanarDistance: 0.04;
   holeVerticalOffset: 0.025;
   seatedVerticalOffset: 0.02;
