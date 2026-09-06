@@ -1,4 +1,4 @@
-import { access, mkdir } from 'node:fs/promises';
+import { access, mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import { chromium } from 'playwright';
@@ -7,12 +7,13 @@ import {
   ASSEMBLY1_STEP4_GRIPPERS,
   ASSEMBLY1_STEP4_LIMITS,
 } from '../src/assemblyStep4.js';
+import { ASSEMBLY1_STEP3_HOME_JOINT_TARGETS } from '../src/assemblyStep3.js';
 
 const baseUrl = process.env.SCENE_URL ?? 'http://127.0.0.1:3000';
 const timeout = Number(process.env.SCENE_TIMEOUT_MS ?? 600_000);
 const handoverOnly = process.env.HANDOVER_ONLY === '1';
 const diagnoseHandover = process.env.DIAGNOSE_HANDOVER === '1';
-const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step4-fastener-staged.png');
+const screenshotPath = resolve('artifacts/screenshots/franka-assembly1-step4-complete.png');
 
 const browser = await chromium.launch({
   headless: true,
@@ -23,11 +24,16 @@ const browser = await chromium.launch({
     }
     : {}),
 });
-const page = await browser.newPage({ viewport: { width: 1200, height: 760 } });
+const page = await browser.newPage({
+  viewport: { width: 1200, height: 760 },
+  ...(process.env.RECORD_VIDEO ? {recordVideo:{dir:resolve('artifacts/videos/assembly-physical-audit'),size:{width:1200,height:760}}}:{}),
+});
 const browserFailures = [];
 let beforeStep4 = null;
 page.on('pageerror', (error) => browserFailures.push(`page error: ${error.message}`));
 page.on('console', (message) => {
+  if (message.text().startsWith('[audit-phase]')) console.warn(message.text());
+  if (message.text().startsWith('[audit-physics]') || /WARNING|arena|constraint buffer/i.test(message.text())) console.warn(message.text());
   if (message.type() === 'error') browserFailures.push(`console error: ${message.text()}`);
 });
 
@@ -81,7 +87,7 @@ async function runStep(buttons, index, datasetName, diagnosticsName) {
   return result.diagnostics;
 }
 
-async function runPrerequisitesWithReset(buttons, maximumAttempts = 4) {
+async function runPrerequisitesWithReset(buttons, maximumAttempts = Number(process.env.PREREQUISITE_ATTEMPTS ?? 4)) {
   let lastError = null;
   for (let attempt = 1; attempt <= maximumAttempts; attempt += 1) {
     try {
@@ -126,6 +132,18 @@ try {
     await speedInput.fill(process.env.SCENE_SPEED);
     await speedInput.press('Enter');
   }
+  await page.evaluate(() => {
+    window.__fullAssemblyContacts = [];
+    window.__fullAssemblyContactTimer = setInterval(() => {
+      for (const c of window.robotDemo.getContacts()) {
+        const crossArm = /^r[0-3]_/.test(c.body1) && /^r[0-3]_/.test(c.body2) && c.body1.slice(0,2)!==c.body2.slice(0,2);
+        const heldObject = [c.body1,c.body2].some(n=>['double_face_hammer','cross_member','fastener_1'].includes(n)) && [c.body1,c.body2].some(n=>/^r[0-3]_(left|right)_finger$/.test(n));
+        if (((crossArm && c.distance<-.001) || (heldObject && c.distance<-.0025)) && window.__fullAssemblyContacts.length<50) {
+          window.__fullAssemblyContacts.push({step:[document.documentElement.dataset.assemblyStep1Status,document.documentElement.dataset.assemblyStep2Status,document.documentElement.dataset.assemblyStep3Status,document.documentElement.dataset.assemblyStep4Status],...c});
+        }
+      }
+    },20);
+  });
   const initialSupports = await page.evaluate(() => {
     const positions = window.robotDemo.getBodyPositions([
       'double_face_hammer',
@@ -262,6 +280,8 @@ try {
         );
       }
       if (trace.phases.at(-1) !== diagnostics.phase) {
+        console.info('[audit-phase]', diagnostics.phase, diagnostics.simulationTime, diagnostics.failure);
+        console.info('[audit-physics]',JSON.stringify(window.robotDemo.getPhysicsDiagnostics()));
         const sites = window.robotDemo.getSitePositions(['r1_tcp', 'r2_tcp', 'r3_tcp']);
         trace.phases.push(diagnostics.phase);
         trace.phaseSamples.push({
@@ -437,37 +457,72 @@ try {
     throw new Error(`Assembly stability failed: ${JSON.stringify(result.diagnostics)}`);
   }
   const expectedGrippers = [
-    ASSEMBLY1_STEP4_GRIPPERS.frame,
     ASSEMBLY1_STEP4_GRIPPERS.open,
     ASSEMBLY1_STEP4_GRIPPERS.open,
-    ASSEMBLY1_STEP4_GRIPPERS.receiverTool,
+    ASSEMBLY1_STEP4_GRIPPERS.open,
+    ASSEMBLY1_STEP4_GRIPPERS.open,
   ];
   for (let arm = 0; arm < expectedGrippers.length; arm += 1) {
     if (Math.abs(result.ctrl[arm * 8 + 7] - expectedGrippers[arm]) > 1e-6) {
       throw new Error(`Arm ${arm + 1} final gripper command is invalid`);
     }
   }
+  if (!result.diagnostics.strikeObserved) throw new Error('No physical hammer strike was recorded');
+  if (!result.diagnostics.strikeSupportContacts?.every(pair=>pair.every(Boolean))) throw new Error('All three frame supports must contact during the tap');
+  if (result.diagnostics.workpiecePenetration > .0015) throw new Error('Fastener penetrated its receiver');
 
   await page.waitForTimeout(750);
+  const finalState = await page.evaluate(() => ({
+    joints: window.robotDemo.getJointPositions(Array.from({length:4},(_,arm)=>Array.from({length:7},(_,j)=>`r${arm}_joint${j+1}`)).flat()),
+    contacts: window.robotDemo.getContacts(),
+    diagnostics: window.robotDemo.getAssemblyStep4Diagnostics(),
+    fullSequenceContactViolations: window.__fullAssemblyContacts,
+    physics: window.robotDemo.getPhysicsDiagnostics(),
+  }));
+  if (finalState.fullSequenceContactViolations.length) throw new Error(`Full-sequence collision audit failed: ${JSON.stringify(finalState.fullSequenceContactViolations)}`);
+  if (finalState.physics.warnings.some(w=>w.count>0)) throw new Error(`MuJoCo reported physical solver warnings: ${JSON.stringify(finalState.physics)}`);
+  for (let arm=0;arm<4;arm++) for (let joint=0;joint<7;joint++) {
+    const actual=finalState.joints[`r${arm}_joint${joint+1}`];
+    if (Math.abs(actual-ASSEMBLY1_STEP3_HOME_JOINT_TARGETS[joint])>.04) throw new Error(`Arm ${arm+1} did not return home: joint ${joint+1} = ${actual}`);
+  }
+  for (const support of ['hammer_return_cradle_tail','hammer_return_cradle_head']) {
+    if (!finalState.contacts.some(c=>[c.body1,c.body2].includes('double_face_hammer')&&[c.body1,c.body2].includes(support)&&c.distance<=.0001)) throw new Error(`Returned hammer is not resting on ${support}`);
+  }
+  if (finalState.diagnostics.insertionDepth < .003 || finalState.diagnostics.fastenerPlanarDistance>.004) throw new Error('Installed fastener moved after all hands returned');
   await mkdir(resolve('artifacts/screenshots'), { recursive: true });
   await page.screenshot({ path: screenshotPath, fullPage: true });
   if (browserFailures.length > 0) throw new Error(browserFailures.join('\n'));
-  console.log(JSON.stringify({
+  const report = {
     status: 'PASS',
     before,
     initialSupports,
     diagnostics: result.diagnostics,
+    finalState,
     trace: result.trace,
     screenshot: screenshotPath,
-  }, null, 2));
+  };
+  await mkdir(resolve('artifacts/reports'),{recursive:true});
+  await writeFile(resolve('artifacts/reports/assembly-physical-audit.json'),JSON.stringify(report,null,2));
+  console.log(JSON.stringify(report, null, 2));
   }
 } catch (error) {
+  await mkdir(resolve('artifacts/screenshots'), { recursive: true });
+  await page.screenshot({ path: resolve('artifacts/screenshots/assembly-physical-failure.png') }).catch(() => {});
+  await page.evaluate(() => {
+    if (!window.robotDemo?.setInspectionCamera) return;
+    const p = window.robotDemo.getSitePositions(['r3_tcp']).r3_tcp;
+    window.robotDemo.setInspectionCamera([p[0]+.55,p[1]-.6,p[2]+.35],p);
+  }).catch(() => {});
+  await page.waitForTimeout(150);
+  await page.screenshot({path:resolve('artifacts/screenshots/assembly-physical-failure-close.png')}).catch(()=>{});
   const pageState = await page.evaluate(() => ({
     step1: document.documentElement.dataset.assemblyStep1Status,
     step2: document.documentElement.dataset.assemblyStep2Status,
     step3: document.documentElement.dataset.assemblyStep3Status,
     step4: document.documentElement.dataset.assemblyStep4Status,
     panelText: document.querySelector('.assembly-sequence-panel')?.textContent ?? '',
+    fullSequenceContactViolations: window.__fullAssemblyContacts ?? [],
+    physics: window.robotDemo?.getPhysicsDiagnostics?.(),
     diagnostics: window.robotDemo?.getAssemblyStep4Diagnostics?.() ?? null,
     geometry: window.robotDemo ? {
       tcp: window.robotDemo.getSitePositions(['r2_tcp']),
@@ -478,6 +533,8 @@ try {
       donorTcp: window.robotDemo.getSitePositions(['r1_tcp']),
       donorFingers: window.robotDemo.getBodyPositions(['r1_left_finger', 'r1_right_finger']),
       hammer: window.robotDemo.getBodyPositions(['double_face_hammer']),
+      graspSites: window.robotDemo.getSitePositions(['hammer_receiver_grasp', 'hammer_donor_grasp']),
+      contacts: window.robotDemo.getContacts().filter(({body1,body2})=>body1.startsWith('r3_')||body2.startsWith('r3_')||body1==='double_face_hammer'||body2==='double_face_hammer'),
     } : null,
     trace: window.__assemblyStep4Trace ?? null,
   })).catch(() => null);

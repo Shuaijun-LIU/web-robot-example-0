@@ -7,6 +7,15 @@ import * as selectedIkSolver from '../src/controllers/selectedIkSolver.js';
 
 const { fitJointAngleToRange, solveSelectedIk } = selectedIkSolver;
 
+test('bounded IK redistributes motion before a joint limit rather than clipping the solved pose',()=>{
+  const data={qpos:new Float64Array([0,0]),site_xpos:new Float64Array(3),site_xmat:new Float64Array([1,0,0,0,1,0,0,0,1])};
+  const mujoco={mj_forward:(_m,d)=>{d.site_xpos[0]=d.qpos[0]+d.qpos[1];}};
+  const q=solveSelectedIk({mujoco,model:{},data,siteId:0,qposAddresses:[0,1],currentQ:[0,0],targetPosition:new THREE.Vector3(1.5,0,0),targetQuaternion:new THREE.Quaternion(),jointRanges:[[0,.5],[0,2]],maxIterations:150,tolerance:1e-5});
+  assert.ok(q[0]<=.5);
+  assert.ok(Math.abs(q[0]+q[1]-1.5)<1e-4);
+  assert.deepEqual(Array.from(data.qpos),[0,0]);
+});
+
 const XML = `
 <mujoco model="selected_ik_test">
   <compiler angle="radian"/>

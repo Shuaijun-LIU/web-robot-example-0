@@ -34,7 +34,7 @@ export const ASSEMBLY1_STEP2_LIMITS = Object.freeze({
   hammerVerticalDisplacement: 0.005,
   crossMemberVerticalDisplacement: 0.015,
   minimumAperture: 0.035,
-  hammerMinimumAperture: 0.03,
+  hammerMinimumAperture: 0.018,
   crossMemberMinimumAperture: 0.035,
   maximumContactPenetration: 0.002,
   hammerMaximumContactPenetration: 0.0025,

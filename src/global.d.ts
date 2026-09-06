@@ -10,6 +10,8 @@ declare global {
   interface Window {
     robotDemo?: {
       getCtrl(): number[];
+      setInspectionCamera(position: [number,number,number], target: [number,number,number]): void;
+      getPhysicsDiagnostics(): {contacts:number;constraints:number;arenaBytes:number;peakArenaBytes:number;warnings:Array<{index:number;count:number;lastInfo:number}>};
       getQpos(): number[];
       getQvel(): number[];
       getBodyPositions(names: string[]): Record<string, [number, number, number]>;

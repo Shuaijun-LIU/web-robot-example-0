@@ -1,4 +1,5 @@
 import { fixedBox, FRANKA_HOME, repeatPose } from './sceneLayouts.js';
+import { HAMMER_COLLISION_ASSETS, HAMMER_COLLISION_GEOMS } from './hammerCollisionGeometry.js';
 
 const QUARTER_TURN_DEGREES = 90;
 const HALF_TURN_DEGREES = 180;
@@ -474,23 +475,14 @@ const FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML = ASSEMBLY2_TOOL_XML
     '<body name="double_face_hammer" pos=".642 -.421 .198">',
   )
   .replace(
-    'name="robotwin_hammer_collision" type="capsule" fromto="-.14 0 -.008 .06 0 -.008" size=".02" rgba="0 0 0 0" mass=".16" friction="1.4 .22 .03"',
-    `name="robotwin_hammer_handle_collision" type="box" pos="-.0125 0 -.008" size=".0475 .024 .015" rgba="0 0 0 0" mass=".009" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
-      <geom name="robotwin_hammer_handle_inner_shoulder_collision" type="box" pos="-.0665 0 -.008" size=".0065 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
-      <!-- The receiver grip is recessed inside the original 48 mm handle
-           envelope.  Its 32 mm length gives both Panda pads a full contact
-           patch; the integral top/bottom lips resist vertical slip without
-           adding an external guard or any non-contact attachment. -->
-      <geom name="robotwin_hammer_handle_receiver_waist_collision" type="box" pos="-.084 0 -.010" size=".016 .018 .011" rgba="0 0 0 0" mass=".002" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
-      <geom name="robotwin_hammer_handle_receiver_upper_rib_collision" type="box" pos="-.084 0 .004" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
-      <geom name="robotwin_hammer_handle_receiver_lower_rib_collision" type="box" pos="-.084 0 -.020" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
-      <geom name="robotwin_hammer_handle_outer_shoulder_collision" type="box" pos="-.100 0 -.008" size=".005 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"`,
+    '<geom name="robotwin_hammer_collision" type="capsule" fromto="-.14 0 -.008 .06 0 -.008" size=".02" rgba="0 0 0 0" mass=".16" friction="1.4 .22 .03"/>',
+    HAMMER_COLLISION_GEOMS,
   )
   .replace(
-    'name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"',
-    `name="robotwin_hammer_head_collision" type="box" pos=".075 0 -.008" size=".029 .074 .018" rgba="0 0 0 0" mass=".006" friction="1 .1 .01"/>
-      <site name="hammer_donor_grasp" pos=".033 0 -.008" size=".003" rgba="0 0 0 0"/>
-      <site name="hammer_receiver_grasp" pos="-.09 0 -.008" size=".003" rgba="0 0 0 0"`,
+    '<geom name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"/>',
+    `<site name="hammer_donor_grasp" pos=".033 -.003 -.008" size=".003" rgba="0 0 0 0"/>
+      <site name="hammer_receiver_grasp" pos="-.045 0 -.008" size=".003" rgba="0 0 0 0"/>
+      <site name="hammer_strike_face" pos=".088 -.075 -.008" size=".003" rgba="0 0 0 0"/>`,
   );
 
 export const createAssembly1SceneObjects = (includeTorqueDriverCradle = false) => [
@@ -519,6 +511,8 @@ function createFrankaAssembly1SceneObjects() {
     // matching mat is rotated with it and remains fully inside the inset area.
     fixedBox('tool_mat_powered', [.13, .2, .006], [.55, 0, .112], [.31, .27, .21, 1]),
     fixedBox('tool_mat_manual', [.2, .13, .006], [-.53, -.42, .112], [.31, .27, .21, 1]),
+    fixedBox('hammer_return_cradle_tail', [.008,.025,.043], [-.578,-.25,.155], [.17,.18,.19,1]),
+    fixedBox('hammer_return_cradle_head', [.025,.045,.042], [-.405,-.25,.154], [.17,.18,.19,1]),
   ];
 }
 
@@ -532,7 +526,16 @@ function createPatches(
   gripperForceRange = '-100 100',
 ) {
   return [
+    {
+      target: 'scene.xml',
+      injectAfter: '<mujoco',
+      inject: '<option integrator="implicitfast" timestep=".002"/><size memory="64M"/>',
+    },
     { target: 'panda.xml', replace: ['name="actuator8"', 'name="gripper"'] },
+    {
+      target: 'panda.xml',
+      replace: ['<geom type="mesh" group="3"/>', '<geom type="mesh" group="3" solref=".002 1" solimp=".99 .999 .0001"/>'],
+    },
     {
       target: 'panda.xml',
       replace: [
@@ -544,35 +547,35 @@ function createPatches(
       target: 'panda.xml',
       replace: [
         '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445"/>\n        </default>',
-        '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+        '<default class="fingertip_pad_collision_1">\n          <geom type="box" size="0.0085 0.004 0.0085" pos="0 0.0055 0.0445" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".99 .999 .0001"/>\n        </default>',
       ],
     },
     {
       target: 'panda.xml',
       replace: [
         '<default class="fingertip_pad_collision_2">\n          <geom type="box" size="0.003 0.002 0.003" pos="0.0055 0.002 0.05"/>\n        </default>',
-        '<default class="fingertip_pad_collision_2">\n          <geom type="box" size="0.003 0.002 0.003" pos="0.0055 0.002 0.05" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+        '<default class="fingertip_pad_collision_2">\n          <geom type="box" size="0.003 0.002 0.003" pos="0.0055 0.002 0.05" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".99 .999 .0001"/>\n        </default>',
       ],
     },
     {
       target: 'panda.xml',
       replace: [
         '<default class="fingertip_pad_collision_3">\n          <geom type="box" size="0.003 0.002 0.003" pos="-0.0055 0.002 0.05"/>\n        </default>',
-        '<default class="fingertip_pad_collision_3">\n          <geom type="box" size="0.003 0.002 0.003" pos="-0.0055 0.002 0.05" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+        '<default class="fingertip_pad_collision_3">\n          <geom type="box" size="0.003 0.002 0.003" pos="-0.0055 0.002 0.05" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".99 .999 .0001"/>\n        </default>',
       ],
     },
     {
       target: 'panda.xml',
       replace: [
         '<default class="fingertip_pad_collision_4">\n          <geom type="box" size="0.003 0.002 0.0035" pos="0.0055 0.002 0.0395"/>\n        </default>',
-        '<default class="fingertip_pad_collision_4">\n          <geom type="box" size="0.003 0.002 0.0035" pos="0.0055 0.002 0.0395" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+        '<default class="fingertip_pad_collision_4">\n          <geom type="box" size="0.003 0.002 0.0035" pos="0.0055 0.002 0.0395" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".99 .999 .0001"/>\n        </default>',
       ],
     },
     {
       target: 'panda.xml',
       replace: [
         '<default class="fingertip_pad_collision_5">\n          <geom type="box" size="0.003 0.002 0.0035" pos="-0.0055 0.002 0.0395"/>\n        </default>',
-        '<default class="fingertip_pad_collision_5">\n          <geom type="box" size="0.003 0.002 0.0035" pos="-0.0055 0.002 0.0395" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>\n        </default>',
+        '<default class="fingertip_pad_collision_5">\n          <geom type="box" size="0.003 0.002 0.0035" pos="-0.0055 0.002 0.0395" friction="10 .5 .1" condim="6" solref=".002 1" solimp=".99 .999 .0001"/>\n        </default>',
       ],
     },
     {
@@ -611,7 +614,7 @@ function createLayout(
   gripperForceRange = '-100 100',
 ) {
   const workcellXml = reachableFastenerStation
-    ? assembly1ReachableFastenerWorkcellXml()
+    ? assembly1ReachableFastenerWorkcellXml().replaceAll('solimp=".95 .99 .001"', 'solimp=".99 .999 .0001"')
     : SHARED_ASSEMBLY1_WORKCELL_XML;
   return {
     instanceCount: 4,
@@ -647,7 +650,7 @@ function createLayout(
 }
 
 export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
-  ASSEMBLY2_ASSET_XML,
+  ASSEMBLY2_ASSET_XML + HAMMER_COLLISION_ASSETS,
   FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML,
   true,
   -0.3,

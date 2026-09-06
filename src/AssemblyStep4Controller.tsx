@@ -6,8 +6,10 @@ import {
   findSiteByName,
   useBeforePhysicsStep,
   useMujoco,
+  useMujocoWasm,
 } from 'mujoco-react';
 import type { MujocoData, MujocoModel } from 'mujoco-react';
+import { actualInsertionGeometry, planMeasuredAssemblyPhase } from './assemblyMeasuredPlanning.js';
 
 import {
   consumeMujocoContacts,
@@ -37,14 +39,7 @@ import type {
 
 type AssemblyOwnership = 'manual' | 'step1' | 'step2' | 'step3' | 'step4';
 
-const HAMMER_GRASP_GEOMS = new Set([
-  'robotwin_hammer_handle_collision',
-  'robotwin_hammer_handle_inner_shoulder_collision',
-  'robotwin_hammer_handle_receiver_waist_collision',
-  'robotwin_hammer_handle_receiver_upper_rib_collision',
-  'robotwin_hammer_handle_receiver_lower_rib_collision',
-  'robotwin_hammer_handle_outer_shoulder_collision',
-]);
+const HAMMER_GRASP_GEOMS = new Set(Array.from({ length: 15 }, (_, i) => `robotwin_hammer_handle_${i}_collision`));
 
 interface RuntimeArm {
   armKey: string;
@@ -54,6 +49,8 @@ interface RuntimeArm {
 }
 
 interface RuntimePlan {
+  gravityData: MujocoData | null;
+  restoreGripperServo: (() => void) | null;
   arms: RuntimeArm[];
   armPlans: AssemblyStep4ArmPlan[];
   frameBodyId: number;
@@ -193,7 +190,7 @@ function createRuntimePlan(
       return { plan: null, failure: planningFailure('joint-limit', arm.key) };
     }
     const qposAddresses = jointIds.map((jointId) => model.jnt_qposadr[jointId]);
-    const hold = qposAddresses.map((address) => data.qpos[address]);
+    const hold = index === 0 ? [...ASSEMBLY1_STEP2_ARMS[0].contactJointTargets] : qposAddresses.map((address) => data.qpos[address]);
     arms.push({
       armKey: arm.key,
       actuatorIndices: [...arm.actuatorIndices],
@@ -219,6 +216,8 @@ function createRuntimePlan(
 
   return {
     plan: {
+      gravityData: null,
+      restoreGripperServo: null,
       arms,
       armPlans,
       frameBodyId,
@@ -270,6 +269,7 @@ function targetContacts(
       && (firstBody === targetBodyId || secondBody === targetBodyId)
       && !allowedTargetGeomNames.has(targetGeomName)
     ) continue;
+    if (contact.distance > 0.0001) continue;
     const passiveRetainer = isPassiveRetainingContactGeom(
       targetGeomName,
     );
@@ -386,16 +386,37 @@ function sampleRuntime(
     fastenerCurrentGrasp = { ok: false, code: 'empty-closure', armKey: 'r2' };
   }
   const fastenerPosition = vector3(data.xpos, runtime.fastenerBodyId);
-  const receiverPosition = vector3(data.site_xpos, runtime.receiverSiteId);
-  const fastenerPlanarDistance = Math.hypot(
-    fastenerPosition[0] - receiverPosition[0],
-    fastenerPosition[1] - receiverPosition[1],
-  );
+  const insertion = actualInsertionGeometry(model, data);
+  const fastenerPlanarDistance = insertion.radial;
   const fastenerHeight = fastenerPosition[2];
-  const placement = evaluateAssemblyStep4Placement({
+  let placement = evaluateAssemblyStep4Placement({
     fastenerPlanarDistance,
     fastenerHeight,
   });
+  if (insertion.radial > .004 || insertion.depth < .003 || insertion.depth > .053 || insertion.tilt > 8) {
+    placement = { ok: false, code: 'shaft-not-seated', detail: `${insertion.radial.toFixed(4)}m/${insertion.depth.toFixed(4)}m/${insertion.tilt.toFixed(1)}deg` };
+  }
+  let hammerStrikeContact = false;
+  let workpiecePenetration = 0;
+  const robotCollisions: string[] = [];
+  const hammerCollisions: string[] = [];
+  const supportContacts = Array.from({length:3},()=>[false,false]);
+  for (const contact of consumeMujocoContacts(data.contact, data.ncon)) {
+    const b1 = model.geom_bodyid[contact.geom1], b2 = model.geom_bodyid[contact.geom2];
+    if ([b1,b2].includes(runtime.fastenerBodyId) && [b1,b2].includes(runtime.crossMemberBodyId)) workpiecePenetration = Math.max(workpiecePenetration,-contact.distance);
+    const hammerGeom = b1 === runtime.hammerBodyId ? contact.geom1 : contact.geom2;
+    if ([b1,b2].includes(runtime.fastenerBodyId) && [b1,b2].includes(runtime.hammerBodyId) && nameAt(model,model.name_geomadr[hammerGeom]) === 'robotwin_hammer_head_0_collision' && contact.distance <= .0001) hammerStrikeContact = true;
+    const n1 = nameAt(model,model.name_bodyadr[b1]), n2 = nameAt(model,model.name_bodyadr[b2]);
+    if (/^r[0-3]_/.test(n1) && /^r[0-3]_/.test(n2) && n1.slice(0,2) !== n2.slice(0,2) && contact.distance < -.001) robotCollisions.push(`${n1}/${n2}/${contact.distance.toFixed(4)}`);
+    if ([b1,b2].includes(runtime.hammerBodyId) && contact.distance < -.0005) {
+      const other=b1 === runtime.hammerBodyId ? n2 : n1;
+      if (other === 'assembly_frame' || other === 'cross_member' || (/^r[0-3]_/.test(other) && !/^r[13]_(left|right)_finger$/.test(other))) hammerCollisions.push(`${other}/${contact.distance.toFixed(4)}`);
+    }
+    if ([b1,b2].includes(runtime.frameBodyId) && contact.distance <= .0001) {
+      const match=/^r([0-2])_(left|right)_finger$/.exec(b1===runtime.frameBodyId?n2:n1);
+      if(match)supportContacts[Number(match[1])][match[2]==='left'?0:1]=true;
+    }
+  }
   const hammerAperture = data.qpos[runtime.hammerFingerQposAddresses[0]]
     + data.qpos[runtime.hammerFingerQposAddresses[1]];
   const hammerLeftRecent = data.time - lastContactTimes.hammer.left
@@ -437,6 +458,13 @@ function sampleRuntime(
     hammerLeftContactDistance: hammerContacts.leftDistance,
     hammerRightContactDistance: hammerContacts.rightDistance,
     hammerReceiverGraspPointDistance,
+    insertionDepth: insertion.depth,
+    insertionTiltDegrees: insertion.tilt,
+    workpiecePenetration,
+    hammerStrikeContact,
+    robotCollisions,
+    hammerCollisions,
+    supportContacts,
   };
 }
 
@@ -457,6 +485,7 @@ export function AssemblyStep4Controller({
   onStateChange,
 }: AssemblyStep4ControllerProps) {
   const simulation = useMujoco();
+  const { mujoco } = useMujocoWasm();
   const runtimeRef = useRef<RuntimePlan | null>(null);
   const machineRef = useRef<AssemblyStep4Machine | null>(null);
   const lastTimeRef = useRef<number | null>(null);
@@ -465,11 +494,22 @@ export function AssemblyStep4Controller({
     hammer: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
   });
   const completedRequestRef = useRef(0);
+  const strikeObservedRef = useRef(false);
+  const strikeSupportContactsRef = useRef<boolean[][] | null>(null);
+  const receiverPlanTimeRef = useRef(-Infinity);
   const stateCallbackRef = useRef(onStateChange);
   const reportedPhaseRef = useRef<AssemblyStep4State['phase']>('idle');
   stateCallbackRef.current = onStateChange;
 
+  useEffect(() => () => {
+    runtimeRef.current?.restoreGripperServo?.();
+    runtimeRef.current?.gravityData?.delete();
+    runtimeRef.current = null;
+  }, []);
+
   useEffect(() => {
+    runtimeRef.current?.restoreGripperServo?.();
+    runtimeRef.current?.gravityData?.delete();
     runtimeRef.current = null;
     machineRef.current = null;
     lastTimeRef.current = null;
@@ -478,6 +518,9 @@ export function AssemblyStep4Controller({
       hammer: { left: Number.NEGATIVE_INFINITY, right: Number.NEGATIVE_INFINITY },
     };
     diagnosticsRef.current = null;
+    strikeObservedRef.current = false;
+    strikeSupportContactsRef.current = null;
+    receiverPlanTimeRef.current = -Infinity;
     completedRequestRef.current = requestId;
     reportedPhaseRef.current = 'idle';
     if (ownershipRef.current === 'step4') ownershipRef.current = 'manual';
@@ -506,6 +549,31 @@ export function AssemblyStep4Controller({
       return;
     }
     const machine = createAssemblyStep4Machine();
+    const originalNoslip=model.opt.noslip_iterations;
+    model.opt.noslip_iterations=2;
+    // The inherited demo gripper servo produces only ~1 N at this handle
+    // width. Raise physical position-servo stiffness (not object forces or
+    // attachments), keeping its existing actuator force limit. Restore the
+    // manual-control calibration after completion/reset/error.
+    const gripCalibrations = [1,3].map(index => {
+      const offset=plan.arms[index].gripperActuatorIndex*10;
+      const gain=model.actuator_gainprm[offset], stiffness=model.actuator_biasprm[offset+1], damping=model.actuator_biasprm[offset+2];
+      model.actuator_gainprm[offset]=gain*8;
+      model.actuator_biasprm[offset+1]=stiffness*8;
+      model.actuator_biasprm[offset+2]=damping*Math.sqrt(8);
+      return {offset,gain,stiffness,damping};
+    });
+    plan.restoreGripperServo = () => {
+      if (simulation.mjModelRef.current !== model) return;
+      model.opt.noslip_iterations=originalNoslip;
+      for(const {offset,gain,stiffness,damping} of gripCalibrations) {
+        model.actuator_gainprm[offset]=gain;
+        model.actuator_biasprm[offset+1]=stiffness;
+        model.actuator_biasprm[offset+2]=damping;
+      }
+      plan.restoreGripperServo = null;
+    };
+    if (mujoco) plan.gravityData = new mujoco.MjData(model);
     runtimeRef.current = plan;
     machineRef.current = machine;
     lastTimeRef.current = data.time;
@@ -527,7 +595,20 @@ export function AssemblyStep4Controller({
     const deltaSeconds = Math.max(0, data.time - previousTime);
     lastTimeRef.current = data.time;
     const sample = sampleRuntime(model, data, runtime, lastContactTimesRef.current);
-    const nextMachine = advanceAssemblyStep4Machine(machine, deltaSeconds, {
+    let alignmentFailure: AssemblyStep4Failure | null = null;
+    if (mujoco && machine.phase === 'dual-clamp' && machine.phaseElapsed < 2 && data.time - receiverPlanTimeRef.current > .25) {
+      try {
+        planMeasuredAssemblyPhase(mujoco,model,data,machine.phase,runtime.armPlans);
+        receiverPlanTimeRef.current = data.time;
+      } catch (error) {
+        alignmentFailure = {code:'receiver-alignment-failed',detail:String(error)};
+      }
+    }
+    if (sample.hammerStrikeContact && machine.phase === 'hammer-strike') {
+      strikeObservedRef.current = true;
+      strikeSupportContactsRef.current = sample.supportContacts.map(pair=>[...pair]);
+    }
+    let nextMachine = advanceAssemblyStep4Machine(machine, deltaSeconds, {
       all: ['donor-tighten', 'prepare', 'engage'].includes(machine.phase)
         ? { ok: true }
         : sample.all,
@@ -536,6 +617,49 @@ export function AssemblyStep4Controller({
       hammerGrasp: sample.hammerGrasp,
       placement: sample.placement,
     });
+    if (mujoco && machine.phase === 'receiver-align' && machine.phaseElapsed >= ASSEMBLY1_STEP4_DURATIONS.receiverAlign) {
+      // Do not close merely because the nominal approach duration elapsed.
+      // Follow the real handle with OPEN fingers until centered and settled.
+      const valid = sample.hammerReceiverGraspPointDistance < .010;
+      const settled = valid ? machine.continuousValidSeconds + deltaSeconds : 0;
+      if (settled < .3) {
+        nextMachine = {...machine, phaseElapsed:machine.phaseElapsed+deltaSeconds,continuousValidSeconds:settled};
+        if (data.time-receiverPlanTimeRef.current>.25) {
+          try {
+            planMeasuredAssemblyPhase(mujoco,model,data,'dual-clamp',runtime.armPlans);
+            delete runtime.armPlans[3].phasePaths?.['receiver-align'];
+            receiverPlanTimeRef.current=data.time;
+          } catch(error) {alignmentFailure={code:'receiver-alignment-failed',detail:String(error)};}
+        }
+        if (machine.phaseElapsed > 12) alignmentFailure={code:'receiver-center-timeout',detail:String(sample.hammerReceiverGraspPointDistance)};
+      }
+    } else if (machine.phase === 'receiver-align' && nextMachine.phase === 'dual-clamp') {
+      nextMachine={...machine,phaseElapsed:machine.phaseElapsed+deltaSeconds};
+    }
+    if (machine.phase === 'insert' && sample.insertionDepth >= .003 && sample.fastenerPlanarDistance < .004 && nextMachine.phase !== 'error') {
+      runtime.armPlans[2].insert = runtime.arms[2].qposAddresses.map(a => data.qpos[a]);
+      nextMachine = { phase: 'fastener-release', phaseElapsed: 0, continuousValidSeconds: 0, failure: null };
+    }
+    if (machine.phase === 'hammer-strike' && sample.hammerStrikeContact && nextMachine.phase !== 'error') {
+      // A tap ends on real face/head contact, not by pressing to a fixed depth.
+      runtime.armPlans[3].strike=runtime.arms[3].qposAddresses.map(a=>data.qpos[a]);
+      nextMachine={phase:'hammer-recover',phaseElapsed:0,continuousValidSeconds:0,failure:null};
+    }
+    const safetyFailure = alignmentFailure ?? (sample.robotCollisions.length ? {code:'robot-collision',detail:sample.robotCollisions.join(',')}
+      : sample.hammerCollisions.length ? {code:'hammer-collision',detail:sample.hammerCollisions.join(',')}
+      : ['engage-settle','receiver-align','dual-clamp','handover-verification'].includes(machine.phase) && data.xpos[runtime.hammerBodyId*3+2] < .30 ? {code:'hammer-below-exchange-clearance'}
+      : sample.workpiecePenetration > .0015 ? {code:'fastener-penetration',detail:String(sample.workpiecePenetration)}
+      : machine.phase === 'support-clamp' && nextMachine.phase === 'hammer-stage' && sample.supportContacts.some(p=>!p.every(Boolean)) ? {code:'support-not-engaged',detail:JSON.stringify(sample.supportContacts)}
+      : machine.phase === 'hammer-strike' && nextMachine.phase === 'hammer-recover' && !strikeObservedRef.current ? {code:'missing-strike-contact'} : null);
+    if (safetyFailure) nextMachine = {phase:'error',phaseElapsed:0,continuousValidSeconds:0,failure:safetyFailure};
+    if (nextMachine.phase !== machine.phase && nextMachine.phase !== 'error') {
+      try {
+        if (!mujoco) throw new Error('MuJoCo unavailable');
+        planMeasuredAssemblyPhase(mujoco,model,data,nextMachine.phase,runtime.armPlans);
+      } catch(error) {
+        nextMachine = {phase:'error',phaseElapsed:0,continuousValidSeconds:0,failure:{code:'measured-planning-failed',detail:String(error)}};
+      }
+    }
     if (machine.phase === 'prepare' && nextMachine.phase === 'engage') {
       runtime.frameBaseline = vector3(data.xpos, runtime.frameBodyId);
       runtime.crossMemberBaseline = vector3(data.xpos, runtime.crossMemberBodyId);
@@ -552,15 +676,30 @@ export function AssemblyStep4Controller({
       stateCallbackRef.current({ phase: nextMachine.phase, failure: nextMachine.failure });
     }
     if (nextMachine.phase === 'error') {
+      runtime.restoreGripperServo?.();
       holdCurrentJointControls(data, runtime.arms);
       ownershipRef.current = 'manual';
     } else {
+      if (nextMachine.phase === 'complete') runtime.restoreGripperServo?.();
       const controlFrame = createAssemblyStep4ControlFrame(nextMachine, runtime.armPlans);
+      // Gravity-only feedforward through the existing, force-limited joint
+      // actuators. Zero scratch velocity excludes delayed Coriolis feedback.
+      const gravity = runtime.gravityData;
+      if (gravity && mujoco) {
+        gravity.qpos.set(data.qpos);
+        gravity.qvel.fill(0);
+        mujoco.mj_forward(model, gravity);
+      }
       for (let index = 0; index < runtime.arms.length; index += 1) {
         const arm = runtime.arms[index];
         const controls = controlFrame.arms[index];
         for (let joint = 0; joint < arm.actuatorIndices.length; joint += 1) {
-          data.ctrl[arm.actuatorIndices[joint]] = controls.jointTargets[joint];
+          const actuator = arm.actuatorIndices[joint];
+          const jointId = model.actuator_trnid[actuator * 2];
+          const gain = model.actuator_gainprm[actuator * 10];
+          const offset = index > 0 && gravity && jointId >= 0 && gain > 0
+            ? gravity.qfrc_bias[model.jnt_dofadr[jointId]] / gain : 0;
+          data.ctrl[actuator] = Math.max(model.actuator_ctrlrange[actuator*2],Math.min(model.actuator_ctrlrange[actuator*2+1],controls.jointTargets[joint] + offset));
         }
         data.ctrl[arm.gripperActuatorIndex] = controls.gripperTarget;
       }
@@ -588,8 +727,19 @@ export function AssemblyStep4Controller({
       hammerLeftContactDistance: sample.hammerLeftContactDistance,
       hammerRightContactDistance: sample.hammerRightContactDistance,
       hammerReceiverGraspPointDistance: sample.hammerReceiverGraspPointDistance,
+      insertionDepth: sample.insertionDepth,
+      insertionTiltDegrees: sample.insertionTiltDegrees,
+      workpiecePenetration: sample.workpiecePenetration,
+      hammerStrikeContact: sample.hammerStrikeContact,
+      strikeObserved: strikeObservedRef.current,
+      strikeSupportContacts: strikeSupportContactsRef.current,
+      robotCollisions: sample.robotCollisions,
+      hammerCollisions: sample.hammerCollisions,
+      supportContacts: sample.supportContacts,
     };
     if (nextMachine.phase === 'error') {
+      runtime.gravityData?.delete();
+      runtime.gravityData = null;
       runtimeRef.current = null;
       machineRef.current = null;
     }

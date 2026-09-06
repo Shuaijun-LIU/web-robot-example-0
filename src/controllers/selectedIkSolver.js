@@ -122,6 +122,7 @@ export function solveSelectedIk({
   epsilon = DEFAULTS.epsilon,
   positionWeight = DEFAULTS.positionWeight,
   rotationWeight = DEFAULTS.rotationWeight,
+  jointRanges,
 }) {
   if (siteId < 0 || qposAddresses.length === 0 || qposAddresses.length !== currentQ.length) {
     return null;
@@ -208,7 +209,8 @@ export function solveSelectedIk({
         for (let row = 0; row < 6; row += 1) {
           delta += jacobian[row * jointCount + joint] * solvedError[row];
         }
-        joints[joint] += delta;
+        joints[joint] += jointRanges ? Math.max(-.15,Math.min(.15,delta)) : delta;
+        if (jointRanges) joints[joint]=Math.max(jointRanges[joint][0],Math.min(jointRanges[joint][1],joints[joint]));
       }
     }
   } finally {

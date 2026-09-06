@@ -16,6 +16,7 @@ export interface SelectedIkInput {
   epsilon?: number;
   positionWeight?: number;
   rotationWeight?: number;
+  jointRanges?: readonly (readonly [number, number])[];
 }
 
 export function solveSelectedIk(input: SelectedIkInput): number[] | null;

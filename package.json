@@ -17,6 +17,7 @@
     "verify:assembly-step2": "node scripts/verify-assembly-step2.mjs",
     "verify:assembly-step3": "node scripts/verify-assembly-step3.mjs",
     "verify:assembly-step4": "node scripts/verify-assembly-step4.mjs",
+    "verify:franka-demo1": "node scripts/verify-franka-demo1-physical.mjs",
     "verify:controls": "node scripts/verify-controls.mjs",
     "verify:assembly2-recorder-browser": "node scripts/verify-franka-assembly2-recorder-browser.mjs",
     "verify:unitree-action": "node scripts/verify-unitree-action-dynamics.mjs",

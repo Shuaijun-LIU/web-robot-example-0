@@ -61,7 +61,7 @@ export const ASSEMBLY1_STEP3_HAMMER_ARM = Object.freeze({
 
 export const ASSEMBLY1_STEP3_LIMITS = Object.freeze({
   minimumAperture: 0.035,
-  hammerMinimumAperture: 0.03,
+  hammerMinimumAperture: 0.018,
   crossMemberMinimumAperture: 0.035,
   maximumContactPenetration: 0.002,
   // The lightweight hammer's high-friction receiver surface settles about

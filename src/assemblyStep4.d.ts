@@ -1,10 +1,12 @@
 export type AssemblyStep4Phase =
-  | 'idle' | 'planning' | 'donor-tighten' | 'prepare' | 'engage' | 'engage-settle' | 'dual-clamp'
-  | 'handover-verification' | 'hammer-release' | 'donor-clear'
+  | 'idle' | 'planning' | 'donor-tighten' | 'prepare' | 'engage' | 'engage-settle' | 'receiver-align' | 'dual-clamp'
+  | 'handover-verification' | 'hammer-release' | 'donor-clear' | 'receiver-retreat'
   | 'fastener-tighten' | 'fastener-grip-settle' | 'fastener-grasp-verification'
   | 'lift' | 'transfer' | 'transfer-settle' | 'insert'
   | 'fastener-release' | 'clear' | 'placement-verification'
   | 'hammer-stage' | 'hammer-strike' | 'hammer-recover'
+  | 'support-approach' | 'support-clamp' | 'support-release' | 'support-clear' | 'return-home'
+  | 'hammer-return' | 'hammer-lower' | 'tool-release' | 'tool-clear'
   | 'complete' | 'error';
 
 export interface AssemblyStep4Failure {
@@ -40,6 +42,11 @@ export interface AssemblyStep4ArmPlan {
   clear: readonly number[];
   ready: readonly number[];
   strike: readonly number[];
+  phasePaths?: Partial<Record<AssemblyStep4Phase, readonly (readonly number[])[]>>;
+  support?: readonly number[];
+  returnStart?: readonly number[];
+  wait?: readonly number[];
+  hammerYaw?: number;
 }
 
 export interface AssemblyStep4RuntimeDiagnostics {
@@ -65,6 +72,15 @@ export interface AssemblyStep4RuntimeDiagnostics {
   hammerLeftContactDistance: number | null;
   hammerRightContactDistance: number | null;
   hammerReceiverGraspPointDistance: number;
+  insertionDepth: number;
+  insertionTiltDegrees: number;
+  workpiecePenetration: number;
+  hammerStrikeContact: boolean;
+  strikeObserved: boolean;
+  strikeSupportContacts: boolean[][] | null;
+  robotCollisions: string[];
+  hammerCollisions: string[];
+  supportContacts: boolean[][];
 }
 
 export const ASSEMBLY1_STEP4_DURATIONS: Readonly<Record<string, number>>;

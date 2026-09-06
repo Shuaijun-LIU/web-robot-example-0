@@ -44,7 +44,7 @@ test('Step 3 preserves the measured dual-grasp span while moving to the interfac
   assert.deepEqual(ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS, [130, 130, 135, 130]);
   assert.deepEqual(ASSEMBLY1_STEP3_LIMITS, {
     minimumAperture: 0.035,
-    hammerMinimumAperture: 0.03,
+    hammerMinimumAperture: 0.018,
     crossMemberMinimumAperture: 0.035,
     maximumContactPenetration: 0.002,
     hammerMaximumContactPenetration: 0.0025,

@@ -8,13 +8,14 @@ import {
 export const ASSEMBLY1_STEP4_DURATIONS = Object.freeze({
   donorTighten: 1.2,
   prepare: 3,
-  engage: 2,
+  engage: 6,
   engageSettle: 3,
+  receiverAlign: 3,
   dualClamp: 4,
-  // Keep both wrists stationary until the donor fingers physically clear the
-  // 48 mm handle; 0.8 s changed ctrl but left the real aperture near 46 mm.
+  // Keep both wrists stationary until the donor fingers physically clear.
   hammerRelease: 2,
   donorClear: 3,
+  receiverRetreat: 5,
   fastenerTighten: 5,
   // MuJoCo's finger joints lag the actuator command.  Hold the pickup pose
   // after closing so the real pads can settle on both sides before any lift.
@@ -24,37 +25,40 @@ export const ASSEMBLY1_STEP4_DURATIONS = Object.freeze({
   // Require a sustained bilateral grasp before the donor opens.  A single
   // contact frame is not a handover and previously allowed the hammer to fall.
   verificationWindow: 0.5,
-  contactGrace: 0.75,
+  contactGrace: 0.12,
   verificationTimeout: 4,
   lift: 6,
   transfer: 3,
   transferSettle: 2,
   insert: 5,
-  fastenerRelease: 0.8,
+  fastenerRelease: 1.5,
   clear: 2,
   placementHold: 1,
   placementTimeout: 4,
   hammerStage: 4,
   hammerStrike: 0.9,
   hammerRecover: 1.2,
+  supportApproach: 4,
+  supportClamp: 3,
+  supportRelease: 2,
+  supportClear: 3,
+  returnHome: 6,
+  hammerReturn: 5,
+  hammerLower: 3,
+  toolRelease: 2,
+  toolClear: 3,
 });
 
 export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
   minimumFastenerAperture: 0.005,
-  minimumToolAperture: 0.03,
-  // Bilateral touch is not a completed handover while the real fingers are
-  // still almost fully open.  Keep the donor closed until the receiver has
-  // physically settled around the 48 mm handle.
-  // Use the 48 mm nominal handle width as the closure boundary.  This accepts
-  // safe bilateral contact while remaining below the previously observed
-  // 49.5 mm false handover.
+  minimumToolAperture: 0.018,
+  // Require closed fingers, real mesh contact and proximity to the visible
+  // grip center together; aperture alone cannot establish a grasp.
   maximumToolAperture: 0.052,
   maximumContactPenetration: 0.002,
   contactComparisonEpsilon: 0.0003,
-  // The receiver site remains within the 140 mm visible handle collision.
-  // Allow 35 mm for physical pitch settling under the offset hammer head;
-  // bilateral finger contact and penetration limits remain mandatory.
-  maximumHammerGraspPointDistance: 0.035,
+  // Reject edge-only grasps, even when the source mesh has bilateral contact.
+  maximumHammerGraspPointDistance: 0.016,
   frameTranslation: 0.012,
   crossMemberTranslation: 0.025,
   crossMemberRotationDegrees: 12,
@@ -68,11 +72,9 @@ export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
 export const ASSEMBLY1_STEP4_GRIPPERS = Object.freeze({
   frame: 130,
   donorEntry: 130,
-  tool: 130,
-  // Command about 47 mm aperture against the 48 mm integrated ribs.  This
-  // supplies real bilateral normal force without driving the fingers through
-  // the handle; there is no hidden attachment.
-  receiverTool: 145,
+  tool: 80,
+  // Close against the actual curved source mesh; there are no added ribs.
+  receiverTool: 50,
   // Grip the broad 30 mm head.  This avoids driving the narrow 14 mm shaft
   // sideways inside its passive fixture and provides a larger friction area.
   pregrasp: 80,
@@ -109,7 +111,7 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
       (z) => Object.freeze([0.095, 0.368, z]),
     )),
     transfer: Object.freeze([-0.12, 0.215, 0.43]),
-    insert: Object.freeze([-0.12, 0.215, 0.29]),
+    insert: Object.freeze([-0.12, 0.215, 0.385]),
     clear: Object.freeze([-0.10, 0.35, 0.44]),
   }),
   r3: Object.freeze({
@@ -120,7 +122,7 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
     // branch and move the donor's exchange pose toward it instead, placing
     // both receiver fingers inside the visible main handle.
     prepare: Object.freeze([0.001, 0.022, 0.46]),
-    engage: Object.freeze([0.001, 0.022, 0.421]),
+    engage: Object.freeze([0.02, 0.034, 0.38]),
     // Retreat horizontally toward the west base while preserving grasp
     // height.  Raising 90 mm at the tail grip made the handle slide downward
     // even though both pads remained force-closed.
@@ -179,8 +181,8 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
       engage: [-0.135986, -0.769199, 2.335743, -1.889583, 0.756709, 2.322619, -2.13635],
       lift: [0.057474, -0.473012, 2.055218, -1.802036, 0.458798, 1.995036, -1.965205],
       transfer: [-0.466614, -0.575639, 2.089565, -1.583993, 0.515133, 1.856688, -2.38293],
-      insert: [-0.523431, -0.723626, 2.217082, -1.725992, 0.660789, 2.106073, -2.467963],
-      clear: [0.193428, 0.14369, 1.799681, -2.079174, -0.156585, 2.039847, -1.860285],
+      insert: [-0.478007, -0.617187, 2.122525, -1.641888, 0.555504, 1.937334, -2.407451],
+      clear: [0.19281, 0.143248, 1.800162, -2.079169, -0.156084, 2.039899, -1.860655],
     }),
     liftPathJointTargets: Object.freeze([
       [-0.115714, -0.735541, 2.306111, -1.895171, 0.728403, 2.295944, -2.1219],
@@ -202,10 +204,10 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     closingAxisYawDegrees: -90,
     jointTargets: targets(holds[3], {
       prepare: [1.881565, 0.549929, -0.343027, -1.461157, 0.122962, 2.561078, 0.730321],
-      engage: [1.87715, 0.586769, -0.33258, -1.502862, 0.135155, 2.63673, 0.726839],
-      clear: [1.97584, 0.338062, -0.394899, -1.892177, 0.05567, 2.780969, 0.766914],
-      ready: [2.410981, -0.077004, -0.404644, -2.210515, -0.036337, 2.141535, 1.241632],
-      strike: [2.411101, 0.010961, -0.411435, -2.280183, 0.004947, 2.289861, 1.211306],
+      engage: [1.86868, 0.696841, -0.316474, -1.429496, 0.149974, 2.672418, 0.743031],
+      clear: [1.979088, 0.338598, -0.39832, -1.89208, 0.059341, 2.780917, 0.764135],
+      ready: [2.416424, -0.077192, -0.40999, -2.21052, -0.036876, 2.141526, 1.242034],
+      strike: [2.41656, 0.010969, -0.416895, -2.280203, 0.005007, 2.289873, 1.211271],
     }),
   }),
 ]);
@@ -254,10 +256,12 @@ const timedTransitions = {
   'donor-tighten': [ASSEMBLY1_STEP4_DURATIONS.donorTighten, 'prepare', false, false, false],
   prepare: [ASSEMBLY1_STEP4_DURATIONS.prepare, 'engage', false, false, false],
   engage: [ASSEMBLY1_STEP4_DURATIONS.engage, 'engage-settle', false, false, false],
-  'engage-settle': [ASSEMBLY1_STEP4_DURATIONS.engageSettle, 'dual-clamp', false, false, false],
+  'engage-settle': [ASSEMBLY1_STEP4_DURATIONS.engageSettle, 'receiver-align', false, false, false],
+  'receiver-align': [ASSEMBLY1_STEP4_DURATIONS.receiverAlign, 'dual-clamp', false, false, false],
   'dual-clamp': [ASSEMBLY1_STEP4_DURATIONS.dualClamp, 'handover-verification', false, false, false],
   'hammer-release': [ASSEMBLY1_STEP4_DURATIONS.hammerRelease, 'donor-clear', false, false, true],
-  'donor-clear': [ASSEMBLY1_STEP4_DURATIONS.donorClear, 'fastener-tighten', false, false, true],
+  'donor-clear': [ASSEMBLY1_STEP4_DURATIONS.donorClear, 'receiver-retreat', false, false, true],
+  'receiver-retreat': [ASSEMBLY1_STEP4_DURATIONS.receiverRetreat, 'fastener-tighten', false, false, true],
   'fastener-tighten': [
     ASSEMBLY1_STEP4_DURATIONS.fastenerTighten,
     'fastener-grip-settle',
@@ -286,7 +290,16 @@ const timedTransitions = {
   clear: [ASSEMBLY1_STEP4_DURATIONS.clear, 'placement-verification', false, false, true],
   'hammer-stage': [ASSEMBLY1_STEP4_DURATIONS.hammerStage, 'hammer-strike', false, true, true],
   'hammer-strike': [ASSEMBLY1_STEP4_DURATIONS.hammerStrike, 'hammer-recover', false, true, true],
-  'hammer-recover': [ASSEMBLY1_STEP4_DURATIONS.hammerRecover, 'complete', false, true, true],
+  'support-approach': [ASSEMBLY1_STEP4_DURATIONS.supportApproach, 'support-clamp', false, true, true],
+  'support-clamp': [ASSEMBLY1_STEP4_DURATIONS.supportClamp, 'hammer-stage', false, true, true],
+  'hammer-recover': [ASSEMBLY1_STEP4_DURATIONS.hammerRecover, 'support-release', false, true, true],
+  'support-release': [ASSEMBLY1_STEP4_DURATIONS.supportRelease, 'support-clear', false, true, true],
+  'support-clear': [ASSEMBLY1_STEP4_DURATIONS.supportClear, 'hammer-return', false, true, true],
+  'hammer-return': [ASSEMBLY1_STEP4_DURATIONS.hammerReturn, 'hammer-lower', false, true, true],
+  'hammer-lower': [ASSEMBLY1_STEP4_DURATIONS.hammerLower, 'tool-release', false, true, true],
+  'tool-release': [ASSEMBLY1_STEP4_DURATIONS.toolRelease, 'tool-clear', false, true, false],
+  'tool-clear': [ASSEMBLY1_STEP4_DURATIONS.toolClear, 'return-home', false, true, false],
+  'return-home': [ASSEMBLY1_STEP4_DURATIONS.returnHome, 'complete', false, true, false],
 };
 
 export function advanceAssemblyStep4Machine(machine, deltaSeconds, evidence) {
@@ -349,7 +362,7 @@ export function advanceAssemblyStep4Machine(machine, deltaSeconds, evidence) {
     const continuousValidSeconds = verdict?.ok ? machine.continuousValidSeconds + dt : 0;
     const lastInvalidVerdict = verdict?.ok ? machine.lastInvalidVerdict : verdict;
     if (continuousValidSeconds >= ASSEMBLY1_STEP4_DURATIONS.placementHold) {
-      return enterPhase('hammer-stage');
+      return enterPhase('support-approach');
     }
     if (phaseElapsed >= ASSEMBLY1_STEP4_DURATIONS.placementTimeout) {
       return terminalFailure(verdict?.ok ? lastInvalidVerdict : verdict);
@@ -369,26 +382,44 @@ function phaseTargets(machine, plan) {
   const progress = (duration) => machine.phaseElapsed / duration;
   const pathTarget = (path, value) => {
     const clamped = Math.max(0, Math.min(1, value));
-    const scaled = clamped * Math.max(0, path.length - 1);
+    const eased = clamped ** 3 * (10 - 15 * clamped + 6 * clamped ** 2);
+    const scaled = eased * Math.max(0, path.length - 1);
     const index = Math.min(path.length - 1, Math.floor(scaled));
     const next = Math.min(path.length - 1, index + 1);
-    return interpolateJointTargets(path[index], path[next], scaled - index);
+    return path[index].map((q,j)=>q+(path[next][j]-q)*(scaled-index));
   };
+  if (plan.phasePaths?.[machine.phase]) {
+    return pathTarget(plan.phasePaths[machine.phase], progress(timedTransitions[machine.phase]?.[0] ?? 1));
+  }
+  if (machine.phase === 'complete') return ASSEMBLY1_STEP3_HOME_JOINT_TARGETS;
+  if (machine.phase === 'receiver-retreat') {
+    return plan.armKey === 'r3'
+      ? interpolateJointTargets(plan.engage, ASSEMBLY1_STEP3_HOME_JOINT_TARGETS, progress(ASSEMBLY1_STEP4_DURATIONS.receiverRetreat))
+      : plan.armKey === 'r1' ? plan.clear : plan.armKey === 'r2' ? plan.prepare : plan.hold;
+  }
+  if (plan.armKey === 'r3' && ['fastener-tighten', 'fastener-grip-settle', 'fastener-grasp-verification', 'lift', 'transfer', 'transfer-settle', 'insert', 'fastener-release', 'clear', 'placement-verification', 'support-approach', 'support-clamp'].includes(machine.phase)) {
+    return plan.wait ?? ASSEMBLY1_STEP3_HOME_JOINT_TARGETS;
+  }
+  if (['support-clear','hammer-return','hammer-lower','tool-release','tool-clear'].includes(machine.phase)) return plan.armKey === 'r3' ? plan.ready : plan.support ?? plan.clear;
+  if (['support-approach', 'support-clamp', 'hammer-stage', 'hammer-strike', 'hammer-recover', 'support-release'].includes(machine.phase) && plan.support) return plan.support;
+  if (machine.phase === 'return-home') return interpolateJointTargets(plan.returnStart ?? plan.clear, ASSEMBLY1_STEP3_HOME_JOINT_TARGETS, progress(ASSEMBLY1_STEP4_DURATIONS.returnHome));
   if (machine.phase === 'donor-tighten') return plan.hold;
   if (machine.phase === 'prepare') {
     return interpolateJointTargets(plan.hold, plan.prepare, progress(ASSEMBLY1_STEP4_DURATIONS.prepare));
   }
   if (machine.phase === 'engage') {
-    if (plan.armKey === 'r2') return plan.prepare;
+    if (plan.armKey === 'r2' || plan.armKey === 'r3') return plan.prepare;
     return interpolateJointTargets(plan.prepare, plan.engage, progress(ASSEMBLY1_STEP4_DURATIONS.engage));
   }
   if (
     machine.phase === 'engage-settle'
+    || machine.phase === 'receiver-align'
     || machine.phase === 'dual-clamp'
     || machine.phase === 'handover-verification'
     || machine.phase === 'hammer-release'
   ) {
     if (plan.armKey === 'r2') return plan.prepare;
+    if (plan.armKey === 'r3' && machine.phase === 'engage-settle') return plan.prepare;
     return plan.engage;
   }
   if (machine.phase === 'donor-clear') {
@@ -508,10 +539,23 @@ export function createAssemblyStep4ControlFrame(machine, plans) {
           )[0];
         }
         if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
-      } else if (['donor-clear', 'fastener-tighten', 'fastener-grip-settle', 'fastener-grasp-verification', 'lift', 'transfer', 'transfer-settle', 'insert', 'fastener-release', 'clear', 'placement-verification', 'hammer-stage', 'hammer-strike', 'hammer-recover', 'complete'].includes(machine.phase)) {
+      } else if (['donor-clear', 'receiver-retreat', 'fastener-tighten', 'fastener-grip-settle', 'fastener-grasp-verification', 'lift', 'transfer', 'transfer-settle', 'insert', 'fastener-release', 'clear', 'placement-verification', 'support-approach', 'support-clamp', 'hammer-stage', 'hammer-strike', 'hammer-recover', 'support-release', 'hammer-return', 'hammer-lower', 'tool-release', 'tool-clear', 'return-home', 'complete'].includes(machine.phase)) {
         if (index === 1) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.open;
         if (index === 3) gripperTarget = ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
       }
+      if (index < 3 && ['support-clamp', 'hammer-stage', 'hammer-strike', 'hammer-recover'].includes(machine.phase)) {
+        gripperTarget = machine.phase === 'support-clamp' && index > 0
+          ? interpolateJointTargets([255], [130], machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.supportClamp)[0]
+          : 130;
+      }
+      if (index < 3 && ['support-release', 'support-clear', 'hammer-return','hammer-lower','tool-release','tool-clear','return-home', 'complete'].includes(machine.phase)) {
+        gripperTarget = machine.phase === 'support-release'
+          ? interpolateJointTargets([130], [255], machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.supportRelease)[0]
+          : 255;
+      }
+      if (index === 3 && ['tool-release','tool-clear','return-home','complete'].includes(machine.phase)) gripperTarget = machine.phase === 'tool-release'
+        ? interpolateJointTargets([ASSEMBLY1_STEP4_GRIPPERS.receiverTool],[255],machine.phaseElapsed/ASSEMBLY1_STEP4_DURATIONS.toolRelease)[0] : 255;
+      if(index===3 && machine.phase==='support-clear')gripperTarget=ASSEMBLY1_STEP4_GRIPPERS.receiverTool;
 
       if (index === 2 && machine.phase === 'fastener-tighten') {
         const phaseProgress = machine.phaseElapsed / ASSEMBLY1_STEP4_DURATIONS.fastenerTighten;
@@ -553,6 +597,9 @@ export function evaluateAssemblyStep4Stability({
   }
   if (frameTranslation > ASSEMBLY1_STEP4_LIMITS.frameTranslation + ASSEMBLY1_STEP4_LIMITS.comparisonEpsilon) {
     return { ok: false, code: 'frame-drift', detail: String(frameTranslation) };
+  }
+  if (crossMemberTranslation > ASSEMBLY1_STEP4_LIMITS.crossMemberTranslation || crossMemberRotationDegrees > ASSEMBLY1_STEP4_LIMITS.crossMemberRotationDegrees) {
+    return {ok:false,code:'cross-member-disturbed',detail:`${crossMemberTranslation.toFixed(4)}m/${crossMemberRotationDegrees.toFixed(1)}deg`};
   }
   return { ok: true };
 }

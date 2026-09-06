@@ -1,5 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+
+test('dense physical paths do not stop and restart at every IK sample', async()=>{
+  const {createAssemblyStep4ControlFrame,ASSEMBLY1_STEP4_DURATIONS}=await import('../src/assemblyStep4.js');
+  const plan={armKey:'r1',phasePaths:{engage:[Array(7).fill(0),Array(7).fill(1),Array(7).fill(2)]}};
+  const duration=ASSEMBLY1_STEP4_DURATIONS.engage;
+  const value=p=>createAssemblyStep4ControlFrame({phase:'engage',phaseElapsed:p*duration},[plan]).arms[0].jointTargets[0];
+  const centerVelocity=(value(.501)-value(.499))/(.002*duration);
+  assert.ok(centerVelocity>1/duration,'interior IK waypoint must not introduce a stop');
+});
 import { FRANKA_HOME } from '../src/sceneLayouts.js';
 
 let step4 = {};
@@ -70,22 +79,20 @@ test('Step 4 rejects hidden collision contact outside the visible receiver grasp
 
 test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () => {
   assert.equal(typeof step4.createAssemblyStep4Machine, 'function');
-  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.minimumToolAperture, 0.03);
+  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.minimumToolAperture, 0.018);
   assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumToolAperture, 0.052);
   assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumContactPenetration, 0.002);
   assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.contactComparisonEpsilon, 0.0003);
-  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumHammerGraspPointDistance, 0.035);
+  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumHammerGraspPointDistance, 0.016);
   assert.equal(step4.ASSEMBLY1_STEP4_DURATIONS.verificationWindow, 0.5);
   assert.equal(step4.ASSEMBLY1_STEP4_DURATIONS.dualClamp, 4);
   assert.equal(step4.ASSEMBLY1_STEP4_DURATIONS.hammerRelease, 2);
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.frame, 130);
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.donorEntry, 130);
-  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.tool, 130);
-  // Close just inside the integrated 48 mm retaining ribs.  This preserves
-  // bilateral normal force without commanding the fingers through the ribs.
-  assert.ok(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool >= 140);
-  assert.ok(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool <= 150);
-  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool, 145);
+  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.tool, 80);
+  // The curved source mesh supplies the contact surface; the commanded
+  // aperture must produce normal force on that grip, without added ribs.
+  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool, 50);
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.pregrasp, 80);
   // Grasp the 30 mm head rather than squeezing the 14 mm shaft out of its
   // passive fixture.
@@ -122,9 +129,9 @@ test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () 
     0.215, 0.235, 0.26, 0.285, 0.315, 0.345, 0.3725, 0.40,
   ].map((z) => [0.095, 0.368, z]));
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.transfer, [-0.12, 0.215, 0.43]);
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.insert, [-0.12, 0.215, 0.29]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.insert, [-0.12, 0.215, 0.385]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.prepare, [0.001, 0.022, 0.46]);
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.engage, [0.001, 0.022, 0.421]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.engage, [0.02, 0.034, 0.38]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.clear, [-0.08, 0.02, 0.421]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.ready, [-0.33, 0.215, 0.41]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.strike, [-0.33, 0.215, 0.35]);
@@ -154,11 +161,13 @@ test('Step 4 receives the hammer while picking the fastener, then inserts and st
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.donorTighten, 'prepare');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.prepare, 'engage');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.engage, 'engage-settle');
-  advance(step4.ASSEMBLY1_STEP4_DURATIONS.engageSettle, 'dual-clamp');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.engageSettle, 'receiver-align');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.receiverAlign, 'dual-clamp');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.dualClamp, 'handover-verification');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.verificationWindow, 'hammer-release');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerRelease, 'donor-clear');
-  advance(step4.ASSEMBLY1_STEP4_DURATIONS.donorClear, 'fastener-tighten');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.donorClear, 'receiver-retreat');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.receiverRetreat, 'fastener-tighten');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.fastenerTighten, 'fastener-grip-settle');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.fastenerGripSettle, 'fastener-grasp-verification');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.fastenerVerificationWindow, 'lift');
@@ -168,10 +177,19 @@ test('Step 4 receives the hammer while picking the fastener, then inserts and st
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.insert, 'fastener-release');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.fastenerRelease, 'clear');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.clear, 'placement-verification');
-  advance(step4.ASSEMBLY1_STEP4_DURATIONS.placementHold, 'hammer-stage');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.placementHold, 'support-approach');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.supportApproach, 'support-clamp');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.supportClamp, 'hammer-stage');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerStage, 'hammer-strike');
   advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerStrike, 'hammer-recover');
-  advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerRecover, 'complete');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerRecover, 'support-release');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.supportRelease, 'support-clear');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.supportClear, 'hammer-return');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerReturn, 'hammer-lower');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.hammerLower, 'tool-release');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.toolRelease, 'tool-clear');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.toolClear, 'return-home');
+  advance(step4.ASSEMBLY1_STEP4_DURATIONS.returnHome, 'complete');
 });
 
 test('Step 4 stops if the fastener grasp is lost during transfer', () => {
@@ -217,6 +235,8 @@ test('Step 4 completes hammer release before requiring the fastener grasp', () =
     step4.ASSEMBLY1_STEP4_DURATIONS.donorClear,
     hammerOnly,
   );
+  assert.equal(machine.phase, 'receiver-retreat');
+  machine = step4.advanceAssemblyStep4Machine(machine, step4.ASSEMBLY1_STEP4_DURATIONS.receiverRetreat, hammerOnly);
   assert.equal(machine.phase, 'fastener-tighten');
 });
 
@@ -313,7 +333,7 @@ test('Step 4 placement verification tolerates settling before a continuous valid
     step4.ASSEMBLY1_STEP4_DURATIONS.placementHold,
     valid,
   );
-  assert.equal(machine.phase, 'hammer-stage');
+  assert.equal(machine.phase, 'support-approach');
 });
 
 test('Step 4 placement timeout retains the physical failure reason', () => {
@@ -330,12 +350,12 @@ test('Step 4 placement timeout retains the physical failure reason', () => {
   assert.deepEqual(failure.failure, { code: 'fastener-misalignment', detail: '0.02' });
 });
 
-test('Step 4 stability protects the held frame while treating free beam settling as diagnostic', () => {
-  assert.deepEqual(step4.evaluateAssemblyStep4Stability({
+test('Step 4 rejects a tipped or displaced beam as well as frame drift', () => {
+  assert.equal(step4.evaluateAssemblyStep4Stability({
     frameTranslation: 0.002,
     crossMemberTranslation: 0.08,
     crossMemberRotationDegrees: 30,
-  }), { ok: true });
+  }).code, 'cross-member-disturbed');
   assert.equal(step4.evaluateAssemblyStep4Stability({
     frameTranslation: 0.02,
     crossMemberTranslation: 0,
@@ -367,7 +387,7 @@ test('Step 4 completes a physical hammer handover before descending onto the fas
   }, plans);
   assert.deepEqual(
     donorTighten.arms.map(({ gripperTarget }) => gripperTarget),
-    [130, 130, 255, 255],
+    [130, 105, 255, 255],
   );
 
   const clamp = step4.createAssemblyStep4ControlFrame({
@@ -419,7 +439,7 @@ test('Step 4 completes a physical hammer handover before descending onto the fas
   assert.equal(fastenerApproach.arms[2].gripperTarget, 255);
   assert.ok(fastenerApproach.arms[2].jointTargets[0] > 21);
   assert.ok(fastenerApproach.arms[2].jointTargets[0] < 22);
-  assert.deepEqual(fastenerApproach.arms[3].jointTargets, Array(7).fill(32));
+  assert.deepEqual(fastenerApproach.arms[3].jointTargets, FRANKA_HOME.slice(0,7));
 
   const fastenerClamp = step4.createAssemblyStep4ControlFrame({
     phase: 'fastener-tighten',
@@ -462,7 +482,7 @@ test('Step 4 completes a physical hammer handover before descending onto the fas
     failure: null,
   }, plans);
   assert.deepEqual(fastenerLift.arms[2].jointTargets, Array(7).fill(30));
-  assert.deepEqual(fastenerLift.arms[3].jointTargets, Array(7).fill(32));
+  assert.deepEqual(fastenerLift.arms[3].jointTargets, FRANKA_HOME.slice(0,7));
 
   const hammerStage = step4.createAssemblyStep4ControlFrame({
     phase: 'hammer-stage',
@@ -493,12 +513,10 @@ test('Step 4 completes a physical hammer handover before descending onto the fas
     failure: null,
   }, plans);
   assert.deepEqual(complete.arms.map(({ gripperTarget }) => gripperTarget), [
-    130,
     255,
     255,
-    step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool,
+    255,
+    255,
   ]);
-  assert.deepEqual(complete.arms[1].jointTargets, Array(7).fill(16));
-  assert.deepEqual(complete.arms[2].jointTargets, Array(7).fill(26));
-  assert.deepEqual(complete.arms[3].jointTargets, Array(7).fill(37));
+  for (const arm of complete.arms) assert.deepEqual(arm.jointTargets, FRANKA_HOME.slice(0,7));
 });

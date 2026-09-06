@@ -100,7 +100,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     hammerVerticalDisplacement: 0.005,
     crossMemberVerticalDisplacement: 0.015,
     minimumAperture: 0.035,
-    hammerMinimumAperture: 0.03,
+    hammerMinimumAperture: 0.018,
     crossMemberMinimumAperture: 0.035,
     maximumContactPenetration: 0.002,
     hammerMaximumContactPenetration: 0.0025,

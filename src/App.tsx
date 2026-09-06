@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { OrbitControls, Html, Stats, Environment } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import { Leva, useControls, button } from 'leva';
 import {
   MujocoProvider,
@@ -247,6 +248,7 @@ function SceneChildren({
   onSelectUnitreeActionProgram: (programId: UnitreeActionProgramId) => boolean;
 }) {
   const simulation = useMujoco();
+  const { camera, controls: viewControls } = useThree();
   const isAssembly1Scene = robotKey === 'frankaAssembly1' || robotKey === 'frankaDemo1';
   const assemblyAutomationActive = assemblyStep1Status === 'planning'
     || assemblyStep1Status === 'running'
@@ -285,6 +287,19 @@ function SceneChildren({
       return [name, [positions[offset], positions[offset + 1], positions[offset + 2]]];
     })) as Record<string, [number, number, number]>;
     const diagnostics = {
+      getPhysicsDiagnostics() {
+        const warnings=data.warning as {size():number;get(index:number):{number:number;lastinfo:number;delete():void}|undefined;delete():void};
+        const counts=[];
+        try {for(let i=0;i<warnings.size();i++) {const warning=warnings.get(i);if(!warning)continue;try {counts.push({index:i,count:warning.number,lastInfo:warning.lastinfo});}finally {warning.delete();}}}finally {warnings.delete();}
+        return {contacts:data.ncon,constraints:Number(data.nefc),arenaBytes:Number(data.narena),peakArenaBytes:Number(data.maxuse_arena),warnings:counts};
+      },
+      setInspectionCamera(position: [number,number,number], target: [number,number,number]) {
+        camera.position.set(...position);
+        camera.lookAt(...target);
+        const orbit = viewControls as unknown as { target?: { set(x:number,y:number,z:number):void }; update?():void } | null;
+        orbit?.target?.set(...target);
+        orbit?.update?.();
+      },
       getCtrl: () => Array.from(simulation.api.getCtrl()),
       getQpos: () => Array.from(simulation.api.getQpos()),
       getQvel: () => Array.from(data.qvel),
@@ -364,6 +379,8 @@ function SceneChildren({
     };
   }, [
     simulation,
+    camera,
+    viewControls,
     ik,
     target.key,
     onResetAssemblySequence,
@@ -808,6 +825,7 @@ export function App() {
   });
 
   const canvasKey = useMemo(() => robotKey, [robotKey]);
+  const simulationConfig = useMemo(() => ({ ...entry.config, controlTimestep: isAssembly1Scene ? .01 : undefined }), [entry.config, isAssembly1Scene]);
 
   return (
     <MujocoProvider>
@@ -818,7 +836,7 @@ export function App() {
       <MujocoCanvas
         key={canvasKey}
         ref={apiRef}
-        config={entry.config}
+        config={simulationConfig}
         onReady={handleSceneReady}
         onError={handleSceneError}
         camera={{

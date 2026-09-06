@@ -221,7 +221,7 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
   }
   assert.match(xml, /name="robotwin_screwdriver_collision"/);
   assert.match(xml, /name="robotwin_drill_housing_collision"/);
-  assert.match(xml, /name="robotwin_hammer_handle_collision"/);
+  assert.match(xml, /name="robotwin_hammer_handle_\d+_collision"/);
   assert.doesNotMatch(xml, /manual_screwdriver_octagonal_handle|hammer_handle_core/);
   assert.match(SHARED_ASSEMBLY1_TOOL_XML, /manual_screwdriver_octagonal_handle/);
   assert.match(SHARED_ASSEMBLY1_TOOL_XML, /name="hammer_handle_core"/);
@@ -249,32 +249,11 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
   assert.ok(!FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(({ name }) => name === 'tool_mat_hammer'));
   assert.match(xml, /<body name="double_face_hammer" pos="\.642 -\.421 \.198">/);
   assert.doesNotMatch(xml, /double_face_hammer[^>]*gravcomp/);
-  assert.match(
-    xml,
-    /name="robotwin_hammer_handle_collision" type="box"[^>]*pos="-\.0125 0 -\.008"[^>]*size="\.0475 \.024 \.015"[^>]*mass="\.009"[^>]*friction="10 2 1"[^>]*condim="6"/,
-  );
-  assert.match(xml, /name="robotwin_hammer_handle_inner_shoulder_collision"[^>]*pos="-\.0665 0 -\.008"[^>]*size="\.0065 \.024 \.015"[^>]*mass="\.001"/);
-  assert.match(xml, /name="robotwin_hammer_handle_receiver_waist_collision"[^>]*pos="-\.084 0 -\.010"[^>]*size="\.016 \.018 \.011"[^>]*mass="\.002"/);
-  assert.match(xml, /name="robotwin_hammer_handle_receiver_upper_rib_collision"[^>]*pos="-\.084 0 \.004"[^>]*size="\.016 \.024 \.003"[^>]*mass="\.0008"/);
-  assert.match(xml, /name="robotwin_hammer_handle_receiver_lower_rib_collision"[^>]*pos="-\.084 0 -\.020"[^>]*size="\.016 \.024 \.003"[^>]*mass="\.0008"/);
-  assert.match(xml, /name="robotwin_hammer_handle_outer_shoulder_collision"[^>]*pos="-\.100 0 -\.008"[^>]*size="\.005 \.024 \.015"[^>]*mass="\.001"/);
-  for (const geom of [
-    'robotwin_hammer_handle_collision',
-    'robotwin_hammer_handle_inner_shoulder_collision',
-    'robotwin_hammer_handle_receiver_waist_collision',
-    'robotwin_hammer_handle_receiver_upper_rib_collision',
-    'robotwin_hammer_handle_receiver_lower_rib_collision',
-    'robotwin_hammer_handle_outer_shoulder_collision',
-  ]) {
-    assert.match(
-      xml,
-      new RegExp(`name="${geom}"[^>]*priority="1"[^>]*solref="\\.001 1"[^>]*solimp="\\.99 \\.999 \\.0001"`),
-    );
-  }
-  assert.doesNotMatch(xml, /robotwin_hammer_tail_stop_collision/);
-  assert.match(xml, /name="robotwin_hammer_head_collision"[^>]*pos="\.075 0 -\.008"[^>]*size="\.029 \.074 \.018"[^>]*mass="\.006"/);
-  assert.match(xml, /name="hammer_donor_grasp"[^>]*pos="\.033 0 -\.008"/);
-  assert.match(xml, /name="hammer_receiver_grasp"[^>]*pos="-\.09 0 -\.008"/);
+  assert.match(xml, /name="robotwin_hammer_handle_\d+_collision" type="mesh"/);
+  assert.match(xml, /name="robotwin_hammer_head_\d+_collision" type="mesh"/);
+  assert.doesNotMatch(xml, /robotwin_hammer_handle_(?:inner_shoulder|outer_shoulder|receiver_waist|receiver_upper_rib|receiver_lower_rib)_collision/);
+  assert.match(xml, /name="hammer_donor_grasp"[^>]*pos="\.033 -\.003 -\.008"/);
+  assert.match(xml, /name="hammer_receiver_grasp"[^>]*pos="-\.045 0 -\.008"/);
   assert.doesNotMatch(xml, /robotwin_hammer_(?:handle_extension|receiver_guard|grip_guard)/);
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'tool_mat_powered'
@@ -378,16 +357,7 @@ test('Assembly automation avoids delayed per-frame gravity-force feedback', asyn
   ]);
   assert.doesNotMatch(step1Controller, /qfrc_applied|qfrc_bias/);
   assert.doesNotMatch(step2Controller, /qfrc_applied|qfrc_bias/);
-  for (const geom of [
-    'robotwin_hammer_handle_collision',
-    'robotwin_hammer_handle_inner_shoulder_collision',
-    'robotwin_hammer_handle_receiver_waist_collision',
-    'robotwin_hammer_handle_receiver_upper_rib_collision',
-    'robotwin_hammer_handle_receiver_lower_rib_collision',
-    'robotwin_hammer_handle_outer_shoulder_collision',
-  ]) {
-    assert.match(step4Controller, new RegExp(`['"]${geom}['"]`));
-  }
+  assert.match(step4Controller, /robotwin_hammer_handle_\$\{i\}_collision/);
 });
 
 test('Assembly2 uses palette-baked RoboTwin meshes and explicit collision geometry', async () => {

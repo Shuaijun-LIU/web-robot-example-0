@@ -14,3 +14,6 @@ count.txt
 todos.json
 .superpowers/
 .worktrees/
+# Preserve raw local physics audits without publishing failed/debug recordings.
+artifacts/videos/assembly-physical-audit/page@*.webm
+artifacts/screenshots/assembly-physical-failure*.png
