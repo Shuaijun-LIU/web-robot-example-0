@@ -47,7 +47,7 @@ test('both assembly strategies preserve the same four-arm workcell envelope', ()
       frame: [0, 0, 0.275],
       parts: [-0.56, 0.42, 0.125],
       poweredTool: layout === FRANKA_ASSEMBLY1_LAYOUT
-        ? [0.65, 0, 0.146]
+        ? [0.55, 0, 0.146]
         : [0.53, -0.42, 0.146],
       manualTool: [-0.53, -0.42, 0.13],
       hammer: layout === FRANKA_ASSEMBLY1_LAYOUT
@@ -227,7 +227,7 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
   assert.match(SHARED_ASSEMBLY1_TOOL_XML, /name="hammer_handle_core"/);
   assert.match(
     xml,
-    /<body name="torque_driver" pos="\.65 0 \.146" euler="90 0 0">/,
+    /<body name="torque_driver" pos="\.55 0 \.146" euler="90 90 0">/,
   );
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'hammer_pickup_cradle_tail'
@@ -265,16 +265,37 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
   assert.doesNotMatch(xml, /robotwin_hammer_(?:handle_extension|receiver_guard|grip_guard)/);
   assert.ok(FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.some(
     ({ name, size, position }) => name === 'tool_mat_powered'
-      && JSON.stringify(size) === JSON.stringify([.2, .13, .006])
-      && JSON.stringify(position) === JSON.stringify([.65, 0, .112]),
+      && JSON.stringify(size) === JSON.stringify([.13, .2, .006])
+      && JSON.stringify(position) === JSON.stringify([.55, 0, .112]),
   ));
   assert.doesNotMatch(xml, /<body name="claw_hammer"/);
+});
+
+test('Assembly1 keeps the powered tool station tangential and inside the work area', () => {
+  const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
+  const poweredMat = FRANKA_ASSEMBLY1_LAYOUT.sceneObjects.find(
+    ({ name }) => name === 'tool_mat_powered',
+  );
+
+  assert.match(
+    xml,
+    /<body name="torque_driver" pos="\.55 0 \.146" euler="90 90 0">/,
+  );
+  assert.deepEqual(poweredMat?.position, [.55, 0, .112]);
+  assert.deepEqual(poweredMat?.size, [.13, .2, .006]);
+  assert.deepEqual(FRANKA_ASSEMBLY1_LAYOUT.taskStations.poweredTool, [.55, 0, .146]);
+
+  const insetHalfExtent = .82;
+  assert.ok(poweredMat.position[0] - poweredMat.size[0] >= -insetHalfExtent);
+  assert.ok(poweredMat.position[0] + poweredMat.size[0] <= insetHalfExtent);
+  assert.ok(poweredMat.position[1] - poweredMat.size[1] >= -insetHalfExtent);
+  assert.ok(poweredMat.position[1] + poweredMat.size[1] <= insetHalfExtent);
 });
 
 test('RoboTwin drill and hammer collision supports coincide with their visible geometry', async () => {
   const xml = layoutXml(FRANKA_ASSEMBLY1_LAYOUT);
   const drillBounds = await objBounds('drill', .105);
-  const drillBody = /<body name="torque_driver" pos="\.65 0 ([\d.]+)" euler="90 0 0">/.exec(xml);
+  const drillBody = /<body name="torque_driver" pos="\.55 0 ([\d.]+)" euler="90 90 0">/.exec(xml);
   const drillSideCollision = /name="robotwin_drill_housing_collision"[^>]*size="[\d.]+ ([\d.]+) [\d.]+"/.exec(xml);
   assert.ok(drillBody && drillSideCollision);
   const drillBodyHeight = Number(drillBody[1]);

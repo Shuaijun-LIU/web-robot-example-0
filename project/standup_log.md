@@ -91,3 +91,6 @@
   - What: Fixed static-host pose export, kept Step 2 Arm 1 on the Step 1 `-90°` IK branch, and added the English-only `Franka Demo1` presentation page with Page/Play/Reset and automatic four-step sequencing.
   - Verified: A production Pages build downloaded a valid four-TCP JSON without calling the development endpoint. A real browser showed only the three requested controls, measured only `0.1093 rad` maximum Arm 1 joint change across the Step 1→2 boundary, completed all four Step 2 physical grasp verdicts, and automatically entered Step 3 planning.
   - Boundary: The new page reuses all existing physical state machines and stops on their errors; Step 3/4 trajectories and validation thresholds were not changed.
+- 2026-09-06
+  - What: Rotated the Assembly1 RoboTwin drill tangentially to the four-arm ring and moved its complete station inward from `x=0.65 m` to `x=0.55 m`; the matching rectangular support mat was rotated and now stays inside the central inset.
+  - Verified: After five seconds of browser physics, the drill remained centered at approximately `(0.5500, 0.0000, 0.1457) m`, with both housing and battery supported by the visible mat and maximum sampled penetration below `0.18 mm`. The 190-test suite, TypeScript check, production build, and strict 65-body MuJoCo compile passed.

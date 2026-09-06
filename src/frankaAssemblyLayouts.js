@@ -465,7 +465,7 @@ const ASSEMBLY2_TOOL_XML = `
 const FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML = ASSEMBLY2_TOOL_XML
   .replace(
     '<body name="torque_driver" pos=".53 -.42 .146" euler="90 0 0">',
-    '<body name="torque_driver" pos=".65 0 .146" euler="90 0 0">',
+    '<body name="torque_driver" pos=".55 0 .146" euler="90 90 0">',
   )
   .replace(
     '<body name="claw_hammer" pos=".65 0 .229">',
@@ -513,9 +513,9 @@ function createFrankaAssembly1SceneObjects() {
     fixedBox('handover_pad', [.16, .11, .006], [0, -.48, .112], [.24, .31, .36, 1]),
     { ...fixedBox('hammer_pickup_cradle_tail', [.028, .035, .037], [.565, -.421, .137], [.17, .18, .19, 1]), friction: '.8 .05 .01', condim: 4, solref: '.004 1', solimp: '.95 .99 .001' },
     { ...fixedBox('hammer_pickup_cradle_head', [.028, .05, .036], [.717, -.421, .136], [.17, .18, .19, 1]), friction: '.8 .05 .01', condim: 4, solref: '.004 1', solimp: '.95 .99 .001' },
-    // The drill lies on its side: the visible mesh and its collision primitives
-    // share the same 56 mm side profile and touch this mat at the same height.
-    fixedBox('tool_mat_powered', [.2, .13, .006], [.65, 0, .112], [.31, .27, .21, 1]),
+    // The drill lies tangentially to the arm ring and farther from Arm 2. The
+    // matching mat is rotated with it and remains fully inside the inset area.
+    fixedBox('tool_mat_powered', [.13, .2, .006], [.55, 0, .112], [.31, .27, .21, 1]),
     fixedBox('tool_mat_manual', [.2, .13, .006], [-.53, -.42, .112], [.31, .27, .21, 1]),
   ];
 }
@@ -623,7 +623,7 @@ function createLayout(
       ...TASK_STATIONS,
       ...(reachableFastenerStation ? { fasteners: [0.18, 0.48, 0.125] } : {}),
       ...(hammerPickupForArm2 ? {
-        poweredTool: [0.65, 0, 0.146],
+        poweredTool: [0.55, 0, 0.146],
         hammer: [0.642, -0.421, 0.198],
       } : {}),
     },

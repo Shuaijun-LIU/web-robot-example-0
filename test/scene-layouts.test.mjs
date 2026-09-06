@@ -59,7 +59,7 @@ test('Franka assembly scene stages a frame, installable parts, separated tools, 
     assert.deepEqual(layout.taskStations, {
       ...expectedStations,
       ...(layout === FRANKA_ASSEMBLY1_LAYOUT ? {
-        poweredTool: [0.65, 0, 0.146],
+        poweredTool: [0.55, 0, 0.146],
         hammer: [0.642, -0.421, 0.198],
         fasteners: [0.18, 0.48, 0.125],
       } : {}),
