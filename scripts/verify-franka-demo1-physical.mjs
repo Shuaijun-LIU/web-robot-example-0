@@ -4,6 +4,9 @@ import {resolve} from 'node:path';
 import {chromium} from 'playwright';
 import {ASSEMBLY1_STEP3_HOME_JOINT_TARGETS} from '../src/assemblyStep3.js';
 
+const artifactName=process.env.AUDIT_NAME??'franka-demo1';
+assert.match(artifactName,/^[a-z0-9-]+$/);
+
 const browser=await chromium.launch({headless:true,...process.env.CHROME_EXECUTABLE?{executablePath:process.env.CHROME_EXECUTABLE,args:['--use-angle=vulkan','--enable-features=Vulkan','--ignore-gpu-blocklist']}:{}});
 const page=await browser.newPage({viewport:{width:1440,height:900},recordVideo:{dir:resolve('artifacts/videos/assembly-physical-audit'),size:{width:1440,height:900}}});
 const failures=[];
@@ -51,9 +54,9 @@ try {
   for(const support of ['hammer_return_cradle_tail','hammer_return_cradle_head'])assert.ok(result.contacts.some(c=>[c.body1,c.body2].includes(support)&&[c.body1,c.body2].includes('double_face_hammer')&&c.distance<=.0001));
   assert.deepEqual(failures,[]);
   await mkdir(resolve('artifacts/reports'),{recursive:true});
-  await writeFile(resolve('artifacts/reports/franka-demo1-physical-audit.json'),JSON.stringify({result:'PASS',...result},null,2));
-  await page.screenshot({path:resolve('artifacts/screenshots/franka-demo1-complete.png')});
+  await writeFile(resolve(`artifacts/reports/${artifactName}-physical-audit.json`),JSON.stringify({result:'PASS',...result},null,2));
+  await page.screenshot({path:resolve(`artifacts/screenshots/${artifactName}-complete.png`)});
   await page.close();
-  await page.video().saveAs(resolve('artifacts/videos/franka-demo1-complete.webm'));
+  await page.video().saveAs(resolve(`artifacts/videos/${artifactName}-complete.webm`));
   console.log('PASS: production Demo1 continuous playback, contacts, tap and home positions');
 } finally {await browser.close();}

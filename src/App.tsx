@@ -36,6 +36,7 @@ import { AssemblyStep4Controller } from './AssemblyStep4Controller';
 import { AssemblySequencePanel } from './AssemblySequencePanel';
 import { Assembly1PoseCapturePanel } from './Assembly1PoseCapturePanel';
 import { FrankaDemo1Panel } from './FrankaDemo1Panel';
+import { AssemblyPresentation } from './AssemblyPresentation';
 import { frankaDemo1DisplayAction, nextFrankaDemo1Action } from './frankaDemo1.js';
 import type { FrankaDemo1Action } from './frankaDemo1.js';
 import { FrankaAssembly2DataRecorderPanel } from './FrankaAssembly2DataRecorderPanel';
@@ -920,14 +921,15 @@ export function App() {
         <Debug showSites={debug.sites} showJoints={debug.joints} />
 
         {/* Scene decoration — lights, environment, grid */}
-        {robotKey.startsWith('frankaAssembly') || isFrankaDemo1
+        {isAssembly1Scene && <AssemblyPresentation />}
+        {isAssembly1Scene ? <color attach="background" args={['#d6d8d2']} /> : robotKey.startsWith('frankaAssembly')
           ? <color attach="background" args={['#d8d2b5']} />
           : <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />}
-        <ambientLight intensity={0.4} />
+        <ambientLight intensity={isAssembly1Scene ? .65 : .4} />
         <directionalLight position={[2, -2, 5]} intensity={1.5} castShadow />
         <directionalLight position={[-1, 1, 3]} intensity={0.3} />
         <gridHelper
-          args={[entry.gridSize ?? 4, entry.gridDivisions ?? 40, '#64748b', '#94a3b8']}
+          args={[entry.gridSize ?? 4, entry.gridDivisions ?? 40, isAssembly1Scene ? '#a2aaa6' : '#64748b', isAssembly1Scene ? '#c0c6c0' : '#94a3b8']}
           rotation={[Math.PI / 2, 0, 0]}
           position={[0, 0, 0.001]}
         />
