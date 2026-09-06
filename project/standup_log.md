@@ -94,3 +94,7 @@
 - 2026-09-06
   - What: Rotated the Assembly1 RoboTwin drill tangentially to the four-arm ring and moved its complete station inward from `x=0.65 m` to `x=0.55 m`; the matching rectangular support mat was rotated and now stays inside the central inset.
   - Verified: After five seconds of browser physics, the drill remained centered at approximately `(0.5500, 0.0000, 0.1457) m`, with both housing and battery supported by the visible mat and maximum sampled penetration below `0.18 mm`. The 190-test suite, TypeScript check, production build, and strict 65-body MuJoCo compile passed.
+- 2026-09-06
+  - What: Removed synchronous runtime IK from the Step 3 click path, held Arm 1 at its Step 2 contact target, shifted the cross-member installation 80 mm toward Arm 4, and mapped the user-recorded outward wrist tilt onto the Arm 2/4 hammer handover.
+  - Verified: Repeated browser runs completed Steps 1–3 with `0.08–0.59 mm` frame drift; the independent Step 3 check placed the beam at `x=-0.0871 m`. A contact-only handover run reached `fastener-tighten` after Arm 2 fully released: Arm 4 retained bilateral hammer contact at `50.08 mm` aperture, `0.86/0.89 mm` penetration, `7.59 mm` grip-site error, and `z=0.354 m`, with no robot-body collisions.
+  - Boundary: Full fastener insertion and hammer-strike completion were not part of this handover-focused run and remain separately pending. Changes remain local until the user requests a push.

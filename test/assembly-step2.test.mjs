@@ -103,6 +103,7 @@ test('Step 2 assigns exact physical contact geometry to all four arms', () => {
     hammerMinimumAperture: 0.03,
     crossMemberMinimumAperture: 0.035,
     maximumContactPenetration: 0.002,
+    hammerMaximumContactPenetration: 0.0025,
     contactComparisonEpsilon: 0.00015,
   });
 });

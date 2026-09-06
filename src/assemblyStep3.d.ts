@@ -145,6 +145,7 @@ export const ASSEMBLY1_STEP3_HAMMER_ARM: Readonly<{
   preliftJointTargets: readonly number[];
   liftJointTargets: readonly number[];
   handoverJointTargets: readonly number[];
+  liftPathJointTargets: readonly (readonly number[])[];
 }>;
 
 export const ASSEMBLY1_STEP3_LIMITS: Readonly<{
@@ -152,6 +153,7 @@ export const ASSEMBLY1_STEP3_LIMITS: Readonly<{
   hammerMinimumAperture: 0.035;
   crossMemberMinimumAperture: 0.035;
   maximumContactPenetration: 0.002;
+  hammerMaximumContactPenetration: 0.0025;
   frameMaximumContactPenetration: 0.0025;
   contactComparisonEpsilon: 0.00015;
   frameTranslation: 0.02;
@@ -176,7 +178,16 @@ export const ASSEMBLY1_STEP3_TRANSPORT_ARMS: ReadonlyArray<Readonly<{
   hoverJointTargets: readonly number[];
   descentMidJointTargets: readonly number[];
   alignedJointTargets: readonly number[];
+  transportLiftPathJointTargets: readonly (readonly number[])[];
+  transportAPathJointTargets: readonly (readonly number[])[];
+  transportBPathJointTargets: readonly (readonly number[])[];
+  transportDescentPathJointTargets: readonly (readonly number[])[];
 }>>;
+
+export function selectAssemblyStep3HoldTarget(
+  armIndex: number,
+  measuredJointTargets: readonly number[],
+): number[];
 
 export function evaluateAssemblyStep3Transport(input: {
   targetBody: string;

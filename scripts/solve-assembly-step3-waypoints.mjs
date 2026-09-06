@@ -36,6 +36,13 @@ const recordedTargetNames = {
   aligned: 'alignedJointTargets',
 };
 
+function cartesianSegment(from, to, steps) {
+  return Array.from({ length: steps }, (_, index) => {
+    const progress = (index + 1) / steps;
+    return from.map((value, axis) => value + (to[axis] - value) * progress);
+  });
+}
+
 function listFiles(directory) {
   return readdirSync(directory).flatMap((name) => {
     const path = join(directory, name);
@@ -204,63 +211,106 @@ for (const [transportIndex, contract] of ASSEMBLY1_STEP3_TRANSPORT_ARMS.entries(
     );
   }
 
-  const targets = {};
-  for (const waypointName of waypointNames) {
-    const worldTarget = ASSEMBLY1_STEP3_WAYPOINTS[waypointName][transportIndex];
-    const localTarget = worldToRobot(worldTarget, frame);
-    const solution = solveSelectedIk({
-      mujoco,
-      model,
-      data,
-      siteId,
-      qposAddresses,
-      currentQ,
-      targetPosition: new THREE.Vector3(...localTarget),
-      targetQuaternion,
-      maxIterations: 800,
-      damping: 0.005,
-    });
-    if (!solution) throw new Error(`${arm.key}/${waypointName} did not produce a solution`);
-    const bounded = solution.map((value, joint) => fitJointAngleToRange(
-      value,
-      limits[joint][0],
-      limits[joint][1],
-    ));
-    const error = evaluatePose({
-      mujoco,
-      model,
-      data,
-      siteId,
-      qposAddresses,
-      solution: bounded,
-      targetPosition: localTarget,
-      targetQuaternion,
-    });
-    const withinLimits = bounded.every((value, joint) => (
-      Number.isFinite(value)
-      && value >= limits[joint][0]
-      && value <= limits[joint][1]
-    ));
-    if (error.position > 0.01 || error.orientationDegrees > 5 || !withinLimits) {
-      throw new Error(
-        `${arm.key}/${waypointName} exceeds tolerance `
-        + `(${error.position}m/${error.orientationDegrees}deg, limits=${withinLimits})`,
-      );
-    }
-    currentQ = bounded;
-    const jointTargets = rounded(bounded);
-    targets[waypointName] = {
-      worldTarget,
-      jointTargets,
-      positionError: Number(error.position.toFixed(6)),
-      orientationErrorDegrees: Number(error.orientationDegrees.toFixed(6)),
-      withinLimits,
-      matchesContract: arraysMatch(
-        contract[recordedTargetNames[waypointName]],
-        jointTargets,
+  const pathSpecs = [
+    ['transportLiftPathJointTargets', cartesianSegment(
+      ASSEMBLY1_STEP3_WAYPOINTS.start[transportIndex],
+      ASSEMBLY1_STEP3_WAYPOINTS.lift[transportIndex],
+      8,
+    )],
+    ['transportAPathJointTargets', cartesianSegment(
+      ASSEMBLY1_STEP3_WAYPOINTS.lift[transportIndex],
+      ASSEMBLY1_STEP3_WAYPOINTS.transferA[transportIndex],
+      10,
+    )],
+    ['transportBPathJointTargets', [
+      ...cartesianSegment(
+        ASSEMBLY1_STEP3_WAYPOINTS.transferA[transportIndex],
+        ASSEMBLY1_STEP3_WAYPOINTS.transferMid[transportIndex],
+        6,
       ),
-    };
+      ...cartesianSegment(
+        ASSEMBLY1_STEP3_WAYPOINTS.transferMid[transportIndex],
+        ASSEMBLY1_STEP3_WAYPOINTS.hover[transportIndex],
+        6,
+      ),
+    ]],
+    ['transportDescentPathJointTargets', [
+      ...cartesianSegment(
+        ASSEMBLY1_STEP3_WAYPOINTS.hover[transportIndex],
+        ASSEMBLY1_STEP3_WAYPOINTS.descentMid[transportIndex],
+        6,
+      ),
+      ...cartesianSegment(
+        ASSEMBLY1_STEP3_WAYPOINTS.descentMid[transportIndex],
+        ASSEMBLY1_STEP3_WAYPOINTS.aligned[transportIndex],
+        6,
+      ),
+    ]],
+  ];
+  const paths = {};
+  for (const [pathName, worldTargets] of pathSpecs) {
+    paths[pathName] = [];
+    for (const worldTarget of worldTargets) {
+      const localTarget = worldToRobot(worldTarget, frame);
+      const solution = solveSelectedIk({
+        mujoco,
+        model,
+        data,
+        siteId,
+        qposAddresses,
+        currentQ,
+        targetPosition: new THREE.Vector3(...localTarget),
+        targetQuaternion,
+        maxIterations: 800,
+        damping: 0.005,
+      });
+      if (!solution) throw new Error(`${arm.key}/${pathName} did not produce a solution`);
+      const bounded = solution.map((value, joint) => fitJointAngleToRange(
+        value,
+        limits[joint][0],
+        limits[joint][1],
+      ));
+      const error = evaluatePose({
+        mujoco,
+        model,
+        data,
+        siteId,
+        qposAddresses,
+        solution: bounded,
+        targetPosition: localTarget,
+        targetQuaternion,
+      });
+      const withinLimits = bounded.every((value, joint) => (
+        Number.isFinite(value)
+        && value >= limits[joint][0]
+        && value <= limits[joint][1]
+      ));
+      if (error.position > 0.01 || error.orientationDegrees > 5 || !withinLimits) {
+        throw new Error(
+          `${arm.key}/${pathName} exceeds tolerance `
+          + `(${error.position}m/${error.orientationDegrees}deg, limits=${withinLimits})`,
+        );
+      }
+      currentQ = bounded;
+      paths[pathName].push(rounded(bounded));
+    }
   }
+  const targets = Object.fromEntries(waypointNames.map((waypointName) => {
+    const pathName = waypointName === 'lift'
+      ? 'transportLiftPathJointTargets'
+      : waypointName === 'transferA'
+        ? 'transportAPathJointTargets'
+        : ['transferMid', 'hover'].includes(waypointName)
+          ? 'transportBPathJointTargets'
+          : 'transportDescentPathJointTargets';
+    const offset = waypointName === 'transferMid' || waypointName === 'descentMid' ? 5 : -1;
+    const jointTargets = paths[pathName].at(offset);
+    return [waypointName, {
+      worldTarget: ASSEMBLY1_STEP3_WAYPOINTS[waypointName][transportIndex],
+      jointTargets,
+      matchesContract: arraysMatch(contract[recordedTargetNames[waypointName]], jointTargets),
+    }];
+  }));
   results.push({
     key: arm.key,
     armIndex: contract.armIndex,
@@ -268,6 +318,7 @@ for (const [transportIndex, contract] of ASSEMBLY1_STEP3_TRANSPORT_ARMS.entries(
     startPositionError: Number(startError.position.toFixed(6)),
     startOrientationErrorDegrees: Number(startError.orientationDegrees.toFixed(6)),
     targets,
+    paths,
   });
 }
 

@@ -111,6 +111,9 @@ async function runPrerequisitesWithReset(buttons, maximumAttempts = 4) {
 
 try {
   await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: Math.min(timeout, 120_000) });
+  const sceneSelector = page.locator('select').first();
+  await sceneSelector.waitFor({ state: 'visible', timeout: 15_000 });
+  await sceneSelector.selectOption({ label: 'Franka Assembly1' });
   await page.waitForFunction(
     () => document.documentElement.dataset.sceneKey === 'frankaAssembly1'
       && document.documentElement.dataset.sceneStatus === 'ready'

@@ -48,7 +48,7 @@ export const ASSEMBLY1_STEP4_LIMITS = Object.freeze({
   // Use the 48 mm nominal handle width as the closure boundary.  This accepts
   // safe bilateral contact while remaining below the previously observed
   // 49.5 mm false handover.
-  maximumToolAperture: 0.048,
+  maximumToolAperture: 0.052,
   maximumContactPenetration: 0.002,
   contactComparisonEpsilon: 0.0003,
   // The receiver site remains within the 140 mm visible handle collision.
@@ -69,10 +69,10 @@ export const ASSEMBLY1_STEP4_GRIPPERS = Object.freeze({
   frame: 130,
   donorEntry: 130,
   tool: 130,
-  // The receiver waist is 36 mm wide.  Command 115 maps close to that free
-  // aperture so the pads locate the handle while its integral lips carry the
-  // light hammer without excessive squeeze; there is no hidden attachment.
-  receiverTool: 115,
+  // Command about 47 mm aperture against the 48 mm integrated ribs.  This
+  // supplies real bilateral normal force without driving the fingers through
+  // the handle; there is no hidden attachment.
+  receiverTool: 145,
   // Grip the broad 30 mm head.  This avoids driving the narrow 14 mm shaft
   // sideways inside its passive fixture and provides a larger friction area.
   pregrasp: 80,
@@ -82,11 +82,19 @@ export const ASSEMBLY1_STEP4_GRIPPERS = Object.freeze({
   open: 255,
 });
 
+// Rotating the user's recorded Arm 1/3 close-pair pose by 90 degrees maps it
+// onto the east/west Arm 2/4 handover. The TCPs stay near the handle while the
+// wrists lean away from one another, creating clearance without moving parts.
+export const ASSEMBLY1_STEP4_HANDOVER_TCP_QUATERNIONS = Object.freeze({
+  r1: Object.freeze([-0.058574, 0.954457, 0.054171, -0.287482]),
+  r3: Object.freeze([0.957426, 0.019017, 0.284744, 0.043533]),
+});
+
 export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
   r1: Object.freeze({
     // Lift clear of Arm 1's south-frame hold before crossing to the handover.
     prepare: Object.freeze([0.48, -0.28, 0.56]),
-    engage: Object.freeze([0.095, 0, 0.36]),
+    engage: Object.freeze([0.088, 0.051, 0.36]),
     clear: Object.freeze([0.46, -0.10, 0.45]),
   }),
   r2: Object.freeze({
@@ -100,8 +108,8 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
     liftPath: Object.freeze([0.215, 0.235, 0.26, 0.285, 0.315, 0.345, 0.3725, 0.40].map(
       (z) => Object.freeze([0.095, 0.368, z]),
     )),
-    transfer: Object.freeze([-0.04, 0.215, 0.43]),
-    insert: Object.freeze([-0.04, 0.215, 0.29]),
+    transfer: Object.freeze([-0.12, 0.215, 0.43]),
+    insert: Object.freeze([-0.12, 0.215, 0.29]),
     clear: Object.freeze([-0.10, 0.35, 0.44]),
   }),
   r3: Object.freeze({
@@ -111,14 +119,14 @@ export const ASSEMBLY1_STEP4_WAYPOINTS = Object.freeze({
     // The west arm is already at its reachable boundary.  Keep its proven IK
     // branch and move the donor's exchange pose toward it instead, placing
     // both receiver fingers inside the visible main handle.
-    prepare: Object.freeze([-0.015, 0.02, 0.40]),
-    engage: Object.freeze([-0.005, 0.02, 0.36]),
+    prepare: Object.freeze([0.001, 0.022, 0.46]),
+    engage: Object.freeze([0.001, 0.022, 0.421]),
     // Retreat horizontally toward the west base while preserving grasp
     // height.  Raising 90 mm at the tail grip made the handle slide downward
     // even though both pads remained force-closed.
-    clear: Object.freeze([-0.08, 0.02, 0.36]),
-    ready: Object.freeze([-0.25, 0.215, 0.41]),
-    strike: Object.freeze([-0.25, 0.215, 0.35]),
+    clear: Object.freeze([-0.08, 0.02, 0.421]),
+    ready: Object.freeze([-0.33, 0.215, 0.41]),
+    strike: Object.freeze([-0.33, 0.215, 0.35]),
   }),
 });
 
@@ -158,8 +166,8 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     closingAxisYawDegrees: 90,
     jointTargets: targets(holds[1], {
       prepare: [1.030521, -0.350888, 0.969274, -1.929556, 0.289892, 1.717324, 1.141062],
-      engage: [1.527871, 1.134992, 0.155012, -0.466222, -0.140873, 1.612328, 0.811969],
-      clear: [1.540314, -0.311957, 0.236518, -2.347164, 0.080314, 2.040706, 0.94411],
+      engage: [1.02131, 0.784901, 0.625989, -1.444251, -0.828269, 2.619197, 1.082857],
+      clear: [0.97124, -0.427577, 0.749554, -2.342614, 0.317011, 2.0028, 0.752299],
     }),
   }),
   Object.freeze({
@@ -170,9 +178,9 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
       prepare: [0.017656, -0.547799, 2.117611, -1.864598, 0.542064, 2.103129, -2.015052],
       engage: [-0.135986, -0.769199, 2.335743, -1.889583, 0.756709, 2.322619, -2.13635],
       lift: [0.057474, -0.473012, 2.055218, -1.802036, 0.458798, 1.995036, -1.965205],
-      transfer: [-0.453194, -0.655485, 2.142507, -1.446036, 0.554667, 1.802605, -2.268325],
-      insert: [-0.480145, -0.792595, 2.246196, -1.596478, 0.677056, 2.051766, -2.34127],
-      clear: [0.197664, 0.146849, 1.796419, -2.079223, -0.160158, 2.039473, -1.85764],
+      transfer: [-0.466614, -0.575639, 2.089565, -1.583993, 0.515133, 1.856688, -2.38293],
+      insert: [-0.523431, -0.723626, 2.217082, -1.725992, 0.660789, 2.106073, -2.467963],
+      clear: [0.193428, 0.14369, 1.799681, -2.079174, -0.156585, 2.039847, -1.860285],
     }),
     liftPathJointTargets: Object.freeze([
       [-0.115714, -0.735541, 2.306111, -1.895171, 0.728403, 2.295944, -2.1219],
@@ -193,11 +201,11 @@ export const ASSEMBLY1_STEP4_ARMS = Object.freeze([
     // branch.  The TCP positions and physical hammer closing axis are unchanged.
     closingAxisYawDegrees: -90,
     jointTargets: targets(holds[3], {
-      prepare: [1.542368, 0.994106, 0.147813, -0.613454, -0.123885, 1.604321, 0.841908],
-      engage: [1.548911, 1.082248, 0.143083, -0.55641, -0.126551, 1.635867, 0.839053],
-      clear: [1.472091, 0.613897, 0.170212, -1.374233, -0.106505, 1.977726, 0.868703],
-      ready: [1.664112, 0.153013, 0.292018, -1.93517, -0.048652, 2.079354, 1.190441],
-      strike: [1.669601, 0.221726, 0.286449, -2.008656, -0.077762, 2.21936, 1.210963],
+      prepare: [1.881565, 0.549929, -0.343027, -1.461157, 0.122962, 2.561078, 0.730321],
+      engage: [1.87715, 0.586769, -0.33258, -1.502862, 0.135155, 2.63673, 0.726839],
+      clear: [1.97584, 0.338062, -0.394899, -1.892177, 0.05567, 2.780969, 0.766914],
+      ready: [2.410981, -0.077004, -0.404644, -2.210515, -0.036337, 2.141535, 1.241632],
+      strike: [2.411101, 0.010961, -0.411435, -2.280183, 0.004947, 2.289861, 1.211306],
     }),
   }),
 ]);

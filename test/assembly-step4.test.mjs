@@ -61,7 +61,7 @@ test('Step 4 rejects hidden collision contact outside the visible receiver grasp
   assert.equal(step4.evaluateAssemblyStep4HammerHandover({
     leftContact: true,
     rightContact: true,
-    aperture: 0.0495,
+    aperture: 0.0535,
     receiverGraspPointDistance: 0.008,
     leftContactDistance: -0.0002,
     rightContactDistance: -0.0002,
@@ -71,7 +71,7 @@ test('Step 4 rejects hidden collision contact outside the visible receiver grasp
 test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () => {
   assert.equal(typeof step4.createAssemblyStep4Machine, 'function');
   assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.minimumToolAperture, 0.03);
-  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumToolAperture, 0.048);
+  assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumToolAperture, 0.052);
   assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumContactPenetration, 0.002);
   assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.contactComparisonEpsilon, 0.0003);
   assert.equal(step4.ASSEMBLY1_STEP4_LIMITS.maximumHammerGraspPointDistance, 0.035);
@@ -81,12 +81,11 @@ test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () 
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.frame, 130);
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.donorEntry, 130);
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.tool, 130);
-  // The integrated receiver waist is 36 mm wide.  A 115 command maps close
-  // to that width, leaving the upper/lower lips to carry the light hammer
-  // without excessive squeeze loading the wrist.
-  assert.ok(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool >= 110);
-  assert.ok(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool <= 120);
-  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool, 115);
+  // Close just inside the integrated 48 mm retaining ribs.  This preserves
+  // bilateral normal force without commanding the fingers through the ribs.
+  assert.ok(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool >= 140);
+  assert.ok(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool <= 150);
+  assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.receiverTool, 145);
   assert.equal(step4.ASSEMBLY1_STEP4_GRIPPERS.pregrasp, 80);
   // Grasp the 30 mm head rather than squeezing the 14 mm shaft out of its
   // passive fixture.
@@ -116,21 +115,29 @@ test('Step 4 exposes finite four-arm waypoint contracts for distinct roles', () 
   assert.notDeepEqual(receiver.jointTargets.hold, receiver.jointTargets.engage);
   assert.notDeepEqual(receiver.jointTargets.ready, receiver.jointTargets.strike);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r1.prepare, [0.48, -0.28, 0.56]);
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r1.engage, [0.095, 0, 0.36]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r1.engage, [0.088, 0.051, 0.36]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.prepare, [0.095, 0.368, 0.34]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.engage, [0.095, 0.368, 0.195]);
   assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.liftPath, [
     0.215, 0.235, 0.26, 0.285, 0.315, 0.345, 0.3725, 0.40,
   ].map((z) => [0.095, 0.368, z]));
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.prepare, [-0.015, 0.02, 0.40]);
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.engage, [-0.005, 0.02, 0.36]);
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.clear, [-0.08, 0.02, 0.36]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.transfer, [-0.12, 0.215, 0.43]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r2.insert, [-0.12, 0.215, 0.29]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.prepare, [0.001, 0.022, 0.46]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.engage, [0.001, 0.022, 0.421]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.clear, [-0.08, 0.02, 0.421]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.ready, [-0.33, 0.215, 0.41]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.strike, [-0.33, 0.215, 0.35]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_HANDOVER_TCP_QUATERNIONS, {
+    r1: [-0.058574, 0.954457, 0.054171, -0.287482],
+    r3: [0.957426, 0.019017, 0.284744, 0.043533],
+  });
 });
 
 test('Step 4 Arm 4 leaves its Step 3 home pose without a greater-than-180-degree joint sweep', () => {
   const receiver = step4.ASSEMBLY1_STEP4_ARMS[3];
   assert.deepEqual(receiver.jointTargets.hold, FRANKA_HOME.slice(0, 7));
-  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.prepare, [-0.015, 0.02, 0.40]);
+  assert.deepEqual(step4.ASSEMBLY1_STEP4_WAYPOINTS.r3.prepare, [0.001, 0.022, 0.46]);
   assert.equal(receiver.closingAxisYawDegrees, -90);
   assert.ok(receiver.jointTargets.prepare.every(
     (target, joint) => Math.abs(target - receiver.jointTargets.hold[joint]) < Math.PI,

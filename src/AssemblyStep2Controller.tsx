@@ -327,6 +327,9 @@ function armVerdicts(
       maximumRotationDegrees: arm.targetBody === 'double_face_hammer'
         ? ASSEMBLY1_STEP2_LIMITS.hammerRotationDegrees
         : ASSEMBLY1_STEP2_LIMITS.objectRotationDegrees,
+      maximumContactPenetration: arm.targetBody === 'double_face_hammer'
+        ? ASSEMBLY1_STEP2_LIMITS.hammerMaximumContactPenetration
+        : ASSEMBLY1_STEP2_LIMITS.maximumContactPenetration,
     });
     const taggedVerdict: AssemblyStep2GraspVerdict = verdict.ok
       ? verdict

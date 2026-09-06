@@ -1,29 +1,19 @@
 import { useEffect, useRef } from 'react';
 import type { MutableRefObject } from 'react';
-import * as THREE from 'three';
 import {
   findBodyByName,
   findJointByName,
   findSiteByName,
   useBeforePhysicsStep,
   useMujoco,
-  useMujocoWasm,
 } from 'mujoco-react';
-import type { MujocoData, MujocoModel, MujocoModule } from 'mujoco-react';
+import type { MujocoData, MujocoModel } from 'mujoco-react';
 
 import {
   consumeMujocoContacts,
   isPassiveRetainingContactGeom,
 } from './mujocoContact.js';
 import { ASSEMBLY1_STEP2_ARMS, quaternionAngularDistanceDegrees } from './assemblyStep2.js';
-import {
-  ASSEMBLY1_STEP3_HAMMER_WAYPOINTS,
-  ASSEMBLY1_STEP3_WAYPOINTS,
-} from './assemblyStep3.js';
-import {
-  fitJointAngleToRange,
-  solveSelectedIk,
-} from './controllers/selectedIkSolver.js';
 import {
   ASSEMBLY1_STEP3_START_GRIPPER_CLAMPS,
   ASSEMBLY1_STEP3_HAMMER_ARM,
@@ -36,6 +26,7 @@ import {
   evaluateAssemblyStep3Alignment,
   evaluateAssemblyStep3Transport,
   holdAssemblyStep3Controls,
+  selectAssemblyStep3HoldTarget,
 } from './assemblyStep3.js';
 import type {
   AssemblyStep3ArmPlan,
@@ -116,21 +107,6 @@ function vector3(values: Float64Array, index: number): [number, number, number] 
   return [values[offset], values[offset + 1], values[offset + 2]];
 }
 
-function cartesianSegment(
-  from: readonly number[],
-  to: readonly number[],
-  steps: number,
-): [number, number, number][] {
-  return Array.from({ length: steps }, (_, index) => {
-    const progress = (index + 1) / steps;
-    return [
-      from[0] + (to[0] - from[0]) * progress,
-      from[1] + (to[1] - from[1]) * progress,
-      from[2] + (to[2] - from[2]) * progress,
-    ];
-  });
-}
-
 function quaternion4(values: Float64Array, index: number): [number, number, number, number] {
   const offset = index * 4;
   return [values[offset], values[offset + 1], values[offset + 2], values[offset + 3]];
@@ -171,7 +147,6 @@ function solutionIsWithinLimits(
 }
 
 function createRuntimePlan(
-  mujoco: MujocoModule,
   model: MujocoModel,
   data: MujocoData,
 ): { plan: RuntimePlan | null; failure: AssemblyStep3Failure | null } {
@@ -191,15 +166,13 @@ function createRuntimePlan(
   const arms: RuntimeArm[] = [];
   const armPlans: AssemblyStep3ArmPlan[] = [];
   for (const [index, arm] of ASSEMBLY1_STEP2_ARMS.entries()) {
-    const siteId = findSiteByName(model, arm.siteName);
     const jointIds = arm.jointNames.map((name) => findJointByName(model, name));
     const fingerJointIds = arm.fingerJointNames.map((name) => findJointByName(model, name));
     const leftFingerBodyId = findBodyByName(model, arm.leftFingerBody);
     const rightFingerBodyId = findBodyByName(model, arm.rightFingerBody);
     const targetBodyId = findBodyByName(model, arm.targetBody);
     if (
-      siteId < 0
-      || jointIds.some((id) => id < 0)
+      jointIds.some((id) => id < 0)
       || fingerJointIds.some((id) => id < 0)
       || leftFingerBodyId < 0
       || rightFingerBodyId < 0
@@ -214,7 +187,10 @@ function createRuntimePlan(
       return { plan: null, failure: planningFailure('invalid-precondition', `${arm.key} gripper`) };
     }
     const qposAddresses = jointIds.map((jointId) => model.jnt_qposadr[jointId]);
-    const hold = qposAddresses.map((address) => data.qpos[address]);
+    const hold = selectAssemblyStep3HoldTarget(
+      index,
+      qposAddresses.map((address) => data.qpos[address]),
+    );
     const transport = ASSEMBLY1_STEP3_TRANSPORT_ARMS.find(({ armIndex }) => armIndex === index);
     const hammer = ASSEMBLY1_STEP3_HAMMER_ARM.armIndex === index
       ? ASSEMBLY1_STEP3_HAMMER_ARM
@@ -227,9 +203,17 @@ function createRuntimePlan(
         transport.hoverJointTargets,
         transport.descentMidJointTargets,
         transport.alignedJointTargets,
+        ...transport.transportLiftPathJointTargets,
+        ...transport.transportAPathJointTargets,
+        ...transport.transportBPathJointTargets,
+        ...transport.transportDescentPathJointTargets,
       ]
       : hammer
-        ? [hammer.liftJointTargets, hammer.handoverJointTargets]
+        ? [
+          hammer.liftJointTargets,
+          hammer.handoverJointTargets,
+          ...hammer.liftPathJointTargets,
+        ]
         : [];
     if (
       !solutionIsWithinLimits(model, jointIds, hold)
@@ -255,93 +239,12 @@ function createRuntimePlan(
     let hammerLift = hammer?.liftJointTargets ?? hold;
     let hammerHandover = hammer?.handoverJointTargets ?? hold;
     if (transport) {
-      const waypointIndex = index - 2;
-      const currentPosition = vector3(data.site_xpos, siteId);
-      const liftWaypoints = cartesianSegment(
-        currentPosition,
-        ASSEMBLY1_STEP3_WAYPOINTS.lift[waypointIndex],
-        8,
-      );
-      const transferAWaypoints = cartesianSegment(
-        ASSEMBLY1_STEP3_WAYPOINTS.lift[waypointIndex],
-        ASSEMBLY1_STEP3_WAYPOINTS.transferA[waypointIndex],
-        10,
-      );
-      const transferMidWaypoints = cartesianSegment(
-        ASSEMBLY1_STEP3_WAYPOINTS.transferA[waypointIndex],
-        ASSEMBLY1_STEP3_WAYPOINTS.transferMid[waypointIndex],
-        6,
-      );
-      const hoverWaypoints = cartesianSegment(
-        ASSEMBLY1_STEP3_WAYPOINTS.transferMid[waypointIndex],
-        ASSEMBLY1_STEP3_WAYPOINTS.hover[waypointIndex],
-        6,
-      );
-      const descentMidWaypoints = cartesianSegment(
-        ASSEMBLY1_STEP3_WAYPOINTS.hover[waypointIndex],
-        ASSEMBLY1_STEP3_WAYPOINTS.descentMid[waypointIndex],
-        6,
-      );
-      const alignedWaypoints = cartesianSegment(
-        ASSEMBLY1_STEP3_WAYPOINTS.descentMid[waypointIndex],
-        ASSEMBLY1_STEP3_WAYPOINTS.aligned[waypointIndex],
-        6,
-      );
-      const waypointGroups = [
-        liftWaypoints,
-        transferAWaypoints,
-        transferMidWaypoints,
-        hoverWaypoints,
-        descentMidWaypoints,
-        alignedWaypoints,
-      ];
-      const targetQuaternion = new THREE.Quaternion(...arm.tcpQuaternion).normalize();
-      let currentQ = [...hold];
-      const solvedGroups: number[][][] = [];
-      for (const waypointGroup of waypointGroups) {
-        const solvedGroup: number[][] = [];
-        for (const waypoint of waypointGroup) {
-          const solution = solveSelectedIk({
-            mujoco,
-            model,
-            data,
-            siteId,
-            qposAddresses,
-            currentQ,
-            targetPosition: new THREE.Vector3(...waypoint),
-            targetQuaternion,
-            maxIterations: 100,
-            damping: 0.008,
-          });
-          if (!solution) {
-            return {
-              plan: null,
-              failure: planningFailure('invalid-precondition', `${arm.key} transport IK`),
-            };
-          }
-          currentQ = solution.map((value, joint) => fitJointAngleToRange(
-            value,
-            model.jnt_range[jointIds[joint] * 2],
-            model.jnt_range[jointIds[joint] * 2 + 1],
-          ));
-          if (!solutionIsWithinLimits(model, jointIds, currentQ)) {
-            return {
-              plan: null,
-              failure: planningFailure('joint-limit', `${arm.key} transport IK`),
-            };
-          }
-          solvedGroup.push(currentQ);
-        }
-        solvedGroups.push(solvedGroup);
-      }
-      const [liftTargets, transferATargets, transferMidTargets, hoverTargets,
-        descentMidTargets, alignedTargets] = solvedGroups;
-      const lift = liftTargets.at(-1) ?? hold;
-      const transferA = transferATargets.at(-1) ?? lift;
-      const transferMid = transferMidTargets.at(-1) ?? transferA;
-      const hover = hoverTargets.at(-1) ?? transferMid;
-      const descentMid = descentMidTargets.at(-1) ?? hover;
-      const aligned = alignedTargets.at(-1) ?? descentMid;
+      const lift = transport.liftJointTargets;
+      const transferA = transport.transferAJointTargets;
+      const transferMid = transport.transferMidJointTargets;
+      const hover = transport.hoverJointTargets;
+      const descentMid = transport.descentMidJointTargets;
+      const aligned = transport.alignedJointTargets;
       armPlans.push({
         armKey: arm.key,
         hold,
@@ -355,52 +258,17 @@ function createRuntimePlan(
         hammerPrelift,
         hammerLift,
         hammerHandover,
-        transportLiftPath: [hold, ...liftTargets],
-        transportAPath: [lift, ...transferATargets],
-        transportBPath: [transferA, ...transferMidTargets, ...hoverTargets],
-        transportDescentPath: [hover, ...descentMidTargets, ...alignedTargets],
+        transportLiftPath: [hold, ...transport.transportLiftPathJointTargets],
+        transportAPath: [lift, ...transport.transportAPathJointTargets],
+        transportBPath: [transferA, ...transport.transportBPathJointTargets],
+        transportDescentPath: [hover, ...transport.transportDescentPathJointTargets],
       });
       continue;
     }
     if (hammer) {
-      const targetQuaternion = new THREE.Quaternion(...arm.tcpQuaternion).normalize();
-      let currentQ = [...hold];
-      const runtimeTargets: number[][] = [];
-      for (const waypoint of [
-        ...ASSEMBLY1_STEP3_HAMMER_WAYPOINTS.liftPath,
-        ...ASSEMBLY1_STEP3_HAMMER_WAYPOINTS.handoverPath,
-      ]) {
-        const solution = solveSelectedIk({
-          mujoco,
-          model,
-          data,
-          siteId,
-          qposAddresses,
-          currentQ,
-          targetPosition: new THREE.Vector3(...waypoint),
-          targetQuaternion,
-          maxIterations: 100,
-          damping: 0.008,
-        });
-        if (!solution) {
-          return { plan: null, failure: planningFailure('invalid-precondition', 'r1 hammer IK') };
-        }
-        currentQ = solution.map((value, joint) => fitJointAngleToRange(
-          value,
-          model.jnt_range[jointIds[joint] * 2],
-          model.jnt_range[jointIds[joint] * 2 + 1],
-        ));
-        if (!solutionIsWithinLimits(model, jointIds, currentQ)) {
-          return { plan: null, failure: planningFailure('joint-limit', 'r1 hammer IK') };
-        }
-        runtimeTargets.push(currentQ);
-      }
-      const liftCount = ASSEMBLY1_STEP3_HAMMER_WAYPOINTS.liftPath.length;
-      const liftTargets = runtimeTargets.slice(0, liftCount);
-      const handoverTargets = runtimeTargets.slice(liftCount);
-      hammerPrelift = liftTargets[0];
-      hammerLift = liftTargets.at(-1) ?? hammerLift;
-      hammerHandover = handoverTargets.at(-1) ?? hammerHandover;
+      hammerPrelift = hammer.preliftJointTargets;
+      hammerLift = hammer.liftJointTargets;
+      hammerHandover = hammer.handoverJointTargets;
       armPlans.push({
         armKey: arm.key,
         hold,
@@ -414,8 +282,8 @@ function createRuntimePlan(
         hammerPrelift,
         hammerLift,
         hammerHandover,
-        hammerLiftPath: [hold, ...liftTargets],
-        hammerHandoverPath: [hammerLift, ...handoverTargets],
+        hammerLiftPath: [hold, ...hammer.liftPathJointTargets],
+        hammerHandoverPath: [hammerLift, hammerHandover],
       });
       continue;
     }
@@ -519,7 +387,9 @@ function sampleRuntime(
           : ASSEMBLY1_STEP3_LIMITS.minimumAperture,
       maximumContactPenetration: arm.targetBody === 'assembly_frame'
         ? ASSEMBLY1_STEP3_LIMITS.frameMaximumContactPenetration
-        : ASSEMBLY1_STEP3_LIMITS.maximumContactPenetration,
+        : arm.targetBody === 'double_face_hammer'
+          ? ASSEMBLY1_STEP3_LIMITS.hammerMaximumContactPenetration
+          : ASSEMBLY1_STEP3_LIMITS.maximumContactPenetration,
     });
     return {
       armKey: arm.armKey,
@@ -593,7 +463,6 @@ export function AssemblyStep3Controller({
   onStateChange,
 }: AssemblyStep3ControllerProps) {
   const simulation = useMujoco();
-  const { mujoco } = useMujocoWasm();
   const runtimeRef = useRef<RuntimePlan | null>(null);
   const machineRef = useRef<AssemblyStep3Machine | null>(null);
   const lastTimeRef = useRef<number | null>(null);
@@ -614,7 +483,7 @@ export function AssemblyStep3Controller({
 
   useEffect(() => {
     if (requestId <= 0 || requestId <= completedRequestRef.current) return;
-    if (simulation.status !== 'ready' || !mujoco) return;
+    if (simulation.status !== 'ready') return;
     const model = simulation.mjModelRef.current;
     const data = simulation.mjDataRef.current;
     if (!model || !data) return;
@@ -627,7 +496,7 @@ export function AssemblyStep3Controller({
       reportedPhaseRef.current = 'error';
       return;
     }
-    const { plan, failure } = createRuntimePlan(mujoco, model, data);
+    const { plan, failure } = createRuntimePlan(model, data);
     if (!plan || failure) {
       const resolvedFailure = failure
         ?? planningFailure('invalid-precondition', 'unknown planning error');
@@ -642,7 +511,7 @@ export function AssemblyStep3Controller({
     ownershipRef.current = 'step3';
     stateCallbackRef.current({ phase: machine.phase, failure: null });
     reportedPhaseRef.current = machine.phase;
-  }, [mujoco, ownershipRef, requestId, simulation, step2Complete]);
+  }, [ownershipRef, requestId, simulation, step2Complete]);
 
   useBeforePhysicsStep((model, data) => {
     if (ownershipRef.current !== 'step3') return;

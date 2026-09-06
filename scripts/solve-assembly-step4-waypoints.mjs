@@ -12,6 +12,7 @@ import {
 } from '../src/assemblyStep3.js';
 import {
   ASSEMBLY1_STEP4_ARMS,
+  ASSEMBLY1_STEP4_HANDOVER_TCP_QUATERNIONS,
   ASSEMBLY1_STEP4_WAYPOINTS,
 } from '../src/assemblyStep4.js';
 import {
@@ -36,7 +37,9 @@ const tasks = [
     start: ASSEMBLY1_STEP3_HAMMER_ARM.handoverJointTargets,
     waypoints: ['prepare', 'engage', 'clear'],
     orientationFor(name, initialWorldQuaternion) {
-      return initialWorldQuaternion;
+      return name === 'engage'
+        ? new THREE.Quaternion(...ASSEMBLY1_STEP4_HANDOVER_TCP_QUATERNIONS.r1).normalize()
+        : initialWorldQuaternion;
     },
   },
   {
@@ -65,8 +68,10 @@ const tasks = [
     // back to the long-sweep west-arm branch.
     start: ASSEMBLY1_STEP3_HOME_JOINT_TARGETS,
     waypoints: ['prepare', 'engage', 'clear', 'ready', 'strike'],
-    orientationFor(_name, initialWorldQuaternion) {
-      return initialWorldQuaternion;
+    orientationFor(name, initialWorldQuaternion) {
+      return ['prepare', 'engage', 'clear'].includes(name)
+        ? new THREE.Quaternion(...ASSEMBLY1_STEP4_HANDOVER_TCP_QUATERNIONS.r3).normalize()
+        : initialWorldQuaternion;
     },
   },
 ];

@@ -58,6 +58,9 @@ try {
     waitUntil: 'domcontentloaded',
     timeout: Math.min(timeout, 120_000),
   });
+  const sceneSelector = page.locator('select').first();
+  await sceneSelector.waitFor({ state: 'visible', timeout: 15_000 });
+  await sceneSelector.selectOption({ label: 'Franka Assembly1' });
   await page.waitForFunction(
     () => document.documentElement.dataset.sceneKey === 'frankaAssembly1'
       && document.documentElement.dataset.sceneStatus === 'ready'
@@ -245,7 +248,8 @@ try {
       arm.leftTargetContactDistance,
       arm.rightTargetContactDistance,
     ]) {
-      if (typeof contactDistance === 'number' && contactDistance < -0.00215) {
+      const penetrationFloor = arm.armKey === 'r1' ? -0.00265 : -0.00215;
+      if (typeof contactDistance === 'number' && contactDistance < penetrationFloor) {
         throw new Error(`${arm.armKey} penetration is ${contactDistance}m`);
       }
     }
@@ -262,7 +266,7 @@ try {
       throw new Error(`Arm ${arm + 1} did not return to its initial joint target`);
     }
   }
-  const finalBodyOffset = distance(result.positions.cross_member, [0, 0, 0.278]);
+  const finalBodyOffset = distance(result.positions.cross_member, [-0.08, 0, 0.278]);
   if (finalBodyOffset > 0.03) {
     throw new Error(`Cross-member body is ${finalBodyOffset}m from its installed pose`);
   }

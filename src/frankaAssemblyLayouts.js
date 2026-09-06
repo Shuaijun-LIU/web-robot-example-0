@@ -16,12 +16,14 @@ const TASK_STATIONS = {
 };
 
 export const FRANKA_ASSEMBLY_INTERFACE = {
-  crossMemberTargetPose: [0, 0, 0.278],
+  // Install the beam 80 mm west of center, toward Arm 4, while preserving
+  // the same four-hole interface geometry.
+  crossMemberTargetPose: [-0.08, 0, 0.278],
   frameReceiverPositions: [
+    [-0.12, 0.215, 0.275],
     [-0.04, 0.215, 0.275],
-    [0.04, 0.215, 0.275],
+    [-0.12, -0.215, 0.275],
     [-0.04, -0.215, 0.275],
-    [0.04, -0.215, 0.275],
   ],
   crossMemberHoleLocalPositions: [
     [-0.04, 0.215, -0.003],
@@ -179,10 +181,10 @@ export const SHARED_ASSEMBLY1_WORKCELL_XML = `
       <geom name="frame_rail_east_slot" type="box" pos=".315 0 .026" size=".006 .18 .003" rgba=".08 .09 .1 1" contype="0" conaffinity="0"/>
       <geom name="frame_grip_west" type="box" pos="-.354 0 .006" size=".014 .08 .034" rgba=".15 .17 .18 1"/>
       <geom name="frame_grip_east" type="box" pos=".354 0 .006" size=".014 .08 .034" rgba=".15 .17 .18 1"/>
-      <site name="frame_receiver_nw" pos="-.04 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
-      <site name="frame_receiver_ne" pos=".04 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
-      <site name="frame_receiver_sw" pos="-.04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
-      <site name="frame_receiver_se" pos=".04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
+      <site name="frame_receiver_nw" pos="-.12 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
+      <site name="frame_receiver_ne" pos="-.04 .215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
+      <site name="frame_receiver_sw" pos="-.12 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
+      <site name="frame_receiver_se" pos="-.04 -.215 .04" type="cylinder" size=".012 .002" rgba=".07 .08 .09 1"/>
     </body>
 
     <body name="parts_tray" pos="-.57 .44 .11">
@@ -473,16 +475,16 @@ const FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML = ASSEMBLY2_TOOL_XML
   )
   .replace(
     'name="robotwin_hammer_collision" type="capsule" fromto="-.14 0 -.008 .06 0 -.008" size=".02" rgba="0 0 0 0" mass=".16" friction="1.4 .22 .03"',
-    `name="robotwin_hammer_handle_collision" type="box" pos="-.0125 0 -.008" size=".0475 .024 .015" rgba="0 0 0 0" mass=".009" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_handle_inner_shoulder_collision" type="box" pos="-.0665 0 -.008" size=".0065 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
+    `name="robotwin_hammer_handle_collision" type="box" pos="-.0125 0 -.008" size=".0475 .024 .015" rgba="0 0 0 0" mass=".009" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
+      <geom name="robotwin_hammer_handle_inner_shoulder_collision" type="box" pos="-.0665 0 -.008" size=".0065 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
       <!-- The receiver grip is recessed inside the original 48 mm handle
            envelope.  Its 32 mm length gives both Panda pads a full contact
            patch; the integral top/bottom lips resist vertical slip without
            adding an external guard or any non-contact attachment. -->
-      <geom name="robotwin_hammer_handle_receiver_waist_collision" type="box" pos="-.084 0 -.010" size=".016 .018 .011" rgba="0 0 0 0" mass=".002" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_handle_receiver_upper_rib_collision" type="box" pos="-.084 0 .004" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_handle_receiver_lower_rib_collision" type="box" pos="-.084 0 -.020" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"/>
-      <geom name="robotwin_hammer_handle_outer_shoulder_collision" type="box" pos="-.100 0 -.008" size=".005 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" solref=".002 1" solimp=".95 .99 .001"`,
+      <geom name="robotwin_hammer_handle_receiver_waist_collision" type="box" pos="-.084 0 -.010" size=".016 .018 .011" rgba="0 0 0 0" mass=".002" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
+      <geom name="robotwin_hammer_handle_receiver_upper_rib_collision" type="box" pos="-.084 0 .004" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
+      <geom name="robotwin_hammer_handle_receiver_lower_rib_collision" type="box" pos="-.084 0 -.020" size=".016 .024 .003" rgba="0 0 0 0" mass=".0008" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"/>
+      <geom name="robotwin_hammer_handle_outer_shoulder_collision" type="box" pos="-.100 0 -.008" size=".005 .024 .015" rgba="0 0 0 0" mass=".001" friction="10 2 1" condim="6" priority="1" solref=".001 1" solimp=".99 .999 .0001"`,
   )
   .replace(
     'name="robotwin_hammer_head_collision" type="box" pos=".075 0 0" size=".05 .03 .026" rgba="0 0 0 0" mass=".3"',

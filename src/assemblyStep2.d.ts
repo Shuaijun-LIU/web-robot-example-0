@@ -170,6 +170,7 @@ export const ASSEMBLY1_STEP2_LIMITS: Readonly<{
   hammerMinimumAperture: 0.03;
   crossMemberMinimumAperture: 0.035;
   maximumContactPenetration: 0.002;
+  hammerMaximumContactPenetration: 0.0025;
   contactComparisonEpsilon: 0.00015;
 }>;
 

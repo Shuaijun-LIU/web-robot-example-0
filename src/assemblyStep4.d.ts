@@ -70,6 +70,10 @@ export interface AssemblyStep4RuntimeDiagnostics {
 export const ASSEMBLY1_STEP4_DURATIONS: Readonly<Record<string, number>>;
 export const ASSEMBLY1_STEP4_LIMITS: Readonly<Record<string, number>>;
 export const ASSEMBLY1_STEP4_GRIPPERS: Readonly<Record<string, number>>;
+export const ASSEMBLY1_STEP4_HANDOVER_TCP_QUATERNIONS: Readonly<{
+  r1: readonly [number, number, number, number];
+  r3: readonly [number, number, number, number];
+}>;
 export const ASSEMBLY1_STEP4_WAYPOINTS: Readonly<Record<string, Readonly<Record<string, readonly number[]>>>>;
 export const ASSEMBLY1_STEP4_ARMS: ReadonlyArray<Readonly<{
   key: string;

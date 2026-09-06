@@ -124,13 +124,13 @@ test('Assembly1 positions Arms 3/4 to reach both staging and the central interfa
 
 test('cross-member target pose aligns all four installation holes with frame receivers', () => {
   const expected = [
+    [-0.12, 0.215, 0.275],
     [-0.04, 0.215, 0.275],
-    [0.04, 0.215, 0.275],
+    [-0.12, -0.215, 0.275],
     [-0.04, -0.215, 0.275],
-    [0.04, -0.215, 0.275],
   ];
   assert.deepEqual(FRANKA_ASSEMBLY_INTERFACE.frameReceiverPositions, expected);
-  assert.deepEqual(FRANKA_ASSEMBLY_INTERFACE.crossMemberTargetPose, [0, 0, 0.278]);
+  assert.deepEqual(FRANKA_ASSEMBLY_INTERFACE.crossMemberTargetPose, [-0.08, 0, 0.278]);
   assert.ok(FRANKA_ASSEMBLY_INTERFACE.crossMemberHoleLocalPositions.every(
     (position) => position[2] === -0.003,
   ));
@@ -258,6 +258,19 @@ test('Assembly1 uses the Assembly2 RoboTwin tools while retaining the legacy too
   assert.match(xml, /name="robotwin_hammer_handle_receiver_upper_rib_collision"[^>]*pos="-\.084 0 \.004"[^>]*size="\.016 \.024 \.003"[^>]*mass="\.0008"/);
   assert.match(xml, /name="robotwin_hammer_handle_receiver_lower_rib_collision"[^>]*pos="-\.084 0 -\.020"[^>]*size="\.016 \.024 \.003"[^>]*mass="\.0008"/);
   assert.match(xml, /name="robotwin_hammer_handle_outer_shoulder_collision"[^>]*pos="-\.100 0 -\.008"[^>]*size="\.005 \.024 \.015"[^>]*mass="\.001"/);
+  for (const geom of [
+    'robotwin_hammer_handle_collision',
+    'robotwin_hammer_handle_inner_shoulder_collision',
+    'robotwin_hammer_handle_receiver_waist_collision',
+    'robotwin_hammer_handle_receiver_upper_rib_collision',
+    'robotwin_hammer_handle_receiver_lower_rib_collision',
+    'robotwin_hammer_handle_outer_shoulder_collision',
+  ]) {
+    assert.match(
+      xml,
+      new RegExp(`name="${geom}"[^>]*priority="1"[^>]*solref="\\.001 1"[^>]*solimp="\\.99 \\.999 \\.0001"`),
+    );
+  }
   assert.doesNotMatch(xml, /robotwin_hammer_tail_stop_collision/);
   assert.match(xml, /name="robotwin_hammer_head_collision"[^>]*pos="\.075 0 -\.008"[^>]*size="\.029 \.074 \.018"[^>]*mass="\.006"/);
   assert.match(xml, /name="hammer_donor_grasp"[^>]*pos="\.033 0 -\.008"/);

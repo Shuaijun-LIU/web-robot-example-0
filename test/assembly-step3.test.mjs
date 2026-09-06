@@ -18,17 +18,19 @@ import {
   evaluateAssemblyStep3Alignment,
   evaluateAssemblyStep3Transport,
   holdAssemblyStep3Controls,
+  selectAssemblyStep3HoldTarget,
 } from '../src/assemblyStep3.js';
+import { ASSEMBLY1_STEP2_ARMS } from '../src/assemblyStep2.js';
 
 test('Step 3 preserves the measured dual-grasp span while moving to the interface', () => {
   assert.deepEqual(ASSEMBLY1_STEP3_WAYPOINTS, {
     start: [[-0.489, 0.56, 0.21], [-0.482, 0.32, 0.213]],
     lift: [[-0.49, 0.5675, 0.38], [-0.49, 0.3125, 0.38]],
     transferA: [[-0.245, 0.3475, 0.38], [-0.245, 0.0925, 0.38]],
-    transferMid: [[-0.1225, 0.2375, 0.37], [-0.1225, -0.0175, 0.37]],
-    hover: [[0, 0.1275, 0.34], [0, -0.1275, 0.34]],
-    descentMid: [[0, 0.1275, 0.315], [0, -0.1275, 0.315]],
-    aligned: [[0.006, 0.1275, 0.292], [0.002, -0.1275, 0.292]],
+    transferMid: [[-0.1625, 0.2375, 0.37], [-0.1625, -0.0175, 0.37]],
+    hover: [[-0.08, 0.1275, 0.34], [-0.08, -0.1275, 0.34]],
+    descentMid: [[-0.08, 0.1275, 0.315], [-0.08, -0.1275, 0.315]],
+    aligned: [[-0.074, 0.1275, 0.292], [-0.078, -0.1275, 0.292]],
   });
   assert.ok(Math.abs(
     ASSEMBLY1_STEP3_WAYPOINTS.start[0][1]
@@ -45,6 +47,7 @@ test('Step 3 preserves the measured dual-grasp span while moving to the interfac
     hammerMinimumAperture: 0.03,
     crossMemberMinimumAperture: 0.035,
     maximumContactPenetration: 0.002,
+    hammerMaximumContactPenetration: 0.0025,
     frameMaximumContactPenetration: 0.0025,
     contactComparisonEpsilon: 0.00015,
     frameTranslation: 0.02,
@@ -76,7 +79,27 @@ test('every Step 3 transport waypoint contains a generated Panda joint solution'
       assert.equal(arm[name].length, 7, `${arm.key}/${name} must contain seven joints`);
       assert.ok(arm[name].every(Number.isFinite), `${arm.key}/${name} must be finite`);
     }
+    for (const [name, length] of [
+      ['transportLiftPathJointTargets', 8],
+      ['transportAPathJointTargets', 10],
+      ['transportBPathJointTargets', 12],
+      ['transportDescentPathJointTargets', 12],
+    ]) {
+      assert.equal(arm[name].length, length, `${arm.key}/${name} has an offline path`);
+      assert.ok(arm[name].flat().every(Number.isFinite), `${arm.key}/${name} must be finite`);
+    }
   }
+});
+
+test('Step 3 keeps Arm 1 on the stable Step 2 frame-hold target', () => {
+  const measured = ASSEMBLY1_STEP2_ARMS[0].contactJointTargets.map(
+    (value, index) => value + 0.004 * (index + 1),
+  );
+  assert.deepEqual(
+    selectAssemblyStep3HoldTarget(0, measured),
+    ASSEMBLY1_STEP2_ARMS[0].contactJointTargets,
+  );
+  assert.deepEqual(selectAssemblyStep3HoldTarget(1, measured), measured);
 });
 
 test('Step 3 lifts Arm 2 hammer vertically into a collision-free staging pose', () => {
@@ -485,4 +508,5 @@ test('Step 3 runtime owns only Panda actuators and exposes physical evidence', a
   assert.doesNotMatch(source, /data\.qpos\s*\[[^\]]+\]\s*=/);
   assert.doesNotMatch(source, /data\.qvel\s*\[[^\]]+\]\s*=/);
   assert.doesNotMatch(source, /qfrc_applied|mjEQ_WELD|magnet|proximity|scripted.*pose/i);
+  assert.doesNotMatch(source, /solveSelectedIk|cartesianSegment/);
 });

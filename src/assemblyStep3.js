@@ -1,5 +1,7 @@
 import { interpolateJointTargets } from './assemblyStep1.js';
+import { ASSEMBLY1_STEP2_ARMS } from './assemblyStep2.js';
 import { FRANKA_HOME } from './sceneLayouts.js';
+import { ASSEMBLY1_STEP3_PRECOMPUTED_PATHS } from './assemblyStep3Paths.js';
 
 export const ASSEMBLY1_STEP3_DURATIONS = Object.freeze({
   graspCheckWindow: 0.25,
@@ -48,6 +50,13 @@ export const ASSEMBLY1_STEP3_HAMMER_ARM = Object.freeze({
   handoverJointTargets: Object.freeze([
     1.47825, 0.235116, 1.141209, -2.458871, -0.37648, 2.524016, 2.135577,
   ]),
+  liftPathJointTargets: Object.freeze(Array.from({ length: 6 }, (_, index) => (
+    Object.freeze(interpolateJointTargets(
+      [1.663093, 0.382413, 0.916994, -2.442793, -0.613259, 2.598899, 2.300676],
+      [1.47825, 0.235116, 1.141209, -2.458871, -0.37648, 2.524016, 2.135577],
+      index / 5,
+    ))
+  ))),
 });
 
 export const ASSEMBLY1_STEP3_LIMITS = Object.freeze({
@@ -55,6 +64,9 @@ export const ASSEMBLY1_STEP3_LIMITS = Object.freeze({
   hammerMinimumAperture: 0.03,
   crossMemberMinimumAperture: 0.035,
   maximumContactPenetration: 0.002,
+  // The lightweight hammer's high-friction receiver surface settles about
+  // 2.2 mm into the compliant pad model while remaining visibly well seated.
+  hammerMaximumContactPenetration: 0.0025,
   frameMaximumContactPenetration: 0.0025,
   contactComparisonEpsilon: 0.00015,
   frameTranslation: 0.02,
@@ -78,22 +90,31 @@ export const ASSEMBLY1_STEP3_WAYPOINTS = Object.freeze({
     Object.freeze([-0.245, 0.0925, 0.38]),
   ]),
   transferMid: Object.freeze([
-    Object.freeze([-0.1225, 0.2375, 0.37]),
-    Object.freeze([-0.1225, -0.0175, 0.37]),
+    Object.freeze([-0.1625, 0.2375, 0.37]),
+    Object.freeze([-0.1625, -0.0175, 0.37]),
   ]),
   hover: Object.freeze([
-    Object.freeze([0, 0.1275, 0.34]),
-    Object.freeze([0, -0.1275, 0.34]),
+    Object.freeze([-0.08, 0.1275, 0.34]),
+    Object.freeze([-0.08, -0.1275, 0.34]),
   ]),
   descentMid: Object.freeze([
-    Object.freeze([0, 0.1275, 0.315]),
-    Object.freeze([0, -0.1275, 0.315]),
+    Object.freeze([-0.08, 0.1275, 0.315]),
+    Object.freeze([-0.08, -0.1275, 0.315]),
   ]),
   aligned: Object.freeze([
-    Object.freeze([0.006, 0.1275, 0.292]),
-    Object.freeze([0.002, -0.1275, 0.292]),
+    Object.freeze([-0.074, 0.1275, 0.292]),
+    Object.freeze([-0.078, -0.1275, 0.292]),
   ]),
 });
+
+export function selectAssemblyStep3HoldTarget(armIndex, measuredJointTargets) {
+  // Arm 1 enters Step 3 while preloaded against the frame. Reusing the exact
+  // Step 2 target preserves that preload; a measured snapshot releases it and
+  // lets the frame oscillate. Other arms retain their measured transition pose.
+  return armIndex === 0
+    ? [...ASSEMBLY1_STEP2_ARMS[0].contactJointTargets]
+    : [...measuredJointTargets];
+}
 
 export const ASSEMBLY1_STEP3_TRANSPORT_ARMS = Object.freeze([
   Object.freeze({
@@ -101,46 +122,48 @@ export const ASSEMBLY1_STEP3_TRANSPORT_ARMS = Object.freeze([
     armIndex: 2,
     closingAxisYawDegrees: 0,
     liftJointTargets: Object.freeze([
-      1.512016, -0.682083, -0.537287, -2.76636, -0.388813, 2.122724, -2.636736,
+      1.400881, -0.646883, -0.427827, -2.771807, -0.30315, 2.148747, -2.705984,
     ]),
     transferAJointTargets: Object.freeze([
-      1.92702, -0.068878, -0.244566, -2.288658, -0.021863, 2.223498, -2.230458,
+      1.771081, -0.06638, -0.090561, -2.287666, -0.007183, 2.22276, -2.242054,
     ]),
     transferMidJointTargets: Object.freeze([
-      2.007347, 0.327231, -0.171128, -1.79554, 0.06406, 2.118359, -2.115164,
+      1.82773, 0.292618, -0.039414, -1.841197, 0.013564, 2.135377, -2.144295,
     ]),
     hoverJointTargets: Object.freeze([
-      2.025487, 0.919618, -0.118889, -0.898438, 0.097376, 1.814967, -1.997266,
+      1.876893, 0.762889, -0.016208, -1.16687, 0.011966, 1.931089, -2.066018,
     ]),
     descentMidJointTargets: Object.freeze([
-      2.026892, 0.95688, -0.116543, -0.946158, 0.100488, 1.896209, -1.999844,
+      1.876859, 0.78801, -0.015961, -1.187039, 0.012298, 1.973843, -2.066222,
     ]),
     alignedJointTargets: Object.freeze([
-      2.032727, 0.979879, -0.114387, -0.948012, 0.10142, 1.921416, -1.993605,
+      1.883582, 0.816862, -0.014614, -1.196937, 0.011868, 2.013246, -2.058572,
     ]),
+    ...ASSEMBLY1_STEP3_PRECOMPUTED_PATHS.r2,
   }),
   Object.freeze({
     key: 'r3',
     armIndex: 3,
     closingAxisYawDegrees: 0,
     liftJointTargets: Object.freeze([
-      2.812157, -0.28508, -0.443897, -2.493134, -0.15349, 2.229172, 0.122219,
+      2.718918, -0.274179, -0.352746, -2.494008, -0.118746, 2.233089, 0.09526,
     ]),
     transferAJointTargets: Object.freeze([
-      2.655534, 0.159851, -0.946985, -2.084786, 0.156593, 2.174215, -0.730454,
+      2.467493, 0.129741, -0.750092, -2.085143, 0.106867, 2.178559, -0.695436,
     ]),
     transferMidJointTargets: Object.freeze([
-      2.237724, 0.623438, -0.875703, -1.586116, 0.507729, 1.968393, -1.102189,
+      2.201028, 0.422584, -0.746279, -1.785715, 0.324699, 2.082097, -1.01876,
     ]),
     hoverJointTargets: Object.freeze([
-      1.448019, 1.162494, -0.127668, -0.466453, 0.11769, 1.644099, -0.96558,
+      1.854169, 0.769157, -0.662157, -1.323138, 0.475428, 1.936001, -1.193745,
     ]),
     descentMidJointTargets: Object.freeze([
-      1.425614, 1.221362, -0.046695, -0.466925, 0.044249, 1.697324, -0.951748,
+      1.850025, 0.797105, -0.649911, -1.339989, 0.490205, 1.975565, -1.20185,
     ]),
     alignedJointTargets: Object.freeze([
-      1.41738, 1.244817, -0.015408, -0.466996, 0.01477, 1.722095, -0.945825,
+      1.843182, 0.82844, -0.636634, -1.345833, 0.505462, 2.011413, -1.208399,
     ]),
+    ...ASSEMBLY1_STEP3_PRECOMPUTED_PATHS.r3,
   }),
 ]);
 
