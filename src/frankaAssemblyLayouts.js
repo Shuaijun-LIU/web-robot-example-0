@@ -1,5 +1,6 @@
 import { fixedBox, FRANKA_HOME, repeatPose } from './sceneLayouts.js';
 import { HAMMER_COLLISION_ASSETS, HAMMER_COLLISION_GEOMS } from './hammerCollisionGeometry.js';
+import { WRENCH_ASSET_XML, WRENCH_BODY_XML } from './robodojoWrench.js';
 
 const QUARTER_TURN_DEGREES = 90;
 const HALF_TURN_DEGREES = 180;
@@ -655,8 +656,8 @@ function createLayout(
 }
 
 export const FRANKA_ASSEMBLY1_LAYOUT = createLayout(
-  ASSEMBLY2_ASSET_XML + HAMMER_COLLISION_ASSETS,
-  FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML,
+  ASSEMBLY2_ASSET_XML + HAMMER_COLLISION_ASSETS + WRENCH_ASSET_XML,
+  FRANKA_ASSEMBLY1_ROBOTWIN_TOOL_XML + WRENCH_BODY_XML,
   true,
   -0.3,
   0.85,

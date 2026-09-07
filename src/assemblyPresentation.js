@@ -3,6 +3,7 @@ import * as THREE from 'three';
 
 function materialFinish(geom,body) {
   if(geom.includes('_collision'))return null;
+  if(body==='open_end_wrench')return {metalness:.65,roughness:.32};
   if(geom.startsWith('robotwin_')) {
     if(geom.includes('_metal_'))return {metalness:.78,roughness:.26,color:'#aeb3b5'};
     if(geom.includes('_dark_'))return {metalness:.02,roughness:.8,color:'#292d2d'};

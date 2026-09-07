@@ -1,0 +1,347 @@
+{
+  "initial": {
+    "position": [
+      2.091802080835536e-7,
+      -0.48000000033127915,
+      0.12201003209702159
+    ],
+    "contacts": [
+      {
+        "geom1": 506,
+        "geom2": 489,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_0",
+        "distance": -0.0000021261181178539035,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 490,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_1",
+        "distance": -0.0000021295873668253362,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 491,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_2",
+        "distance": -0.00000268434205671908,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 492,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_3",
+        "distance": -0.0000024037617146754897,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 493,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_4",
+        "distance": -0.000001658741649535056,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 494,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_5",
+        "distance": -0.0000023282943293900793,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 495,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_6",
+        "distance": -0.000002783527003905051,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 496,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_7",
+        "distance": -0.0000020374162804231988,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 497,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_8",
+        "distance": -0.0000018510170312069363,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 498,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_9",
+        "distance": -0.000002783925739838211,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 499,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_10",
+        "distance": -0.0000025040196990899766,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 500,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_11",
+        "distance": -0.0000021315706850572047,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 501,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_12",
+        "distance": -0.00000185132292437884,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 502,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_13",
+        "distance": -0.000002032948037508642,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      },
+      {
+        "geom1": 506,
+        "geom2": 503,
+        "geomName1": "",
+        "geomName2": "robodojo_wrench_collision_14",
+        "distance": -0.0000019204002487671623,
+        "body1": "handover_pad",
+        "body2": "open_end_wrench"
+      }
+    ]
+  },
+  "status": "Demo complete",
+  "audit": {
+    "foreignContacts": [],
+    "maxDisplacement": 6.635380817575135e-9,
+    "baseline": [
+      2.082938858574767e-7,
+      -0.480000000161114,
+      0.12201003135782415
+    ]
+  },
+  "physics": {
+    "contacts": 133,
+    "constraints": 750,
+    "arenaBytes": 67108864,
+    "peakArenaBytes": 28285760,
+    "warnings": [
+      {
+        "index": 0,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 1,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 2,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 3,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 4,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 5,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 6,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 7,
+        "count": 0,
+        "lastInfo": 0
+      }
+    ]
+  },
+  "position": [
+    2.1137123802326006e-7,
+    -0.4800000010707582,
+    0.12201003076694852
+  ],
+  "contacts": [
+    {
+      "geom1": 506,
+      "geom2": 489,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_0",
+      "distance": -0.000002131985109954382,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 490,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_1",
+      "distance": -0.000002124691158511549,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 491,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_2",
+      "distance": -0.0000026973916034678247,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 492,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_3",
+      "distance": -0.0000024169303821930392,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 493,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_4",
+      "distance": -0.000001664787474542351,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 494,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_5",
+      "distance": -0.000002322988007869009,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 495,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_6",
+      "distance": -0.00000277984916517704,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 496,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_7",
+      "distance": -0.0000020298394962647848,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 497,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_8",
+      "distance": -0.0000018417341271226297,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 498,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_9",
+      "distance": -0.00000277946809584817,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 499,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_10",
+      "distance": -0.0000024972961769620387,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 500,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_11",
+      "distance": -0.000002122604865165134,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 501,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_12",
+      "distance": -0.0000018412603013662212,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 502,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_13",
+      "distance": -0.0000020400030871225994,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    },
+    {
+      "geom1": 506,
+      "geom2": 503,
+      "geomName1": "",
+      "geomName2": "robodojo_wrench_collision_14",
+      "distance": -0.000001927204835078245,
+      "body1": "handover_pad",
+      "body2": "open_end_wrench"
+    }
+  ],
+  "errors": []
+}
