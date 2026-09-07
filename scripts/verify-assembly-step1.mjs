@@ -76,7 +76,7 @@ try {
   try {
     await button.waitFor({ state: 'visible', timeout: 15_000 });
     const buttonText = (await button.textContent())?.trim();
-    if (buttonText !== '执行第一步：协作就位') {
+    if (buttonText !== 'Step 1: Move into position') {
       throw new Error(`Unexpected Step 1 button label: ${buttonText}`);
     }
   } catch (error) {

@@ -4,110 +4,110 @@ import type { AssemblyStep3Phase, AssemblyStep3State } from './assemblyStep3.js'
 import type { AssemblyStep4Phase, AssemblyStep4State } from './assemblyStep4.js';
 
 const step1Copy: Record<AssemblyStep1Status, { button: string; status: string }> = {
-  idle: { button: '执行第一步：协作就位', status: '就绪' },
-  planning: { button: '正在规划四臂轨迹…', status: '规划中' },
-  running: { button: '正在执行第一步…', status: '执行中' },
-  complete: { button: '第一步已完成', status: '四臂已到达预抓取位' },
-  error: { button: '第一步规划失败', status: '请 Reset 后重试' },
+  idle: { button: 'Step 1: Move into position', status: 'Ready' },
+  planning: { button: 'Planning four-arm trajectories…', status: 'Planning' },
+  running: { button: 'Running Step 1…', status: 'In progress' },
+  complete: { button: 'Step 1 complete', status: 'All four arms are at their pre-grasp positions' },
+  error: { button: 'Step 1 planning failed', status: 'Press Reset and try again' },
 };
 
 const step2PhaseCopy: Record<AssemblyStep2Phase, string> = {
-  idle: '等待第一步完成',
-  planning: '正在验证物理夹持前置条件',
-  approach: '四臂接近夹持高度',
-  'slow-descent': '四臂缓慢下降至接触位',
-  'contact-settle': '开爪保持，等待四臂接触位收敛',
-  'frame-clamp': 'Arm 1 正在夹持框架',
-  'frame-verification': '正在验证框架双侧接触',
-  'cross-member-clamp': 'Arm 3 / Arm 4 正在同步夹持横梁',
-  'cross-member-verification': '正在验证横梁四指接触',
-  'hammer-clamp': 'Arm 2 正在夹持锤柄',
-  'tool-verification': '正在验证工具双侧接触',
-  'clamped-hold': '正在验证四处稳定保持',
-  complete: '第二步已完成：四处物理夹持已建立',
-  error: '第二步失败',
+  idle: 'Waiting for Step 1',
+  planning: 'Checking grasp preconditions',
+  approach: 'All four arms are approaching grasp height',
+  'slow-descent': 'All four arms are descending slowly to contact',
+  'contact-settle': 'Holding grippers open while approach poses settle',
+  'frame-clamp': 'Arm 1 is gripping the frame',
+  'frame-verification': 'Verifying contact on both sides of the frame',
+  'cross-member-clamp': 'Arms 3/4 are gripping the cross-member together',
+  'cross-member-verification': 'Verifying all four finger contacts on the cross-member',
+  'hammer-clamp': 'Arm 2 is gripping the hammer handle',
+  'tool-verification': 'Verifying contact on both sides of the tool',
+  'clamped-hold': 'Verifying four stable grasps',
+  complete: 'Step 2 complete: all four physical grasps verified',
+  error: 'Step 2 failed',
 };
 
 function step2ButtonCopy(phase: AssemblyStep2Phase) {
-  if (phase === 'idle') return '执行第二步：下降并物理夹持';
-  if (phase === 'complete') return '第二步已完成：四处物理夹持已建立';
-  if (phase === 'error') return '第二步执行失败';
-  return '正在执行第二步…';
+  if (phase === 'idle') return 'Step 2: Lower and grasp';
+  if (phase === 'complete') return 'Step 2 complete: grasps verified';
+  if (phase === 'error') return 'Step 2 failed';
+  return 'Running Step 2…';
 }
 
 const step3PhaseCopy: Record<AssemblyStep3Phase, string> = {
-  idle: '等待第二步完成',
-  planning: '正在验证搬运前置条件',
-  'grasp-check': '正在确认四处物理夹持',
-  lift: 'Arm 2 正在抬起锤子，Arm 3 / Arm 4 同步抬升横梁',
-  'lift-settle': '横梁已离开料盘，正在验证双臂保持',
-  'transfer-a': 'Arm 2 将锤子移至安全暂存位，横梁同步搬运',
-  'transfer-b': '正在将横梁送至框架正上方',
-  'hover-settle': '正在框架上方稳定横梁',
-  'aligned-descent': '正在缓慢下降并对准安装孔',
-  'alignment-verification': '正在验证四孔与框架接口',
-  'aligned-hold': '正在验证对孔后的稳定保持',
-  'reseat-lift': '对孔未收敛，正在抬升横梁重新落位',
-  'reseat-descent': '正在执行一次慢速重新落位',
-  release: '对孔已确认，Arms 3 / 4 正在松开横梁',
-  'release-settle': '横梁已释放，正在等待物理落稳',
-  retreat: 'Arms 3 / 4 正在撤离并返回初始位置',
-  'placed-verification': '正在验证无夹持状态下的横梁稳定性',
-  complete: '第三步已完成：锤子已暂存，横梁已落位，Arms 3 / 4 已返回初始位置',
-  error: '第三步失败',
+  idle: 'Waiting for Step 2',
+  planning: 'Checking transfer preconditions',
+  'grasp-check': 'Confirming all four physical grasps',
+  lift: 'Arm 2 is lifting the hammer; Arms 3/4 are lifting the cross-member',
+  'lift-settle': 'Cross-member clear of the tray; verifying the two-arm hold',
+  'transfer-a': 'Arm 2 is staging the hammer while Arms 3/4 move the cross-member',
+  'transfer-b': 'Moving the cross-member directly above the frame',
+  'hover-settle': 'Stabilizing the cross-member above the frame',
+  'aligned-descent': 'Lowering slowly and aligning the mounting holes',
+  'alignment-verification': 'Checking all four holes against the frame interfaces',
+  'aligned-hold': 'Verifying a stable, aligned hold',
+  'reseat-lift': 'Alignment not settled; lifting the cross-member to reseat',
+  'reseat-descent': 'Making one slow reseating attempt',
+  release: 'Alignment confirmed; Arms 3/4 are releasing the cross-member',
+  'release-settle': 'Cross-member released; waiting for it to settle',
+  retreat: 'Arms 3/4 are retreating to their home positions',
+  'placed-verification': 'Checking cross-member stability with grippers released',
+  complete: 'Step 3 complete: hammer staged, cross-member seated, Arms 3/4 home',
+  error: 'Step 3 failed',
 };
 
 function step3ButtonCopy(phase: AssemblyStep3Phase) {
-  if (phase === 'idle') return '执行第三步：双臂搬运并对孔';
-  if (phase === 'complete') return '第三步已完成：锤子已暂存，横梁已落位';
-  if (phase === 'error') return '第三步执行失败';
-  return '正在执行第三步…';
+  if (phase === 'idle') return 'Step 3: Transfer and align';
+  if (phase === 'complete') return 'Step 3 complete: cross-member seated';
+  if (phase === 'error') return 'Step 3 failed';
+  return 'Running Step 3…';
 }
 
 const step4PhaseCopy: Record<AssemblyStep4Phase, string> = {
-  idle: '等待第三步完成',
-  planning: '正在验证紧固件安装前置条件',
-  'donor-tighten': 'Arm 2 原地增加锤柄夹持力，准备实体交接',
-  prepare: 'Arm 3 接近紧固件，Arm 4 接近 Arm 2 手中的锤子',
-  engage: 'Arm 3 对准紧固件，Arm 4 对准锤柄接取位',
-  'engage-settle': '正在稳定紧固件与锤子交接姿态',
-  'dual-clamp': 'Arm 3 夹持紧固件，同时 Arm 4 夹持锤柄',
-  'handover-verification': '正在验证 Arm 3 紧固件抓取与 Arm 4 锤子双侧接触',
-  'hammer-release': '交接已确认，Arm 2 正在松开锤柄',
-  'donor-clear': 'Arm 2 正在撤离交接区，Arm 4 稳定持锤',
-  'receiver-align': 'Arm 4 正在按锤柄实际方向对准两侧握持面',
-  'receiver-retreat': 'Arm 4 持锤退回底座前的安全等待位',
-  'fastener-tighten': 'Arm 3 正在下降并夹持紧固件，Arm 4 持锤退至安全位',
-  'fastener-grip-settle': 'Arm 3 保持拾取位，等待实体夹爪完全闭合',
-  'fastener-grasp-verification': '正在验证 Arm 3 与紧固件的双侧实体接触',
-  lift: 'Arm 3 正在从料盘抬起紧固件',
-  transfer: 'Arm 3 正在将紧固件搬运至安装孔上方',
-  'transfer-settle': 'Arm 3 正在安装孔上方稳定紧固件',
-  insert: 'Arm 3 正在将紧固件插入西北侧接口',
-  'fastener-release': '紧固件已到位，Arm 3 正在松开夹爪',
-  clear: 'Arm 3 正在撤离，Arm 4 继续持锤等待',
-  'placement-verification': '正在验证紧固件无夹持落位状态',
-  'hammer-stage': 'Arm 4 正在将锤头移至紧固件上方',
-  'hammer-strike': 'Arm 4 正在下击紧固件',
-  'hammer-recover': 'Arm 4 正在抬锤并离开安装接口',
-  'support-approach': 'Arms 2/3 正在靠近框架固定点',
-  'support-clamp': 'Arms 1/2/3 正在夹持固定框架',
-  'support-release': '敲击结束，Arms 1/2/3 正在松开框架',
-  'support-clear': 'Arms 1/2/3 正在抬起夹爪，离开框架',
-  'return-home': '四个机械臂正在回到初始位置',
-  'hammer-return': 'Arm 4 正在将锤子送回西侧支撑座',
-  'hammer-lower': 'Arm 4 正在放下锤子',
-  'tool-release': '锤子已放在支撑座上，Arm 4 正在松爪',
-  'tool-clear': 'Arm 4 正在离开锤子，准备归位',
-  complete: '第四步已完成：紧固件已落位并完成锤击',
-  error: '第四步失败',
+  idle: 'Waiting for Step 3',
+  planning: 'Checking fastener installation preconditions',
+  'donor-tighten': 'Arm 2 is tightening its hammer grip for handover',
+  prepare: 'Arm 3 is approaching the fastener; Arm 4 is approaching the hammer in Arm 2',
+  engage: 'Arm 3 is aligning with the fastener; Arm 4 with the hammer handle',
+  'engage-settle': 'Stabilizing the fastener pickup and hammer handover poses',
+  'dual-clamp': 'Arm 3 is gripping the fastener while Arm 4 grips the hammer handle',
+  'handover-verification': 'Verifying Arm 3 fastener grip and Arm 4 bilateral hammer contact',
+  'hammer-release': 'Handover confirmed; Arm 2 is releasing the hammer handle',
+  'donor-clear': 'Arm 2 is clearing the handover area; Arm 4 is holding the hammer',
+  'receiver-align': 'Arm 4 is aligning its grip with the actual hammer handle orientation',
+  'receiver-retreat': 'Arm 4 is carrying the hammer to its safe waiting position',
+  'fastener-tighten': 'Arm 3 is lowering to grip the fastener; Arm 4 is retreating with the hammer',
+  'fastener-grip-settle': 'Arm 3 is holding its pickup pose while the gripper closes',
+  'fastener-grasp-verification': 'Verifying Arm 3 contact on both sides of the fastener',
+  lift: 'Arm 3 is lifting the fastener from the tray',
+  transfer: 'Arm 3 is moving the fastener above the mounting hole',
+  'transfer-settle': 'Arm 3 is stabilizing the fastener above the mounting hole',
+  insert: 'Arm 3 is inserting the fastener into the northwest interface',
+  'fastener-release': 'Fastener in position; Arm 3 is opening its gripper',
+  clear: 'Arm 3 is retreating; Arm 4 is waiting with the hammer',
+  'placement-verification': 'Checking fastener placement with the gripper released',
+  'hammer-stage': 'Arm 4 is positioning the hammer head above the fastener',
+  'hammer-strike': 'Arm 4 is tapping the fastener',
+  'hammer-recover': 'Arm 4 is lifting the hammer clear of the mounting interface',
+  'support-approach': 'Arms 2/3 are approaching the frame support points',
+  'support-clamp': 'Arms 1/2/3 are gripping the frame to stabilize it',
+  'support-release': 'Tap complete; Arms 1/2/3 are releasing the frame',
+  'support-clear': 'Arms 1/2/3 are lifting their grippers clear of the frame',
+  'return-home': 'All four arms are returning home',
+  'hammer-return': 'Arm 4 is returning the hammer to the west-side supports',
+  'hammer-lower': 'Arm 4 is lowering the hammer',
+  'tool-release': 'Hammer on its supports; Arm 4 is opening its gripper',
+  'tool-clear': 'Arm 4 is clearing the hammer before returning home',
+  complete: 'Step 4 complete: fastener seated and tapped',
+  error: 'Step 4 failed',
 };
 
 function step4ButtonCopy(phase: AssemblyStep4Phase) {
-  if (phase === 'idle') return '执行第四步：拾取并插入第一颗紧固件';
-  if (phase === 'complete') return '第四步已完成：紧固件已落位并完成锤击';
-  if (phase === 'error') return '第四步执行失败';
-  return '正在执行第四步…';
+  if (phase === 'idle') return 'Step 4: Insert fastener and tap';
+  if (phase === 'complete') return 'Step 4 complete: fastener tapped';
+  if (phase === 'error') return 'Step 4 failed';
+  return 'Running Step 4…';
 }
 
 export function AssemblySequencePanel({
@@ -139,7 +139,7 @@ export function AssemblySequencePanel({
   const failure = step2State.failure;
   return (
     <section className="assembly-sequence-panel" aria-label="Assembly1 action sequence">
-      <div className="assembly-sequence-panel__title">Assembly1 动作</div>
+      <div className="assembly-sequence-panel__title">Assembly1 Actions</div>
       <div className="assembly-sequence-panel__step">
         <div className="assembly-sequence-panel__status">{first.status}</div>
         <button type="button" onClick={onRunStep1} disabled={step1Status !== 'idle'}>
@@ -155,9 +155,9 @@ export function AssemblySequencePanel({
           {step2PhaseCopy[step2State.phase]}
           {failure && (
             <span>
-              {`：${failure.armKey ?? '系统'} / ${failure.code}`}
+              {`: ${failure.armKey ?? 'System'} / ${failure.code}`}
               {failure.detail ? ` / ${failure.detail}` : ''}
-              {'。请 Reset 后重试'}
+              {'. Press Reset and try again.'}
             </span>
           )}
         </div>
@@ -174,9 +174,9 @@ export function AssemblySequencePanel({
           {step3PhaseCopy[step3State.phase]}
           {step3State.failure && (
             <span>
-              {`：${step3State.failure.armKey ?? '系统'} / ${step3State.failure.code}`}
+              {`: ${step3State.failure.armKey ?? 'System'} / ${step3State.failure.code}`}
               {step3State.failure.detail ? ` / ${step3State.failure.detail}` : ''}
-              {'。请 Reset 后重试'}
+              {'. Press Reset and try again.'}
             </span>
           )}
         </div>
@@ -193,9 +193,9 @@ export function AssemblySequencePanel({
           {step4PhaseCopy[step4State.phase]}
           {step4State.failure && (
             <span>
-              {`：${step4State.failure.armKey ?? '系统'} / ${step4State.failure.code}`}
+              {`: ${step4State.failure.armKey ?? 'System'} / ${step4State.failure.code}`}
               {step4State.failure.detail ? ` / ${step4State.failure.detail}` : ''}
-              {'。请 Reset 后重试'}
+              {'. Press Reset and try again.'}
             </span>
           )}
         </div>

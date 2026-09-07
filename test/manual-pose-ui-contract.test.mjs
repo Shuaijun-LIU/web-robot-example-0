@@ -12,8 +12,8 @@ test('Assembly1 exposes manual positioning with static-host download and optiona
   assert.match(app, /manualPoseMode/);
   assert.match(app, /Assembly1PoseCapturePanel/);
   assert.match(app, /assemblyOwnershipRef\.current = 'manual'/);
-  assert.match(panel, /进入手动定姿/);
-  assert.match(panel, /保存当前姿态/);
+  assert.match(panel, /Enter manual posing/);
+  assert.match(panel, /Save current pose/);
   assert.match(panel, /createManualPoseDownload/);
   assert.match(panel, /anchor\.download/);
   assert.match(panel, /import\.meta\.env\.DEV/);

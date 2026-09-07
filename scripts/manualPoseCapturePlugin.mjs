@@ -6,19 +6,19 @@ const MAX_REQUEST_BYTES = 1_000_000;
 
 function sanitizePoseLabel(value) {
   const label = String(value ?? '').trim();
-  if (label.length > 64) throw new Error('姿态名称不能超过 64 个字符');
+  if (label.length > 64) throw new Error('Pose names must not exceed 64 characters');
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(label)) {
-    throw new Error('姿态名称只能包含字母、数字、短横线和下划线，并须以字母或数字开头');
+    throw new Error('Pose names may contain only letters, numbers, hyphens and underscores, and must start with a letter or number');
   }
   return label;
 }
 
 export async function persistManualPoseSnapshot(projectRoot, payload) {
   if (!payload || payload.scene !== 'frankaAssembly1') {
-    throw new Error('只接受 Franka Assembly1 姿态');
+    throw new Error('Only Franka Assembly1 poses are accepted');
   }
   if (payload.schemaVersion !== 'franka-assembly1-manual-pose-v1') {
-    throw new Error('姿态数据版本无效');
+    throw new Error('Invalid pose schema version');
   }
   const label = sanitizePoseLabel(payload.label);
   const outputDirectory = path.resolve(projectRoot, 'artifacts', 'manual-poses');
@@ -40,7 +40,7 @@ async function readJsonRequest(request, maxBytes) {
   let totalBytes = 0;
   for await (const chunk of request) {
     totalBytes += chunk.length;
-    if (totalBytes > maxBytes) throw new Error('姿态数据超过 1 MB 限制');
+    if (totalBytes > maxBytes) throw new Error('Pose data exceeds the 1 MB limit');
     chunks.push(chunk);
   }
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));

@@ -13,8 +13,8 @@ import { persistManualPoseSnapshot } from '../scripts/manualPoseCapturePlugin.mj
 
 test('manual pose labels are filesystem-safe and reject traversal', () => {
   assert.equal(sanitizePoseLabel('handover-clamp_01'), 'handover-clamp_01');
-  assert.throws(() => sanitizePoseLabel('../outside'), /字母、数字/);
-  assert.throws(() => sanitizePoseLabel(''), /字母、数字/);
+  assert.throws(() => sanitizePoseLabel('../outside'), /letters, numbers/);
+  assert.throws(() => sanitizePoseLabel(''), /letters, numbers/);
   assert.throws(() => sanitizePoseLabel('a'.repeat(65)), /64/);
 });
 
@@ -92,7 +92,7 @@ test('server persistence writes only under artifacts/manual-poses using an atomi
     assert.deepEqual(saved, payload);
     await assert.rejects(
       persistManualPoseSnapshot(projectRoot, { ...payload, label: '../escape' }),
-      /字母、数字/,
+      /letters, numbers/,
     );
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
