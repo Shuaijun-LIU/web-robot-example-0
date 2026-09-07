@@ -396,8 +396,13 @@ function assembly1ReachableFastenerWorkcellXml() {
     // spares stay together at the north edge, outside the closing fingers'
     // approach corridor.
     .replace('name="fastener_1" pos=".50 .36 .152"', 'name="fastener_1" pos=".10 .38 .152"')
-    .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".14 .55 .152"')
-    .replace('name="fastener_3" pos=".50 .48 .152"', 'name="fastener_3" pos=".24 .55 .152"')
+    // Seat the spares on the tray (top .12 + shaft half-height .025).
+    // Torsional/rolling contact friction dissipates spin and rocking without locking either
+    // free body. Only spare shafts change; the picked fastener is untouched.
+    .replace('name="fastener_2" pos=".60 .36 .152"', 'name="fastener_2" pos=".14 .55 .145"')
+    .replace('name="fastener_3" pos=".50 .48 .152"', 'name="fastener_3" pos=".24 .55 .145"')
+    .replace('name="fastener_2_shaft" type="cylinder" size=".007 .025"', 'name="fastener_2_shaft" type="cylinder" size=".007 .025" condim="6" friction="1 .005 .001" priority="1" solref=".004 1" solimp=".95 .99 .001"')
+    .replace('name="fastener_3_shaft" type="cylinder" size=".007 .025"', 'name="fastener_3_shaft" type="cylinder" size=".007 .025" condim="6" friction="1 .005 .001" priority="1" solref=".004 1" solimp=".95 .99 .001"')
     .replace(
       '    <body name="fastener_1" pos=".10 .38 .152"><freejoint/>',
       `    ${fastenerPickFixtureXml()}\n    <body name="fastener_1" pos=".10 .38 .152"><freejoint/>`,

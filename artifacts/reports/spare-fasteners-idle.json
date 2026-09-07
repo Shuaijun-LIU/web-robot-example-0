@@ -1,0 +1,98 @@
+{
+  "mode": "idle",
+  "sampleCount": 400,
+  "foreignContacts": [],
+  "elapsedSeconds": 17.006400000035764,
+  "spares": [
+    {
+      "name": "fastener_2",
+      "position": [
+        0.14000110177098601,
+        0.5499930879380425,
+        0.14499886408422843
+      ],
+      "maxTranslationMm": 0.011392799853270278,
+      "maxRotationDegrees": 0.02631439792818333,
+      "contacts": [
+        {
+          "geom1": 444,
+          "geom2": 429,
+          "geomName1": "fastener_2_shaft",
+          "geomName2": "fastener_tray_floor",
+          "distance": -0.000003956442467694032,
+          "body1": "fastener_2",
+          "body2": "fastener_tray"
+        }
+      ]
+    },
+    {
+      "name": "fastener_3",
+      "position": [
+        0.23999037070542129,
+        0.5500072186413454,
+        0.14499862265745964
+      ],
+      "maxTranslationMm": 0.020555755461071173,
+      "maxRotationDegrees": 0.048914986985141226,
+      "contacts": [
+        {
+          "geom1": 446,
+          "geom2": 429,
+          "geomName1": "fastener_3_shaft",
+          "geomName2": "fastener_tray_floor",
+          "distance": -0.0000030767449819397887,
+          "body1": "fastener_3",
+          "body2": "fastener_tray"
+        }
+      ]
+    }
+  ],
+  "physics": {
+    "contacts": 89,
+    "constraints": 400,
+    "arenaBytes": 67108864,
+    "peakArenaBytes": 249488,
+    "warnings": [
+      {
+        "index": 0,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 1,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 2,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 3,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 4,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 5,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 6,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 7,
+        "count": 0,
+        "lastInfo": 0
+      }
+    ]
+  }
+}

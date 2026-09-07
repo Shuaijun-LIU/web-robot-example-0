@@ -68,8 +68,8 @@ test('Assembly1 isolates and physically seats one target fastener for a vertical
   assert.match(assembly1Xml, /name="fastener_tray_floor" type="box" pos="0 0 -\.03" size="\.18 \.18 \.04"/);
   assert.doesNotMatch(assembly1Xml, /fastener_1_guide_/);
   assert.match(assembly1Xml, /<body name="fastener_1" pos="\.10 \.38 \.152"><freejoint\/>/);
-  assert.match(assembly1Xml, /<body name="fastener_2" pos="\.14 \.55 \.152">/);
-  assert.match(assembly1Xml, /<body name="fastener_3" pos="\.24 \.55 \.152">/);
+  assert.match(assembly1Xml, /<body name="fastener_2" pos="\.14 \.55 \.145">/);
+  assert.match(assembly1Xml, /<body name="fastener_3" pos="\.24 \.55 \.145">/);
   assert.doesNotMatch(assembly1Xml, /<body name="fastener_4"/);
   assert.match(assembly1Xml, /<body name="fastener_1_pick_fixture" pos="\.10 \.38 \.12">/);
   assert.equal((assembly1Xml.match(/name="fastener_1_pick_fixture_segment_/g) ?? []).length, 8);
