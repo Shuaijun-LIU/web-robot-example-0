@@ -19,8 +19,14 @@
 .assembly-cameras-panel figcaption { padding: .24rem .55rem; background: #29322fee; }
 .assembly-cameras-panel p { margin: 0; padding: .6rem; background: #29322fee; }
 .assembly-cameras-panel--all { width: min(60rem, calc(100vw - 2rem)); }
-.assembly-cameras-panel--all .assembly-cameras-panel__views { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
-.assembly-cameras-panel--all figure:first-child { grid-row: span 2; grid-column: span 2; align-self: center; }
+/* Keep captions inside the feeds: a separate caption row would make the two
+   stacked wrist views taller than the single global view. Inset separators
+   do not consume space, so every feed retains its native 16:9 proportions. */
+.assembly-cameras-panel--all .assembly-cameras-panel__views { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 0; }
+.assembly-cameras-panel--all figure { position: relative; min-height: 0; }
+.assembly-cameras-panel--all figure:first-child { grid-row: span 2; grid-column: span 2; }
+.assembly-cameras-panel--all figure::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px #74827a; pointer-events: none; }
+.assembly-cameras-panel--all figcaption { position: absolute; bottom: 0; left: 0; right: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
 @media (max-width: 700px) {
   .assembly-cameras-panel { bottom: .5rem; width: min(19rem, calc(100vw - 1rem)); }
   .assembly-cameras-panel--all { width: calc(100vw - 1rem); }
