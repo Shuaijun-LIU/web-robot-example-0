@@ -6,14 +6,14 @@ function materialFinish(geom,body) {
   if(geom.startsWith('robotwin_')) {
     if(geom.includes('_metal_'))return {metalness:.78,roughness:.26,color:'#aeb3b5'};
     if(geom.includes('_dark_'))return {metalness:.02,roughness:.8,color:'#292d2d'};
-    if(geom.includes('_primary_'))return {metalness:.05,roughness:.46,color:geom.includes('drill')?'#6e7773':'#aa8746'};
+    if(geom.includes('_primary_'))return {metalness:.05,roughness:.46,color:'#aa8746'};
   }
   if(geom.includes('_slot')||geom.includes('grip_stop')||geom.startsWith('frame_grip'))return {metalness:.08,roughness:.72,color:'#343b3c'};
-  if(geom.startsWith('frame_rail')||geom.startsWith('cross_member_flange'))return {metalness:.68,roughness:.34,color:'#b2b8b9'};
-  if(geom.includes('_plate_')||body==='mounting_plate')return {metalness:.65,roughness:.4,color:'#777f81'};
-  if(/^fastener_\d+$/.test(body))return {metalness:.8,roughness:.27,color:'#aab0b1'};
-  if(body.includes('cradle')||geom.startsWith('frame_support')||geom.startsWith('cross_member_stand'))return {metalness:.42,roughness:.42,color:'#555f61'};
-  if(body.includes('tray'))return {metalness:.18,roughness:.65,color:'#596466'};
+  if(body.includes('cradle')||geom.startsWith('frame_support')||geom.startsWith('cross_member_stand'))return {metalness:.02,roughness:.84,color:'#424948'};
+  if(body.includes('tray'))return {metalness:.02,roughness:.82,color:'#4d5553'};
+  if(body==='cross_member'||geom.startsWith('frame_rail'))return {metalness:.56,roughness:.32,color:'#dde0df'};
+  if(geom.includes('_plate_')||body==='mounting_plate')return {metalness:.55,roughness:.36,color:'#d5d9d8'};
+  if(/^fastener_\d+$/.test(body))return {metalness:.65,roughness:.25,color:'#dce0df'};
   if(body.startsWith('tool_mat'))return {metalness:0,roughness:.91,color:'#646a65'};
   if(body==='handover_pad')return {metalness:0,roughness:.87,color:'#566563'};
   if(body==='platform_inset')return {metalness:.13,roughness:.73,color:'#727a78'};
@@ -44,7 +44,7 @@ export function cleanToolSurface(mesh,body) {
   const originalGeometry=mesh.geometry,originalMaterial=mesh.material;
   const geometry=originalGeometry.clone(),positions=geometry.attributes.position;
   const colors=new Float32Array(positions.count*3),finishes=new Float32Array(positions.count*2);
-  const primary=new THREE.Color(body==='torque_driver'?'#65766e':'#aa8746');
+  const primary=new THREE.Color('#aa8746');
   const rubber=new THREE.Color('#292f30'),steel=new THREE.Color('#b4babc');
   const p=new THREE.Vector3(),color=new THREE.Color();mesh.updateMatrix();
   const smooth=(a,b,x)=>THREE.MathUtils.smoothstep(x,a,b);
@@ -55,8 +55,10 @@ export function cleanToolSurface(mesh,body) {
       metal=smooth(.045,.06,p.x);
       dark=(1-smooth(-.01,.025,p.x))*smooth(.002,.008,Math.abs(p.y));
     }else if(body==='torque_driver'){
-      metal=1-smooth(-.075,-.06,p.x);
-      dark=1-smooth(-.055,-.025,p.z);
+      // This scan's battery-to-motor axis is X, not Z. Keep the rubber
+      // handle/battery and chuck dark, with only the actual nose metallic.
+      metal=smooth(.051,.058,p.z)*smooth(.055,.068,p.x);
+      dark=Math.max(1-smooth(.025,.047,p.x),smooth(.006,.020,p.z),1-smooth(-.087,-.073,p.z));
     }else{
       metal=smooth(.025,.04,p.x);
       dark=(1-smooth(-.025,.012,p.x))*smooth(.008,.014,Math.abs(p.y));
@@ -78,15 +80,7 @@ export function cleanToolSurface(mesh,body) {
 }
 
 export function assemblyStationDecals() {
-  return [
-    {text:'HAMMER / PICKUP',position:[.64,-.508,.1123],size:[.22,.029]},
-    {text:'HAMMER / RETURN',position:[-.49,-.312,.1123],size:[.25,.028]},
-    {text:'POWER TOOL',position:[.55,-.176,.1183],size:[.20,.028]},
-    {text:'HAND TOOL',position:[-.53,-.515,.1183],size:[.23,.028]},
-    {text:'LOCATING PINS',position:[.19,.635,.1203],size:[.22,.029]},
-    {text:'CROSS MEMBER / CM-01',position:[-.56,.766,.1123],size:[.36,.03]},
-    {text:'COOPERATIVE ASSEMBLY  /  CELL 01',position:[0,-1.066,.1003],size:[.72,.037]},
-  ];
+  return [];
 }
 
 function surfaceTexture(draw,width=1024,height=128) {
@@ -99,17 +93,21 @@ function surfaceTexture(draw,width=1024,height=128) {
   return texture;
 }
 
-function labelTexture(text) {
-  return surfaceTexture((ctx,w,h)=>{
-    ctx.fillStyle='#313c3d';ctx.fillRect(0,0,w,h);
-    ctx.fillStyle='#b1a071';ctx.fillRect(0,0,12,h);
-    ctx.fillStyle='#e1e3dc';ctx.font='500 52px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(text,w/2,h/2,w-64);
-  });
-}
-
 function nameAt(model,kind,id) {
   let s='';for(let p=model[`name_${kind}adr`][id];model.names[p];p++)s+=String.fromCharCode(model.names[p]);return s;
+}
+
+// One continuous machined face instead of visible overlapping collision blocks.
+// The two through-bores and the original .048 m seating plane stay unchanged.
+export function createConnectorSurface() {
+  const outline=new THREE.Shape();
+  outline.moveTo(-.076,-.024);outline.lineTo(.076,-.024);outline.lineTo(.076,.024);outline.lineTo(-.076,.024);outline.closePath();
+  const round=new THREE.Path();round.absarc(-.038,0,.012,0,Math.PI*2,true);
+  const square=new THREE.Path();square.moveTo(.028,-.012);square.lineTo(.028,.012);square.lineTo(.052,.012);square.lineTo(.052,-.012);square.closePath();
+  outline.holes.push(round,square);
+  const geometry=new THREE.ExtrudeGeometry(outline,{depth:.03,steps:1,curveSegments:48,bevelEnabled:false});
+  geometry.translate(0,0,.018);
+  return new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:'#dde0df',metalness:.56,roughness:.3,envMapIntensity:.75}));
 }
 
 export function installAssemblyPresentation(scene,model) {
@@ -124,16 +122,27 @@ export function installAssemblyPresentation(scene,model) {
     }
   });
   const root=new THREE.Group();root.name='assembly-clean-presentation';scene.add(root);
+  const beam=groups.get('cross_member');
+  if(beam){
+    for(const child of beam.children){
+      const id=child.userData.geomID;
+      if(!Number.isInteger(id))continue;
+      if(/^cross_member_(north|south)_(plate_|round_opening_segment_)/.test(nameAt(model,'geom',id))){
+        const visible=child.visible;child.visible=false;restores.push(()=>{child.visible=visible;});
+      }
+    }
+    for(const y of [-.215,.215]){
+      const surface=createConnectorSurface();surface.position.y=y;surface.name='machined-connector';
+      surface.castShadow=true;surface.receiveShadow=true;surface.raycast=()=>{};beam.add(surface);
+      restores.push(()=>{surface.removeFromParent();surface.geometry.dispose();surface.material.dispose();});
+    }
+  }
   function decal(parent,texture,size,position,yaw=0) {
     const material=new THREE.MeshStandardMaterial({map:texture,transparent:true,roughness:.74,metalness:.12,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
     const mesh=new THREE.Mesh(new THREE.PlaneGeometry(...size),material);
     mesh.position.set(...position);mesh.rotation.z=yaw;mesh.receiveShadow=true;
     // Etched/printed surface detail must not intercept manual picking.
     mesh.raycast=()=>{};parent.add(mesh);decals.push(mesh);return mesh;
-  }
-  for(const station of assemblyStationDecals()){
-    const texture=labelTexture(station.text);textures.push(texture);
-    decal(root,texture,station.size,station.position);
   }
   // Flush mounting outlines on the existing platform, not raised plates that
   // would change the robot mounting height. Bolt recesses are surface graphics.
@@ -147,9 +156,6 @@ export function installAssemblyPresentation(scene,model) {
   const bases=[[0,-.9], [.9,0],[-.3,.85],[-.8,0]];
   bases.forEach(([x,y],i)=>{
     decal(root,mount,[.29,.29],[x,y,.1003],i*Math.PI/2);
-    const tex=labelTexture(`ARM ${i+1}  /  PANDA`);textures.push(tex);
-    const offset=new THREE.Vector3(0,-.184,0).applyAxisAngle(new THREE.Vector3(0,0,1),i*Math.PI/2);
-    decal(root,tex,[.235,.025],[x+offset.x,y+offset.y,.1003],i*Math.PI/2);
   });
   // Rings and crosshair annotations are printed on the existing tray floor.
   const pinTray=groups.get('fastener_tray');

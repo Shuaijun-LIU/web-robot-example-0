@@ -1,3 +1,31 @@
+.assembly-cameras-panel {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 105;
+  width: min(24rem, calc(100vw - 2rem));
+  color: #e5e9e7;
+  font: 500 .72rem/1.4 system-ui, sans-serif;
+  border-radius: .55rem;
+  overflow: hidden;
+  box-shadow: 0 5px 24px #0003;
+}
+.assembly-cameras-panel header { display: flex; gap: .5rem; align-items: center; padding: .55rem; background: #29322fee; }
+.assembly-cameras-panel button, .assembly-cameras-panel select { color: #e5e9e7; background: #3c4742; border: 1px solid #74827a; border-radius: .3rem; padding: .3rem .4rem; font: inherit; cursor: pointer; }
+.assembly-cameras-panel__badge { margin-left: auto; white-space: nowrap; color: #b7c3bb; font-size: .63rem; }
+.assembly-cameras-panel figure { margin: 0; min-width: 0; }
+.assembly-camera-tile { aspect-ratio: 16 / 9; pointer-events: none; }
+.assembly-cameras-panel figcaption { padding: .24rem .55rem; background: #29322fee; }
+.assembly-cameras-panel p { margin: 0; padding: .6rem; background: #29322fee; }
+.assembly-cameras-panel--all { width: min(60rem, calc(100vw - 2rem)); }
+.assembly-cameras-panel--all .assembly-cameras-panel__views { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+.assembly-cameras-panel--all figure:first-child { grid-row: span 2; grid-column: span 2; align-self: center; }
+@media (max-width: 700px) {
+  .assembly-cameras-panel { bottom: .5rem; width: min(19rem, calc(100vw - 1rem)); }
+  .assembly-cameras-panel--all { width: calc(100vw - 1rem); }
+}
+
 .performance-stats {
   position: fixed;
   top: 0.75rem;

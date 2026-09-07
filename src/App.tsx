@@ -37,6 +37,8 @@ import { AssemblySequencePanel } from './AssemblySequencePanel';
 import { Assembly1PoseCapturePanel } from './Assembly1PoseCapturePanel';
 import { FrankaDemo1Panel } from './FrankaDemo1Panel';
 import { AssemblyPresentation } from './AssemblyPresentation';
+import { AssemblyCameras } from './AssemblyCameras';
+import { AssemblyCameraPanel } from './AssemblyCameraPanel';
 import { frankaDemo1DisplayAction, nextFrankaDemo1Action } from './frankaDemo1.js';
 import type { FrankaDemo1Action } from './frankaDemo1.js';
 import { FrankaAssembly2DataRecorderPanel } from './FrankaAssembly2DataRecorderPanel';
@@ -403,12 +405,14 @@ function SceneChildren({
   return (
     <>
       {ik && showGizmo && !assemblyControlsLocked && (
+        <group userData={{sensorOverlay:true}}>
         <IkGizmo
           key={`gizmo-${target.key}`}
           controller={ik}
           siteName={target.ik?.siteName}
           scale={gizmoScale}
         />
+        </group>
       )}
 
       {controlFamily === 'franka' && (
@@ -826,6 +830,9 @@ export function App() {
   });
 
   const canvasKey = useMemo(() => robotKey, [robotKey]);
+  const cameraTiles=useRef(new Map<string,HTMLDivElement>());
+  const [cameraSelection,setCameraSelection]=useState('arm2');
+  const [cameraStatus,setCameraStatus]=useState('loading');
   const simulationConfig = useMemo(() => ({ ...entry.config, controlTimestep: isAssembly1Scene ? .01 : undefined }), [entry.config, isAssembly1Scene]);
 
   return (
@@ -917,11 +924,14 @@ export function App() {
         {!isFrankaDemo1 && <ClickSelectOverlay />}
 
         {/* Debug overlays */}
-        <ContactMarkers visible={debug.contacts} />
-        <Debug showSites={debug.sites} showJoints={debug.joints} />
+        <group userData={{sensorOverlay:true}}>
+          <ContactMarkers visible={debug.contacts} />
+          <Debug showSites={debug.sites} showJoints={debug.joints} />
+        </group>
 
         {/* Scene decoration — lights, environment, grid */}
         {isAssembly1Scene && <AssemblyPresentation />}
+        {isAssembly1Scene && <AssemblyCameras tiles={cameraTiles} onStatus={setCameraStatus} />}
         {isAssembly1Scene ? <color attach="background" args={['#d6d8d2']} /> : robotKey.startsWith('frankaAssembly')
           ? <color attach="background" args={['#d8d2b5']} />
           : <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />}
@@ -939,6 +949,7 @@ export function App() {
       </MujocoCanvas>
 
       {/* HTML overlay — outside R3F canvas */}
+      {isAssembly1Scene && <AssemblyCameraPanel key={`cameras-${robotKey}`} selection={cameraSelection} onSelection={setCameraSelection} tiles={cameraTiles} status={cameraStatus} />}
       {!isFrankaDemo1 && (
         <div
           ref={performanceStatsRef}

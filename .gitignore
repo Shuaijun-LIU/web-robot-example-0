@@ -17,3 +17,4 @@ todos.json
 # Preserve raw local physics audits without publishing failed/debug recordings.
 artifacts/videos/assembly-physical-audit/page@*.webm
 artifacts/screenshots/assembly-physical-failure*.png
+artifacts/debug/camera-installation/

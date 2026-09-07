@@ -1,4 +1,5 @@
 import type { SceneConfig } from 'mujoco-react';
+import { ASSEMBLY_CAMERA_PATCHES } from './assemblyCameras.js';
 
 import {
   FRANKA_LAYOUT,
@@ -157,7 +158,7 @@ export const robots: Record<string, RobotEntry> = {
       src: FRANKA_ASSEMBLY2_BASE,
       sceneFile: 'scene.xml',
       homeJoints: FRANKA_ASSEMBLY1_LAYOUT.homeJoints,
-      xmlPatches: FRANKA_ASSEMBLY1_LAYOUT.xmlPatches,
+      xmlPatches: [...FRANKA_ASSEMBLY1_LAYOUT.xmlPatches,...ASSEMBLY_CAMERA_PATCHES],
       sceneObjects: FRANKA_ASSEMBLY1_LAYOUT.sceneObjects,
     },
     camera: FRANKA_ASSEMBLY1_LAYOUT.camera,
@@ -172,7 +173,7 @@ export const robots: Record<string, RobotEntry> = {
       src: FRANKA_ASSEMBLY2_BASE,
       sceneFile: 'scene.xml',
       homeJoints: FRANKA_ASSEMBLY1_LAYOUT.homeJoints,
-      xmlPatches: FRANKA_ASSEMBLY1_LAYOUT.xmlPatches,
+      xmlPatches: [...FRANKA_ASSEMBLY1_LAYOUT.xmlPatches,...ASSEMBLY_CAMERA_PATCHES],
       sceneObjects: FRANKA_ASSEMBLY1_LAYOUT.sceneObjects,
     },
     camera: FRANKA_ASSEMBLY1_LAYOUT.camera,

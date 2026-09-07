@@ -32,11 +32,9 @@ test('hidden collision meshes remain hidden and rubber differs from metal',()=>{
   assert.ok(rubber.material.metalness<metal.material.metalness);
 });
 
-test('station markings are surface decals, not extra support solids or network assets',()=>{
+test('workstation does not add textual tool or station labels',()=>{
   const specs=presentation.assemblyStationDecals();
-  assert.ok(specs.some(s=>s.text==='HAMMER / PICKUP'));
-  assert.ok(specs.some(s=>s.text==='HAMMER / RETURN'));
-  assert.ok(specs.some(s=>s.text==='LOCATING PINS'));
+  assert.equal(specs.filter(s=>s.text).length,0);
   for(const spec of specs){
     assert.ok(spec.position.every(Number.isFinite));
     assert.equal(spec.position.length,3);
@@ -44,6 +42,46 @@ test('station markings are surface decals, not extra support solids or network a
     assert.ok(spec.position[2]>=.1&&spec.position[2]<.121);
     assert.equal(spec.text.match(/[^\x00-\x7F]/),null);
   }
+});
+
+test('supports stay matte while beam interface and pins receive light silver finish',()=>{
+  const create=(geom,body)=>{
+    const mesh=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:'#444444'}));
+    presentation.styleAssemblyMesh(mesh,geom,body);return mesh.material;
+  };
+  const beam=create('cross_member_north_round_opening_segment_01','cross_member');
+  const pin=create('pin_head','fastener_0');
+  const support=create('cradle_top','hammer_pickup_cradle');
+  const tray=create('tray_floor','fastener_tray');
+  assert.ok(beam.color.r>.6&&pin.color.r>.6);
+  assert.ok(support.metalness<.1&&tray.metalness<.1);
+  assert.ok(support.roughness>.7&&tray.roughness>.7);
+});
+
+test('drill shares hammer yellow housing and retains black grip and steel chuck',()=>{
+  const geometry=new THREE.BufferGeometry();
+  // Source CAD uses X along battery → motor, Z along the motor/chuck axis.
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute([.08,0,-.03,0,.02,-.044,.085,0,.06],3));
+  const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial());
+  const restore=presentation.cleanToolSurface(mesh,'torque_driver');
+  const colors=mesh.geometry.attributes.color;
+  const yellow=new THREE.Color('#aa8746');
+  assert.ok(Math.abs(colors.getX(0)-yellow.r)<1e-6);
+  assert.ok(colors.getX(1)<colors.getX(0)*.2);
+  assert.ok(colors.getX(2)>colors.getX(0));
+  restore();
+});
+
+test('refined connector keeps both bores open and the existing top seating height',()=>{
+  assert.equal(typeof presentation.createConnectorSurface,'function');
+  const mesh=presentation.createConnectorSurface();mesh.updateMatrixWorld(true);
+  const ray=new THREE.Raycaster();
+  for(const x of [-.038,.04]){
+    ray.set(new THREE.Vector3(x,0,.10),new THREE.Vector3(0,0,-1));
+    assert.equal(ray.intersectObject(mesh).length,0);
+  }
+  ray.set(new THREE.Vector3(0,0,.1),new THREE.Vector3(0,0,-1));
+  assert.ok(Math.abs(ray.intersectObject(mesh)[0].point.z-.048)<1e-6);
 });
 
 test('clean tool coloring is continuous across source material partitions and preserves every vertex',()=>{
