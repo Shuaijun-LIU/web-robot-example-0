@@ -44,7 +44,7 @@ test('workstation does not add textual tool or station labels',()=>{
   }
 });
 
-test('workstation restores the pre-camera palette while preserving metal and matte finishes',()=>{
+test('workstation retains source model colors while preserving metal and matte finishes',()=>{
   const create=(geom,body)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:'#444444'}));
     presentation.styleAssemblyMesh(mesh,geom,body);return mesh.material;
@@ -54,17 +54,33 @@ test('workstation restores the pre-camera palette while preserving metal and mat
   const support=create('cradle_top','hammer_pickup_cradle');
   const tray=create('tray_floor','fastener_tray');
   const plate=create('mounting_plate_body','mounting_plate');
-  assert.equal(beam.color.getHexString(),'b2b8b9');
-  assert.equal(pin.color.getHexString(),'aab0b1');
-  assert.equal(support.color.getHexString(),'555f61');
-  assert.equal(tray.color.getHexString(),'596466');
-  assert.equal(plate.color.getHexString(),'777f81');
+  for(const material of [beam,pin,support,tray,plate])assert.equal(material.color.getHexString(),'444444');
   assert.equal(beam.metalness,.56);
   assert.equal(beam.roughness,.32);
   assert.equal(pin.metalness,.65);
   assert.equal(pin.roughness,.25);
   assert.ok(support.metalness<.1&&tray.metalness<.1);
   assert.ok(support.roughness>.7&&tray.roughness>.7);
+});
+
+test('source palette keeps inner/outer rail contrast and distinct mats instead of repainting them',()=>{
+  // Linear RGB values from the model before the September 6 presentation layer.
+  for(const [geom,body,rgb] of [
+    ['frame_rail_north_outer','assembly_frame',[.55,.57,.58]],
+    ['frame_rail_north_inner','assembly_frame',[.68,.69,.69]],
+    ['cross_member_slot','cross_member',[.08,.09,.1]],
+    ['frame_grip_west','assembly_frame',[.15,.17,.18]],
+    ['parts_tray_floor','parts_tray',[.24,.3,.34]],
+    ['mat','tool_mat_manual',[.31,.27,.21]],
+    ['pad','handover_pad',[.24,.31,.36]],
+    ['inset','platform_inset',[.33,.35,.36]],
+    ['platform','assembly_platform',[.25,.27,.29]],
+  ]){
+    const mesh=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:new THREE.Color(...rgb)}));
+    const restore=presentation.styleAssemblyMesh(mesh,geom,body);
+    assert.deepEqual(mesh.material.color.toArray(),rgb,geom);
+    restore();
+  }
 });
 
 test('drill shares hammer yellow housing and retains black grip and steel chuck',()=>{
@@ -84,7 +100,7 @@ test('drill shares hammer yellow housing and retains black grip and steel chuck'
 test('refined connector keeps both bores open and the existing top seating height',()=>{
   assert.equal(typeof presentation.createConnectorSurface,'function');
   const mesh=presentation.createConnectorSurface();mesh.updateMatrixWorld(true);
-  assert.equal(mesh.material.color.getHexString(),'777f81');
+  assert.deepEqual(mesh.material.color.toArray(),[.24,.27,.29]);
   assert.equal(mesh.material.metalness,.56);
   const ray=new THREE.Raycaster();
   for(const x of [-.038,.04]){

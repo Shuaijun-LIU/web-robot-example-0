@@ -932,7 +932,7 @@ export function App() {
         {/* Scene decoration — lights, environment, grid */}
         {isAssembly1Scene && <AssemblyPresentation />}
         {isAssembly1Scene && <AssemblyCameras tiles={cameraTiles} onStatus={setCameraStatus} />}
-        {isAssembly1Scene ? <color attach="background" args={['#d6d8d2']} /> : robotKey.startsWith('frankaAssembly')
+        {isAssembly1Scene ? <color attach="background" args={['#d8d2b5']} /> : robotKey.startsWith('frankaAssembly')
           ? <color attach="background" args={['#d8d2b5']} />
           : <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />}
         <ambientLight intensity={isAssembly1Scene ? .65 : .4} />

@@ -8,18 +8,18 @@ function materialFinish(geom,body) {
     if(geom.includes('_dark_'))return {metalness:.02,roughness:.8,color:'#292d2d'};
     if(geom.includes('_primary_'))return {metalness:.05,roughness:.46,color:'#aa8746'};
   }
-  if(geom.includes('_slot')||geom.includes('grip_stop')||geom.startsWith('frame_grip'))return {metalness:.08,roughness:.72,color:'#343b3c'};
-  // Restore the pre-camera workstation palette, retaining current surface
-  // response. Tool paint, geometry and physical properties are unchanged.
-  if(body.includes('cradle')||geom.startsWith('frame_support')||geom.startsWith('cross_member_stand'))return {metalness:.02,roughness:.84,color:'#555f61'};
-  if(body.includes('tray'))return {metalness:.02,roughness:.82,color:'#596466'};
-  if(body==='cross_member'||geom.startsWith('frame_rail'))return {metalness:.56,roughness:.32,color:'#b2b8b9'};
-  if(geom.includes('_plate_')||body==='mounting_plate')return {metalness:.55,roughness:.36,color:'#777f81'};
-  if(/^fastener_\d+$/.test(body))return {metalness:.65,roughness:.25,color:'#aab0b1'};
-  if(body.startsWith('tool_mat'))return {metalness:0,roughness:.91,color:'#646a65'};
-  if(body==='handover_pad')return {metalness:0,roughness:.87,color:'#566563'};
-  if(body==='platform_inset')return {metalness:.13,roughness:.73,color:'#727a78'};
-  if(body==='assembly_platform')return {metalness:.22,roughness:.6,color:'#4b5354'};
+  // Keep the source model's pre-September-6 colors, including distinct inner
+  // rails, tray walls and mats. Retain current surface response and tool paint.
+  if(geom.includes('_slot')||geom.includes('grip_stop')||geom.startsWith('frame_grip'))return {metalness:.08,roughness:.72};
+  if(body.includes('cradle')||geom.startsWith('frame_support')||geom.startsWith('cross_member_stand'))return {metalness:.02,roughness:.84};
+  if(body.includes('tray'))return {metalness:.02,roughness:.82};
+  if(body==='cross_member'||geom.startsWith('frame_rail'))return {metalness:.56,roughness:.32};
+  if(geom.includes('_plate_')||body==='mounting_plate')return {metalness:.55,roughness:.36};
+  if(/^fastener_\d+$/.test(body))return {metalness:.65,roughness:.25};
+  if(body.startsWith('tool_mat'))return {metalness:0,roughness:.91};
+  if(body==='handover_pad')return {metalness:0,roughness:.87};
+  if(body==='platform_inset')return {metalness:.13,roughness:.73};
+  if(body==='assembly_platform')return {metalness:.22,roughness:.6};
   if(/^r[0-3]_/.test(body))return {metalness:.08,roughness:.34};
   return null;
 }
@@ -109,7 +109,8 @@ export function createConnectorSurface() {
   outline.holes.push(round,square);
   const geometry=new THREE.ExtrudeGeometry(outline,{depth:.03,steps:1,curveSegments:48,bevelEnabled:false});
   geometry.translate(0,0,.018);
-  return new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:'#777f81',metalness:.56,roughness:.3,envMapIntensity:.75}));
+  // Match the source connector plate's linear MuJoCo RGB, not an sRGB hex.
+  return new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:new THREE.Color(.24,.27,.29),metalness:.56,roughness:.3,envMapIntensity:.75}));
 }
 
 export function installAssemblyPresentation(scene,model) {
