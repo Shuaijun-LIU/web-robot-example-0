@@ -9,11 +9,13 @@ function materialFinish(geom,body) {
     if(geom.includes('_primary_'))return {metalness:.05,roughness:.46,color:'#aa8746'};
   }
   if(geom.includes('_slot')||geom.includes('grip_stop')||geom.startsWith('frame_grip'))return {metalness:.08,roughness:.72,color:'#343b3c'};
-  if(body.includes('cradle')||geom.startsWith('frame_support')||geom.startsWith('cross_member_stand'))return {metalness:.02,roughness:.84,color:'#424948'};
-  if(body.includes('tray'))return {metalness:.02,roughness:.82,color:'#4d5553'};
-  if(body==='cross_member'||geom.startsWith('frame_rail'))return {metalness:.56,roughness:.32,color:'#dde0df'};
-  if(geom.includes('_plate_')||body==='mounting_plate')return {metalness:.55,roughness:.36,color:'#d5d9d8'};
-  if(/^fastener_\d+$/.test(body))return {metalness:.65,roughness:.25,color:'#dce0df'};
+  // Restore the pre-camera workstation palette, retaining current surface
+  // response. Tool paint, geometry and physical properties are unchanged.
+  if(body.includes('cradle')||geom.startsWith('frame_support')||geom.startsWith('cross_member_stand'))return {metalness:.02,roughness:.84,color:'#555f61'};
+  if(body.includes('tray'))return {metalness:.02,roughness:.82,color:'#596466'};
+  if(body==='cross_member'||geom.startsWith('frame_rail'))return {metalness:.56,roughness:.32,color:'#b2b8b9'};
+  if(geom.includes('_plate_')||body==='mounting_plate')return {metalness:.55,roughness:.36,color:'#777f81'};
+  if(/^fastener_\d+$/.test(body))return {metalness:.65,roughness:.25,color:'#aab0b1'};
   if(body.startsWith('tool_mat'))return {metalness:0,roughness:.91,color:'#646a65'};
   if(body==='handover_pad')return {metalness:0,roughness:.87,color:'#566563'};
   if(body==='platform_inset')return {metalness:.13,roughness:.73,color:'#727a78'};
@@ -107,7 +109,7 @@ export function createConnectorSurface() {
   outline.holes.push(round,square);
   const geometry=new THREE.ExtrudeGeometry(outline,{depth:.03,steps:1,curveSegments:48,bevelEnabled:false});
   geometry.translate(0,0,.018);
-  return new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:'#dde0df',metalness:.56,roughness:.3,envMapIntensity:.75}));
+  return new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:'#777f81',metalness:.56,roughness:.3,envMapIntensity:.75}));
 }
 
 export function installAssemblyPresentation(scene,model) {

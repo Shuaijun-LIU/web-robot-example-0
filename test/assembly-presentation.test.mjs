@@ -44,7 +44,7 @@ test('workstation does not add textual tool or station labels',()=>{
   }
 });
 
-test('supports stay matte while beam interface and pins receive light silver finish',()=>{
+test('workstation restores the pre-camera palette while preserving metal and matte finishes',()=>{
   const create=(geom,body)=>{
     const mesh=new THREE.Mesh(new THREE.BoxGeometry(),new THREE.MeshStandardMaterial({color:'#444444'}));
     presentation.styleAssemblyMesh(mesh,geom,body);return mesh.material;
@@ -53,7 +53,16 @@ test('supports stay matte while beam interface and pins receive light silver fin
   const pin=create('pin_head','fastener_0');
   const support=create('cradle_top','hammer_pickup_cradle');
   const tray=create('tray_floor','fastener_tray');
-  assert.ok(beam.color.r>.6&&pin.color.r>.6);
+  const plate=create('mounting_plate_body','mounting_plate');
+  assert.equal(beam.color.getHexString(),'b2b8b9');
+  assert.equal(pin.color.getHexString(),'aab0b1');
+  assert.equal(support.color.getHexString(),'555f61');
+  assert.equal(tray.color.getHexString(),'596466');
+  assert.equal(plate.color.getHexString(),'777f81');
+  assert.equal(beam.metalness,.56);
+  assert.equal(beam.roughness,.32);
+  assert.equal(pin.metalness,.65);
+  assert.equal(pin.roughness,.25);
   assert.ok(support.metalness<.1&&tray.metalness<.1);
   assert.ok(support.roughness>.7&&tray.roughness>.7);
 });
@@ -75,6 +84,8 @@ test('drill shares hammer yellow housing and retains black grip and steel chuck'
 test('refined connector keeps both bores open and the existing top seating height',()=>{
   assert.equal(typeof presentation.createConnectorSurface,'function');
   const mesh=presentation.createConnectorSurface();mesh.updateMatrixWorld(true);
+  assert.equal(mesh.material.color.getHexString(),'777f81');
+  assert.equal(mesh.material.metalness,.56);
   const ray=new THREE.Raycaster();
   for(const x of [-.038,.04]){
     ray.set(new THREE.Vector3(x,0,.10),new THREE.Vector3(0,0,-1));
