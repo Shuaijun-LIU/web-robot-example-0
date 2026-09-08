@@ -1,0 +1,40 @@
+{
+  "errors": [],
+  "phaseErrors": [],
+  "transitions": [
+    {
+      "phase": "running",
+      "label": "Approach above ivory egg",
+      "phaseIndex": 0
+    },
+    {
+      "phase": "running",
+      "label": "Lower open fingers",
+      "phaseIndex": 1
+    },
+    {
+      "phase": "running",
+      "label": "Close on egg",
+      "phaseIndex": 2
+    },
+    {
+      "phase": "running",
+      "label": "Lift clear of box",
+      "phaseIndex": 3
+    },
+    {
+      "phase": "running",
+      "label": "Transfer over tray",
+      "phaseIndex": 4
+    },
+    {
+      "phase": "ready",
+      "label": "Ready · Arm 1 / one ivory egg",
+      "phaseIndex": 0
+    }
+  ],
+  "reset": {
+    "testedWhileCarrying": true,
+    "cancelledWithoutStaleCommand": true
+  }
+}

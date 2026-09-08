@@ -4,6 +4,8 @@ This file is generated/updated by artifact registry tooling.
 
 ## Latest artifacts
 
+Demo2 first-egg increment (2026-09-08): [carry](../artifacts/screenshots/demo2-first-egg-carry.png), [released placement](../artifacts/screenshots/demo2-first-egg-complete.png), [native metrics](../artifacts/reports/demo2-first-egg-native.json), [WASM replay](../artifacts/reports/demo2-first-egg-wasm.json), [browser playback](../artifacts/reports/demo2-first-egg-browser.json), and [carrying-state Reset](../artifacts/reports/demo2-egg-reset-browser.json). This does not represent completed four-arm sorting.
+
 | Time (UTC) | Kind | Path | Produced by | Source | Notes |
 |---|---|---|---|---|---|
 | 2026-08-15 01:03:00 UTC | video | artifacts/videos/unitree-locomotion-suite.mp4 | production-browser-verification | Unitree Locomotion Suite | Complete 1440x900 H.264 recording; 27.0 s, 810 frames at 30 fps |

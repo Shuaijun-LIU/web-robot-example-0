@@ -1,10 +1,18 @@
 # Multi-Robot MuJoCo Web Example
 
-An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The eleven selectable scenes use independent physical robot instances—not visual-only clones.
+An interactive browser simulation built with React, Three.js, `mujoco-react`, and MuJoCo WASM. The selectable scenes use independent physical robot instances—not visual-only clones.
 
 [Open the live demo](https://shuaijun-liu.github.io/web-robot-example-0/)
 
 ## Verified scenes
+
+### Franka Demo2 — first physical egg transfer
+
+Select **Franka Demo2**, then **Run first egg**. Arm 1 picks one ivory egg from the mixed box, carries it to its tray, corrects its tilt, seats and releases it, and returns home. Arms 2–4 wait and remain independently controllable outside playback. Reset cancels a running transfer. The workcell reuses RoboDojo eggs/holders and Menagerie UMI long-finger grippers; no object attachment or scripted egg motion is used.
+
+![One egg physically carried between the sourced fingers](artifacts/screenshots/demo2-first-egg-carry.png)
+
+Native, browser-engine and actual browser checks pass for this single transfer. Post-placement regrasp and four-arm concurrent sorting are **not yet enabled**. [Measurements and progress](docs/progress/2026-09-08-demo2-first-egg.md). Demo1 / Assembly1 remain unchanged, and Demo1 remains the default entry.
 
 | Franka Panda — 4 arms | SO101 — 4 arms | XLeRobot — 2 robots |
 |---|---|---|
@@ -50,6 +58,7 @@ This isolated scene contains only a dynamic Unitree G1, a dynamic Go2 carrying a
 
 | Scene | Physical layout | Shared workspace |
 |---|---|---|
+| Franka Demo2 | Four Pandas with sourced UMI long fingers | Sixteen mixed eggs, four trays; verified Arm 1 single-egg transfer |
 | Franka Panda | Four 7-DOF arms at 90° intervals, facing the center | Three free-joint, graspable cubes |
 | SO101 | Four 6-actuator arms at 90° intervals, facing the center | One table with a `0.800 m` top and three graspable cubes |
 | XLeRobot | Two complete dual-arm mobile robots, facing one another | One four-leg table; its top is exactly `0.775 m`, matching the arm mounting height |

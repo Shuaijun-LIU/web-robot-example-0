@@ -1,5 +1,10 @@
 # Standup Log
 
+- 2026-09-08 — Published static Demo2 as `49f9be7`; Pages run 34175093620 succeeded. Continued with an isolated Arm 1 egg transfer, retaining accepted Demo1 / Assembly1 assets and controllers.
+  - Verified: 222 Node tests, TypeScript, production build, native MuJoCo 3.3.7 physical acceptance, WASM 3.3.8 replay and browser playback. Lift 129.6 mm, final tilt about 0.17 degrees, actual tray support after release. Independent controls for all four arms and Demo1 page switching pass.
+  - Fixed during acceptance: browser-version tangential slip through Demo2-only no-slip contact solving; tray/finger clearance through source-derived smaller pockets and staged opening; native Reset/React ordering through a clock rollback guard before actuator writes. Carrying-state Reset passes a lossless transition audit.
+  - Next: post-placement regrasp/reseat, then two-arm conflicts and four-arm parallel sorting. These are not claimed complete by the single-egg increment. See `docs/progress/2026-09-08-demo2-first-egg.md`.
+
 ## 2026-09-08 — Demo2 static milestone
 
 - What: User approved the isolated static egg-sorting scene. Added four Pandas with sourced UMI long-finger meshes, 16 source-derived egg appearances mixed in one box, and four empty output trays. Existing scenes/default remain unchanged.

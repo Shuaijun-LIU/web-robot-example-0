@@ -30,6 +30,8 @@ import { useClickSelect } from './useClickSelect';
 import { KeyboardHelp } from './KeyboardHelp';
 import { GitHubLink } from './GitHubLink';
 import { AssemblyStep1Controller } from './AssemblyStep1Controller';
+import { EggTransferController } from './EggTransferController';
+import type { EggTransferState } from './eggTransfer.js';
 import { AssemblyStep2Controller } from './AssemblyStep2Controller';
 import { AssemblyStep3Controller } from './AssemblyStep3Controller';
 import { AssemblyStep4Controller } from './AssemblyStep4Controller';
@@ -213,6 +215,9 @@ function SceneChildren({
   onPauseUnitreeAction,
   onResumeUnitreeAction,
   onSelectUnitreeActionProgram,
+  eggRequestId,
+  eggLocked,
+  onEggStateChange,
 }: {
   robotKey: string;
   controlFamily: 'franka' | 'industrialArm' | 'so101' | 'xlerobot' | 'unitreeAction';
@@ -249,6 +254,9 @@ function SceneChildren({
   onPauseUnitreeAction: () => boolean;
   onResumeUnitreeAction: () => boolean;
   onSelectUnitreeActionProgram: (programId: UnitreeActionProgramId) => boolean;
+  eggRequestId:number;
+  eggLocked:boolean;
+  onEggStateChange:(state:EggTransferState)=>void;
 }) {
   const simulation = useMujoco();
   const { camera, controls: viewControls } = useThree();
@@ -258,7 +266,7 @@ function SceneChildren({
     || assemblyStep2State.phase !== 'idle'
     || assemblyStep3State.phase !== 'idle'
     || assemblyStep4State.phase !== 'idle';
-  const assemblyControlsLocked = assemblyAutomationActive && !manualPoseMode;
+  const assemblyControlsLocked = (assemblyAutomationActive && !manualPoseMode) || eggLocked;
   const { controller: ik, resolvedSiteName } = useSelectedIkController(
     target,
     resetGeneration,
@@ -404,6 +412,7 @@ function SceneChildren({
 
   return (
     <>
+      {robotKey === 'frankaDemo2' && <EggTransferController requestId={eggRequestId} resetGeneration={resetGeneration} onStateChange={onEggStateChange} />}
       {ik && showGizmo && !assemblyControlsLocked && (
         <group userData={{sensorOverlay:true}}>
         <IkGizmo
@@ -517,6 +526,8 @@ const replicatedRootPatterns: Record<string, RegExp> = {
 export function App() {
   const apiRef = useRef<MujocoSimAPI>(null);
   const [resetGeneration, setResetGeneration] = useState(0);
+  const [eggRequestId,setEggRequestId]=useState(0);
+  const [eggState,setEggState]=useState<EggTransferState>({phase:'loading',label:'Loading checked motion',phaseIndex:0});
   const [assemblyStep1RequestId, setAssemblyStep1RequestId] = useState(0);
   const [assemblyStep1Status, setAssemblyStep1Status] = useState<AssemblyStep1Status>('idle');
   const [assemblyStep2RequestId, setAssemblyStep2RequestId] = useState(0);
@@ -583,6 +594,7 @@ export function App() {
   const isUnitreeActionScene = robotKey === 'unitreeActionLab';
   const isAssembly1Scene = robotKey === 'frankaAssembly1' || robotKey === 'frankaDemo1';
   const isFrankaDemo1 = robotKey === 'frankaDemo1';
+  const eggLocked = robotKey === 'frankaDemo2' && (eggState.phase === 'running' || eggState.phase === 'error');
 
   const handleRunAssemblyStep1 = useCallback(() => {
     if (!isAssembly1Scene || assemblyStep1Status !== 'idle') return false;
@@ -834,7 +846,7 @@ export function App() {
   const cameraTiles=useRef(new Map<string,HTMLDivElement>());
   const [cameraSelection,setCameraSelection]=useState('arm2');
   const [cameraStatus,setCameraStatus]=useState('loading');
-  const simulationConfig = useMemo(() => ({ ...entry.config, controlTimestep: isAssembly1Scene ? .01 : undefined }), [entry.config, isAssembly1Scene]);
+  const simulationConfig = useMemo(() => ({ ...entry.config, controlTimestep: isAssembly1Scene ? .01 : robotKey === 'frankaDemo2' ? .002 : undefined }), [entry.config, isAssembly1Scene, robotKey]);
 
   return (
     <MujocoProvider>
@@ -908,6 +920,9 @@ export function App() {
           onPauseUnitreeAction={handlePauseUnitreeAction}
           onResumeUnitreeAction={handleResumeUnitreeAction}
           onSelectUnitreeActionProgram={handleSelectUnitreeActionProgram}
+          eggRequestId={eggRequestId}
+          eggLocked={eggLocked}
+          onEggStateChange={setEggState}
         />
 
         {isUnitreeActionScene && (
@@ -921,7 +936,7 @@ export function App() {
         )}
 
         {/* Opt-in interaction */}
-        {!assemblyControlsLocked && !isUnitreeActionScene && !isFrankaDemo1 && <DragInteraction />}
+        {!assemblyControlsLocked && !eggLocked && !isUnitreeActionScene && !isFrankaDemo1 && <DragInteraction />}
         {!isFrankaDemo1 && <ClickSelectOverlay />}
 
         {/* Debug overlays */}
@@ -951,11 +966,14 @@ export function App() {
 
       {/* HTML overlay — outside R3F canvas */}
       {robotKey === 'frankaDemo2' && (
-        <aside aria-label="Egg sorting scene review" style={{position:'absolute',left:18,bottom:200,maxWidth:290,padding:'16px 20px',borderRadius:12,background:'rgba(248,246,236,.94)',color:'#34382f',fontSize:13,lineHeight:1.7,pointerEvents:'none'}}>
+        <aside aria-label="Egg sorting scene review" style={{position:'absolute',left:18,bottom:200,maxWidth:290,padding:'16px 20px',borderRadius:12,background:'rgba(248,246,236,.94)',color:'#34382f',fontSize:13,lineHeight:1.7}}>
           <strong style={{fontSize:16}}>Mixed Egg Sorting</strong>
-          <div>Static workcell review · 16 eggs · 4 arms</div>
+          <div>Contact grasp review · 16 eggs · 4 arms</div>
           <div style={{marginTop:8}}>Arm 1: Ivory · Arm 2: Brown<br/>Arm 3: Pale green · Arm 4: Cream</div>
-          <div style={{marginTop:8,color:'#66695e'}}>UMI gripper adaptation. Select an arm for manual inspection. Automatic sorting is not enabled.</div>
+          <div style={{marginTop:8,color:'#66695e'}}>First transfer: Arm 1 picks one ivory egg, aligns it and places it in its tray. Arms 2–4 wait.</div>
+          <button disabled={eggState.phase!=='ready'} onClick={()=>{setEggState({phase:'running',label:'Starting first egg',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:12,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:eggState.phase==='ready'?'#e1dfc9':'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'?'pointer':'default'}}>Run first egg</button>
+          <div role="status" style={{marginTop:8}}>{eggState.label}</div>
+          {eggState.reason && <div style={{color:'#8a3b2c'}}>{eggState.reason} · Reset to retry</div>}
         </aside>
       )}
       {isAssembly1Scene && <AssemblyCameraPanel key={`cameras-${robotKey}`} selection={cameraSelection} onSelection={setCameraSelection} tiles={cameraTiles} status={cameraStatus} />}

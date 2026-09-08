@@ -51,6 +51,28 @@ def geom(parent, name, kind, pos, size, rgba, **attrs):
     return add(parent, 'geom', name=name, type=kind, pos=pos, size=size, rgba=rgba, **attrs)
 
 
+def output_cells(mesh, convex=False):
+    """Reuse the four sourced pockets at egg-fit diameter with hand clearance.
+
+    Cut at the source divider lines; preserve each pocket's surface, shrink
+    around its measured hole center, then separate pockets to 84 mm pitch.
+    Each collision input is convex; clipping and affine scaling preserve that.
+    """
+    pieces=[]
+    for sx,sy,cx,cy in [(-1,-1,-.03784,-.03869),(1,-1,.03785,-.03869),
+                        (-1,1,-.03784,.03819),(1,1,.03773,.03831)]:
+        part=mesh.slice_plane([0,0,0],[sx,0,0])
+        if not len(part.faces):continue
+        part=part.slice_plane([0,0,0],[0,sy,0])
+        if len(part.vertices)<4:continue
+        part.vertices=(part.vertices-[cx,cy,0])*[.35,.35,.6]+[sx*.042,sy*.042,0]
+        if convex:
+            if np.min(part.extents)<1e-8:continue
+            part=part.convex_hull
+        pieces.append(part)
+    return pieces
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--menagerie', type=Path, required=True)
@@ -95,6 +117,16 @@ def main():
             trimesh.Trimesh(v, f, process=False).export(out / 'assets' / filename)
             collision_files.append(filename)
         collision_manifest.write_text(json.dumps({'key': cache_key, 'settings': settings, 'files': collision_files}, indent=2))
+
+    # Source-derived modular output pockets: tighter holes but ample clearance
+    # between neighboring eggs for the long, physically sized UMI fingers.
+    trimesh.util.concatenate(output_cells(tray)).export(out/'assets'/'output-insert.obj')
+    output_collision_files=[]
+    for filename in collision_files:
+        for part in output_cells(trimesh.load(out/'assets'/filename),convex=True):
+            name=f'output-collision-{len(output_collision_files)}.obj'
+            part.export(out/'assets'/name)
+            output_collision_files.append(name)
 
     # Adapt the complete sourced UMI body, retaining meshes, holders and GoPro.
     # This is a simulation mount, not a qualified physical flange adapter.
@@ -156,18 +188,22 @@ def main():
 
     scene = ET.Element('mujoco', model='Franka Demo2 - mixed egg sorting static workcell')
     add(scene, 'compiler', angle='degree', meshdir='assets', texturedir='assets')
-    add(scene, 'option', timestep='.002', integrator='implicitfast', cone='elliptic', iterations='50')
+    option=add(scene, 'option', timestep='.002', integrator='implicitfast', cone='elliptic', iterations='50', noslip_iterations='10')
+    add(option,'flag',multiccd='enable')
     visual = add(scene, 'visual')
     add(visual, 'headlight', diffuse='.75 .75 .75', ambient='.4 .4 .4', specular='.1 .1 .1')
     assets = add(scene, 'asset')
     add(assets, 'model', name='panda_model', file='panda.xml')
-    add(assets, 'mesh', name='insert', file='egg-insert.obj')
+    add(assets, 'mesh', name='insert', file='output-insert.obj')
+    add(assets, 'mesh', name='source_insert_mesh', file='egg-insert.obj', scale='1 1 .6')
     classes = [('Ivory', '0.91 0.86 0.73 1', 1., .055), ('Brown', '.53 .29 .13 1', 1.03, .06),
                ('Pale green', '.60 .73 .59 1', .96, .05), ('Cream', '.76 .62 .39 1', .91, .045)]
     for i, (_, color, scale, mass) in enumerate(classes):
         add(assets, 'mesh', name=f'egg_class_{i}', file='egg.obj', scale=f'{scale} {scale} {scale}')
         add(assets, 'material', name=f'shell_{i}', rgba=color, specular='.12', shininess='.08')
     for i, filename in enumerate(collision_files):
+        add(assets, 'mesh', name=f'source_insert_c_{i}', file=filename, scale='1 1 .6')
+    for i, filename in enumerate(output_collision_files):
         add(assets, 'mesh', name=f'insert_c_{i}', file=filename)
     world = add(scene, 'worldbody')
     geom(world, 'floor', 'plane', '0 0 -.01', '0 0 .01', '.77 .75 .66 1')
@@ -183,9 +219,10 @@ def main():
 
     def insert(name, x, y, z, color):
         body = add(world, 'body', name=name, pos=f'{x} {y} {z}')
-        add(body, 'geom', type='mesh', mesh='insert', rgba=color, contype='0', conaffinity='0', mass='0', group='2')
-        for i in range(len(collision_files)):
-            add(body, 'geom', name=f'{name}_contact_{i}', type='mesh', mesh=f'insert_c_{i}', group='3',
+        source=name.startswith('source_')
+        add(body, 'geom', type='mesh', mesh='source_insert_mesh' if source else 'insert', rgba=color, contype='0', conaffinity='0', mass='0', group='2')
+        for i in range(len(collision_files if source else output_collision_files)):
+            add(body, 'geom', name=f'{name}_contact_{i}', type='mesh', mesh=f'source_insert_c_{i}' if source else f'insert_c_{i}', group='3',
                 friction='.6 .01 .001', solref='.005 1', solimp='.99 .999 .0001')
         return body
 
@@ -219,7 +256,7 @@ def main():
     model = mujoco.MjModel.from_xml_path(str((out / 'scene.xml').resolve()))
     data = mujoco.MjData(model)
     mujoco.mj_resetDataKeyframe(model, data, 0)
-    for _ in range(30000):
+    for _ in range(100000):
         mujoco.mj_step(model, data)
     initial_egg_positions = []
     for e in eggs:
@@ -244,17 +281,20 @@ def main():
         mujoco.mj_step(model, data)
     drift = [float(np.linalg.norm(data.body(e['name']).xpos - p)) for e, p in zip(eggs, initial_egg_positions)]
     metadata = {
-        'stage': 'static scene review; manipulation not validated',
+        'stage': 'scene geometry; motion acceptance is recorded separately in first-egg-motion.json and artifacts/reports',
         'eggSource': 'RoboDojo/Rigid/egg/00000', 'eggSourceSha256': hashlib.sha256(egg_source.read_bytes()).hexdigest(),
         'insertSource': 'RoboDojo/Articulation/egg_holder/00000 bottom only',
         'insertSourceSha256': hashlib.sha256(tray_source.read_bytes()).hexdigest(),
         'insertScale': [1.4, 1.4, .65], 'insertCollisionPieces': len(collision_files),
+        'sourceInsertAdditionalZScale': .6,
+        'outputPocketScale': [.35, .35, .6], 'outputPocketPitchMeters': .084,
+        'outputCollisionPieces': len(output_collision_files),
         'eggBoundsMeters': egg.bounds.tolist(), 'insertBoundsMeters': tray.bounds.tolist(),
         'classes': [{'name': name, 'rgba': color, 'scale': scale, 'massKg': mass} for name, color, scale, mass in classes],
         'classNote': 'Four appearance classes adapted from one sourced shell, not four independently verified species.',
         'gripper': 'Menagerie UMI meshes and holder assembly; rigid simulation flange mount; not a validated real-hardware Panda adapter or deformable simulation.',
         'gripperForceLimitN': 12, 'homeJoints': ctrl, 'eggs': eggs, 'trays': trays,
-        'initialization': '60 seconds of offline passive contact settling; poses used only as scene/Reset initial conditions',
+        'initialization': '200 seconds of offline passive contact settling; poses used only as scene/Reset initial conditions',
         'resetFollowup5sMaxDriftMeters': max(drift),
     }
     (out / 'manifest.json').write_text(json.dumps(metadata, indent=2) + '\n')
