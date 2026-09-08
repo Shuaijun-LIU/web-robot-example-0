@@ -1,6 +1,8 @@
 # Task Plan
 
 ## Goal
+- Active work (2026-09-08): design an isolated four-Panda mixed-egg sorting Demo2; first deliver a reviewable static workcell, then validate physical manipulation incrementally.
+- Demo1 / Assembly1 are temporarily complete and frozen by user acceptance at `019afd25d2f1f93aa08866330634f936b29f2818`. Preserve all existing scenes and the current default entry. The goals below describe the completed/archived assembly work, not a request to reopen it.
 - Refine the fourth web scene into `Franka Assembly1` and add `Franka Assembly2` for a direct procedural-versus-external-asset comparison.
 - Preserve the existing Franka Panda, SO101, and XLeRobot scenes and controls unchanged.
 - Deliver a physically coherent static workcell, browser-verified screenshot, documentation, and GitHub Pages deployment.
@@ -26,9 +28,16 @@
 - [x] Phase 15: Implement and production-verify Step 2 physical contact and clamped hold
 - [x] Phase 16: Unitree Action Lab dynamic models, actuator choreography, browser verification, and visual artifacts
 - [x] Phase 17: Implement and production-verify Step 3 dual-arm cross-member placement
-- [ ] Phase 18: Robust Step 2/3 verification, Step 3 release, and Step 4 first-fastener staging (hammer lift/handover complete; fastener path pending)
+- [x] Phase 18: Assembly1 release, handover, insertion/strike and return-home development; subsequently accepted by the user as temporarily complete on 2026-09-08. Historical test caveats remain in dated progress reports.
+- [x] Phase 19: Record Demo1 / Assembly1 closure and initial Demo2 resource investigation.
+- [x] Phase 20: User approved stage A; imported RoboDojo shell/holder and Menagerie UMI gripper candidates. Physical hardware adapter qualification and upstream asset publication rights remain separate follow-ups.
+- [x] Phase 21: Deliver the isolated static Demo2 workcell for visual review (2026-09-08, local only).
+- [ ] Phase 22: Validate one-arm egg grasp, transfer, seating, release and orientation correction.
+- [ ] Phase 23: Validate two-arm shared-space conflict handling, then four-arm parallel sorting.
+- [ ] Phase 24: Integrate continuous Demo2 playback and regression-check existing scenes.
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
-- Current phase: Phase 18 implementation; Step 3 physical release/home and Step 4 contact-only hammer handover pass, while the full fastener insertion/strike path still needs browser regression.
-- Blockers: None.
+- Updated: 2026-09-08.
+- Current phase: Static `Franka Demo2` ready for user review; no sorting controller yet. See [static result](../docs/progress/2026-09-08-demo2-static.md).
+- Pending decisions/validation: user layout review; source rights audit before public asset release; qualified gripper mount and physical one-egg grasp/place/reseat before four-arm automation.

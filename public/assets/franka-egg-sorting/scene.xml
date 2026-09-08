@@ -1,0 +1,1280 @@
+<mujoco model="Franka Demo2 - mixed egg sorting static workcell">
+  <compiler angle="degree" meshdir="assets" texturedir="assets" />
+  <option timestep=".002" integrator="implicitfast" cone="elliptic" iterations="50" />
+  <visual>
+    <headlight diffuse=".75 .75 .75" ambient=".4 .4 .4" specular=".1 .1 .1" />
+  </visual>
+  <asset>
+    <model name="panda_model" file="panda.xml" />
+    <mesh name="insert" file="egg-insert.obj" />
+    <mesh name="egg_class_0" file="egg.obj" scale="1.0 1.0 1.0" />
+    <material name="shell_0" rgba="0.91 0.86 0.73 1" specular=".12" shininess=".08" />
+    <mesh name="egg_class_1" file="egg.obj" scale="1.03 1.03 1.03" />
+    <material name="shell_1" rgba=".53 .29 .13 1" specular=".12" shininess=".08" />
+    <mesh name="egg_class_2" file="egg.obj" scale="0.96 0.96 0.96" />
+    <material name="shell_2" rgba=".60 .73 .59 1" specular=".12" shininess=".08" />
+    <mesh name="egg_class_3" file="egg.obj" scale="0.91 0.91 0.91" />
+    <material name="shell_3" rgba=".76 .62 .39 1" specular=".12" shininess=".08" />
+    <mesh name="insert_c_0" file="insert-collision-0.obj" />
+    <mesh name="insert_c_1" file="insert-collision-1.obj" />
+    <mesh name="insert_c_2" file="insert-collision-2.obj" />
+    <mesh name="insert_c_3" file="insert-collision-3.obj" />
+    <mesh name="insert_c_4" file="insert-collision-4.obj" />
+    <mesh name="insert_c_5" file="insert-collision-5.obj" />
+    <mesh name="insert_c_6" file="insert-collision-6.obj" />
+    <mesh name="insert_c_7" file="insert-collision-7.obj" />
+    <mesh name="insert_c_8" file="insert-collision-8.obj" />
+    <mesh name="insert_c_9" file="insert-collision-9.obj" />
+    <mesh name="insert_c_10" file="insert-collision-10.obj" />
+    <mesh name="insert_c_11" file="insert-collision-11.obj" />
+    <mesh name="insert_c_12" file="insert-collision-12.obj" />
+    <mesh name="insert_c_13" file="insert-collision-13.obj" />
+    <mesh name="insert_c_14" file="insert-collision-14.obj" />
+    <mesh name="insert_c_15" file="insert-collision-15.obj" />
+    <mesh name="insert_c_16" file="insert-collision-16.obj" />
+    <mesh name="insert_c_17" file="insert-collision-17.obj" />
+    <mesh name="insert_c_18" file="insert-collision-18.obj" />
+    <mesh name="insert_c_19" file="insert-collision-19.obj" />
+    <mesh name="insert_c_20" file="insert-collision-20.obj" />
+    <mesh name="insert_c_21" file="insert-collision-21.obj" />
+    <mesh name="insert_c_22" file="insert-collision-22.obj" />
+    <mesh name="insert_c_23" file="insert-collision-23.obj" />
+    <mesh name="insert_c_24" file="insert-collision-24.obj" />
+    <mesh name="insert_c_25" file="insert-collision-25.obj" />
+    <mesh name="insert_c_26" file="insert-collision-26.obj" />
+    <mesh name="insert_c_27" file="insert-collision-27.obj" />
+    <mesh name="insert_c_28" file="insert-collision-28.obj" />
+    <mesh name="insert_c_29" file="insert-collision-29.obj" />
+    <mesh name="insert_c_30" file="insert-collision-30.obj" />
+    <mesh name="insert_c_31" file="insert-collision-31.obj" />
+    <mesh name="insert_c_32" file="insert-collision-32.obj" />
+    <mesh name="insert_c_33" file="insert-collision-33.obj" />
+    <mesh name="insert_c_34" file="insert-collision-34.obj" />
+    <mesh name="insert_c_35" file="insert-collision-35.obj" />
+    <mesh name="insert_c_36" file="insert-collision-36.obj" />
+    <mesh name="insert_c_37" file="insert-collision-37.obj" />
+    <mesh name="insert_c_38" file="insert-collision-38.obj" />
+    <mesh name="insert_c_39" file="insert-collision-39.obj" />
+    <mesh name="insert_c_40" file="insert-collision-40.obj" />
+    <mesh name="insert_c_41" file="insert-collision-41.obj" />
+    <mesh name="insert_c_42" file="insert-collision-42.obj" />
+    <mesh name="insert_c_43" file="insert-collision-43.obj" />
+    <mesh name="insert_c_44" file="insert-collision-44.obj" />
+    <mesh name="insert_c_45" file="insert-collision-45.obj" />
+    <mesh name="insert_c_46" file="insert-collision-46.obj" />
+    <mesh name="insert_c_47" file="insert-collision-47.obj" />
+    <mesh name="insert_c_48" file="insert-collision-48.obj" />
+    <mesh name="insert_c_49" file="insert-collision-49.obj" />
+    <mesh name="insert_c_50" file="insert-collision-50.obj" />
+    <mesh name="insert_c_51" file="insert-collision-51.obj" />
+    <mesh name="insert_c_52" file="insert-collision-52.obj" />
+    <mesh name="insert_c_53" file="insert-collision-53.obj" />
+    <mesh name="insert_c_54" file="insert-collision-54.obj" />
+    <mesh name="insert_c_55" file="insert-collision-55.obj" />
+    <mesh name="insert_c_56" file="insert-collision-56.obj" />
+    <mesh name="insert_c_57" file="insert-collision-57.obj" />
+    <mesh name="insert_c_58" file="insert-collision-58.obj" />
+    <mesh name="insert_c_59" file="insert-collision-59.obj" />
+    <mesh name="insert_c_60" file="insert-collision-60.obj" />
+    <mesh name="insert_c_61" file="insert-collision-61.obj" />
+    <mesh name="insert_c_62" file="insert-collision-62.obj" />
+    <mesh name="insert_c_63" file="insert-collision-63.obj" />
+    <mesh name="insert_c_64" file="insert-collision-64.obj" />
+    <mesh name="insert_c_65" file="insert-collision-65.obj" />
+    <mesh name="insert_c_66" file="insert-collision-66.obj" />
+    <mesh name="insert_c_67" file="insert-collision-67.obj" />
+    <mesh name="insert_c_68" file="insert-collision-68.obj" />
+    <mesh name="insert_c_69" file="insert-collision-69.obj" />
+    <mesh name="insert_c_70" file="insert-collision-70.obj" />
+    <mesh name="insert_c_71" file="insert-collision-71.obj" />
+    <mesh name="insert_c_72" file="insert-collision-72.obj" />
+    <mesh name="insert_c_73" file="insert-collision-73.obj" />
+    <mesh name="insert_c_74" file="insert-collision-74.obj" />
+    <mesh name="insert_c_75" file="insert-collision-75.obj" />
+    <mesh name="insert_c_76" file="insert-collision-76.obj" />
+    <mesh name="insert_c_77" file="insert-collision-77.obj" />
+    <mesh name="insert_c_78" file="insert-collision-78.obj" />
+    <mesh name="insert_c_79" file="insert-collision-79.obj" />
+    <mesh name="insert_c_80" file="insert-collision-80.obj" />
+    <mesh name="insert_c_81" file="insert-collision-81.obj" />
+    <mesh name="insert_c_82" file="insert-collision-82.obj" />
+    <mesh name="insert_c_83" file="insert-collision-83.obj" />
+    <mesh name="insert_c_84" file="insert-collision-84.obj" />
+    <mesh name="insert_c_85" file="insert-collision-85.obj" />
+    <mesh name="insert_c_86" file="insert-collision-86.obj" />
+    <mesh name="insert_c_87" file="insert-collision-87.obj" />
+    <mesh name="insert_c_88" file="insert-collision-88.obj" />
+    <mesh name="insert_c_89" file="insert-collision-89.obj" />
+    <mesh name="insert_c_90" file="insert-collision-90.obj" />
+    <mesh name="insert_c_91" file="insert-collision-91.obj" />
+    <mesh name="insert_c_92" file="insert-collision-92.obj" />
+    <mesh name="insert_c_93" file="insert-collision-93.obj" />
+    <mesh name="insert_c_94" file="insert-collision-94.obj" />
+    <mesh name="insert_c_95" file="insert-collision-95.obj" />
+    <mesh name="insert_c_96" file="insert-collision-96.obj" />
+    <mesh name="insert_c_97" file="insert-collision-97.obj" />
+    <mesh name="insert_c_98" file="insert-collision-98.obj" />
+    <mesh name="insert_c_99" file="insert-collision-99.obj" />
+    <mesh name="insert_c_100" file="insert-collision-100.obj" />
+    <mesh name="insert_c_101" file="insert-collision-101.obj" />
+    <mesh name="insert_c_102" file="insert-collision-102.obj" />
+    <mesh name="insert_c_103" file="insert-collision-103.obj" />
+    <mesh name="insert_c_104" file="insert-collision-104.obj" />
+    <mesh name="insert_c_105" file="insert-collision-105.obj" />
+    <mesh name="insert_c_106" file="insert-collision-106.obj" />
+    <mesh name="insert_c_107" file="insert-collision-107.obj" />
+    <mesh name="insert_c_108" file="insert-collision-108.obj" />
+    <mesh name="insert_c_109" file="insert-collision-109.obj" />
+    <mesh name="insert_c_110" file="insert-collision-110.obj" />
+    <mesh name="insert_c_111" file="insert-collision-111.obj" />
+    <mesh name="insert_c_112" file="insert-collision-112.obj" />
+    <mesh name="insert_c_113" file="insert-collision-113.obj" />
+    <mesh name="insert_c_114" file="insert-collision-114.obj" />
+    <mesh name="insert_c_115" file="insert-collision-115.obj" />
+    <mesh name="insert_c_116" file="insert-collision-116.obj" />
+    <mesh name="insert_c_117" file="insert-collision-117.obj" />
+    <mesh name="insert_c_118" file="insert-collision-118.obj" />
+    <mesh name="insert_c_119" file="insert-collision-119.obj" />
+    <mesh name="insert_c_120" file="insert-collision-120.obj" />
+    <mesh name="insert_c_121" file="insert-collision-121.obj" />
+    <mesh name="insert_c_122" file="insert-collision-122.obj" />
+    <mesh name="insert_c_123" file="insert-collision-123.obj" />
+    <mesh name="insert_c_124" file="insert-collision-124.obj" />
+    <mesh name="insert_c_125" file="insert-collision-125.obj" />
+    <mesh name="insert_c_126" file="insert-collision-126.obj" />
+  </asset>
+  <worldbody>
+    <geom name="floor" type="plane" pos="0 0 -.01" size="0 0 .01" rgba=".77 .75 .66 1" />
+    <geom name="table" type="box" pos="0 0 .045" size="1.02 1.02 .055" rgba=".76 .77 .73 1" />
+    <frame pos="0 -0.78 .1" euler="0 0 0">
+      <attach model="panda_model" body="link0" prefix="r0_" />
+    </frame>
+    <frame pos="0.78 0 .1" euler="0 0 90">
+      <attach model="panda_model" body="link0" prefix="r1_" />
+    </frame>
+    <frame pos="0 0.78 .1" euler="0 0 180">
+      <attach model="panda_model" body="link0" prefix="r2_" />
+    </frame>
+    <frame pos="-0.78 0 .1" euler="0 0 -90">
+      <attach model="panda_model" body="link0" prefix="r3_" />
+    </frame>
+    <body name="source_box">
+      <geom name="box_floor" type="box" pos="0 0 .106" size=".188 .188 .006" rgba=".36 .38 .33 1" />
+      <geom name="box_north" type="box" pos="0 .19 .128" size=".198 .006 .028" rgba=".43 .45 .38 1" />
+      <geom name="box_south" type="box" pos="0 -.19 .128" size=".198 .006 .028" rgba=".43 .45 .38 1" />
+      <geom name="box_east" type="box" pos=".192 0 .128" size=".006 .184 .028" rgba=".43 .45 .38 1" />
+      <geom name="box_west" type="box" pos="-.192 0 .128" size=".006 .184 .028" rgba=".43 .45 .38 1" />
+    </body>
+    <body name="source_insert_0" pos="-0.091 -0.091 0.112">
+      <geom type="mesh" mesh="insert" rgba=".60 .55 .44 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="source_insert_0_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_0_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="egg_0" pos="-0.1270813259 -0.1198096053 0.1412255114" quat="0.9552556280 -0.2696151982 0.1090248021 0.0539251570">
+      <freejoint name="egg_0_free" />
+      <geom name="egg_0_shell" type="mesh" mesh="egg_class_0" material="shell_0" mass="0.055" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_1" pos="-0.0518332018 -0.1208886669 0.1427414554" quat="0.9682867327 -0.2421789027 -0.0475359880 -0.0388653082">
+      <freejoint name="egg_1_free" />
+      <geom name="egg_1_shell" type="mesh" mesh="egg_class_1" material="shell_1" mass="0.06" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_2" pos="-0.0518425254 -0.0408084966 0.1416694650" quat="0.9837729557 -0.1703769643 -0.0479082976 -0.0294492227">
+      <freejoint name="egg_2_free" />
+      <geom name="egg_2_shell" type="mesh" mesh="egg_class_2" material="shell_2" mass="0.05" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_3" pos="-0.1164479640 -0.0517701256 0.1393979633" quat="0.9640987501 0.1112071875 0.2159683486 0.1072577920">
+      <freejoint name="egg_3_free" />
+      <geom name="egg_3_shell" type="mesh" mesh="egg_class_3" material="shell_3" mass="0.045" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="source_insert_1" pos="0.091 -0.091 0.112">
+      <geom type="mesh" mesh="insert" rgba=".60 .55 .44 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="source_insert_1_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_1_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="egg_4" pos="0.0552845284 -0.1200994141 0.1422469899" quat="0.9595063928 -0.2528953480 0.1098599020 0.0576387634">
+      <freejoint name="egg_4_free" />
+      <geom name="egg_4_shell" type="mesh" mesh="egg_class_1" material="shell_1" mass="0.06" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_5" pos="0.1318688711 -0.1204270690 0.1405952430" quat="0.9639914678 -0.2644681599 -0.0165427335 -0.0224361407">
+      <freejoint name="egg_5_free" />
+      <geom name="egg_5_shell" type="mesh" mesh="egg_class_2" material="shell_2" mass="0.05" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_6" pos="0.1291723442 -0.0402426741 0.1398089737" quat="0.9750814920 -0.2078437961 -0.0709182501 -0.0314267755">
+      <freejoint name="egg_6_free" />
+      <geom name="egg_6_shell" type="mesh" mesh="egg_class_3" material="shell_3" mass="0.045" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_7" pos="0.0648337526 -0.0526052493 0.1429492376" quat="0.9836492473 0.0674840357 0.1384166546 0.0933857209">
+      <freejoint name="egg_7_free" />
+      <geom name="egg_7_shell" type="mesh" mesh="egg_class_0" material="shell_0" mass="0.055" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="source_insert_2" pos="0.091 0.091 0.112">
+      <geom type="mesh" mesh="insert" rgba=".60 .55 .44 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="source_insert_2_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_2_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="egg_8" pos="0.0539102194 0.0628132968 0.1400133743" quat="0.9519972447 -0.2892720282 0.0911446205 0.0414197768">
+      <freejoint name="egg_8_free" />
+      <geom name="egg_8_shell" type="mesh" mesh="egg_class_2" material="shell_2" mass="0.05" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_9" pos="0.1315888276 0.0620126897 0.1387926543" quat="0.9532796384 -0.3000679311 -0.0238656419 -0.0254479641">
+      <freejoint name="egg_9_free" />
+      <geom name="egg_9_shell" type="mesh" mesh="egg_class_3" material="shell_3" mass="0.045" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_10" pos="0.1282722458 0.1405032930 0.1426712800" quat="0.9818587718 -0.1623508318 -0.0911277685 -0.0359345158">
+      <freejoint name="egg_10_free" />
+      <geom name="egg_10_shell" type="mesh" mesh="egg_class_0" material="shell_0" mass="0.055" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_11" pos="0.0645361618 0.1300826560 0.1436417433" quat="0.9828361330 0.0531991714 0.1567761494 0.0813893286">
+      <freejoint name="egg_11_free" />
+      <geom name="egg_11_shell" type="mesh" mesh="egg_class_1" material="shell_1" mass="0.06" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="source_insert_3" pos="-0.091 0.091 0.112">
+      <geom type="mesh" mesh="insert" rgba=".60 .55 .44 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="source_insert_3_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="source_insert_3_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="egg_12" pos="-0.1287510416 0.0635584916 0.1385086595" quat="0.9475753508 -0.3064380175 0.0840379409 0.0336796764">
+      <freejoint name="egg_12_free" />
+      <geom name="egg_12_shell" type="mesh" mesh="egg_class_3" material="shell_3" mass="0.045" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_13" pos="-0.0503718366 0.0612002462 0.1418932047" quat="0.9676685594 -0.2498521822 -0.0220089784 -0.0265904329">
+      <freejoint name="egg_13_free" />
+      <geom name="egg_13_shell" type="mesh" mesh="egg_class_0" material="shell_0" mass="0.055" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_14" pos="-0.0562752325 0.1393523509 0.1433938192" quat="0.9806530348 -0.1302563859 -0.1380584273 -0.0478828773">
+      <freejoint name="egg_14_free" />
+      <geom name="egg_14_shell" type="mesh" mesh="egg_class_1" material="shell_1" mass="0.06" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="egg_15" pos="-0.1161675016 0.1298944010 0.1421847709" quat="0.9891709390 0.0416878587 0.1050901581 0.0935897142">
+      <freejoint name="egg_15_free" />
+      <geom name="egg_15_shell" type="mesh" mesh="egg_class_2" material="shell_2" mass="0.05" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" condim="4" />
+    </body>
+    <body name="output_tray_0" pos="-0.4 -0.4 0.106">
+      <geom type="mesh" mesh="insert" rgba=".64 .66 .59 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="output_tray_0_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_0_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <geom name="tray_mat_0" type="box" pos="-0.4 -0.4 .103" size=".092 .092 .003" rgba="0.91 0.86 0.73 1" />
+    <body name="output_tray_1" pos="0.4 -0.4 0.106">
+      <geom type="mesh" mesh="insert" rgba=".64 .66 .59 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="output_tray_1_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_1_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <geom name="tray_mat_1" type="box" pos="0.4 -0.4 .103" size=".092 .092 .003" rgba=".53 .29 .13 1" />
+    <body name="output_tray_2" pos="0.4 0.4 0.106">
+      <geom type="mesh" mesh="insert" rgba=".64 .66 .59 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="output_tray_2_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_2_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <geom name="tray_mat_2" type="box" pos="0.4 0.4 .103" size=".092 .092 .003" rgba=".60 .73 .59 1" />
+    <body name="output_tray_3" pos="-0.4 0.4 0.106">
+      <geom type="mesh" mesh="insert" rgba=".64 .66 .59 1" contype="0" conaffinity="0" mass="0" group="2" />
+      <geom name="output_tray_3_contact_0" type="mesh" mesh="insert_c_0" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_1" type="mesh" mesh="insert_c_1" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_2" type="mesh" mesh="insert_c_2" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_3" type="mesh" mesh="insert_c_3" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_4" type="mesh" mesh="insert_c_4" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_5" type="mesh" mesh="insert_c_5" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_6" type="mesh" mesh="insert_c_6" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_7" type="mesh" mesh="insert_c_7" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_8" type="mesh" mesh="insert_c_8" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_9" type="mesh" mesh="insert_c_9" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_10" type="mesh" mesh="insert_c_10" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_11" type="mesh" mesh="insert_c_11" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_12" type="mesh" mesh="insert_c_12" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_13" type="mesh" mesh="insert_c_13" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_14" type="mesh" mesh="insert_c_14" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_15" type="mesh" mesh="insert_c_15" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_16" type="mesh" mesh="insert_c_16" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_17" type="mesh" mesh="insert_c_17" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_18" type="mesh" mesh="insert_c_18" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_19" type="mesh" mesh="insert_c_19" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_20" type="mesh" mesh="insert_c_20" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_21" type="mesh" mesh="insert_c_21" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_22" type="mesh" mesh="insert_c_22" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_23" type="mesh" mesh="insert_c_23" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_24" type="mesh" mesh="insert_c_24" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_25" type="mesh" mesh="insert_c_25" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_26" type="mesh" mesh="insert_c_26" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_27" type="mesh" mesh="insert_c_27" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_28" type="mesh" mesh="insert_c_28" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_29" type="mesh" mesh="insert_c_29" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_30" type="mesh" mesh="insert_c_30" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_31" type="mesh" mesh="insert_c_31" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_32" type="mesh" mesh="insert_c_32" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_33" type="mesh" mesh="insert_c_33" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_34" type="mesh" mesh="insert_c_34" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_35" type="mesh" mesh="insert_c_35" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_36" type="mesh" mesh="insert_c_36" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_37" type="mesh" mesh="insert_c_37" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_38" type="mesh" mesh="insert_c_38" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_39" type="mesh" mesh="insert_c_39" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_40" type="mesh" mesh="insert_c_40" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_41" type="mesh" mesh="insert_c_41" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_42" type="mesh" mesh="insert_c_42" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_43" type="mesh" mesh="insert_c_43" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_44" type="mesh" mesh="insert_c_44" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_45" type="mesh" mesh="insert_c_45" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_46" type="mesh" mesh="insert_c_46" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_47" type="mesh" mesh="insert_c_47" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_48" type="mesh" mesh="insert_c_48" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_49" type="mesh" mesh="insert_c_49" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_50" type="mesh" mesh="insert_c_50" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_51" type="mesh" mesh="insert_c_51" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_52" type="mesh" mesh="insert_c_52" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_53" type="mesh" mesh="insert_c_53" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_54" type="mesh" mesh="insert_c_54" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_55" type="mesh" mesh="insert_c_55" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_56" type="mesh" mesh="insert_c_56" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_57" type="mesh" mesh="insert_c_57" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_58" type="mesh" mesh="insert_c_58" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_59" type="mesh" mesh="insert_c_59" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_60" type="mesh" mesh="insert_c_60" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_61" type="mesh" mesh="insert_c_61" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_62" type="mesh" mesh="insert_c_62" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_63" type="mesh" mesh="insert_c_63" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_64" type="mesh" mesh="insert_c_64" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_65" type="mesh" mesh="insert_c_65" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_66" type="mesh" mesh="insert_c_66" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_67" type="mesh" mesh="insert_c_67" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_68" type="mesh" mesh="insert_c_68" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_69" type="mesh" mesh="insert_c_69" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_70" type="mesh" mesh="insert_c_70" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_71" type="mesh" mesh="insert_c_71" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_72" type="mesh" mesh="insert_c_72" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_73" type="mesh" mesh="insert_c_73" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_74" type="mesh" mesh="insert_c_74" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_75" type="mesh" mesh="insert_c_75" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_76" type="mesh" mesh="insert_c_76" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_77" type="mesh" mesh="insert_c_77" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_78" type="mesh" mesh="insert_c_78" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_79" type="mesh" mesh="insert_c_79" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_80" type="mesh" mesh="insert_c_80" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_81" type="mesh" mesh="insert_c_81" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_82" type="mesh" mesh="insert_c_82" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_83" type="mesh" mesh="insert_c_83" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_84" type="mesh" mesh="insert_c_84" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_85" type="mesh" mesh="insert_c_85" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_86" type="mesh" mesh="insert_c_86" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_87" type="mesh" mesh="insert_c_87" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_88" type="mesh" mesh="insert_c_88" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_89" type="mesh" mesh="insert_c_89" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_90" type="mesh" mesh="insert_c_90" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_91" type="mesh" mesh="insert_c_91" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_92" type="mesh" mesh="insert_c_92" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_93" type="mesh" mesh="insert_c_93" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_94" type="mesh" mesh="insert_c_94" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_95" type="mesh" mesh="insert_c_95" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_96" type="mesh" mesh="insert_c_96" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_97" type="mesh" mesh="insert_c_97" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_98" type="mesh" mesh="insert_c_98" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_99" type="mesh" mesh="insert_c_99" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_100" type="mesh" mesh="insert_c_100" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_101" type="mesh" mesh="insert_c_101" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_102" type="mesh" mesh="insert_c_102" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_103" type="mesh" mesh="insert_c_103" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_104" type="mesh" mesh="insert_c_104" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_105" type="mesh" mesh="insert_c_105" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_106" type="mesh" mesh="insert_c_106" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_107" type="mesh" mesh="insert_c_107" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_108" type="mesh" mesh="insert_c_108" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_109" type="mesh" mesh="insert_c_109" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_110" type="mesh" mesh="insert_c_110" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_111" type="mesh" mesh="insert_c_111" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_112" type="mesh" mesh="insert_c_112" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_113" type="mesh" mesh="insert_c_113" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_114" type="mesh" mesh="insert_c_114" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_115" type="mesh" mesh="insert_c_115" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_116" type="mesh" mesh="insert_c_116" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_117" type="mesh" mesh="insert_c_117" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_118" type="mesh" mesh="insert_c_118" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_119" type="mesh" mesh="insert_c_119" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_120" type="mesh" mesh="insert_c_120" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_121" type="mesh" mesh="insert_c_121" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_122" type="mesh" mesh="insert_c_122" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_123" type="mesh" mesh="insert_c_123" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_124" type="mesh" mesh="insert_c_124" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_125" type="mesh" mesh="insert_c_125" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="output_tray_3_contact_126" type="mesh" mesh="insert_c_126" group="3" friction=".6 .01 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <geom name="tray_mat_3" type="box" pos="-0.4 0.4 .103" size=".092 .092 .003" rgba=".76 .62 .39 1" />
+  </worldbody>
+  <keyframe>
+    <key name="home" qpos="1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 0.05 0.05 1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 0.05 0.05 1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 0.05 0.05 1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 0.05 0.05 -0.127081325875945 -0.11980960525836179 0.14122551138004832 0.9552556280150464 -0.2696151982108312 0.10902480214511442 0.05392515699125326 -0.05183320183267246 -0.12088866690397164 0.14274145537993344 0.9682867327192685 -0.24217890267828593 -0.04753598804401121 -0.038865308156069665 -0.05184252539342493 -0.04080849655309762 0.14166946496965507 0.9837729556915294 -0.17037696426148824 -0.04790829763535423 -0.02944922268368884 -0.1164479639678557 -0.0517701256022231 0.13939796326460177 0.9640987500895809 0.11120718748408595 0.21596834857447506 0.10725779198547977 0.05528452840255811 -0.1200994141277594 0.14224698986302553 0.9595063928023996 -0.2528953480183505 0.10985990204689844 0.05763876338239 0.1318688711072118 -0.1204270690351946 0.14059524297348536 0.9639914677872502 -0.26446815988231187 -0.016542733537315148 -0.02243614068774187 0.12917234415793807 -0.04024267406683273 0.13980897369359882 0.9750814919747425 -0.2078437961352802 -0.07091825012105571 -0.03142677546544247 0.06483375264092142 -0.0526052493371697 0.14294923760044942 0.9836492473348625 0.06748403573254425 0.1384166546025157 0.09338572089701784 0.0539102193840369 0.06281329681891018 0.14001337426592986 0.9519972447256151 -0.2892720281680402 0.09114462047912388 0.041419776823443465 0.13158882755593676 0.06201268969937658 0.13879265431952212 0.9532796384151848 -0.30006793105013896 -0.023865641897621147 -0.025447964066279877 0.1282722458362429 0.1405032930051309 0.14267128004787613 0.9818587718157575 -0.1623508318088734 -0.09112776850482436 -0.035934515813481414 0.06453616180300605 0.1300826559775986 0.14364174329658946 0.9828361330102592 0.053199171389684115 0.1567761493540281 0.08138932857946501 -0.12875104157340875 0.0635584915625726 0.13850865950072158 0.9475753507543676 -0.30643801745034566 0.08403794086207363 0.03367967635685 -0.05037183655229608 0.061200246199158814 0.14189320471142292 0.9676685593725924 -0.24985218220310906 -0.022008978362951286 -0.026590432894809533 -0.056275232487997186 0.13935235090769715 0.14339381918811628 0.9806530347931803 -0.13025638591181593 -0.13805842726311826 -0.04788287733367807 -0.11616750159229002 0.12989440104614694 0.14218477088541123 0.9891709389780345 0.041687858723272936 0.1050901580601996 0.09358971415313264" ctrl="1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 255 1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 255 1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 255 1.570796 -0.785398 0 -2.356194 0 1.570796 0.785398 255" />
+  </keyframe>
+</mujoco>

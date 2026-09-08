@@ -420,7 +420,7 @@ function SceneChildren({
           key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}`}
           target={target}
           enabled={!assemblyControlsLocked}
-          initiallyOpen={assemblyStep1Status === 'complete'}
+          initiallyOpen={assemblyStep1Status === 'complete' || robotKey === 'frankaDemo2'}
         />
       )}
       {controlFamily === 'industrialArm' && (
@@ -501,6 +501,7 @@ const robotOptions = Object.fromEntries(
 const replicatedRootPatterns: Record<string, RegExp> = {
   franka: /^r\d+_link0$/,
   frankaDemo1: /^r\d+_link0$/,
+  frankaDemo2: /^r\d+_link0$/,
   frankaAssembly1: /^r\d+_link0$/,
   frankaAssembly2: /^r\d+_link0$/,
   piperAssembly1: /^r\d+_base_link$/,
@@ -932,10 +933,10 @@ export function App() {
         {/* Scene decoration — lights, environment, grid */}
         {isAssembly1Scene && <AssemblyPresentation />}
         {isAssembly1Scene && <AssemblyCameras tiles={cameraTiles} onStatus={setCameraStatus} />}
-        {isAssembly1Scene ? <color attach="background" args={['#d8d2b5']} /> : robotKey.startsWith('frankaAssembly')
+        {isAssembly1Scene || robotKey === 'frankaDemo2' ? <color attach="background" args={['#d8d2b5']} /> : robotKey.startsWith('frankaAssembly')
           ? <color attach="background" args={['#d8d2b5']} />
           : <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />}
-        <ambientLight intensity={isAssembly1Scene ? .65 : .4} />
+        <ambientLight intensity={isAssembly1Scene || robotKey === 'frankaDemo2' ? .65 : .4} />
         <directionalLight position={[2, -2, 5]} intensity={1.5} castShadow />
         <directionalLight position={[-1, 1, 3]} intensity={0.3} />
         <gridHelper
@@ -949,6 +950,14 @@ export function App() {
       </MujocoCanvas>
 
       {/* HTML overlay — outside R3F canvas */}
+      {robotKey === 'frankaDemo2' && (
+        <aside aria-label="Egg sorting scene review" style={{position:'absolute',left:18,bottom:200,maxWidth:290,padding:'16px 20px',borderRadius:12,background:'rgba(248,246,236,.94)',color:'#34382f',fontSize:13,lineHeight:1.7,pointerEvents:'none'}}>
+          <strong style={{fontSize:16}}>Mixed Egg Sorting</strong>
+          <div>Static workcell review · 16 eggs · 4 arms</div>
+          <div style={{marginTop:8}}>Arm 1: Ivory · Arm 2: Brown<br/>Arm 3: Pale green · Arm 4: Cream</div>
+          <div style={{marginTop:8,color:'#66695e'}}>UMI gripper adaptation. Select an arm for manual inspection. Automatic sorting is not enabled.</div>
+        </aside>
+      )}
       {isAssembly1Scene && <AssemblyCameraPanel key={`cameras-${robotKey}`} selection={cameraSelection} onSelection={setCameraSelection} tiles={cameraTiles} status={cameraStatus} />}
       {!isFrankaDemo1 && (
         <div

@@ -1,5 +1,11 @@
 # Standup Log
 
+## 2026-09-08 — Demo2 static milestone
+
+- What: User approved the isolated static egg-sorting scene. Added four Pandas with sourced UMI long-finger meshes, 16 source-derived egg appearances mixed in one box, and four empty output trays. Existing scenes/default remain unchanged.
+- Verified: 216 tests, TypeScript and production build pass. Browser verifies four independent gripper controls, IK target availability, Reset, real support for all eggs, no sampled robot penetration, and switching back to Demo1. Artifacts and measured drift are in `docs/progress/2026-09-08-demo2-static.md`.
+- Boundary: Local static preview only, uncommitted/unpushed. No automatic grasp/sort/correction or collision-aware scheduler yet. Physical mounting qualification and asset publication provenance remain follow-ups.
+
 - 2026-08-12 18:50 UTC — Initialized tracking.
 - 2026-08-13 02:00 CST — Audited existing scene generation and local RoboTwin/RoboCasa resources; selected an isolated, physically coherent four-arm frame-assembly workcell design.
 - 2026-08-13 03:00 CST — Implemented and compiled `Franka Assembly` with 4 physical Panda roots, 62 bodies, 379 geoms, and 32 actuators. Browser screenshot passed visual inspection; all 14 selectable control targets across four scenes passed independent keyboard/IK regression.

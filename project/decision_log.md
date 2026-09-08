@@ -1,5 +1,18 @@
 # Decision Log
 
+## 2026-09-08 — Demo1 closure and Demo2 design start
+
+- User subsequently approved stage A. Added local `Franka Demo2` only: four Pandas, one mixed 16-egg box, four empty destination trays, sourced UMI mesh assembly. No automatic manipulation and no change to the default entry.
+- Source-holder bottom is reused as low packing inserts/trays; four source-derived shell appearances are explicitly not represented as verified species. A rigid simulation wrist attachment is not claimed as a qualified physical UMI–Panda adapter.
+- Replace only Demo2's folded home with an unfolded hover after real contact tests caught long-finger/link-1 self-collision. Generate egg initial conditions by offline passive settling; eggs remain free during runtime. Preserve the 215-test baseline; expanded suite passes 216 tests.
+
+- User decision: Demo1 / Assembly are temporarily complete. Freeze the accepted Demo1 / Assembly1 baseline at `019afd25d2f1f93aa08866330634f936b29f2818`; preserve all other scenes and the current page entry as well. Historical test caveats remain archived.
+- New user scope: four Panda arms sort assigned egg types from one shared mixed box into assigned trays, correct tilted seating, and coordinate to avoid collisions in the common work area. Investigate real longer/egg-appropriate finger assets.
+- Proposed, not yet implemented: static scene review → single-egg physical grasp/place/reseat → two-arm conflict handling → four-arm parallel sorting → continuous Demo2 page.
+- Resource investigation found local RoboDojo/RoboCasa egg assets and official UMI soft-finger/Franka-mount CAD references. Actual container suitability, CAD export/licensing and grasp behavior remain to be validated. See [Demo2 proposal](demo2-egg-sorting-proposal.md).
+
+## Earlier decisions (historical)
+
 - 2026-08-12 18:50 UTC — Initialized tracking.
 - 2026-08-13 02:00 CST — Add a fourth `Franka Assembly` scene while preserving the existing three scene entries unchanged.
 - 2026-08-13 02:00 CST — Use compound MuJoCo primitives for the first assembly workcell so every visible task object is represented in physics and GitHub Pages remains self-contained.

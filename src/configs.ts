@@ -1,4 +1,5 @@
 import type { SceneConfig } from 'mujoco-react';
+import { EGG_SORTING_LAYOUT } from './eggSortingLayout.js';
 import { ASSEMBLY_CAMERA_PATCHES } from './assemblyCameras.js';
 
 import {
@@ -163,6 +164,21 @@ export const robots: Record<string, RobotEntry> = {
     },
     camera: FRANKA_ASSEMBLY1_LAYOUT.camera,
     orbitTarget: FRANKA_ASSEMBLY1_LAYOUT.orbitTarget,
+    controlTargets: createFrankaTargets(),
+  },
+
+  frankaDemo2: {
+    label: 'Franka Demo2',
+    controlFamily: 'franka',
+    config: {
+      src: `${import.meta.env.BASE_URL}assets/franka-egg-sorting/`,
+      sceneFile: 'scene.xml',
+      homeJoints: EGG_SORTING_LAYOUT.homeJoints,
+      xmlPatches: EGG_SORTING_LAYOUT.xmlPatches,
+      sceneObjects: EGG_SORTING_LAYOUT.sceneObjects,
+    },
+    camera: EGG_SORTING_LAYOUT.camera,
+    orbitTarget: EGG_SORTING_LAYOUT.orbitTarget,
     controlTargets: createFrankaTargets(),
   },
 
