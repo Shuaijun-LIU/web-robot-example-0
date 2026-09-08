@@ -1,0 +1,1166 @@
+{
+  "result": {
+    "transfer": {
+      "state": {
+        "phase": "complete",
+        "label": "Egg corrected and reseated · Arm 1 returned",
+        "phaseIndex": 19
+      },
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "aperture": 0.09999999999869996,
+        "tcpDistance": 0.5650355837701784,
+        "lift": 0.00701794978254161,
+        "traySupported": true,
+        "tiltDegrees": 0.24093243207643242,
+        "cellError": 0.00010909951490932618,
+        "speed": 8.098512678590925e-12,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0,
+        "neighborDisplacement": 0.0008263445347714907
+      },
+      "history": [
+        {
+          "phase": "Approach above ivory egg",
+          "time": 6.165999999999543,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.06272696516049603,
+            "tcpDistance": 0.2007998991599681,
+            "lift": -2.7994292994826253e-10,
+            "traySupported": false,
+            "tiltDegrees": 37.62233344522063,
+            "cellError": 0.45628222356237846,
+            "speed": 7.522501030116669e-11,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0000615641022088031
+          }
+        },
+        {
+          "phase": "Lower open fingers",
+          "time": 9.16599999999973,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.06274509804599254,
+            "tcpDistance": 0.024871953417489864,
+            "lift": -3.7405756270203483e-10,
+            "traySupported": false,
+            "tiltDegrees": 37.622334053551924,
+            "cellError": 0.4562822234834764,
+            "speed": 5.3073557699573245e-12,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.00011811859637475429
+          }
+        },
+        {
+          "phase": "Close on egg",
+          "time": 11.166000000000398,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.04482022037662457,
+            "tcpDistance": 0.024675713336874475,
+            "lift": 0.00007661176893156152,
+            "traySupported": false,
+            "tiltDegrees": 37.073410489851526,
+            "cellError": 0.4556823244043302,
+            "speed": 0.00010091279310133952,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.00019175008819373053,
+            "neighborDisplacement": 0.00014147038238318868
+          }
+        },
+        {
+          "phase": "Lift clear of box",
+          "time": 14.1660000000014,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.04480541796036287,
+            "tcpDistance": 0.024718980701098917,
+            "lift": 0.1296014572960231,
+            "traySupported": false,
+            "tiltDegrees": 37.11579522967855,
+            "cellError": 0.45564989329296146,
+            "speed": 0.0021699801829912144,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.00019517084565740344,
+            "neighborDisplacement": 0.0001832485391956161
+          }
+        },
+        {
+          "phase": "Transfer over tray",
+          "time": 18.16800000000081,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.04482992185454852,
+            "tcpDistance": 0.024704109098312867,
+            "lift": 0.1668354508756679,
+            "traySupported": false,
+            "tiltDegrees": 37.23191956481668,
+            "cellError": 0.0007713854446256445,
+            "speed": 0.003406900396477084,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.00019353895362291942,
+            "neighborDisplacement": 0.00024215773994435154
+          }
+        },
+        {
+          "phase": "Align egg upright in free space",
+          "time": 21.169999999999146,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.044800454884221574,
+            "tcpDistance": 0.02504798232305632,
+            "lift": 0.17105418960624078,
+            "traySupported": false,
+            "tiltDegrees": 0.2565509066212981,
+            "cellError": 0.015283859542691,
+            "speed": 0.00043040281511667915,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.00021557906585315266,
+            "neighborDisplacement": 0.0002873462653011944
+          }
+        },
+        {
+          "phase": "Lower into egg tray",
+          "time": 25.171999999996927,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.04481651429650667,
+            "tcpDistance": 0.02508622349809551,
+            "lift": 0.007074013970455345,
+            "traySupported": true,
+            "tiltDegrees": 0.21283159318680672,
+            "cellError": 0.00018330361237423243,
+            "speed": 0.00026702943454271497,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.00022266328212482289,
+            "neighborDisplacement": 0.0003483036673278643
+          }
+        },
+        {
+          "phase": "Release with an early wrist withdrawal",
+          "time": 27.173999999995818,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.06292070137909056,
+            "tcpDistance": 0.04995054651916533,
+            "lift": 0.006073779094879134,
+            "traySupported": true,
+            "tiltDegrees": 24.384870627477873,
+            "cellError": 0.005397950292797979,
+            "speed": 4.8828093929718775e-9,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0003825897604992033
+          }
+        },
+        {
+          "phase": "Clear the tilted egg",
+          "time": 30.175999999994154,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.09999914231441925,
+            "tcpDistance": 0.182007426499777,
+            "lift": 0.00607377905055001,
+            "traySupported": true,
+            "tiltDegrees": 24.384869778752456,
+            "cellError": 0.005397949916254734,
+            "speed": 7.155825014551796e-12,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0004491657444522105
+          }
+        },
+        {
+          "phase": "Inspect released egg tilt",
+          "time": 32.17799999999336,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.09999393723544622,
+            "tcpDistance": 0.18221868991723927,
+            "lift": 0.006073779050703915,
+            "traySupported": true,
+            "tiltDegrees": 24.384869780196166,
+            "cellError": 0.005397949916851502,
+            "speed": 3.731644184477857e-14,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0004945570550155059
+          }
+        },
+        {
+          "phase": "Approach tilted egg",
+          "time": 35.17799999999703,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.06272675886948456,
+            "tcpDistance": 0.1650164982712086,
+            "lift": 0.006073779050670414,
+            "traySupported": true,
+            "tiltDegrees": 24.384869779909238,
+            "cellError": 0.005397949916723667,
+            "speed": 1.302981509763172e-12,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0005641003356277797
+          }
+        },
+        {
+          "phase": "Lower for a second grasp",
+          "time": 38.178000000000694,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.06274509803952667,
+            "tcpDistance": 0.025223722139111573,
+            "lift": 0.006073779050692646,
+            "traySupported": true,
+            "tiltDegrees": 24.384869780209584,
+            "cellError": 0.0053979499168396285,
+            "speed": 1.8540366815637135e-14,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0006355185847310083
+          }
+        },
+        {
+          "phase": "Regrasp both sides",
+          "time": 40.17800000000314,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.04329443973690611,
+            "tcpDistance": 0.02511415654406749,
+            "lift": 0.006152773568026543,
+            "traySupported": true,
+            "tiltDegrees": 23.942719594575095,
+            "cellError": 0.005161180149572489,
+            "speed": 0.00012648825651856156,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.0002611497255010587,
+            "neighborDisplacement": 0.0006641057164667069
+          }
+        },
+        {
+          "phase": "Lift egg out of its pocket",
+          "time": 43.178000000006804,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.0432211992018294,
+            "tcpDistance": 0.02522949842062881,
+            "lift": 0.1056227030079866,
+            "traySupported": false,
+            "tiltDegrees": 23.742006968467248,
+            "cellError": 0.004837049211234706,
+            "speed": 0.0017000061150314132,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.00018449060743166155,
+            "neighborDisplacement": 0.0007004378513566701
+          }
+        },
+        {
+          "phase": "Correct the regrasped egg upright",
+          "time": 46.17800000001047,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.04323481704499271,
+            "tcpDistance": 0.025393289957315657,
+            "lift": 0.10752323939796724,
+            "traySupported": false,
+            "tiltDegrees": 0.1987855848613115,
+            "cellError": 0.015067687240116114,
+            "speed": 0.0003770327634358469,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.0002038545752808263,
+            "neighborDisplacement": 0.00070043810438697
+          }
+        },
+        {
+          "phase": "Reseat the corrected egg",
+          "time": 50.17800000001536,
+          "observation": {
+            "bilateral": true,
+            "fingerContacts": 2,
+            "aperture": 0.04324619170926153,
+            "tcpDistance": 0.025391796332102364,
+            "lift": 0.007016822236901615,
+            "traySupported": true,
+            "tiltDegrees": 0.2274698363015067,
+            "cellError": 0.00011675122346293206,
+            "speed": 0.000182055102827262,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0.00021296447197478603,
+            "neighborDisplacement": 0.0007004379918808243
+          }
+        },
+        {
+          "phase": "Release the corrected egg",
+          "time": 52.1780000000178,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.050983139795207064,
+            "tcpDistance": 0.02530906384301711,
+            "lift": 0.007018581659432116,
+            "traySupported": true,
+            "tiltDegrees": 0.23096291957368928,
+            "cellError": 0.00011077504206962801,
+            "speed": 0.000017341275065395854,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0007004373054829969
+          }
+        },
+        {
+          "phase": "Withdraw after correction",
+          "time": 55.17800000002147,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.10000129339233216,
+            "tcpDistance": 0.18336000144601056,
+            "lift": 0.007017948935225421,
+            "traySupported": true,
+            "tiltDegrees": 0.2408040503898452,
+            "cellError": 0.00010909459250793995,
+            "speed": 2.8391791122063415e-7,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0007004373957972828
+          }
+        },
+        {
+          "phase": "Return after correction",
+          "time": 59.17800000002636,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.09999819230092719,
+            "tcpDistance": 0.5648910231106855,
+            "lift": 0.0070179497802849156,
+            "traySupported": true,
+            "tiltDegrees": 0.24093210739890636,
+            "cellError": 0.00010909950212800876,
+            "speed": 7.266405352041811e-10,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0007758600719884001
+          }
+        },
+        {
+          "phase": "Verify corrected placement",
+          "time": 62.178000000030025,
+          "observation": {
+            "bilateral": false,
+            "fingerContacts": 0,
+            "aperture": 0.09999999999869996,
+            "tcpDistance": 0.5650355837701784,
+            "lift": 0.00701794978254161,
+            "traySupported": true,
+            "tiltDegrees": 0.24093243207643242,
+            "cellError": 0.00010909951490932618,
+            "speed": 8.098512678590925e-12,
+            "forbiddenPenetration": 0,
+            "gripPenetration": 0,
+            "neighborDisplacement": 0.0008263445347714907
+          }
+        }
+      ]
+    },
+    "physics": {
+      "contacts": 43,
+      "constraints": 179,
+      "arenaBytes": 22020096,
+      "peakArenaBytes": 228544,
+      "warnings": [
+        {
+          "index": 0,
+          "count": 0,
+          "lastInfo": 0
+        },
+        {
+          "index": 1,
+          "count": 0,
+          "lastInfo": 0
+        },
+        {
+          "index": 2,
+          "count": 0,
+          "lastInfo": 0
+        },
+        {
+          "index": 3,
+          "count": 0,
+          "lastInfo": 0
+        },
+        {
+          "index": 4,
+          "count": 0,
+          "lastInfo": 0
+        },
+        {
+          "index": 5,
+          "count": 0,
+          "lastInfo": 0
+        },
+        {
+          "index": 6,
+          "count": 0,
+          "lastInfo": 0
+        },
+        {
+          "index": 7,
+          "count": 0,
+          "lastInfo": 0
+        }
+      ]
+    },
+    "positions": {
+      "egg_0": [
+        -0.4420321598243153,
+        -0.44189574814217014,
+        0.14641483579346212
+      ],
+      "egg_1": [
+        -0.055387706115927124,
+        -0.11617103072211823,
+        0.14047795484685321
+      ],
+      "egg_2": [
+        -0.05609394912093707,
+        -0.03752633436277151,
+        0.13959980676712636
+      ],
+      "egg_3": [
+        -0.13331820761502225,
+        -0.03769635248661471,
+        0.1385955833029431
+      ],
+      "egg_4": [
+        0.0595386481298067,
+        -0.11646817013466557,
+        0.14029088883804922
+      ],
+      "egg_5": [
+        0.12673847275879482,
+        -0.11611817621948795,
+        0.13808849175924534
+      ],
+      "egg_6": [
+        0.12770630279138118,
+        -0.03694775985611359,
+        0.13801186679690827
+      ],
+      "egg_7": [
+        0.04885543219921021,
+        -0.03823434959972232,
+        0.14185164882504012
+      ],
+      "egg_8": [
+        0.05776637260466892,
+        0.06606747334514086,
+        0.13815185705093808
+      ],
+      "egg_9": [
+        0.12629473664727747,
+        0.06640332696292303,
+        0.1368954347337766
+      ],
+      "egg_10": [
+        0.12349029010890758,
+        0.14371107675986958,
+        0.14073338698048662
+      ],
+      "egg_11": [
+        0.04891303827434934,
+        0.1435203677744587,
+        0.1427096529005434
+      ],
+      "egg_12": [
+        -0.12658062872484888,
+        0.06664543125698279,
+        0.13659753834077795
+      ],
+      "egg_13": [
+        -0.05535669656921877,
+        0.06582959995381774,
+        0.1394214241158138
+      ],
+      "egg_14": [
+        -0.06057318744223279,
+        0.14174875596469436,
+        0.14157086743345465
+      ],
+      "egg_15": [
+        -0.13328852670380514,
+        0.14394530570557743,
+        0.14010133558080515
+      ]
+    },
+    "contacts": [
+      {
+        "geom1": 389,
+        "geom2": 508,
+        "geomName1": "source_insert_0_contact_9",
+        "geomName2": "egg_1_shell",
+        "distance": -0.00000195302741029535,
+        "body1": "source_insert_0",
+        "body2": "egg_1"
+      },
+      {
+        "geom1": 444,
+        "geom2": 508,
+        "geomName1": "source_insert_0_contact_64",
+        "geomName2": "egg_1_shell",
+        "distance": -6.474043279967302e-7,
+        "body1": "source_insert_0",
+        "body2": "egg_1"
+      },
+      {
+        "geom1": 462,
+        "geom2": 508,
+        "geomName1": "source_insert_0_contact_82",
+        "geomName2": "egg_1_shell",
+        "distance": -2.5947021520975132e-8,
+        "body1": "source_insert_0",
+        "body2": "egg_1"
+      },
+      {
+        "geom1": 389,
+        "geom2": 509,
+        "geomName1": "source_insert_0_contact_9",
+        "geomName2": "egg_2_shell",
+        "distance": -0.0000020878315368356414,
+        "body1": "source_insert_0",
+        "body2": "egg_2"
+      },
+      {
+        "geom1": 483,
+        "geom2": 509,
+        "geomName1": "source_insert_0_contact_103",
+        "geomName2": "egg_2_shell",
+        "distance": -3.342380140837316e-7,
+        "body1": "source_insert_0",
+        "body2": "egg_2"
+      },
+      {
+        "geom1": 483,
+        "geom2": 509,
+        "geomName1": "source_insert_0_contact_103",
+        "geomName2": "egg_2_shell",
+        "distance": -3.342380140837316e-7,
+        "body1": "source_insert_0",
+        "body2": "egg_2"
+      },
+      {
+        "geom1": 381,
+        "geom2": 510,
+        "geomName1": "source_insert_0_contact_1",
+        "geomName2": "egg_3_shell",
+        "distance": -0.0000021075384682815876,
+        "body1": "source_insert_0",
+        "body2": "egg_3"
+      },
+      {
+        "geom1": 390,
+        "geom2": 510,
+        "geomName1": "source_insert_0_contact_10",
+        "geomName2": "egg_3_shell",
+        "distance": -5.841647720377648e-7,
+        "body1": "source_insert_0",
+        "body2": "egg_3"
+      },
+      {
+        "geom1": 507,
+        "geom2": 947,
+        "geomName1": "egg_0_shell",
+        "geomName2": "output_tray_0_contact_39",
+        "distance": -7.535311141518358e-7,
+        "body1": "egg_0",
+        "body2": "output_tray_0"
+      },
+      {
+        "geom1": 507,
+        "geom2": 1028,
+        "geomName1": "egg_0_shell",
+        "geomName2": "output_tray_0_contact_120",
+        "distance": -0.000001714817923444026,
+        "body1": "egg_0",
+        "body2": "output_tray_0"
+      },
+      {
+        "geom1": 507,
+        "geom2": 1036,
+        "geomName1": "egg_0_shell",
+        "geomName2": "output_tray_0_contact_128",
+        "distance": -9.841129537689792e-7,
+        "body1": "egg_0",
+        "body2": "output_tray_0"
+      },
+      {
+        "geom1": 538,
+        "geom2": 639,
+        "geomName1": "source_insert_1_contact_26",
+        "geomName2": "egg_4_shell",
+        "distance": -0.0000018777974493539016,
+        "body1": "source_insert_1",
+        "body2": "egg_4"
+      },
+      {
+        "geom1": 563,
+        "geom2": 639,
+        "geomName1": "source_insert_1_contact_51",
+        "geomName2": "egg_4_shell",
+        "distance": -3.5415249001953407e-7,
+        "body1": "source_insert_1",
+        "body2": "egg_4"
+      },
+      {
+        "geom1": 630,
+        "geom2": 639,
+        "geomName1": "source_insert_1_contact_118",
+        "geomName2": "egg_4_shell",
+        "distance": -3.80950568771378e-7,
+        "body1": "source_insert_1",
+        "body2": "egg_4"
+      },
+      {
+        "geom1": 521,
+        "geom2": 640,
+        "geomName1": "source_insert_1_contact_9",
+        "geomName2": "egg_5_shell",
+        "distance": -0.000001936651626991814,
+        "body1": "source_insert_1",
+        "body2": "egg_5"
+      },
+      {
+        "geom1": 576,
+        "geom2": 640,
+        "geomName1": "source_insert_1_contact_64",
+        "geomName2": "egg_5_shell",
+        "distance": -5.666479084054263e-7,
+        "body1": "source_insert_1",
+        "body2": "egg_5"
+      },
+      {
+        "geom1": 594,
+        "geom2": 640,
+        "geomName1": "source_insert_1_contact_82",
+        "geomName2": "egg_5_shell",
+        "distance": -1.2068065091123748e-7,
+        "body1": "source_insert_1",
+        "body2": "egg_5"
+      },
+      {
+        "geom1": 521,
+        "geom2": 641,
+        "geomName1": "source_insert_1_contact_9",
+        "geomName2": "egg_6_shell",
+        "distance": -0.0000020390370522948103,
+        "body1": "source_insert_1",
+        "body2": "egg_6"
+      },
+      {
+        "geom1": 615,
+        "geom2": 641,
+        "geomName1": "source_insert_1_contact_103",
+        "geomName2": "egg_6_shell",
+        "distance": -6.681802672258722e-7,
+        "body1": "source_insert_1",
+        "body2": "egg_6"
+      },
+      {
+        "geom1": 513,
+        "geom2": 642,
+        "geomName1": "source_insert_1_contact_1",
+        "geomName2": "egg_7_shell",
+        "distance": -0.000002184988762057359,
+        "body1": "source_insert_1",
+        "body2": "egg_7"
+      },
+      {
+        "geom1": 522,
+        "geom2": 642,
+        "geomName1": "source_insert_1_contact_10",
+        "geomName2": "egg_7_shell",
+        "distance": -4.605475038860994e-7,
+        "body1": "source_insert_1",
+        "body2": "egg_7"
+      },
+      {
+        "geom1": 670,
+        "geom2": 771,
+        "geomName1": "source_insert_2_contact_26",
+        "geomName2": "egg_8_shell",
+        "distance": -0.0000019901146235123957,
+        "body1": "source_insert_2",
+        "body2": "egg_8"
+      },
+      {
+        "geom1": 762,
+        "geom2": 771,
+        "geomName1": "source_insert_2_contact_118",
+        "geomName2": "egg_8_shell",
+        "distance": -7.141106458116455e-7,
+        "body1": "source_insert_2",
+        "body2": "egg_8"
+      },
+      {
+        "geom1": 653,
+        "geom2": 772,
+        "geomName1": "source_insert_2_contact_9",
+        "geomName2": "egg_9_shell",
+        "distance": -0.000001935280113600468,
+        "body1": "source_insert_2",
+        "body2": "egg_9"
+      },
+      {
+        "geom1": 708,
+        "geom2": 772,
+        "geomName1": "source_insert_2_contact_64",
+        "geomName2": "egg_9_shell",
+        "distance": -9.81832561089112e-8,
+        "body1": "source_insert_2",
+        "body2": "egg_9"
+      },
+      {
+        "geom1": 708,
+        "geom2": 772,
+        "geomName1": "source_insert_2_contact_64",
+        "geomName2": "egg_9_shell",
+        "distance": -9.81832561089112e-8,
+        "body1": "source_insert_2",
+        "body2": "egg_9"
+      },
+      {
+        "geom1": 726,
+        "geom2": 772,
+        "geomName1": "source_insert_2_contact_82",
+        "geomName2": "egg_9_shell",
+        "distance": -4.063207824798571e-7,
+        "body1": "source_insert_2",
+        "body2": "egg_9"
+      },
+      {
+        "geom1": 653,
+        "geom2": 773,
+        "geomName1": "source_insert_2_contact_9",
+        "geomName2": "egg_10_shell",
+        "distance": -0.000001934782007314526,
+        "body1": "source_insert_2",
+        "body2": "egg_10"
+      },
+      {
+        "geom1": 706,
+        "geom2": 773,
+        "geomName1": "source_insert_2_contact_62",
+        "geomName2": "egg_10_shell",
+        "distance": -4.369652411781231e-7,
+        "body1": "source_insert_2",
+        "body2": "egg_10"
+      },
+      {
+        "geom1": 747,
+        "geom2": 773,
+        "geomName1": "source_insert_2_contact_103",
+        "geomName2": "egg_10_shell",
+        "distance": -2.633623700642114e-7,
+        "body1": "source_insert_2",
+        "body2": "egg_10"
+      },
+      {
+        "geom1": 645,
+        "geom2": 774,
+        "geomName1": "source_insert_2_contact_1",
+        "geomName2": "egg_11_shell",
+        "distance": -0.00000217912032216858,
+        "body1": "source_insert_2",
+        "body2": "egg_11"
+      },
+      {
+        "geom1": 654,
+        "geom2": 774,
+        "geomName1": "source_insert_2_contact_10",
+        "geomName2": "egg_11_shell",
+        "distance": -4.5502115679130905e-7,
+        "body1": "source_insert_2",
+        "body2": "egg_11"
+      },
+      {
+        "geom1": 802,
+        "geom2": 903,
+        "geomName1": "source_insert_3_contact_26",
+        "geomName2": "egg_12_shell",
+        "distance": -0.0000020191498225491378,
+        "body1": "source_insert_3",
+        "body2": "egg_12"
+      },
+      {
+        "geom1": 894,
+        "geom2": 903,
+        "geomName1": "source_insert_3_contact_118",
+        "geomName2": "egg_12_shell",
+        "distance": -6.81206307234876e-7,
+        "body1": "source_insert_3",
+        "body2": "egg_12"
+      },
+      {
+        "geom1": 785,
+        "geom2": 904,
+        "geomName1": "source_insert_3_contact_9",
+        "geomName2": "egg_13_shell",
+        "distance": -0.0000019552640543806354,
+        "body1": "source_insert_3",
+        "body2": "egg_13"
+      },
+      {
+        "geom1": 840,
+        "geom2": 904,
+        "geomName1": "source_insert_3_contact_64",
+        "geomName2": "egg_13_shell",
+        "distance": -5.362919931681831e-7,
+        "body1": "source_insert_3",
+        "body2": "egg_13"
+      },
+      {
+        "geom1": 858,
+        "geom2": 904,
+        "geomName1": "source_insert_3_contact_82",
+        "geomName2": "egg_13_shell",
+        "distance": -1.2443348093091825e-7,
+        "body1": "source_insert_3",
+        "body2": "egg_13"
+      },
+      {
+        "geom1": 785,
+        "geom2": 905,
+        "geomName1": "source_insert_3_contact_9",
+        "geomName2": "egg_14_shell",
+        "distance": -0.000001001017651930397,
+        "body1": "source_insert_3",
+        "body2": "egg_14"
+      },
+      {
+        "geom1": 785,
+        "geom2": 905,
+        "geomName1": "source_insert_3_contact_9",
+        "geomName2": "egg_14_shell",
+        "distance": -0.000001001017651930397,
+        "body1": "source_insert_3",
+        "body2": "egg_14"
+      },
+      {
+        "geom1": 838,
+        "geom2": 905,
+        "geomName1": "source_insert_3_contact_62",
+        "geomName2": "egg_14_shell",
+        "distance": -3.5422725431042403e-7,
+        "body1": "source_insert_3",
+        "body2": "egg_14"
+      },
+      {
+        "geom1": 838,
+        "geom2": 905,
+        "geomName1": "source_insert_3_contact_62",
+        "geomName2": "egg_14_shell",
+        "distance": -3.5422725431042403e-7,
+        "body1": "source_insert_3",
+        "body2": "egg_14"
+      },
+      {
+        "geom1": 777,
+        "geom2": 906,
+        "geomName1": "source_insert_3_contact_1",
+        "geomName2": "egg_15_shell",
+        "distance": -0.0000021209167778931836,
+        "body1": "source_insert_3",
+        "body2": "egg_15"
+      },
+      {
+        "geom1": 786,
+        "geom2": 906,
+        "geomName1": "source_insert_3_contact_10",
+        "geomName2": "egg_15_shell",
+        "distance": -5.568502147708496e-7,
+        "body1": "source_insert_3",
+        "body2": "egg_15"
+      }
+    ],
+    "qpos": [
+      1.5707960000000054,
+      -0.7853979999999975,
+      -8.457592904024842e-19,
+      -2.3561939999999897,
+      -3.928165109062976e-18,
+      1.5707960000000052,
+      0.7853979999999973,
+      0.04999999999934998,
+      0.049999999999349974,
+      1.5707960000000056,
+      -0.7845658248187954,
+      0.00018425072742411406,
+      -2.362354190342986,
+      -0.00031550713305697096,
+      1.5696802626858077,
+      0.7853978452426799,
+      0.04999990430429429,
+      0.05000000118029232,
+      1.5707960000000056,
+      -0.7845658248187954,
+      0.0001842507274241135,
+      -2.362354190342986,
+      -0.0003155071330569709,
+      1.5696802626858077,
+      0.7853978452426799,
+      0.04999990430429428,
+      0.05000000118029232,
+      1.5707960000000056,
+      -0.7845658248187954,
+      0.00018425072742411477,
+      -2.362354190342986,
+      -0.00031550713305697107,
+      1.5696802626858077,
+      0.7853978452426799,
+      0.04999990430429428,
+      0.05000000118029232,
+      -0.4420321598243271,
+      -0.4418957481421734,
+      0.14641483579346218,
+      0.984428808409539,
+      -0.0018272190473158489,
+      -0.001040146785660225,
+      0.17577115957571962,
+      -0.05538770611594126,
+      -0.11617103072211907,
+      0.14047795484684877,
+      0.9488494483988197,
+      -0.2926672558608102,
+      -0.10075594371407862,
+      -0.06228034542649793,
+      -0.056093982569529084,
+      -0.03752634327442157,
+      0.1395998014427986,
+      0.9620685396118459,
+      -0.22358605317026034,
+      -0.09800105013743975,
+      -0.12177518667131881,
+      -0.13331820796976376,
+      -0.037696352484043225,
+      0.13859558330287203,
+      0.9748184860632177,
+      -0.22295058375279922,
+      -0.004217427042129165,
+      -0.0020419948205992583,
+      0.05953864812980677,
+      -0.11646817013466583,
+      0.14029088883804913,
+      0.938639660006998,
+      -0.28149781557489195,
+      0.14144152779322303,
+      0.14038825700189908,
+      0.12673847275878392,
+      -0.11611817621948894,
+      0.13808849175924254,
+      0.9354119595278422,
+      -0.3260771915885889,
+      -0.11051369565073621,
+      -0.08040431687165826,
+      0.12770628805347464,
+      -0.03694776272848018,
+      0.13801186662627107,
+      0.9598213729104099,
+      -0.25166037636552047,
+      -0.08219680218188354,
+      -0.09302511909700548,
+      0.048855436198136606,
+      -0.038234349630968105,
+      0.14185164881862933,
+      0.9886077139014389,
+      -0.15050549376631683,
+      0.00025580920268730896,
+      -0.0016789646748926082,
+      0.05776638712430216,
+      0.06606747032900537,
+      0.1381518568989064,
+      0.9311967198303294,
+      -0.3209076521741645,
+      0.11000743949561141,
+      0.13337657593790786,
+      0.12629473664730906,
+      0.06640332696293054,
+      0.13689543473377835,
+      0.9273743707892586,
+      -0.33750730855622485,
+      -0.054975905099693315,
+      -0.15180000966018067,
+      0.12349029010890476,
+      0.14371107675986805,
+      0.14073338698048588,
+      0.9609521055546736,
+      -0.19936655150244664,
+      -0.12763809692131078,
+      -0.14329181828131915,
+      0.04891303365825782,
+      0.14352036774884133,
+      0.1427096528959645,
+      0.9889190827827274,
+      -0.14844992827195758,
+      -0.00019178741179049088,
+      0.0012766055809040491,
+      -0.12658062852610355,
+      0.06664543121876851,
+      0.1365975383406135,
+      0.9282925677638381,
+      -0.348860560621344,
+      0.08917996125256411,
+      0.09282323194315997,
+      -0.055356696569229126,
+      0.0658295999538167,
+      0.13942142411581138,
+      0.9419303779145387,
+      -0.30919492827735956,
+      -0.10226916596892112,
+      -0.08189430493845565,
+      -0.06057319754805032,
+      0.14174874732366896,
+      0.1415708673134762,
+      0.9645822433026824,
+      -0.155143680125631,
+      -0.1701172060644666,
+      -0.1287310010178633,
+      -0.133288526659029,
+      0.1439453057051432,
+      0.14010133558080184,
+      0.9775665576346131,
+      -0.21057346430999815,
+      -0.0037589592823210572,
+      -0.002883010234426188
+    ]
+  },
+  "errors": [],
+  "phaseErrors": [],
+  "transitions": [
+    {
+      "phase": "running",
+      "label": "Approach above ivory egg",
+      "phaseIndex": 0
+    },
+    {
+      "phase": "running",
+      "label": "Lower open fingers",
+      "phaseIndex": 1
+    },
+    {
+      "phase": "running",
+      "label": "Close on egg",
+      "phaseIndex": 2
+    },
+    {
+      "phase": "running",
+      "label": "Lift clear of box",
+      "phaseIndex": 3
+    },
+    {
+      "phase": "running",
+      "label": "Transfer over tray",
+      "phaseIndex": 4
+    },
+    {
+      "phase": "running",
+      "label": "Align egg upright in free space",
+      "phaseIndex": 5
+    },
+    {
+      "phase": "running",
+      "label": "Lower into egg tray",
+      "phaseIndex": 6
+    },
+    {
+      "phase": "running",
+      "label": "Release with an early wrist withdrawal",
+      "phaseIndex": 7
+    },
+    {
+      "phase": "running",
+      "label": "Clear the tilted egg",
+      "phaseIndex": 8
+    },
+    {
+      "phase": "running",
+      "label": "Inspect released egg tilt",
+      "phaseIndex": 9
+    },
+    {
+      "phase": "running",
+      "label": "Approach tilted egg",
+      "phaseIndex": 10
+    },
+    {
+      "phase": "running",
+      "label": "Lower for a second grasp",
+      "phaseIndex": 11
+    },
+    {
+      "phase": "running",
+      "label": "Regrasp both sides",
+      "phaseIndex": 12
+    },
+    {
+      "phase": "running",
+      "label": "Lift egg out of its pocket",
+      "phaseIndex": 13
+    },
+    {
+      "phase": "running",
+      "label": "Correct the regrasped egg upright",
+      "phaseIndex": 14
+    },
+    {
+      "phase": "running",
+      "label": "Reseat the corrected egg",
+      "phaseIndex": 15
+    },
+    {
+      "phase": "running",
+      "label": "Release the corrected egg",
+      "phaseIndex": 16
+    },
+    {
+      "phase": "running",
+      "label": "Withdraw after correction",
+      "phaseIndex": 17
+    },
+    {
+      "phase": "running",
+      "label": "Return after correction",
+      "phaseIndex": 18
+    },
+    {
+      "phase": "running",
+      "label": "Verify corrected placement",
+      "phaseIndex": 19
+    },
+    {
+      "phase": "complete",
+      "label": "Egg corrected and reseated · Arm 1 returned",
+      "phaseIndex": 19
+    }
+  ],
+  "reset": null
+}

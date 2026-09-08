@@ -32,12 +32,12 @@
 - [x] Phase 19: Record Demo1 / Assembly1 closure and initial Demo2 resource investigation.
 - [x] Phase 20: User approved stage A; imported RoboDojo shell/holder and Menagerie UMI gripper candidates. Physical hardware adapter qualification and upstream asset publication rights remain separate follow-ups.
 - [x] Phase 21: Deliver and publish the isolated static Demo2 workcell for visual review (2026-09-08, `49f9be7`, Pages deployment successful).
-- [ ] Phase 22: Validate one-arm egg grasp, transfer, seating, release and orientation correction.
+- [x] Phase 22: Validate one-arm egg grasp, transfer, seating, release and controlled post-placement regrasp/orientation correction.
 - [ ] Phase 23: Validate two-arm shared-space conflict handling, then four-arm parallel sorting.
 - [ ] Phase 24: Integrate continuous Demo2 playback and regression-check existing scenes.
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
 - Updated: 2026-09-08.
-- Current phase: Static `Franka Demo2` published; the first-egg grasp/transfer/upright seating/release/return increment passes native, WASM and browser acceptance. Phase 22 remains open for post-placement regrasp/reseat; see [first-egg report](../docs/progress/2026-09-08-demo2-first-egg.md).
-- Pending validation: physical one-egg grasp/place/reseat before four-arm automation; qualified hardware gripper mount. Source asset publication provenance has been resolved and documented.
+- Current phase: First-egg baseline `f6d45ac` published and accepted. Separate post-placement correction trial now passes native, WASM and actual browser checks (24.385 → 0.241 degrees), with screenshots and 226 passing regression tests; see [correction report](../docs/progress/2026-09-08-demo2-reseat.md). Correction changes remain local, not pushed.
+- Pending validation: other egg classes/occupied tray cells, two-arm conflict handling and four-arm automation; qualified hardware gripper mount. The current correction recipe is checked for a controlled pose envelope, not arbitrary-pose online recovery. Source asset publication provenance has been resolved and documented.

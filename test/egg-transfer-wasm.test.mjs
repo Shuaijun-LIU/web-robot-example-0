@@ -7,9 +7,9 @@ import { EGG_SORTING_LAYOUT } from '../src/eggSortingLayout.js';
 import { sampleEggPhase,checkEggGate,isForbiddenEggContact } from '../src/eggTransfer.js';
 import { consumeMujocoContacts } from '../src/mujocoContact.js';
 
-test('browser-engine replay carries and releases the egg through real contacts',async()=>{
+for (const program of ['first-egg','egg-reseat']) test(`browser-engine ${program} replay uses real contacts`,async()=>{
   const root=resolve('public/assets/franka-egg-sorting');
-  const plan=JSON.parse(readFileSync(`${root}/first-egg-motion.json`,'utf8'));
+  const plan=JSON.parse(readFileSync(`${root}/${program}-motion.json`,'utf8'));
   const mj=await loadMujoco();mj.FS.mkdir('/eggs');
   function mount(dir){for(const item of readdirSync(dir,{withFileTypes:true})){
     const full=resolve(dir,item.name),dest='/eggs/'+relative(root,full);
@@ -66,8 +66,16 @@ test('browser-engine replay carries and releases the egg through real contacts',
       lastGrip=phase.gripper;
     }
     assert.ok(Array.from(d.qpos).every(Number.isFinite));
+    if(program==='egg-reseat') {
+      assert.ok(records[9].tiltDegrees>20);
+      assert.equal(records[9].fingerContacts,0);
+      assert.ok(records[9].traySupported);
+      assert.ok(records[12].bilateral);
+      assert.ok(records[13].lift-records[9].lift>.06);
+      assert.ok(records[9].tiltDegrees-records.at(-1).tiltDegrees>10);
+    }
     mkdirSync('artifacts/reports',{recursive:true});
-    writeFileSync('artifacts/reports/demo2-first-egg-wasm.json',JSON.stringify({success:true,engine:mj.mj_versionString(),records},null,2)+'\n');
+    writeFileSync(`artifacts/reports/demo2-${program}-wasm.json`,JSON.stringify({success:true,engine:mj.mj_versionString(),records},null,2)+'\n');
     console.log(JSON.stringify({engine:mj.mj_versionString(),records}));
   }finally{d.delete();m.delete();}
 });

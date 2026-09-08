@@ -216,6 +216,8 @@ function SceneChildren({
   onResumeUnitreeAction,
   onSelectUnitreeActionProgram,
   eggRequestId,
+  eggProgram,
+  onEggReseatReady,
   eggLocked,
   onEggStateChange,
 }: {
@@ -255,6 +257,8 @@ function SceneChildren({
   onResumeUnitreeAction: () => boolean;
   onSelectUnitreeActionProgram: (programId: UnitreeActionProgramId) => boolean;
   eggRequestId:number;
+  eggProgram:'transfer'|'reseat';
+  onEggReseatReady:(ready:boolean)=>void;
   eggLocked:boolean;
   onEggStateChange:(state:EggTransferState)=>void;
 }) {
@@ -412,7 +416,7 @@ function SceneChildren({
 
   return (
     <>
-      {robotKey === 'frankaDemo2' && <EggTransferController requestId={eggRequestId} resetGeneration={resetGeneration} onStateChange={onEggStateChange} />}
+      {robotKey === 'frankaDemo2' && <EggTransferController requestId={eggRequestId} program={eggProgram} resetGeneration={resetGeneration} onStateChange={onEggStateChange} onReseatReady={onEggReseatReady} />}
       {ik && showGizmo && !assemblyControlsLocked && (
         <group userData={{sensorOverlay:true}}>
         <IkGizmo
@@ -527,6 +531,8 @@ export function App() {
   const apiRef = useRef<MujocoSimAPI>(null);
   const [resetGeneration, setResetGeneration] = useState(0);
   const [eggRequestId,setEggRequestId]=useState(0);
+  const [eggProgram,setEggProgram]=useState<'transfer'|'reseat'>('transfer');
+  const [eggReseatReady,setEggReseatReady]=useState(false);
   const [eggState,setEggState]=useState<EggTransferState>({phase:'loading',label:'Loading checked motion',phaseIndex:0});
   const [assemblyStep1RequestId, setAssemblyStep1RequestId] = useState(0);
   const [assemblyStep1Status, setAssemblyStep1Status] = useState<AssemblyStep1Status>('idle');
@@ -921,6 +927,8 @@ export function App() {
           onResumeUnitreeAction={handleResumeUnitreeAction}
           onSelectUnitreeActionProgram={handleSelectUnitreeActionProgram}
           eggRequestId={eggRequestId}
+          eggProgram={eggProgram}
+          onEggReseatReady={setEggReseatReady}
           eggLocked={eggLocked}
           onEggStateChange={setEggState}
         />
@@ -971,7 +979,9 @@ export function App() {
           <div>Contact grasp review · 16 eggs · 4 arms</div>
           <div style={{marginTop:8}}>Arm 1: Ivory · Arm 2: Brown<br/>Arm 3: Pale green · Arm 4: Cream</div>
           <div style={{marginTop:8,color:'#66695e'}}>First transfer: Arm 1 picks one ivory egg, aligns it and places it in its tray. Arms 2–4 wait.</div>
-          <button disabled={eggState.phase!=='ready'} onClick={()=>{setEggState({phase:'running',label:'Starting first egg',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:12,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:eggState.phase==='ready'?'#e1dfc9':'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'?'pointer':'default'}}>Run first egg</button>
+          <button disabled={eggState.phase!=='ready'} onClick={()=>{setEggProgram('transfer');setEggState({phase:'running',label:'Starting first egg',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:12,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:eggState.phase==='ready'?'#e1dfc9':'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'?'pointer':'default'}}>Run first egg</button>
+          <div style={{marginTop:8,color:'#66695e'}}>Correction trial: release tilted, regrasp, lift and reseat upright. Reset between trials.</div>
+          <button disabled={eggState.phase!=='ready'||!eggReseatReady} onClick={()=>{setEggProgram('reseat');setEggState({phase:'running',label:'Starting correction trial',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:8,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'&&eggReseatReady?'pointer':'default'}}>Run correction trial</button>
           <div role="status" style={{marginTop:8}}>{eggState.label}</div>
           {eggState.reason && <div style={{color:'#8a3b2c'}}>{eggState.reason} · Reset to retry</div>}
         </aside>

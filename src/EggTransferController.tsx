@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { findBodyByName, findJointByName, findSiteByName, useBeforePhysicsStep } from 'mujoco-react';
 import type { MujocoData, MujocoModel } from 'mujoco-react';
 import { consumeMujocoContacts } from './mujocoContact.js';
-import { checkEggGate, sampleEggPhase, isForbiddenEggContact, isValidEggPlan, didEggClockReset } from './eggTransfer.js';
+import { checkEggGate, sampleEggPhase, isForbiddenEggContact, isValidEggPlan, didEggClockReset, isEggInspectionMatch } from './eggTransfer.js';
 import type { EggMotionPlan, EggObservation, EggTransferState } from './eggTransfer.js';
 
 declare global {
@@ -12,10 +12,11 @@ declare global {
 }
 
 /** Separate ownership and actuator-only playback. Never writes qpos/qvel. */
-export function EggTransferController({requestId,resetGeneration,onStateChange}:{
-  requestId:number;resetGeneration:number;onStateChange:(s:EggTransferState)=>void;
+export function EggTransferController({requestId,program,resetGeneration,onStateChange,onReseatReady}:{
+  requestId:number;program:'transfer'|'reseat';resetGeneration:number;onStateChange:(s:EggTransferState)=>void;onReseatReady:(ready:boolean)=>void;
 }) {
   const plan=useRef<EggMotionPlan|null>(null);
+  const plans=useRef<Partial<Record<'transfer'|'reseat',EggMotionPlan>>>({});
   const active=useRef(false), lastRequest=useRef(requestId), phaseIndex=useRef(0);
   const startTime=useRef<number|null>(null), startGrip=useRef(255), lostSince=useRef<number|null>(null);
   const previousPhysicsTime=useRef<number|null>(null);
@@ -36,13 +37,30 @@ export function EggTransferController({requestId,resetGeneration,onStateChange}:
       .then(async response=>{
         if(!response.ok) throw new Error(`Motion asset HTTP ${response.status}`);
         const p:unknown=await response.json();
-        if(!isValidEggPlan(p)) throw new Error('Invalid or stale motion asset');
+        if(!isValidEggPlan(p)||p.schemaVersion!==1) throw new Error('Invalid or stale motion asset');
         if(cancelled)return;
+        plans.current.transfer=p;
         plan.current=p;
         publish({phase:'ready',label:'Ready · Arm 1 / one ivory egg',phaseIndex:0});
       }).catch(error=>{if(!cancelled)publish({phase:'error',label:'Motion unavailable',reason:String(error),phaseIndex:0});});
     return ()=>{cancelled=true;abort.abort();active.current=false;delete window.eggTransfer;};
   },[]);
+
+  // Independent asset loading: the optional correction trial must not block
+  // the accepted first-egg recipe if its download is unavailable.
+  useEffect(()=>{
+    const abort=new AbortController();let cancelled=false;
+    onReseatReady(false);
+    fetch(`${import.meta.env.BASE_URL}assets/franka-egg-sorting/egg-reseat-motion.json`,{signal:abort.signal})
+      .then(async response=>{
+        if(!response.ok)throw new Error(`Correction asset HTTP ${response.status}`);
+        const p:unknown=await response.json();
+        if(!isValidEggPlan(p)||p.schemaVersion!==2||p.program!=='reseat')throw new Error('Invalid correction asset');
+        if(cancelled)return;
+        plans.current.reseat=p;onReseatReady(true);
+      }).catch(error=>{if(!cancelled)console.warn('Correction trial unavailable',error);});
+    return ()=>{cancelled=true;abort.abort();};
+  },[onReseatReady]);
 
   useEffect(()=>{
     active.current=false;startTime.current=null;lastRequest.current=requestId;phaseIndex.current=0;
@@ -77,8 +95,9 @@ export function EggTransferController({requestId,resetGeneration,onStateChange}:
   }
 
   useBeforePhysicsStep((m,d)=>{
-    const p=plan.current;
-    if(!p)return;
+    const loaded=plan.current;
+    if(!loaded)return;
+    let p:EggMotionPlan=loaded;
     // Native Reset runs before React effects. Stop here, before any old command
     // or contact check can run against the newly reset physics state.
     if(active.current&&didEggClockReset(previousPhysicsTime.current,d.time)) {
@@ -89,6 +108,9 @@ export function EggTransferController({requestId,resetGeneration,onStateChange}:
     previousPhysicsTime.current=d.time;
     if(requestId>lastRequest.current) {
       lastRequest.current=requestId;
+      const selected=plans.current[program];
+      if(!selected){publish({phase:'error',label:'Requested motion is not loaded',phaseIndex:0});return;}
+      p=selected;plan.current=p;
       const joints=Array.from({length:7},(_,i)=>findJointByName(m,`r0_joint${i+1}`));
       const egg=findBodyByName(m,p.egg),site=findSiteByName(m,'r0_tcp');
       const fingers=['r0_left_finger','r0_right_finger'].map(n=>findBodyByName(m,n));
@@ -140,8 +162,12 @@ export function EggTransferController({requestId,resetGeneration,onStateChange}:
     if(elapsed>=phase.duration) {
       const reason=checkEggGate(phase.gate,o);
       if(reason){if(elapsed>phase.duration+1.5)fail(reason);return;}
+      if(phase.gate==='tilted'&&p.inspection&&!isEggInspectionMatch(p.inspection,
+        Array.from(d.xpos.slice(r.egg*3,r.egg*3+3)),Array.from(d.xquat.slice(r.egg*4,r.egg*4+4)))) {
+        fail('outside-checked-regrasp-pose');return;
+      }
       history.current.push({phase:phase.name,time:d.time,observation:o});
-      if(i===p.phases.length-1){active.current=false;publish({phase:'complete',label:'One ivory egg placed · Arm 1 returned',phaseIndex:i},o);return;}
+      if(i===p.phases.length-1){active.current=false;publish({phase:'complete',label:p.program==='reseat'?'Egg corrected and reseated · Arm 1 returned':'One ivory egg placed · Arm 1 returned',phaseIndex:i},o);return;}
       phaseIndex.current++;startTime.current=d.time;startGrip.current=phase.gripper;
       publish({phase:'running',label:p.phases[i+1].name,phaseIndex:i+1},o);
     }

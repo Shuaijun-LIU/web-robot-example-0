@@ -3,10 +3,22 @@ export function didEggClockReset(previous,current) {
   return previous!==null&&current<previous-1e-6;
 }
 
+/** The trial uses a checked trajectory, not arbitrary-pose online recovery. */
+export function isEggInspectionMatch(expected,position,quaternion) {
+  const distance=Math.hypot(...position.map((v,i)=>v-expected.position[i]));
+  const dot=Math.abs(quaternion.reduce((sum,v,i)=>sum+v*expected.quaternion[i],0));
+  const angle=2*Math.acos(Math.min(1,dot));
+  return Number.isFinite(distance)&&Number.isFinite(angle)&&distance<=.004&&angle<=5*Math.PI/180;
+}
+
 export function isValidEggPlan(p) {
   const vector=(v,n)=>Array.isArray(v)&&v.length===n&&v.every(Number.isFinite);
-  const gates=[null,null,'bilateral','carried','carried','carried','supported','released',null,null,'seated'];
-  return !!p&&p.schemaVersion===1&&p.success===true&&p.arm===0&&p.egg==='egg_0'
+  const reseat=p?.schemaVersion===2&&p.program==='reseat';
+  const gates=reseat?[null,null,'bilateral','carried','carried','carried','supported','released',null,'tilted',null,null,'bilateral','carried','carried','supported','released',null,null,'seated']:
+    [null,null,'bilateral','carried','carried','carried','supported','released',null,null,'seated'];
+  return !!p&&((p.schemaVersion===1&&p.program===undefined)||reseat)&&p.success===true&&p.arm===0&&p.egg==='egg_0'
+    &&(!reseat||(p.inspection?.phaseIndex===9&&vector(p.inspection.position,3)&&vector(p.inspection.quaternion,4)
+      &&Math.abs(Math.hypot(...p.inspection.quaternion)-1)<1e-6&&p.inspection.tiltDegrees>20&&p.inspection.tiltDegrees<45))
     &&vector(p.initialJoints,7)&&p.initialGripper===255&&vector(p.cell,3)
     &&Array.isArray(p.initialEggPositions)&&p.initialEggPositions.length===16&&p.initialEggPositions.every(v=>vector(v,3))
     &&Array.isArray(p.phases)&&p.phases.length===gates.length&&p.phases.every((s,i)=>s&&typeof s.name==='string'
@@ -49,10 +61,15 @@ export function checkEggGate(gate, observation) {
     if (o.tcpDistance > .065) return 'egg-not-carried';
   }
   if (gate === 'carried' && o.lift < .060) return 'insufficient-lift';
-  if (gate === 'supported' || gate === 'seated' || gate === 'released') {
+  if (gate === 'supported' || gate === 'seated' || gate === 'released' || gate === 'tilted') {
     if (!o.traySupported) return 'missing-tray-support';
   }
-  if ((gate === 'released' || gate === 'seated') && o.fingerContacts !== 0) return 'egg-not-released';
+  if ((gate === 'released' || gate === 'seated' || gate === 'tilted') && o.fingerContacts !== 0) return 'egg-not-released';
+  if (gate === 'tilted') {
+    if(o.cellError>.012||o.tiltDegrees>=45)return 'outside-correction-envelope';
+    if(o.speed>.008)return 'egg-not-settled';
+    if(o.tiltDegrees<=20)return 'correction-not-needed';
+  }
   if (gate === 'seated') {
     if (o.bilateral) return 'egg-not-released';
     if (o.cellError > .012) return 'wrong-tray-cell';

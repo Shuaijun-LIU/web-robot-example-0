@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 import { mkdir,writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
+const reseat=process.env.EGG_TRIAL==='reseat';
+const reportStem=reseat?'demo2-egg-reseat':'demo2-first-egg';
+const runButton=reseat?'Run correction trial':'Run first egg';
+
 // Explicit CPU SwiftShader renderer; no NVIDIA device is initialized.
 const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_EXECUTABLE,
   args:['--disable-gpu','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
@@ -34,10 +38,19 @@ try {
       if(state&&state.label!==last){last=state.label;console.info('[egg-phase]',JSON.stringify({state,observation:window.eggTransfer.observation}));}
     },200);
   });
-  await page.getByRole('button',{name:'Run first egg',exact:true}).click();
+  await page.getByRole('button',{name:runButton,exact:true}).click();
   // Keyboard must not replace the automation's selected-jaw command.
   await page.keyboard.press('v');
   if(!process.env.EGG_RESET_ONLY) {
+  if(reseat) {
+    await page.waitForFunction(()=>window.eggTransfer?.state.phaseIndex>=9||window.eggTransfer?.state.phase==='error',null,{timeout:360000});
+    assert.equal(await page.evaluate(()=>window.eggTransfer?.state.phase),'running');
+    await page.getByLabel('paused',{exact:true}).evaluate(el=>el.click());
+    await page.getByLabel('IK gizmo',{exact:true}).evaluate(el=>{if(el.checked)el.click();});
+    await page.evaluate(()=>window.robotDemo.setInspectionCamera([-.13,-.82,.50],[-.4,-.4,.14]));
+    await page.screenshot({path:`artifacts/screenshots/${reportStem}-before.png`});
+    await page.getByLabel('paused',{exact:true}).evaluate(el=>el.click());
+  }
   await page.waitForFunction(()=>['complete','error'].includes(window.eggTransfer?.state.phase),null,{timeout:480000});
   result=await page.evaluate(()=>({
     transfer:window.eggTransfer,physics:window.robotDemo.getPhysicsDiagnostics(),
@@ -49,27 +62,36 @@ try {
   await page.getByLabel('paused',{exact:true}).evaluate(el=>el.click());
   await page.getByLabel('IK gizmo',{exact:true}).evaluate(el=>{if(el.checked)el.click();});
   await page.evaluate(()=>window.robotDemo.setInspectionCamera([-.13,-.82,.50],[-.4,-.4,.14]));
-  await page.screenshot({path:`artifacts/screenshots/demo2-first-egg-${result.transfer.state.phase}.png`});
+  await page.screenshot({path:`artifacts/screenshots/${reportStem}-${result.transfer.state.phase}.png`});
   await page.getByLabel('paused',{exact:true}).evaluate(el=>el.click());
-  await writeFile('artifacts/reports/demo2-first-egg-browser.json',JSON.stringify({result,errors},null,2));
+  await writeFile(`artifacts/reports/${reportStem}-browser.json`,JSON.stringify({result,errors},null,2));
   assert.equal(result.transfer.state.phase,'complete',JSON.stringify(result.transfer));
   assert.ok(result.transfer.history.find(s=>s.phase==='Close on egg').observation.bilateral);
   assert.ok(result.transfer.history.find(s=>s.phase==='Lift clear of box').observation.lift>.06);
   assert.ok(result.transfer.observation.traySupported);
   assert.equal(result.transfer.observation.bilateral,false);
   assert.ok(result.transfer.observation.tiltDegrees<20);
+  if(reseat) {
+    const inspected=result.transfer.history[9].observation;
+    assert.ok(inspected.tiltDegrees>20);
+    assert.equal(inspected.fingerContacts,0);
+    assert.ok(inspected.traySupported);
+    assert.ok(result.transfer.history[12].observation.bilateral);
+    assert.ok(result.transfer.history[13].observation.lift-inspected.lift>.06);
+    assert.ok(inspected.tiltDegrees-result.transfer.observation.tiltDegrees>10);
+  }
   assert.ok(result.physics.warnings.every(w=>w.count===0));
   assert.deepEqual(errors,[]);
   if(!process.env.EGG_PLAY_ONLY) {
     await page.getByRole('button',{name:'reset',exact:true}).click();
     await page.waitForFunction(()=>window.eggTransfer?.state.phase==='ready');
-    await page.getByRole('button',{name:'Run first egg',exact:true}).click();
+    await page.getByRole('button',{name:runButton,exact:true}).click();
   }
   }
   if(!process.env.EGG_PLAY_ONLY) {
   await page.evaluate(()=>window.robotDemo.setInspectionCamera([.45,-.85,.75],[-.1,-.18,.2]));
   await page.waitForFunction(()=>window.eggTransfer?.state.phase==='running'&&window.eggTransfer?.observation?.lift>.08,null,{timeout:180000});
-  await page.screenshot({path:'artifacts/screenshots/demo2-first-egg-carry.png'});
+  await page.screenshot({path:`artifacts/screenshots/${reportStem}-carry.png`});
   await page.getByRole('button',{name:'reset',exact:true}).click();
   await page.waitForFunction(()=>window.eggTransfer?.state.phase==='ready');
   await page.waitForTimeout(3000);
@@ -79,7 +101,7 @@ try {
   }
   const transitions=await page.evaluate(()=>window.__eggTransitions);
   assert.deepEqual(transitions.filter(s=>s.phase==='error'),[],'lossless transition audit must not contain a transient error');
-  await writeFile(`artifacts/reports/${process.env.EGG_RESET_ONLY?'demo2-egg-reset-browser':'demo2-first-egg-browser'}.json`,JSON.stringify({result,errors,phaseErrors,transitions,reset:process.env.EGG_PLAY_ONLY?null:{testedWhileCarrying:true,cancelledWithoutStaleCommand:true}},null,2));
+  await writeFile(`artifacts/reports/${process.env.EGG_RESET_ONLY?`${reportStem}-reset-browser`:`${reportStem}-browser`}.json`,JSON.stringify({result,errors,phaseErrors,transitions,reset:process.env.EGG_PLAY_ONLY?null:{testedWhileCarrying:true,cancelledWithoutStaleCommand:true}},null,2));
   console.log(process.env.EGG_RESET_ONLY?'PASS: carrying-state Reset with lossless transition audit':'PASS: actuator-only egg transfer, real contacts and supported upright release');
 } finally {
   await page.evaluate(()=>clearInterval(window.__eggAuditTimer)).catch(()=>{});
