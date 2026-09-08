@@ -21,6 +21,8 @@ try {
   await page.goto(process.env.SCENE_URL??'http://127.0.0.1:4174/web-robot-example-0/',{waitUntil:'domcontentloaded',timeout:120000});
   await page.locator('select').filter({has:page.locator('option').filter({hasText:/^Franka Demo2$/})}).selectOption({label:'Franka Demo2'});
   await page.waitForFunction(()=>document.documentElement.dataset.sceneStatus==='ready'&&window.eggTransfer?.state.phase==='ready',null,{timeout:120000});
+  const checks=page.locator('details').filter({has:page.locator('summary',{hasText:'Single-egg checks'})});
+  if(await checks.count())await checks.evaluate(el=>{el.open=true;});
   await page.getByRole('button',{name:'reset',exact:true}).click();
   await page.waitForTimeout(1500);
   await page.getByLabel('speed',{exact:true}).fill('3.0');

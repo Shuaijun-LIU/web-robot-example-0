@@ -1,0 +1,493 @@
+{
+  "success": true,
+  "counts": [
+    4,
+    4,
+    4,
+    4
+  ],
+  "maxMeshSurfaceGap": 0.00014722618685177044,
+  "scope": "All grasp, carried and supported phase gates; distance from physical contacts to the sourced finger mesh triangles.",
+  "records": [
+    {
+      "arm": 0,
+      "egg": 0,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.305968903141122e-05
+    },
+    {
+      "arm": 2,
+      "egg": 8,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 0.00011118968386901098
+    },
+    {
+      "arm": 0,
+      "egg": 0,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.741118713396907e-05
+    },
+    {
+      "arm": 2,
+      "egg": 8,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.905040833380391e-05
+    },
+    {
+      "arm": 0,
+      "egg": 0,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.660573283569325e-05
+    },
+    {
+      "arm": 2,
+      "egg": 8,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.992653525738691e-05
+    },
+    {
+      "arm": 0,
+      "egg": 0,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00010463887738730762
+    },
+    {
+      "arm": 2,
+      "egg": 8,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00010726775413787633
+    },
+    {
+      "arm": 0,
+      "egg": 0,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00010142058100190125
+    },
+    {
+      "arm": 2,
+      "egg": 8,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00011503655400715005
+    },
+    {
+      "arm": 1,
+      "egg": 4,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 8.774916671493953e-05
+    },
+    {
+      "arm": 3,
+      "egg": 12,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 0.00010119375546350484
+    },
+    {
+      "arm": 1,
+      "egg": 4,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.611595452421521e-05
+    },
+    {
+      "arm": 3,
+      "egg": 12,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.878026749519949e-05
+    },
+    {
+      "arm": 1,
+      "egg": 4,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.522014411838934e-05
+    },
+    {
+      "arm": 3,
+      "egg": 12,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.787317813405899e-05
+    },
+    {
+      "arm": 1,
+      "egg": 4,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.295801319807885e-05
+    },
+    {
+      "arm": 3,
+      "egg": 12,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.000107334701937879
+    },
+    {
+      "arm": 1,
+      "egg": 4,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 9.430300625197152e-05
+    },
+    {
+      "arm": 3,
+      "egg": 12,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 9.498910113771427e-05
+    },
+    {
+      "arm": 0,
+      "egg": 7,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 8.961176467287094e-05
+    },
+    {
+      "arm": 2,
+      "egg": 15,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.541013999570887e-05
+    },
+    {
+      "arm": 0,
+      "egg": 7,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.839719450357548e-05
+    },
+    {
+      "arm": 2,
+      "egg": 15,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.295962327189391e-05
+    },
+    {
+      "arm": 0,
+      "egg": 7,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.786080543987158e-05
+    },
+    {
+      "arm": 2,
+      "egg": 15,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.199936367583962e-05
+    },
+    {
+      "arm": 0,
+      "egg": 7,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.141291427166848e-05
+    },
+    {
+      "arm": 2,
+      "egg": 15,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.752749879293866e-05
+    },
+    {
+      "arm": 0,
+      "egg": 7,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 7.715296831931966e-05
+    },
+    {
+      "arm": 2,
+      "egg": 15,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 8.227779348771185e-05
+    },
+    {
+      "arm": 1,
+      "egg": 1,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 0.00012742568832256634
+    },
+    {
+      "arm": 1,
+      "egg": 1,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.383720084388941e-05
+    },
+    {
+      "arm": 1,
+      "egg": 1,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.767430953278088e-05
+    },
+    {
+      "arm": 1,
+      "egg": 1,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 7.903855229542284e-05
+    },
+    {
+      "arm": 1,
+      "egg": 1,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00014382208981190977
+    },
+    {
+      "arm": 3,
+      "egg": 3,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.857150806820349e-05
+    },
+    {
+      "arm": 3,
+      "egg": 3,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.654099157779769e-05
+    },
+    {
+      "arm": 3,
+      "egg": 3,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.33600089362454e-05
+    },
+    {
+      "arm": 3,
+      "egg": 3,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.604639229809339e-05
+    },
+    {
+      "arm": 3,
+      "egg": 3,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00011375718275351978
+    },
+    {
+      "arm": 0,
+      "egg": 13,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.708778503523333e-05
+    },
+    {
+      "arm": 0,
+      "egg": 13,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.649657560780277e-05
+    },
+    {
+      "arm": 0,
+      "egg": 13,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.785186664047765e-05
+    },
+    {
+      "arm": 0,
+      "egg": 13,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00010514082241427535
+    },
+    {
+      "arm": 0,
+      "egg": 13,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00011464817057843396
+    },
+    {
+      "arm": 2,
+      "egg": 2,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 7.46064416625221e-05
+    },
+    {
+      "arm": 2,
+      "egg": 2,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.658022865499118e-05
+    },
+    {
+      "arm": 2,
+      "egg": 2,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.828533736877187e-05
+    },
+    {
+      "arm": 2,
+      "egg": 2,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.82879019284173e-05
+    },
+    {
+      "arm": 2,
+      "egg": 2,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 9.38400671655601e-05
+    },
+    {
+      "arm": 1,
+      "egg": 11,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 8.643688668726712e-05
+    },
+    {
+      "arm": 1,
+      "egg": 11,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.535240335636687e-05
+    },
+    {
+      "arm": 1,
+      "egg": 11,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.380822618304157e-05
+    },
+    {
+      "arm": 1,
+      "egg": 11,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.890482136793706e-05
+    },
+    {
+      "arm": 1,
+      "egg": 11,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00010533867879039875
+    },
+    {
+      "arm": 3,
+      "egg": 9,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.007200687358604e-05
+    },
+    {
+      "arm": 3,
+      "egg": 9,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00010161880995598064
+    },
+    {
+      "arm": 3,
+      "egg": 9,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00011111062828889823
+    },
+    {
+      "arm": 3,
+      "egg": 9,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00010148275340200555
+    },
+    {
+      "arm": 3,
+      "egg": 9,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00014722618685177044
+    },
+    {
+      "arm": 0,
+      "egg": 10,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.173873549931774e-05
+    },
+    {
+      "arm": 0,
+      "egg": 10,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.156315320270114e-05
+    },
+    {
+      "arm": 0,
+      "egg": 10,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.06653530526833e-05
+    },
+    {
+      "arm": 0,
+      "egg": 10,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.765754606111605e-05
+    },
+    {
+      "arm": 0,
+      "egg": 10,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.0001250137708727396
+    },
+    {
+      "arm": 2,
+      "egg": 5,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 8.93224704403699e-05
+    },
+    {
+      "arm": 2,
+      "egg": 5,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.897410422538077e-05
+    },
+    {
+      "arm": 2,
+      "egg": 5,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.990286728770152e-05
+    },
+    {
+      "arm": 2,
+      "egg": 5,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 8.423141262786098e-05
+    },
+    {
+      "arm": 2,
+      "egg": 5,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.0001003929763854081
+    },
+    {
+      "arm": 1,
+      "egg": 14,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.445979498872863e-05
+    },
+    {
+      "arm": 1,
+      "egg": 14,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.503186072645486e-05
+    },
+    {
+      "arm": 1,
+      "egg": 14,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.47164692261603e-05
+    },
+    {
+      "arm": 1,
+      "egg": 14,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00010501825342407664
+    },
+    {
+      "arm": 1,
+      "egg": 14,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 0.00010132745853299165
+    },
+    {
+      "arm": 3,
+      "egg": 6,
+      "gate": "bilateral",
+      "maxMeshSurfaceGap": 9.433725450182065e-05
+    },
+    {
+      "arm": 3,
+      "egg": 6,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.892846602954246e-05
+    },
+    {
+      "arm": 3,
+      "egg": 6,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 0.00010107472391454146
+    },
+    {
+      "arm": 3,
+      "egg": 6,
+      "gate": "carried",
+      "maxMeshSurfaceGap": 9.055236187509529e-05
+    },
+    {
+      "arm": 3,
+      "egg": 6,
+      "gate": "supported",
+      "maxMeshSurfaceGap": 9.521951983938443e-05
+    }
+  ]
+}

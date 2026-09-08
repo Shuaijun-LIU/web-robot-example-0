@@ -31,6 +31,9 @@ import { KeyboardHelp } from './KeyboardHelp';
 import { GitHubLink } from './GitHubLink';
 import { AssemblyStep1Controller } from './AssemblyStep1Controller';
 import { EggTransferController } from './EggTransferController';
+import { EggSortingController } from './EggSortingController';
+import type { SortingState } from './eggSorting.js';
+import { sortingLocksControls } from './eggSorting.js';
 import type { EggTransferState } from './eggTransfer.js';
 import { AssemblyStep2Controller } from './AssemblyStep2Controller';
 import { AssemblyStep3Controller } from './AssemblyStep3Controller';
@@ -220,6 +223,8 @@ function SceneChildren({
   onEggReseatReady,
   eggLocked,
   onEggStateChange,
+  sortingRequestId,
+  onSortingStateChange,
 }: {
   robotKey: string;
   controlFamily: 'franka' | 'industrialArm' | 'so101' | 'xlerobot' | 'unitreeAction';
@@ -261,6 +266,8 @@ function SceneChildren({
   onEggReseatReady:(ready:boolean)=>void;
   eggLocked:boolean;
   onEggStateChange:(state:EggTransferState)=>void;
+  sortingRequestId:number;
+  onSortingStateChange:(state:SortingState)=>void;
 }) {
   const simulation = useMujoco();
   const { camera, controls: viewControls } = useThree();
@@ -417,6 +424,7 @@ function SceneChildren({
   return (
     <>
       {robotKey === 'frankaDemo2' && <EggTransferController requestId={eggRequestId} program={eggProgram} resetGeneration={resetGeneration} onStateChange={onEggStateChange} onReseatReady={onEggReseatReady} />}
+      {robotKey === 'frankaDemo2' && <EggSortingController requestId={sortingRequestId} resetGeneration={resetGeneration} onStateChange={onSortingStateChange} />}
       {ik && showGizmo && !assemblyControlsLocked && (
         <group userData={{sensorOverlay:true}}>
         <IkGizmo
@@ -430,7 +438,7 @@ function SceneChildren({
 
       {controlFamily === 'franka' && (
         <FrankaController
-          key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}`}
+          key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}-${robotKey === 'frankaDemo2' ? resetGeneration : ''}`}
           target={target}
           enabled={!assemblyControlsLocked}
           initiallyOpen={assemblyStep1Status === 'complete' || robotKey === 'frankaDemo2'}
@@ -533,6 +541,8 @@ export function App() {
   const [eggRequestId,setEggRequestId]=useState(0);
   const [eggProgram,setEggProgram]=useState<'transfer'|'reseat'>('transfer');
   const [eggReseatReady,setEggReseatReady]=useState(false);
+  const [sortingRequestId,setSortingRequestId]=useState(0);
+  const [sortingState,setSortingState]=useState<SortingState>({phase:'loading',label:'Loading four-arm motion',counts:[0,0,0,0],arms:Array(4).fill('Ready')});
   const [eggState,setEggState]=useState<EggTransferState>({phase:'loading',label:'Loading checked motion',phaseIndex:0});
   const [assemblyStep1RequestId, setAssemblyStep1RequestId] = useState(0);
   const [assemblyStep1Status, setAssemblyStep1Status] = useState<AssemblyStep1Status>('idle');
@@ -600,7 +610,8 @@ export function App() {
   const isUnitreeActionScene = robotKey === 'unitreeActionLab';
   const isAssembly1Scene = robotKey === 'frankaAssembly1' || robotKey === 'frankaDemo1';
   const isFrankaDemo1 = robotKey === 'frankaDemo1';
-  const eggLocked = robotKey === 'frankaDemo2' && (eggState.phase === 'running' || eggState.phase === 'error');
+  const sortingLocked=sortingLocksControls(sortingState);
+  const eggLocked = robotKey === 'frankaDemo2' && (eggState.phase === 'running' || eggState.phase === 'error' || sortingLocked);
 
   const handleRunAssemblyStep1 = useCallback(() => {
     if (!isAssembly1Scene || assemblyStep1Status !== 'idle') return false;
@@ -837,7 +848,7 @@ export function App() {
   const sim = useControls('Simulation', {
     paused: false,
     speed: { value: 1.0, min: 0.1, max: 3.0, step: 0.1 },
-    gravityCompensation: { value: false, label: 'gravity compensation' },
+    gravityCompensation: { value: false, label: 'gravity compensation', disabled: robotKey === 'frankaDemo2' },
     gizmo: { value: true, label: 'IK gizmo' },
     reset: button(handleResetAssemblySequence),
   });
@@ -887,7 +898,7 @@ export function App() {
 
         {/* Core scene */}
         <LoadingOverlay />
-        <GravityCompensation enabled={sim.gravityCompensation} />
+        <GravityCompensation enabled={sim.gravityCompensation && robotKey !== 'frankaDemo2'} />
 
         {/* IK + per-robot controllers */}
         <SceneChildren
@@ -931,6 +942,8 @@ export function App() {
           onEggReseatReady={setEggReseatReady}
           eggLocked={eggLocked}
           onEggStateChange={setEggState}
+          sortingRequestId={sortingRequestId}
+          onSortingStateChange={setSortingState}
         />
 
         {isUnitreeActionScene && (
@@ -974,16 +987,22 @@ export function App() {
 
       {/* HTML overlay — outside R3F canvas */}
       {robotKey === 'frankaDemo2' && (
-        <aside aria-label="Egg sorting scene review" style={{position:'absolute',left:18,bottom:200,maxWidth:290,padding:'16px 20px',borderRadius:12,background:'rgba(248,246,236,.94)',color:'#34382f',fontSize:13,lineHeight:1.7}}>
+        <aside aria-label="Egg sorting scene review" style={{position:'absolute',left:18,bottom:200,maxWidth:290,maxHeight:'calc(100vh - 230px)',overflowY:'auto',padding:'16px 20px',borderRadius:12,background:'rgba(248,246,236,.94)',color:'#34382f',fontSize:13,lineHeight:1.7}}>
           <strong style={{fontSize:16}}>Mixed Egg Sorting</strong>
           <div>Contact grasp review · 16 eggs · 4 arms</div>
           <div style={{marginTop:8}}>Arm 1: Ivory · Arm 2: Brown<br/>Arm 3: Pale green · Arm 4: Cream</div>
+          <button disabled={sortingState.phase!=='ready'||eggState.phase!=='ready'} onClick={()=>{setSortingState(s=>({...s,phase:'running',label:'Starting four-arm sorting'}));setSortingRequestId(id=>id+1);}} style={{marginTop:12,padding:'10px 14px',borderRadius:7,border:'1px solid #858773',background:'#d4d8ba',color:'#34382f',cursor:sortingState.phase==='ready'&&eggState.phase==='ready'?'pointer':'default'}}>Run four-arm sorting</button>
+          <div role="status" style={{marginTop:8}}>{sortingState.label}</div>
+          {sortingState.arms.map((label,a)=><div key={a}>Arm {a+1}: {sortingState.counts[a]} / 4 · {label}</div>)}
+          {sortingState.reason&&<div style={{color:'#8a3b2c'}}>{sortingState.reason} · Reset to retry</div>}
+          <details style={{marginTop:10}}><summary>Single-egg checks</summary>
           <div style={{marginTop:8,color:'#66695e'}}>First transfer: Arm 1 picks one ivory egg, aligns it and places it in its tray. Arms 2–4 wait.</div>
-          <button disabled={eggState.phase!=='ready'} onClick={()=>{setEggProgram('transfer');setEggState({phase:'running',label:'Starting first egg',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:12,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:eggState.phase==='ready'?'#e1dfc9':'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'?'pointer':'default'}}>Run first egg</button>
+          <button disabled={eggState.phase!=='ready'||sortingLocked||sortingState.phase==='complete'} onClick={()=>{setEggProgram('transfer');setEggState({phase:'running',label:'Starting first egg',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:12,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:eggState.phase==='ready'?'#e1dfc9':'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'?'pointer':'default'}}>Run first egg</button>
           <div style={{marginTop:8,color:'#66695e'}}>Correction trial: release tilted, regrasp, lift and reseat upright. Reset between trials.</div>
-          <button disabled={eggState.phase!=='ready'||!eggReseatReady} onClick={()=>{setEggProgram('reseat');setEggState({phase:'running',label:'Starting correction trial',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:8,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'&&eggReseatReady?'pointer':'default'}}>Run correction trial</button>
+          <button disabled={eggState.phase!=='ready'||!eggReseatReady||sortingLocked||sortingState.phase==='complete'} onClick={()=>{setEggProgram('reseat');setEggState({phase:'running',label:'Starting correction trial',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:8,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'&&eggReseatReady?'pointer':'default'}}>Run correction trial</button>
           <div role="status" style={{marginTop:8}}>{eggState.label}</div>
           {eggState.reason && <div style={{color:'#8a3b2c'}}>{eggState.reason} · Reset to retry</div>}
+          </details>
         </aside>
       )}
       {isAssembly1Scene && <AssemblyCameraPanel key={`cameras-${robotKey}`} selection={cameraSelection} onSelection={setCameraSelection} tiles={cameraTiles} status={cameraStatus} />}

@@ -1,0 +1,500 @@
+{
+  "state": {
+    "phase": "complete",
+    "label": "Sorted 2 / 2 · all arms returned",
+    "counts": [
+      1,
+      1,
+      0,
+      0
+    ],
+    "arms": [
+      "Complete",
+      "Complete",
+      "Complete",
+      "Complete"
+    ]
+  },
+  "history": [
+    {
+      "time": 3,
+      "taskIndex": 0,
+      "stage": 0,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": false,
+        "lift": -3.2364710911281236e-10,
+        "tiltDegrees": 37.622333720670774,
+        "cellError": 0.45628222352394177,
+        "speed": 9.030542494652847e-11,
+        "tcpDistance": 0.20119611078693217,
+        "aperture": 0.06272696516859701,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0,
+        "neighborDisplacement": 0.00006971177427325445
+      }
+    },
+    {
+      "time": 6,
+      "taskIndex": 0,
+      "stage": 1,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": false,
+        "lift": -4.1555128782455597e-10,
+        "tiltDegrees": 37.62233431338675,
+        "cellError": 0.45628222344798236,
+        "speed": 4.589171659945094e-12,
+        "tcpDistance": 0.025262887759253057,
+        "aperture": 0.06274509804604693,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0,
+        "neighborDisplacement": 0.00012677772468911632
+      }
+    },
+    {
+      "time": 8,
+      "taskIndex": 0,
+      "stage": 2,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 0.00007720758712231879,
+        "tiltDegrees": 37.06926084016044,
+        "cellError": 0.455680464971686,
+        "speed": 0.0001008953921737132,
+        "tcpDistance": 0.025073446284240485,
+        "aperture": 0.044806568210953614,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00019070789784350002,
+        "neighborDisplacement": 0.00014916098366991282
+      }
+    },
+    {
+      "time": 11,
+      "taskIndex": 0,
+      "stage": 3,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 0.12960510575651676,
+        "tiltDegrees": 37.1114541974094,
+        "cellError": 0.4556435382778111,
+        "speed": 0.002122383417405782,
+        "tcpDistance": 0.02511664634963451,
+        "aperture": 0.04479280565260113,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.0001947602494251566,
+        "neighborDisplacement": 0.0001901534032903288
+      }
+    },
+    {
+      "time": 15,
+      "taskIndex": 0,
+      "stage": 4,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 0.16683592979402914,
+        "tiltDegrees": 37.22681076360844,
+        "cellError": 0.0007711999471595608,
+        "speed": 0.003406847710366763,
+        "tcpDistance": 0.025100995965239018,
+        "aperture": 0.04481640593915848,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00019315012754175955,
+        "neighborDisplacement": 0.00024791348261734257
+      }
+    },
+    {
+      "time": 18,
+      "taskIndex": 0,
+      "stage": 5,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 0.17113081012793965,
+        "tiltDegrees": 0.2559588453915505,
+        "cellError": 0.015522953979265508,
+        "speed": 0.00043393710002029615,
+        "tcpDistance": 0.025445170510521517,
+        "aperture": 0.0447875228763954,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.0002144993890893321,
+        "neighborDisplacement": 0.0002922114933999843
+      }
+    },
+    {
+      "time": 18,
+      "taskIndex": 1,
+      "stage": 0,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": false,
+        "lift": -1.109229375018117e-11,
+        "tiltDegrees": 36.72578617480554,
+        "cellError": 0.5022426283411356,
+        "speed": 2.2051015666387796e-13,
+        "tcpDistance": 0.20116660361372246,
+        "aperture": 0.06272695637717884,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.0002144993890893321,
+        "neighborDisplacement": 0.0002922114933999843
+      }
+    },
+    {
+      "time": 21,
+      "taskIndex": 1,
+      "stage": 1,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": false,
+        "lift": -1.112029912597734e-11,
+        "tiltDegrees": 36.72578617469211,
+        "cellError": 0.5022426283403858,
+        "speed": 1.634243722640779e-14,
+        "tcpDistance": 0.025256963290029636,
+        "aperture": 0.062745098047126,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.0002043665150502718,
+        "neighborDisplacement": 0.0003373667662541567
+      }
+    },
+    {
+      "time": 22,
+      "taskIndex": 0,
+      "stage": 6,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": true,
+        "lift": 0.007073223030565956,
+        "tiltDegrees": 0.21331211505673653,
+        "cellError": 0.00018192338965415225,
+        "speed": 0.0002608387058772377,
+        "tcpDistance": 0.025479427337160267,
+        "aperture": 0.04480438598697791,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00021950838119966083,
+        "neighborDisplacement": 0.00035148002512696495
+      }
+    },
+    {
+      "time": 23,
+      "taskIndex": 1,
+      "stage": 2,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 5.345660983036016e-7,
+        "tiltDegrees": 36.64391675225816,
+        "cellError": 0.5019463323279248,
+        "speed": 6.005313004155417e-7,
+        "tcpDistance": 0.025017343606422607,
+        "aperture": 0.04374691643539856,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.0001742706680369557,
+        "neighborDisplacement": 0.00035457255632185115
+      }
+    },
+    {
+      "time": 24,
+      "taskIndex": 0,
+      "stage": 7,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.007043653710142955,
+        "tiltDegrees": 0.34929093935432765,
+        "cellError": 0.00017922383299778365,
+        "speed": 0.000012581827242753938,
+        "tcpDistance": 0.02532415705451837,
+        "aperture": 0.05096304502392588,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.0001749498425526703,
+        "neighborDisplacement": 0.0003652362785050109
+      }
+    },
+    {
+      "time": 26,
+      "taskIndex": 1,
+      "stage": 3,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 0.1296372893592626,
+        "tiltDegrees": 36.71533879131369,
+        "cellError": 0.5019494166770839,
+        "speed": 0.0020991228373710997,
+        "tcpDistance": 0.025061268574063954,
+        "aperture": 0.04374112692040614,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00017223211064855252,
+        "neighborDisplacement": 0.00039618377352108034
+      }
+    },
+    {
+      "time": 27,
+      "taskIndex": 0,
+      "stage": 8,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.007040631626398258,
+        "tiltDegrees": 0.2907564642952299,
+        "cellError": 0.00014296871223900596,
+        "speed": 0.000012765267401705713,
+        "tcpDistance": 0.18090378874082205,
+        "aperture": 0.09999988252862924,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00017015030093162948,
+        "neighborDisplacement": 0.00041180681270769126
+      }
+    },
+    {
+      "time": 30,
+      "taskIndex": 1,
+      "stage": 4,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 0.1668260090530974,
+        "tiltDegrees": 36.68530612907213,
+        "cellError": 0.0008380153365605238,
+        "speed": 0.0037437044054799288,
+        "tcpDistance": 0.025005200564421962,
+        "aperture": 0.0438162496176739,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00017044022284143796,
+        "neighborDisplacement": 0.00045928127798255334
+      }
+    },
+    {
+      "time": 31,
+      "taskIndex": 0,
+      "stage": 9,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.007036449936583561,
+        "tiltDegrees": 0.2166828365483016,
+        "cellError": 0.0000958327206949908,
+        "speed": 0.000013027971658091549,
+        "tcpDistance": 0.5649399774577825,
+        "aperture": 0.09999842382503078,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00017861452232747737,
+        "neighborDisplacement": 0.0004753101857341792
+      }
+    },
+    {
+      "time": 33,
+      "taskIndex": 0,
+      "stage": 10,
+      "arm": 0,
+      "egg": 0,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.007034297824486557,
+        "tiltDegrees": 0.18359918162717137,
+        "cellError": 0.00007413335830002931,
+        "speed": 0.000013161089368395307,
+        "tcpDistance": 0.5650454319722361,
+        "aperture": 0.09999999999835665,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00018591689522015178,
+        "neighborDisplacement": 0.0005076783328798745
+      }
+    },
+    {
+      "time": 33,
+      "taskIndex": 1,
+      "stage": 5,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": false,
+        "lift": 0.17070076335068796,
+        "tiltDegrees": 0.23210049299250793,
+        "cellError": 0.014526261128630435,
+        "speed": 0.0004679628197489834,
+        "tcpDistance": 0.025380114187453347,
+        "aperture": 0.04376732490291639,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00018591689522015178,
+        "neighborDisplacement": 0.0005076783328798745
+      }
+    },
+    {
+      "time": 37,
+      "taskIndex": 1,
+      "stage": 6,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": true,
+        "fingerContacts": 2,
+        "traySupported": true,
+        "lift": 0.007286775308491145,
+        "tiltDegrees": 0.33872243027497095,
+        "cellError": 0.00012771097938574046,
+        "speed": 0.0003049775651523758,
+        "tcpDistance": 0.025214818667745147,
+        "aperture": 0.04379174801230287,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0.00022200359788141375,
+        "neighborDisplacement": 0.000571262927875527
+      }
+    },
+    {
+      "time": 39,
+      "taskIndex": 1,
+      "stage": 7,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.0073109124626409006,
+        "tiltDegrees": 0.324398120532031,
+        "cellError": 0.00011664424164919839,
+        "speed": 0.00002099623779861264,
+        "tcpDistance": 0.024995966139527544,
+        "aperture": 0.05096784700994928,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0,
+        "neighborDisplacement": 0.0005981308415589547
+      }
+    },
+    {
+      "time": 42,
+      "taskIndex": 1,
+      "stage": 8,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.007308002086335641,
+        "tiltDegrees": 0.26451455248877703,
+        "cellError": 0.00008342343108026517,
+        "speed": 0.000013990390302727771,
+        "tcpDistance": 0.18087973984154448,
+        "aperture": 0.09999383975534826,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0,
+        "neighborDisplacement": 0.0006691122450493542
+      }
+    },
+    {
+      "time": 46,
+      "taskIndex": 1,
+      "stage": 9,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.007301242659060292,
+        "tiltDegrees": 0.1843616615441735,
+        "cellError": 0.00006802695675786924,
+        "speed": 0.00001631331758035643,
+        "tcpDistance": 0.5641487051395052,
+        "aperture": 0.1000000008145857,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0,
+        "neighborDisplacement": 0.0007504992053992811
+      }
+    },
+    {
+      "time": 48,
+      "taskIndex": 1,
+      "stage": 10,
+      "arm": 1,
+      "egg": 4,
+      "observation": {
+        "bilateral": false,
+        "fingerContacts": 0,
+        "traySupported": true,
+        "lift": 0.007298538003273181,
+        "tiltDegrees": 0.17185300982230517,
+        "cellError": 0.00008534103195073026,
+        "speed": 0.000016548752678919786,
+        "tcpDistance": 0.5642200602669206,
+        "aperture": 0.0999999999987024,
+        "forbiddenPenetration": 0,
+        "gripPenetration": 0,
+        "neighborDisplacement": 0.0007504994652058992
+      }
+    }
+  ],
+  "metrics": {
+    "maxForbiddenPenetration": 0,
+    "maxGripPenetration": 0.0002491095535053031,
+    "maxNeighborDisplacement": 0.0007504994965329598,
+    "parallelSeconds": 12.967999999992813,
+    "maxSimultaneousArms": 2
+  },
+  "warnings": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "engine": "3.3.8"
+}

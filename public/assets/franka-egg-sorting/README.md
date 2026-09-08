@@ -1,6 +1,6 @@
 # Franka Demo2 egg-sorting assets
 
-This package is separate from the accepted Assembly1 / Demo1 assets. One Arm 1 transfer is implemented and contact-verified; four-arm sorting and post-placement regrasp remain separate milestones. See `docs/progress/2026-09-08-demo2-first-egg.md` in the repository.
+This package is separate from the accepted Assembly1 / Demo1 assets. It includes the single-egg transfer, post-placement regrasp/reseat trial, and a four-arm sorting motion for all 16 eggs. The four-arm motion passes native, browser-WASM and actual-page physical replay, including carrying-state Reset; see `docs/progress/2026-09-09-demo2-four-arm.md` for measured acceptance results.
 
 ## Sources
 
@@ -26,4 +26,4 @@ CPU dependencies: Python, `usd-core`, `numpy`, `trimesh`, `coacd`, `mujoco`, `sc
 
 Run `scripts/build-egg-sorting-assets.py` from the repository root with `--menagerie` pointing to the source Menagerie checkout and `--robodojo` pointing to the RoboDojo checkout. The default output is this directory. The collision decomposition is cached in `insert-collisions.json` and invalidated automatically when converted geometry or decomposition settings change.
 
-Inspect `manifest.json` for source hashes, dimensions, category assignments, mass settings and passive settling drift. The single-egg motion asset is exported by `scripts/solve-egg-transfer.py --export` only after its physical acceptance checks pass. Correction after release and four-arm collision-aware motion remain separate milestones.
+Inspect `manifest.json` for source hashes, dimensions, category assignments, mass settings and passive settling drift. Single-egg motion is exported by `scripts/solve-egg-transfer.py --export`. Four-arm `sorting-motion.json` is exported by `scripts/solve-egg-sorting.py --replay --arms 4 --input <checked-plan> --export` only after fresh fixed-path physical acceptance. The controller drives joint/gripper actuators and checks real contacts; object poses are never animated by these motion assets.

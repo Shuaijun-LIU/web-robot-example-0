@@ -6,13 +6,17 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 
 ## Verified scenes
 
-### Franka Demo2 — first physical egg transfer
+### Franka Demo2 — four-arm physical egg sorting
 
-Select **Franka Demo2**, then **Run first egg**. Arm 1 picks one ivory egg from the mixed box, carries it to its tray, corrects its tilt, seats and releases it, and returns home. Arms 2–4 wait and remain independently controllable outside playback. Reset cancels a running transfer. The workcell reuses RoboDojo eggs/holders and Menagerie UMI long-finger grippers; no object attachment or scripted egg motion is used.
+Select **Franka Demo2**, then **Run four-arm sorting**. The four arms sort all 16 mixed eggs into their class-owned trays, align them upright, release them and return home. Source-corridor reservations stagger conflicting approaches while safe transport and placement overlap. Reset cancels playback. The workcell reuses RoboDojo eggs/holders and Menagerie UMI long-finger grippers; no object attachment or scripted egg motion is used.
 
-![One egg physically carried between the sourced fingers](artifacts/screenshots/demo2-first-egg-carry.png)
+![Four arms sharing the workcell with staggered source access](artifacts/screenshots/demo2-four-arm-parallel.png)
 
-Native, browser-engine and actual browser checks pass for this single transfer. Post-placement regrasp and four-arm concurrent sorting are **not yet enabled**. [Measurements and progress](docs/progress/2026-09-08-demo2-first-egg.md). Demo1 / Assembly1 remain unchanged, and Demo1 remains the default entry.
+Native, browser-engine and actual-page replay pass for all 16 eggs: 216 simulated seconds, about 170 seconds of overlapping arm movement, and four completed eggs per arm. Actual-page checks also pass Reset during carrying and after manual gripper input. [Measurements and progress](docs/progress/2026-09-09-demo2-four-arm.md).
+
+![All 16 eggs placed and all four arms returned home](artifacts/screenshots/demo2-four-arm-complete.png)
+
+Expand **Single-egg checks** for the original transfer and the physical post-placement regrasp/reseat trial; Reset between programs. Both retain their own checks. Class selection uses known scene metadata, not camera recognition. Demo1 / Assembly1 remain unchanged, and Demo1 remains the default entry.
 
 | Franka Panda — 4 arms | SO101 — 4 arms | XLeRobot — 2 robots |
 |---|---|---|
