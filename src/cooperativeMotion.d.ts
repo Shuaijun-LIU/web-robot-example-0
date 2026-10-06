@@ -8,3 +8,4 @@ export function validateCooperativePlan(p:unknown,scene:CooperativeScene):string
 export function sampleCooperativePhase(p:CooperativePhase,fraction:number):{joints:number[][];grippers:number[]};
 export function checkCooperativeGate(g:CooperativeGate,o:Record<string,unknown>):string|null;
 export function loadCooperativePlan(fetcher:typeof fetch,scene:CooperativeScene,url:string,signal?:AbortSignal):Promise<CooperativePlan>;
+export function requestCooperativeInspectionSteps(api:{step(n:number):void}|null,ticks:number):boolean;

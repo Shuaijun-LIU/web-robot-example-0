@@ -6,9 +6,9 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 
 ## Verified scenes
 
-### New workcell previews — Franka Demo3 / Demo4
+### Franka Demo3 / Demo4 — cooperative workcells
 
-**Franka Demo3** adds product inspection and packing; **Franka Demo4** adds dual-handle pot support and solid ingredient loading. Both independent layouts use sourced RoboTwin/RoboCasa objects and support manual four-arm inspection. Automatic sequences are still under development; the pages do not claim task completion. See [design and progress](docs/progress/2026-10-07-cooperative-workcells.md).
+Select either scene, then **Play task**. **Franka Demo3** presents and geometrically inspects two products with a physically held scanner, transfers and packs them, then pushes the supported order tray to dispatch (130.5 simulated seconds). **Franka Demo4** has Arms 1/3 hold the pot while Arms 2/4 load sourced carrot/tomato objects, then safely sets it down and returns all arms (67.1 seconds). Both use RoboTwin/RoboCasa assets, independent four-arm manual controls, real contacts and actuator-only motion. No barcode recognition or liquid cooking is claimed. Demo1 remains the default. See [design, verification and progress](docs/progress/2026-10-07-cooperative-workcells.md).
 
 ### Franka Demo2 — four-arm physical egg sorting
 

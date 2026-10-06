@@ -193,6 +193,7 @@ class Package:
         self.pad(w,'handoff',0,.05,.09,.08,height=.02,color='.5 .49 .42 1')
         self.pad(w,'packing',-.28,.25,.175,.125)
         self.pad(w,'dispatch',-.4,-.16,.175,.125)
+        self.pad(w,'dispatch_lane',-.34,.045,.235,.08)
         self.object(w,'scan','tea_box','tea',[-.28,-.34,.116],.09)
         self.object(w,'scan','coffee_box','coffee',[-.10,-.34,.116],.10)
         self.object(w,'scan','scanner','scanner',[.32,-.16,.120],.13,yaw=-90)

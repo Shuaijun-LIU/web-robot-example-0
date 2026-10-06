@@ -29,7 +29,14 @@ No weld, magnet, object-following constraint or scripted free-body pose is used.
 
 The pot's collision cavity is tested by dropping a physical probe and requiring
 it to rest on the inner floor below the rim. A whole-pot convex hull is never
-used. Barcode inspection will be a geometric pose gate, not image recognition.
+used. Barcode inspection is a geometric pose gate, not image recognition.
+
+`scan-motion.json` and `pot-motion.json` contain verified actuator programs.
+Inspection reuses scanner `model_data0.json` functional point 1 (the optical
+head center), with its transformed local -Y direction facing the product.
+Demo3 dispatch is a two-fingertip outside-wall push along a continuous support
+bed, not an airborne tray grasp. Demo4 keeps two real bilateral handle grasps
+during loading and reverses the insertion corridor to release the handle loops.
 
 ## Rebuild
 

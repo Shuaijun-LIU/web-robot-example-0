@@ -57,3 +57,10 @@ export async function loadCooperativePlan(fetcher,scene,url,signal) {
   if(reason)throw new Error(reason);
   return plan;
 }
+
+// Development inspection uses the provider's real fixed-step loop. This only
+// schedules ticks; it neither seeks a trajectory nor writes simulation state.
+export function requestCooperativeInspectionSteps(api,ticks){
+  if(!api||!Number.isInteger(ticks)||ticks<1||ticks>1000)return false;
+  api.step(ticks);return true;
+}

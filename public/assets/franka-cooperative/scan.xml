@@ -82,6 +82,9 @@
     <body name="dispatch" pos="-0.4 -0.16 0.10700000000000001">
       <geom name="dispatch_surface" type="box" size="0.175 0.125 0.007" rgba=".35 .38 .32 1" friction=".8 .01 .001" />
     </body>
+    <body name="dispatch_lane" pos="-0.34 0.045 0.107">
+      <geom name="dispatch_lane_surface" type="box" size="0.235 0.08 0.007" rgba=".35 .38 .32 1" friction=".8 .01 .001" />
+    </body>
     <body name="tea_box" pos="-0.28 -0.34 0.116" euler="0 0 0">
       <freejoint name="tea_box_free" />
       <inertial pos="0 0 0.0352273494" mass="0.09" diaginertia="7.45818813e-05 0.000104798544 0.000104922457" />

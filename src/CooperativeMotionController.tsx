@@ -1,13 +1,14 @@
 import {useEffect,useRef} from 'react';
-import {findBodyByName,findJointByName,useBeforePhysicsStep} from 'mujoco-react';
-import {loadCooperativePlan} from './cooperativeMotion.js';
+import {findBodyByName,findJointByName,useBeforePhysicsStep,useMujoco} from 'mujoco-react';
+import {loadCooperativePlan,requestCooperativeInspectionSteps} from './cooperativeMotion.js';
 import type {CooperativePlan,CooperativeState} from './cooperativeMotion.js';
 import type {CooperativeScene} from './cooperativeWorkcells.js';
 import {CooperativeMotionRuntime} from './CooperativeMotionRuntime.js';
 
-declare global {interface Window {cooperativeMotion?:{scene:CooperativeScene;state:CooperativeState;time:number;history:unknown[];metrics:Record<string,number>}}}
+declare global {interface Window {cooperativeMotion?:{scene:CooperativeScene;state:CooperativeState;time:number;history:unknown[];metrics:Record<string,number>;stepInspection?:(ticks:number)=>boolean}}}
 
 export function CooperativeMotionController({scene,requestId,resetGeneration,onStateChange}:{scene:CooperativeScene;requestId:number;resetGeneration:number;onStateChange:(s:CooperativeState)=>void}) {
+  const simulation=useMujoco();
   const plan=useRef<CooperativePlan|null>(null),runtime=useRef<CooperativeMotionRuntime|null>(null),lastRequest=useRef(requestId);
   const lastState=useRef<CooperativeState|null>(null),callback=useRef(onStateChange);callback.current=onStateChange;
   useEffect(()=>{
@@ -29,7 +30,8 @@ export function CooperativeMotionController({scene,requestId,resetGeneration,onS
       }catch(error){runtime.current=null;callback.current({phase:'error',label:'Cannot start motion',stage:0,reason:String(error)});}
     }
     const r=runtime.current;if(!r)return;
-    r.step(m,d);window.cooperativeMotion={scene,state:r.state,time:r.time,history:r.history,metrics:r.metrics};
+    r.step(m,d);window.cooperativeMotion={scene,state:r.state,time:r.time,history:r.history,metrics:r.metrics,
+      ...(import.meta.env.DEV?{stepInspection:(ticks:number)=>requestCooperativeInspectionSteps(simulation.api,ticks)}:{})};
     if(r.state!==lastState.current){lastState.current=r.state;callback.current(r.state);}
   });
   return null;

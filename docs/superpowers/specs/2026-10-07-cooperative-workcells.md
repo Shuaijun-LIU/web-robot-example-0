@@ -13,7 +13,7 @@ Use RoboTwin `024_scanner`, `112_tea-box`, `113_coffee-box`, and `008_tray` or `
 1. Arm 1 lifts a product and presents a face toward the inspection region.
 2. Arm 2 picks the scanner and positions it relative to the product. Inspection is a **geometric pose gate**, not barcode decoding or a learned vision system.
 3. Arm 1 releases the inspected product onto a supported handoff pad and clears it. Arm 3 then places it into the designated order tray.
-4. Arm 4 prepares the tray and handles dispatch only when Arm 3 has cleared the shared region. Repeat for the second product, then return all arms home.
+4. After both products are packed and Arm 3 clears the shared region, Arm 4 pushes the loaded tray along a continuous support bed into dispatch using two separated fingertips. This is explicitly a supported push, not a pinch grasp or airborne carry. Then all arms return home.
 
 Final success: both products inspected once, packed in their intended destinations, physically supported, scanner and tray supported, all grippers released and arms home. Scanner/object orientation and standoff, handoff ownership and tray occupancy must be observable in diagnostics.
 
