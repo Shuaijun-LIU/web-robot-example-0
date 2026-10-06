@@ -21,6 +21,7 @@ export function validateCooperativePlan(p,scene) {
   let previous=Array.from({length:4},()=>p.initialJoints),grip=[255,255,255,255];
   for(const phase of p.phases){
     if(typeof phase.name!=='string'||!Number.isFinite(phase.duration)||phase.duration<.02||phase.duration>60)return 'Invalid phase duration/name';
+    if(phase.settleTimeout!==undefined&&(!Number.isFinite(phase.settleTimeout)||phase.settleTimeout<0||phase.settleTimeout>3))return 'Invalid settling window';
     if(!Array.isArray(phase.paths)||phase.paths.length!==4||phase.paths.some(path=>!Array.isArray(path)||path.length<2||!path.every(jointVector)))return 'Invalid joint path';
     if(!Array.isArray(phase.grippers)||phase.grippers.length!==4||phase.grippers.some(p=>!Array.isArray(p)||p.length!==2||p.some(v=>!Number.isFinite(v)||v<0||v>255)))return 'Invalid gripper command';
     if(phase.paths.some((p,a)=>p[0].some((v,j)=>Math.abs(v-previous[a][j])>1e-5))||phase.grippers.some((p,a)=>Math.abs(p[0]-grip[a])>1e-5))return 'Discontinuous program';

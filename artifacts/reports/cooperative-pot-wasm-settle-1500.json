@@ -1,365 +1,365 @@
 {
   "success": true,
   "engine": "3.3.8",
-  "settleTicks": 500,
+  "settleTicks": 1500,
   "state": {
     "phase": "complete",
     "label": "Task complete · all arms returned",
     "stage": 31,
     "active": true
   },
-  "time": 71.10000000001337,
+  "time": 71.1000000000088,
   "metrics": {
     "maxForbiddenPenetration": 0,
-    "maxGripPenetration": 0.0003597169179099144
+    "maxGripPenetration": 0.00036287158148970775
   },
   "history": [
     {
       "phase": "Approach pot handles from above",
-      "time": 2.9999999999997806,
+      "time": 2.99999999999967,
       "observations": []
     },
     {
       "phase": "Insert fingers around pot handles",
-      "time": 5.499999999999505,
+      "time": 5.499999999999617,
       "observations": []
     },
     {
       "phase": "Recenter fingers around handle bars",
-      "time": 6.99999999999934,
+      "time": 7.000000000000118,
       "observations": []
     },
     {
       "phase": "Close both pot handles",
-      "time": 9.000000000000009,
+      "time": 9.000000000000785,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.01805956754768514
+          "aperture": 0.018059567547080824
         },
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.018522071124262227
+          "aperture": 0.018522071093204154
         }
       ]
     },
     {
       "phase": "Lift pot for loading",
-      "time": 12.00000000000101,
+      "time": 12.000000000001787,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.018048989800443477
+          "aperture": 0.01804898979265449
         },
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.01851563422596499
+          "aperture": 0.018515634240764484
         },
         {
-          "height": 0.15219022164194076
+          "height": 0.1521902216396568
         }
       ]
     },
     {
       "phase": "Arm 2 approach carrot",
-      "time": 14.500000000001846,
+      "time": 14.500000000001288,
       "observations": []
     },
     {
       "phase": "Arm 2 descend carrot",
-      "time": 16.50000000000118,
+      "time": 16.500000000000178,
       "observations": []
     },
     {
       "phase": "Arm 2 grip carrot",
-      "time": 17.80000000000046,
+      "time": 17.799999999999457,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.026328409713645726
+          "aperture": 0.026278134752878515
         }
       ]
     },
     {
       "phase": "Arm 2 lift carrot",
-      "time": 19.79999999999935,
+      "time": 19.79999999999835,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.02420899662131598
+          "aperture": 0.02419309081325991
         }
       ]
     },
     {
       "phase": "Arm 2 raise carrot to transfer clearance",
-      "time": 21.799999999998242,
+      "time": 21.79999999999724,
       "observations": []
     },
     {
       "phase": "Arm 2 transport carrot to high pot edge",
-      "time": 26.79999999999547,
+      "time": 26.79999999999447,
       "observations": []
     },
     {
       "phase": "Arm 2 drop carrot into pot",
-      "time": 30.799999999993254,
+      "time": 30.79999999999545,
       "observations": []
     },
     {
       "phase": "Settle carrot inside pot",
-      "time": 31.599999999993877,
+      "time": 31.599999999996427,
       "observations": [
         {
           "relative": [
-            0.01634701578763256,
-            -0.03385151536144288,
-            0.043025358727471444
+            0.013291026187983722,
+            -0.0032888565080649488,
+            0.02625009880577399
           ],
-          "speed": 0.0031963973557998467,
+          "speed": 0.02158375230741971,
           "supported": true
         }
       ]
     },
     {
       "phase": "Arm 2 clear east of the holding wrist",
-      "time": 33.09999999999571,
+      "time": 33.09999999999826,
       "observations": []
     },
     {
       "phase": "Arm 2 clear after dropping carrot",
-      "time": 35.599999999998765,
+      "time": 35.600000000001316,
       "observations": []
     },
     {
       "phase": "Arm 4 approach tomato",
-      "time": 38.10000000000182,
+      "time": 38.10000000000437,
       "observations": []
     },
     {
       "phase": "Arm 4 descend tomato",
-      "time": 40.100000000004265,
+      "time": 40.100000000006816,
       "observations": []
     },
     {
       "phase": "Arm 4 grip tomato",
-      "time": 41.40000000000585,
+      "time": 41.400000000008404,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.05258783773722003
+          "aperture": 0.05258635093636506
         }
       ]
     },
     {
       "phase": "Arm 4 lift tomato",
-      "time": 43.4000000000083,
+      "time": 43.40000000001085,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.05259210105478211
+          "aperture": 0.05259177157249549
         }
       ]
     },
     {
       "phase": "Arm 4 raise tomato to transfer clearance",
-      "time": 45.40000000001074,
+      "time": 45.40000000001329,
       "observations": []
     },
     {
       "phase": "Arm 4 transport tomato to high pot edge",
-      "time": 50.40000000001685,
+      "time": 50.4000000000194,
       "observations": []
     },
     {
       "phase": "Arm 4 drop tomato into pot",
-      "time": 54.40000000002174,
+      "time": 54.40000000002429,
       "observations": []
     },
     {
       "phase": "Settle tomato inside pot",
-      "time": 55.20000000002272,
+      "time": 55.20000000002527,
       "observations": [
         {
           "relative": [
-            -0.017315536206263964,
-            0.007263951643955917,
-            0.03456540892084528
+            -0.03634468570640548,
+            0.017344752669346312,
+            0.03585894526395775
           ],
-          "speed": 0.0166323309403812,
+          "speed": 0.0008515717011779967,
           "supported": true
         }
       ]
     },
     {
       "phase": "Arm 4 clear after dropping tomato",
-      "time": 57.700000000025774,
+      "time": 57.700000000028325,
       "observations": []
     },
     {
       "phase": "Lower loaded pot onto pad",
-      "time": 60.70000000002944,
+      "time": 60.70000000003199,
       "observations": [
         {
           "relative": [
-            0.01695153407874504,
-            -0.03827211855627733,
-            0.042979985384251164
+            0.010234166444528285,
+            -0.0027982131347535086,
+            0.026188110090025456
           ],
-          "speed": 0.00045847688995593575,
+          "speed": 0.0013615850483864767,
           "supported": true
         },
         {
           "relative": [
-            -0.017348034421492093,
-            0.007319771672287944,
-            0.03455800497008216
+            -0.03634274753036776,
+            0.017342274776087067,
+            0.03585996525779066
           ],
-          "speed": 0.005989371801502367,
+          "speed": 0.0010027589577923208,
           "supported": true
         }
       ]
     },
     {
       "phase": "Seek pot pad support 1",
-      "time": 61.300000000030174,
+      "time": 61.30000000003165,
       "observations": [
         {
           "relative": [
-            0.01696257729310875,
-            -0.03833658368088114,
-            0.04298337527797498
+            0.010233413238140237,
+            -0.0027957130941068495,
+            0.026190615928750445
           ],
-          "speed": 0.0006386835731477148,
+          "speed": 0.0017251394539194085,
           "supported": true
         },
         {
           "relative": [
-            -0.01735197856655032,
-            0.007334418603980287,
-            0.03456492249418585
+            -0.03633833016209358,
+            0.017341546033959352,
+            0.03584963742268803
           ],
-          "speed": 0.0076063198810918725,
+          "speed": 0.0010513964216971475,
           "supported": true
         }
       ]
     },
     {
       "phase": "Confirm loaded pot support",
-      "time": 61.60000000003054,
+      "time": 61.60000000003095,
       "observations": [
         {
           "relative": [
-            0.016967146629729972,
-            -0.03836315995777273,
-            0.04298357592398104
+            0.010233834931857139,
+            -0.0027969585717316304,
+            0.02619095455302706
           ],
-          "speed": 0.0010164521145382736,
+          "speed": 0.0018318397157596708,
           "supported": true
         },
         {
           "relative": [
-            -0.017354485533910828,
-            0.007340218311778841,
-            0.03456027594778308
+            -0.03633585689714268,
+            0.017336127467696895,
+            0.03586131580920411
           ],
-          "speed": 0.0015205291863751192,
+          "speed": 0.000609681658860948,
           "supported": true
         },
         {
           "supported": true,
-          "speed": 0.00004242138392496515
+          "speed": 0.000012571141264051946
         }
       ]
     },
     {
       "phase": "Loosen both pot handles",
-      "time": 63.10000000003201,
+      "time": 63.10000000002746,
       "observations": [
         {
           "relative": [
-            0.01698124267793458,
-            -0.038491425101532854,
-            0.043000815623950264
+            0.010149456843324845,
+            -0.002832476118711224,
+            0.026188123718876053
           ],
-          "speed": 0.0012737400756667547,
+          "speed": 0.0014559519247398821,
           "supported": true
         },
         {
           "relative": [
-            -0.017365814368631723,
-            0.007348318595892471,
-            0.03456118817590924
+            -0.0363213552321693,
+            0.017342533518885553,
+            0.03585724599496771
           ],
-          "speed": 0.003358086345061252,
+          "speed": 0.00702476238383655,
           "supported": true
         },
         {
           "supported": true,
-          "speed": 0.00003406556843020555
+          "speed": 0.0000021588669394484237
         }
       ]
     },
     {
       "phase": "Withdraw fingers radially from handles",
-      "time": 64.60000000002852,
+      "time": 64.60000000002395,
       "observations": [
         {
           "relative": [
-            0.017006744350752136,
-            -0.03857366559315782,
-            0.0429830439660498
+            0.010170102885503258,
+            -0.0028261452399789945,
+            0.02619132976750917
           ],
-          "speed": 0.0008019756638510785,
+          "speed": 0.0026080179639914962,
           "supported": true
         },
         {
           "relative": [
-            -0.017360075682663435,
-            0.0073580919105300496,
-            0.0345651498007136
+            -0.03632763267101606,
+            0.017331714685436376,
+            0.035860985718489787
           ],
-          "speed": 0.000589676002182695,
+          "speed": 0.00029587022024294676,
           "supported": true
         },
         {
           "supported": true,
-          "speed": 0.00004830809271873475
+          "speed": 0.00007909614371899341
         }
       ]
     },
     {
       "phase": "Lift fingers clear of handle loops",
-      "time": 67.10000000002269,
+      "time": 67.10000000001813,
       "observations": [
         {
           "relative": [
-            0.01700743519253899,
-            -0.03862483298185331,
-            0.04301346152440736
+            0.010135215625468572,
+            -0.0028370618417846443,
+            0.02618917825406416
           ],
-          "speed": 0.000011056923958017467,
+          "speed": 0.0006485440525737747,
           "supported": true
         },
         {
           "relative": [
-            -0.017362919974817086,
-            0.00735825175049882,
-            0.03456523450551914
+            -0.036323015924828554,
+            0.017331507870721068,
+            0.035860239748329484
           ],
-          "speed": 0.000007829144537154622,
+          "speed": 0.00005229478464806934,
           "supported": true
         },
         {
           "supported": true,
-          "speed": 0.000007960556005886868
+          "speed": 1.1469231436696357e-7
         },
         {
           "fingerContacts": 0
@@ -368,29 +368,29 @@
     },
     {
       "phase": "Open clear grippers fully",
-      "time": 68.10000000002036,
+      "time": 68.1000000000158,
       "observations": [
         {
           "relative": [
-            0.01700814788509484,
-            -0.038625051116122015,
-            0.043014700261067594
+            0.010130327217248276,
+            -0.002836228829875061,
+            0.02618908775225765
           ],
-          "speed": 0.000014388652990801983,
+          "speed": 0.0002717501602186904,
           "supported": true
         },
         {
           "relative": [
-            -0.01736324811113471,
-            0.007358383929098126,
-            0.03456522893346621
+            -0.036323022790963604,
+            0.01733151747610137,
+            0.03586024590256895
           ],
-          "speed": 0.000006738912699618255,
+          "speed": 0.00018669543155016465,
           "supported": true
         },
         {
           "supported": true,
-          "speed": 0.000007387817107185169
+          "speed": 2.4220400638375755e-7
         },
         {
           "fingerContacts": 0
@@ -399,35 +399,35 @@
     },
     {
       "phase": "Pot task complete - all arms home",
-      "time": 71.10000000001337,
+      "time": 71.1000000000088,
       "observations": [
         {
           "relative": [
-            0.01701011436203208,
-            -0.03862470627789469,
-            0.04301604258011111
+            0.010116716230043024,
+            -0.002837844896877593,
+            0.026189233936533163
           ],
-          "speed": 0.000009965587424951243,
+          "speed": 0.00047536769509933164,
           "supported": true
         },
         {
           "relative": [
-            -0.017364186935752115,
-            0.007358765013810575,
-            0.0345652325633925
+            -0.03632297169599505,
+            0.017331444981861007,
+            0.03586023336121561
           ],
-          "speed": 0.000007712320044232833,
+          "speed": 0.00004183745890136919,
           "supported": true
         },
         {
           "supported": true,
-          "speed": 0.0000078131663984981
+          "speed": 1.3969526356633278e-7
         },
         {
           "fingerContacts": 0
         },
         {
-          "error": 0.0028887829420021216
+          "error": 0.0028887829421705424
         }
       ]
     }

@@ -14,7 +14,7 @@ export class CooperativeMotionRuntime {
   }
   reset(){
     this.state={phase:'ready',label:'Ready',stage:0};this.time=0;this.phaseTime=0;this.previous=null;this.refs=null;
-    this.history=[];this.metrics={maxForbiddenPenetration:0,maxGripPenetration:0};this.loss=new Map();this.touching=new Map();
+    this.history=[];this.metrics={maxForbiddenPenetration:0,maxGripPenetration:0};this.loss=new Map();this.touching=new Map();this.waiting=false;
   }
   fail(reason){this.state={...this.state,phase:'error',label:'Motion stopped',reason};}
   start(m,d){
@@ -105,12 +105,18 @@ export class CooperativeMotionRuntime {
     let p=this.plan.phases[this.state.stage];
     if(this.phaseTime>=p.duration-1e-9){
       const observations=p.gates.map(g=>this.observeGate(m,d,g));
-      for(let i=0;i<p.gates.length;i++){const reason=checkCooperativeGate(p.gates[i],observations[i]);if(reason){this.fail(`${p.name}: ${reason}`);return;}}
+      for(let i=0;i<p.gates.length;i++){const reason=checkCooperativeGate(p.gates[i],observations[i]);if(reason){
+        if(this.phaseTime<p.duration+(p.settleTimeout??0)-1e-9){
+          this.waiting=true;this.command=sampleCooperativePhase(p,1);this.apply(m,d);return;
+        }
+        this.history.push({phase:p.name,time:this.time,passed:false,failedGate:i,observations});
+        this.fail(`${p.name}: ${reason}`);return;
+      }}
       this.history.push({phase:p.name,time:this.time,observations});
       this.command=sampleCooperativePhase(p,1);
       const next=this.state.stage+1;
       if(next===this.plan.phases.length){this.state={phase:'complete',label:'Task complete · all arms returned',stage:this.state.stage,active:true};this.apply(m,d);return;}
-      this.phaseTime=Math.max(0,this.phaseTime-p.duration);this.loss.clear();p=this.plan.phases[next];
+      this.phaseTime=this.waiting?0:Math.max(0,this.phaseTime-p.duration);this.waiting=false;this.loss.clear();p=this.plan.phases[next];
       this.state={phase:'running',label:p.name,stage:next,active:true};
     }
     this.command=sampleCooperativePhase(p,this.phaseTime/p.duration);this.apply(m,d);

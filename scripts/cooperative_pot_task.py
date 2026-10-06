@@ -41,9 +41,20 @@ def _drop_in_pot(w, arm, food, local_release):
     w.phase(
         f'Arm {arm + 1} drop {food} into pot', 4.,
         grippers={arm: 255}, carry=carried_pot,
-        gates=[_inside_gate(food)],
+    )
+    w.phase(
+        f'Settle {food} inside pot', .8,
+        carry=carried_pot, gates=[_inside_gate(food)], settle_timeout=1.,
     )
     del w.holds[arm]
+    if arm == 1:
+        # The direct joint return sweeps an open finger past Arm 1's wrist.
+        # First clear laterally; raising before lateral clearance also brushes
+        # that wrist with the already-open finger.
+        w.phase(
+            'Arm 2 clear east of the holding wrist', 1.5,
+            targets={arm: (w.tcp(arm) + [.08, 0., 0.], w.rot(arm))},
+        )
     w.phase(
         f'Arm {arm + 1} clear after dropping {food}', 2.5,
         joint_targets={arm: HOME}, touch={arm: food},
@@ -61,15 +72,28 @@ def _lower_loaded_pot(w):
             target_position + rotation @ local_point,
             rotation @ local_rotation,
         )
-    gates = [
-        _inside_gate('carrot'), _inside_gate('tomato'),
-        {'type': 'support', 'object': 'cooking_pot', 'body': 'pot_pad'},
-    ]
-    w.phase('Lower loaded pot onto pad', 3., targets=targets, gates=gates)
+    inside = [_inside_gate('carrot'), _inside_gate('tomato')]
+    support = {'type': 'support', 'object': 'cooking_pot', 'body': 'pot_pad'}
+    w.phase('Lower loaded pot onto pad', 3., targets=targets, gates=inside, settle_timeout=1.)
+    # The closed fingers guide the final sub-mm load transfer, while pad
+    # support—not bilateral handle contact—becomes the required constraint.
+    for attempt in range(4):
+        if w.gate(support)[0]:
+            break
+        targets = {
+            arm: (np.asarray(pose[0]) - [0., 0., .0005], pose[1])
+            for arm, pose in targets.items()
+        }
+        w.phase(
+            f'Seek pot pad support {attempt + 1}', .6,
+            targets=targets, carry={}, gates=inside, settle_timeout=1.,
+        )
+    gates = inside + [support]
+    w.phase('Confirm loaded pot support', .3, carry={}, gates=gates, settle_timeout=1.)
 
     w.phase(
         'Loosen both pot handles', 1.5,
-        grippers={0: 130, 2: 130}, carry={}, gates=gates,
+        grippers={0: 130, 2: 130}, carry={}, gates=gates, settle_timeout=1.,
     )
     outside = {
         0: ([-.0035, -.1280, .2155], POT_ROTATIONS[0]),
@@ -77,7 +101,7 @@ def _lower_loaded_pot(w):
     }
     w.phase(
         'Withdraw fingers radially from handles', 1.5, targets=outside,
-        touch={0: 'cooking_pot', 2: 'cooking_pot'}, carry={}, gates=gates,
+        touch={0: 'cooking_pot', 2: 'cooking_pot'}, carry={}, gates=gates, settle_timeout=1.,
     )
     retreat = {
         arm: (np.asarray(pose[0]) + [0., 0., .12], pose[1])
@@ -86,11 +110,11 @@ def _lower_loaded_pot(w):
     released = gates + [{'type': 'released', 'object': 'cooking_pot'}]
     w.phase(
         'Lift fingers clear of handle loops', 2.5, targets=retreat,
-        touch={0: 'cooking_pot', 2: 'cooking_pot'}, carry={}, gates=released,
+        touch={0: 'cooking_pot', 2: 'cooking_pot'}, carry={}, gates=released, settle_timeout=1.,
     )
     w.phase(
         'Open clear grippers fully', 1.,
-        grippers={0: 255, 2: 255}, carry={}, gates=released,
+        grippers={0: 255, 2: 255}, carry={}, gates=released, settle_timeout=1.,
     )
     del w.holds[0]
     del w.holds[2]
@@ -145,7 +169,7 @@ def run_pot(w):
     carrot_grasp = carrot_position + carrot_rotation @ np.array([0., 0., .0185])
     carrot_grasp[2] = .140
     w.pick(1, 'carrot', carrot_grasp, top_rotation(np.pi / 2))
-    _drop_in_pot(w, 1, 'carrot', [-.018, -.060, .200])
+    _drop_in_pot(w, 1, 'carrot', [0., -.060, .200])
 
     tomato_position, tomato_rotation = w.pose('tomato')
     tomato_grasp = tomato_position + tomato_rotation @ np.array([0., 0., .03])
@@ -162,5 +186,5 @@ def run_pot(w):
     w.phase(
         'Pot task complete - all arms home', 3.,
         joint_targets={arm: HOME for arm in range(4)},
-        gates=final_gates,
+        gates=final_gates, settle_timeout=1.,
     )

@@ -103,7 +103,7 @@ class Workcell:
             return .025<=distance<=.09 and o['offAxis']<.02 and o['facing']>.9,o
         raise ValueError(g)
 
-    def phase(self,name,duration,targets=None,grippers=None,touch=None,carry=None,gates=None,joint_targets=None):
+    def phase(self,name,duration,targets=None,grippers=None,touch=None,carry=None,gates=None,joint_targets=None,settle_timeout=0.):
         paths=[np.array([q.copy(),q.copy()]) for q in self.q]
         for a,(position,rotation) in (targets or {}).items():paths[a]=self.path(a,np.array(position),np.array(rotation))
         for a,q in (joint_targets or {}).items():paths[a]=np.array([self.q[a],q])
@@ -116,6 +116,7 @@ class Workcell:
         p={'name':name,'duration':duration,'paths':[path.tolist() for path in paths],
            'grippers':np.column_stack([self.grip,end]).tolist(),'allowedContacts':[list(pair) for pair in sorted(allowed)],
            'carry':[{'object':object,'arm':a} for a,object in held.items()],'gates':gates or []}
+        if settle_timeout:p['settleTimeout']=settle_timeout
         self.phases.append(p);self.loss={}
         pairs={frozenset(self.m.body(n).id for n in pair) for pair in allowed}
         ticks=round(duration/.002)

@@ -67,7 +67,7 @@ about arbitrary manual perturbations or a learned manipulation policy.
 | Task | Phases / simulation time | Native → WASM result | Maximum unintended robot contact penetration (WASM) |
 |---|---|---|---|
 | Demo3 inspection and packing | 66 / 130.5 s | Pass → Pass | 0 mm |
-| Demo4 cooperative pot loading | 27 / 67.1 s | Pass → Pass | 0.452 mm |
+| Demo4 cooperative pot loading | 32 / 71.1 s | Pass → Pass | 0 mm |
 
 ### Demo3 actions and design decisions
 
@@ -103,6 +103,42 @@ unsuccessful route is not exported. Final gates verify both foods inside, pot
 support, zero finger contact and all arms home. Maximum intended grip
 penetration in WASM is 0.360 mm.
 
+### Review fixes and browser feedback
+
+- Switching the manual control target used to remount the generic keyboard
+  toggle and reopen the previously closed gripper. A browser reproduction
+  failed before the fix and passes afterward. Only these two new pages use the
+  state-preserving toggle; existing scenes retain their controller.
+- The initial pot route brushed Arm 1's wrist by 0.452 mm. A contact trace
+  showed the conflict begins at the carrot release approach, not just the
+  return. Moving that lane 18 mm toward the pot center, then clearing east
+  before returning, removes unintended contact: native and WASM both measure
+  0 mm over the complete revised cycle.
+- The rendered carrot release initially failed despite being inside and
+  physically supported: residual speed was 44.45 mm/s against the unchanged
+  40 mm/s settling threshold. Each release now has an explicit 0.8 s natural
+  settling phase. No object state is modified and the gate is not loosened.
+- The pot's initial XML height is slightly above its settled support height.
+  Offline planning now verifies contact and, if needed, seeks downward in
+  0.5 mm increments (bounded at 2 mm). The exported plan uses one increment,
+  followed by stationary confirmation of pot support and both contents before
+  opening. Bilateral carrying remains required in the air; at this final
+  closed-finger load transfer the pad becomes the support constraint.
+- The revised pot cycle also passes WASM with 3 s rather than 1 s initial
+  settling (`COOPERATIVE_SETTLE_TICKS=1500`), with 0 mm unintended contact.
+- A later rendered run caught brief tomato contact chatter while setting the
+  pot down: the food stayed inside at 18 mm/s, but one exact sampling instant
+  had no support contact. Pot confirmation phases now allow at most 1 s of
+  endpoint holding and recheck the unchanged gates on every physics tick.
+  Collision monitoring remains active; genuine failure still times out. Waiting
+  cannot consume the next movement's duration. Three new tests reproduce the
+  old immediate stop, bounded timeout and invalid-window rejection, then pass.
+  Scan phases do not opt into this behavior.
+
+Deferred review minor: a separate pot world-up/tilt gate is not added this
+round. Nominal lift and supported release are tested; arbitrary external
+disturbance recovery is not part of this deterministic demo.
+
 ### Reproduce motion verification
 
 ```bash
@@ -115,3 +151,41 @@ Motion reports are `artifacts/reports/cooperative-{scan,pot}-{native,wasm}.json`
 The player writes only actuator controls. Each physics tick checks actual
 contacts; lost bilateral grasps or excessive robot contact stop the motion
 while leaving the rendered scene available for inspection.
+
+## Stage 3 — rendered end-to-end acceptance
+
+Both pages complete in the actual browser renderer and WASM physics, not just
+the offline solver. Development inspection batches call the provider's real
+fixed-step loop while paused; they do not seek object poses or skip controls.
+Pause freezes the task clock, Reset removes the old runtime, and scene switching
+is covered by the layout check. Browser page errors and engine warnings are zero.
+
+| Browser task | Completed phases | Actual simulation time | Unintended robot penetration | Intended finger-contact penetration |
+|---|---:|---:|---:|---:|
+| Demo3 | 66 | 130.500 s | 0 mm | 0.925 mm |
+| Demo4 | 32 | 71.102 s | 0 mm | 0.550 mm |
+
+The pot run needed just 2 ms of contact-confirmation waiting. Final observations
+prove both ingredients inside and supported, pot on its pad, no pot/finger
+contact, and all arms at home. Product inspection remains a geometric scanner
+pose demonstration, not barcode decoding. Tray dispatch remains a supported
+physical push, not an airborne grasp.
+
+Detailed browser records:
+`artifacts/reports/cooperative-scan-browser.json` and
+`artifacts/reports/cooperative-pot-browser.json`.
+
+![Demo3 product inspection](../../artifacts/screenshots/scan-inspect-2026-10-07.png)
+
+![Demo3 complete](../../artifacts/screenshots/scan-complete-2026-10-07.png)
+
+![Demo4 loaded pot held by two arms](../../artifacts/screenshots/pot-load-2026-10-07.png)
+
+![Demo4 complete](../../artifacts/screenshots/pot-complete-2026-10-07.png)
+
+Final regression: **255/255 tests pass**, TypeScript check passes, production
+build passes. The accepted Demo1/Assembly1/Demo2 motion sources are unchanged.
+The complete new work remains on the local feature branch. The previously
+requested main push is `0c18da6`; its GitHub build passed, but the matching
+[Pages deployment](https://github.com/Shuaijun-LIU/web-robot-example-0/actions/runs/37515102590)
+still reports `waiting` at this check. No deployment protection was bypassed.

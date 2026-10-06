@@ -21,6 +21,7 @@ import { consumeMujocoContacts } from './mujocoContact.js';
 import { robots } from './configs';
 import type { ControlTarget } from './controlTargets.js';
 import { FrankaController } from './controllers/FrankaController';
+import { CooperativeManualGripperController } from './CooperativeManualGripperController';
 import { IndustrialArmController } from './controllers/IndustrialArmController';
 import { SO101Controller } from './controllers/SO101Controller';
 import { XLeRobotController } from './controllers/XLeRobotController';
@@ -442,14 +443,16 @@ function SceneChildren({
         </group>
       )}
 
-      {controlFamily === 'franka' && (
+      {controlFamily === 'franka' && (cooperativeSceneForKey(robotKey) ? (
+        <CooperativeManualGripperController target={target} enabled={!assemblyControlsLocked} />
+      ) : (
         <FrankaController
           key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}-${robotKey === 'frankaDemo2' || cooperativeSceneForKey(robotKey) ? resetGeneration : ''}`}
           target={target}
           enabled={!assemblyControlsLocked}
           initiallyOpen={assemblyStep1Status === 'complete' || robotKey === 'frankaDemo2' || !!cooperativeSceneForKey(robotKey)}
         />
-      )}
+      ))}
       {controlFamily === 'industrialArm' && (
         <IndustrialArmController
           key={`industrial-${target.key}`}

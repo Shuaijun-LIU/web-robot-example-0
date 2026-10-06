@@ -1,484 +1,479 @@
 {
   "success": true,
-  "engine": "3.3.8",
-  "settleTicks": 500,
+  "scene": "scan",
   "state": {
     "phase": "complete",
     "label": "Task complete · all arms returned",
     "stage": 65,
     "active": true
   },
-  "time": 130.49999999989979,
-  "metrics": {
-    "maxForbiddenPenetration": 0,
-    "maxGripPenetration": 0.0009771706196746944
-  },
+  "time": 130.49999999990246,
   "history": [
     {
       "phase": "Arm 2 approach scanner",
-      "time": 2.4999999999998357,
+      "time": 2.499999999999774,
       "observations": []
     },
     {
       "phase": "Arm 2 descend scanner",
-      "time": 4.499999999999615,
+      "time": 4.499999999999553,
       "observations": []
     },
     {
       "phase": "Arm 2 grip scanner",
-      "time": 5.799999999999472,
+      "time": 5.79999999999941,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.029800162268675844
+          "aperture": 0.029800163249279855
         }
       ]
     },
     {
       "phase": "Arm 2 lift scanner",
-      "time": 7.799999999999607,
+      "time": 7.799999999999792,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.029829964978751008
+          "aperture": 0.02982996533774842
         }
       ]
     },
     {
       "phase": "Arm 1 approach tea_box",
-      "time": 10.300000000000443,
+      "time": 10.300000000000628,
       "observations": []
     },
     {
       "phase": "Arm 1 descend tea_box",
-      "time": 12.300000000001111,
+      "time": 12.300000000001296,
       "observations": []
     },
     {
       "phase": "Arm 1 grip tea_box",
-      "time": 13.600000000001545,
+      "time": 13.60000000000173,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.07094611232732428
+          "aperture": 0.07094593136382346
         }
       ]
     },
     {
       "phase": "Arm 1 lift tea_box",
-      "time": 15.600000000001678,
+      "time": 15.60000000000137,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.07088219527809439
+          "aperture": 0.07088482831866329
         }
       ]
     },
     {
       "phase": "Present tea_box",
-      "time": 18.600000000000016,
+      "time": 18.599999999999707,
       "observations": []
     },
     {
       "phase": "Inspect tea_box",
-      "time": 21.599999999998353,
+      "time": 21.599999999998044,
       "observations": [
         {
-          "distance": 0.055183484124516013,
-          "offAxis": 0.0009763677982945929,
-          "facing": 0.999899912272567
+          "distance": 0.05518464447619483,
+          "offAxis": 0.0009702614998005424,
+          "facing": 0.999904123620617
         }
       ]
     },
     {
       "phase": "Scanner clear of transfer lane",
-      "time": 23.599999999997245,
+      "time": 23.599999999996935,
       "observations": []
     },
     {
       "phase": "Arm 1 transport tea_box",
-      "time": 26.599999999995582,
+      "time": 26.599999999995273,
       "observations": []
     },
     {
       "phase": "Arm 1 lower tea_box",
-      "time": 28.599999999994473,
+      "time": 28.599999999994164,
       "observations": []
     },
     {
       "phase": "Settle tea_box at support",
-      "time": 29.39999999999403,
+      "time": 29.39999999999372,
       "observations": []
     },
     {
       "phase": "Confirm support for tea_box",
-      "time": 29.699999999993864,
+      "time": 29.699999999993555,
       "observations": [
         {
           "supported": true,
-          "speed": 0.0000011080121285121747
+          "speed": 0.0000010572977325696596
         }
       ]
     },
     {
       "phase": "Arm 1 release tea_box",
-      "time": 30.8999999999932,
+      "time": 30.8999999999937,
       "observations": [
         {
           "fingerContacts": 0
         },
         {
           "supported": true,
-          "speed": 0.00006140953594844161
+          "speed": 0.00006086013315153609
         }
       ]
     },
     {
       "phase": "Arm 1 clear tea_box",
-      "time": 32.899999999995465,
+      "time": 32.89999999999615,
       "observations": []
     },
     {
       "phase": "Arm 1 clear of handoff",
-      "time": 35.39999999999852,
+      "time": 35.3999999999992,
       "observations": []
     },
     {
       "phase": "Arm 3 approach tea_box",
-      "time": 37.900000000001576,
+      "time": 37.90000000000226,
       "observations": []
     },
     {
       "phase": "Arm 3 descend tea_box",
-      "time": 39.90000000000402,
+      "time": 39.9000000000047,
       "observations": []
     },
     {
       "phase": "Arm 3 grip tea_box",
-      "time": 41.20000000000561,
+      "time": 41.20000000000629,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.07088053312544955
+          "aperture": 0.07088411246568725
         }
       ]
     },
     {
       "phase": "Arm 3 lift tea_box",
-      "time": 43.20000000000805,
+      "time": 43.200000000008735,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.0708623112317534
+          "aperture": 0.07085541944867538
         }
       ]
     },
     {
       "phase": "Arm 3 transport tea_box",
-      "time": 46.20000000001172,
+      "time": 46.2000000000124,
       "observations": []
     },
     {
       "phase": "Arm 3 lower tea_box",
-      "time": 48.200000000014164,
+      "time": 48.200000000014846,
       "observations": []
     },
     {
       "phase": "Settle tea_box at support",
-      "time": 49.00000000001514,
+      "time": 49.000000000015824,
       "observations": []
     },
     {
       "phase": "Confirm support for tea_box",
-      "time": 49.30000000001551,
+      "time": 49.30000000001619,
       "observations": [
         {
           "supported": true,
-          "speed": 0.000032510363757938856
+          "speed": 0.0001357509368468037
         }
       ]
     },
     {
       "phase": "Arm 3 release tea_box",
-      "time": 50.500000000016975,
+      "time": 50.50000000001766,
       "observations": [
         {
           "fingerContacts": 0
         },
         {
           "supported": true,
-          "speed": 0.000022735011676227014
+          "speed": 0.00005083968448024877
         }
       ]
     },
     {
       "phase": "Arm 3 clear tea_box",
-      "time": 52.50000000001942,
+      "time": 52.5000000000201,
       "observations": []
     },
     {
       "phase": "Arm 3 clear of packing area",
-      "time": 55.000000000022474,
+      "time": 55.00000000002316,
       "observations": []
     },
     {
       "phase": "Arm 1 approach coffee_box",
-      "time": 57.50000000002553,
+      "time": 57.50000000002621,
       "observations": []
     },
     {
       "phase": "Arm 1 descend coffee_box",
-      "time": 59.500000000027974,
+      "time": 59.500000000028656,
       "observations": []
     },
     {
       "phase": "Arm 1 grip coffee_box",
-      "time": 60.80000000002956,
+      "time": 60.800000000030245,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.06605942315541899
+          "aperture": 0.06605942315542114
         }
       ]
     },
     {
       "phase": "Arm 1 lift coffee_box",
-      "time": 62.80000000003201,
+      "time": 62.80000000003142,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.06606104376096551
+          "aperture": 0.06606343262566367
         }
       ]
     },
     {
       "phase": "Present coffee_box",
-      "time": 65.80000000002572,
+      "time": 65.80000000002443,
       "observations": []
     },
     {
       "phase": "Inspect coffee_box",
-      "time": 68.80000000001873,
+      "time": 68.80000000001743,
       "observations": [
         {
-          "distance": 0.05530378910320584,
-          "offAxis": 0.0010434721640488374,
-          "facing": 0.9999989958218796
+          "distance": 0.05530374615024395,
+          "offAxis": 0.0010435582375200418,
+          "facing": 0.999998991060855
         }
       ]
     },
     {
       "phase": "Scanner clear of transfer lane",
-      "time": 70.80000000001407,
+      "time": 70.80000000001277,
       "observations": []
     },
     {
       "phase": "Arm 1 transport coffee_box",
-      "time": 73.80000000000707,
+      "time": 73.80000000000578,
       "observations": []
     },
     {
       "phase": "Arm 1 lower coffee_box",
-      "time": 75.80000000000241,
+      "time": 75.80000000000112,
       "observations": []
     },
     {
       "phase": "Settle coffee_box at support",
-      "time": 76.60000000000055,
+      "time": 76.59999999999926,
       "observations": []
     },
     {
       "phase": "Confirm support for coffee_box",
-      "time": 76.89999999999985,
+      "time": 76.89999999999856,
       "observations": [
         {
           "supported": true,
-          "speed": 0.000028348580388358505
+          "speed": 0.00002836994643115964
         }
       ]
     },
     {
       "phase": "Arm 1 release coffee_box",
-      "time": 78.09999999999705,
+      "time": 78.09999999999576,
       "observations": [
         {
           "fingerContacts": 0
         },
         {
           "supported": true,
-          "speed": 2.309881500037311e-11
+          "speed": 2.172827983902717e-11
         }
       ]
     },
     {
       "phase": "Arm 1 clear coffee_box",
-      "time": 80.09999999999239,
+      "time": 80.0999999999911,
       "observations": []
     },
     {
       "phase": "Arm 1 clear of handoff",
-      "time": 82.59999999998657,
+      "time": 82.59999999998527,
       "observations": []
     },
     {
       "phase": "Arm 3 approach coffee_box",
-      "time": 85.09999999998074,
+      "time": 85.09999999997945,
       "observations": []
     },
     {
       "phase": "Arm 3 descend coffee_box",
-      "time": 87.09999999997608,
+      "time": 87.09999999997478,
       "observations": []
     },
     {
       "phase": "Arm 3 grip coffee_box",
-      "time": 88.39999999997305,
+      "time": 88.39999999997175,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.06606785036703212
+          "aperture": 0.06606811533580965
         }
       ]
     },
     {
       "phase": "Arm 3 lift coffee_box",
-      "time": 90.39999999996839,
+      "time": 90.3999999999671,
       "observations": [
         {
           "bilateral": true,
           "fingerContacts": 2,
-          "aperture": 0.0660704437845156
+          "aperture": 0.0660684741911618
         }
       ]
     },
     {
       "phase": "Arm 3 transport coffee_box",
-      "time": 93.3999999999614,
+      "time": 93.3999999999601,
       "observations": []
     },
     {
       "phase": "Arm 3 lower coffee_box",
-      "time": 95.39999999995673,
+      "time": 95.39999999995544,
       "observations": []
     },
     {
       "phase": "Settle coffee_box at support",
-      "time": 96.19999999995487,
+      "time": 96.19999999995358,
       "observations": []
     },
     {
       "phase": "Confirm support for coffee_box",
-      "time": 96.49999999995417,
+      "time": 96.49999999995288,
       "observations": [
         {
           "supported": true,
-          "speed": 0.00039360202079555365
+          "speed": 0.00040621191776512195
         }
       ]
     },
     {
       "phase": "Arm 3 release coffee_box",
-      "time": 97.69999999995137,
+      "time": 97.69999999995008,
       "observations": [
         {
           "fingerContacts": 0
         },
         {
           "supported": true,
-          "speed": 0.0000031310723182235207
+          "speed": 0.0000035421676631215995
         }
       ]
     },
     {
       "phase": "Arm 3 clear coffee_box",
-      "time": 99.69999999994671,
+      "time": 99.69999999994542,
       "observations": []
     },
     {
       "phase": "Arm 3 clear of packing area",
-      "time": 102.19999999994089,
+      "time": 102.19999999993959,
       "observations": []
     },
     {
       "phase": "Arm 2 transport scanner",
-      "time": 105.1999999999339,
+      "time": 105.1999999999326,
       "observations": []
     },
     {
       "phase": "Arm 2 lower scanner",
-      "time": 107.19999999992923,
+      "time": 107.19999999992794,
       "observations": []
     },
     {
       "phase": "Settle scanner at support",
-      "time": 107.99999999992737,
+      "time": 107.99999999992608,
       "observations": []
     },
     {
       "phase": "Confirm support for scanner",
-      "time": 108.29999999992667,
+      "time": 108.29999999992538,
       "observations": [
         {
           "supported": true,
-          "speed": 0.000010835813708067776
+          "speed": 0.000010834456069768556
         }
       ]
     },
     {
       "phase": "Arm 2 release scanner",
-      "time": 109.49999999992387,
+      "time": 109.49999999992258,
       "observations": [
         {
           "fingerContacts": 0
         },
         {
           "supported": true,
-          "speed": 0.0000119767505455802
+          "speed": 0.00003182466760108591
         }
       ]
     },
     {
       "phase": "Arm 2 clear scanner",
-      "time": 111.49999999991921,
+      "time": 111.49999999991792,
       "observations": []
     },
     {
       "phase": "Arm 2 return home",
-      "time": 113.99999999991338,
+      "time": 113.99999999991209,
       "observations": []
     },
     {
       "phase": "Arm 4 approach dispatch push",
-      "time": 116.49999999990756,
+      "time": 116.49999999990627,
       "observations": []
     },
     {
       "phase": "Arm 4 lower behind tray",
-      "time": 118.4999999999029,
+      "time": 118.4999999999016,
       "observations": []
     },
     {
       "phase": "Arm 4 push loaded tray to dispatch",
-      "time": 125.49999999988658,
+      "time": 125.49999999988529,
       "observations": [
         {
           "supported": true,
-          "speed": 0.002036174658000316
+          "speed": 0.0012095058997225266
         }
       ]
     },
     {
       "phase": "Arm 4 clear dispatched tray",
-      "time": 127.49999999988546,
+      "time": 127.49999999988812,
       "observations": [
         {
           "fingerContacts": 0
@@ -487,34 +482,87 @@
     },
     {
       "phase": "Order complete - all arms home",
-      "time": 130.49999999989979,
+      "time": 130.49999999990246,
       "observations": [
         {
           "relative": [
-            -0.062295429126672186,
-            0.019089178705264533,
-            0.04228730269046727
+            -0.06308284739342665,
+            0.02291625320211703,
+            0.042346424183206166
           ],
-          "speed": 0.0005869654192833579,
+          "speed": 0.000029245400749800764,
           "supported": true
         },
         {
           "relative": [
-            0.07510266648672995,
-            0.010990474036829907,
-            0.05645027255565998
+            0.07582212524037817,
+            0.014788158074409582,
+            0.056773735197674056
           ],
-          "speed": 0.00000550289783965005,
+          "speed": 0.000002487401512171701,
           "supported": true
         },
         {
-          "error": 0.0030930097166291803
+          "error": 0.0030930097165412507
         },
         {
           "supported": true,
-          "speed": 0.000002909760731455477
+          "speed": 0.000001361307739807524
         }
       ]
     }
-  ]
+  ],
+  "metrics": {
+    "maxForbiddenPenetration": 0,
+    "maxGripPenetration": 0.0009247062295269015
+  },
+  "diagnostics": {
+    "contacts": 32,
+    "constraints": 104,
+    "arenaBytes": 16777216,
+    "peakArenaBytes": 400872,
+    "warnings": [
+      {
+        "index": 0,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 1,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 2,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 3,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 4,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 5,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 6,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 7,
+        "count": 0,
+        "lastInfo": 0
+      }
+    ]
+  },
+  "errors": []
 }

@@ -30,6 +30,12 @@ test('real engine playback owns only actuators and stops its clock across reset/
     for(let i=0;i<120;i++){r.step(m,d);mj.mj_step(m,d);}
     assert.equal(r.state.phase,'complete',JSON.stringify(r.state));assert.equal(r.history.length,1);
     r.fail('test safety stop');assert.equal(r.state.active,true,'failed playback must retain control ownership until Reset');
+    p.phases[0].gates=[{type:'height',object:'tea_box',minZ:99}];
+    r.start(m,d);
+    for(let i=0;i<120&&r.state.phase==='running';i++){r.step(m,d);mj.mj_step(m,d);}
+    assert.equal(r.state.phase,'error');
+    assert.equal(r.history.at(-1)?.passed,false,'a failed gate must preserve its measured observations');
+    assert.ok(r.history.at(-1).observations[0].height<1);
     mj.mj_resetData(m,d);r.step(m,d);assert.equal(r.state.phase,'ready');assert.equal(r.time,0);
   }finally{d.delete();m.delete();}
 });

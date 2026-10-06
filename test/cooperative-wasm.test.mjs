@@ -19,10 +19,12 @@ for(const scene of ['scan','pot'])test(`${scene} complete cooperative cycle uses
     d.ctrl.set([...p.initialJoints,255],a*8);
     for(let j=0;j<7;j++)d.qpos[m.jnt_qposadr[find.joint(`r${a}_joint${j+1}`)]]=p.initialJoints[j];
   }
-  mj.mj_forward(m,d);for(let i=0;i<500;i++)mj.mj_step(m,d);
+  const settleTicks=Number(process.env.COOPERATIVE_SETTLE_TICKS??500);
+  assert.ok(Number.isInteger(settleTicks)&&settleTicks>=0&&settleTicks<=10000);
+  mj.mj_forward(m,d);for(let i=0;i<settleTicks;i++)mj.mj_step(m,d);
   const r=new CooperativeMotionRuntime(p,find);r.start(m,d);
   try {
-    const ticks=Math.ceil(p.phases.reduce((s,p)=>s+p.duration,0)/.002)+20;
+    const ticks=Math.ceil(p.phases.reduce((s,p)=>s+p.duration+(p.settleTimeout??0),0)/.002)+20;
     for(let tick=0;tick<ticks&&r.state.phase==='running';tick++){r.step(m,d);mj.mj_step(m,d);}
     assert.equal(r.state.phase,'complete',JSON.stringify({state:r.state,history:r.history.at(-1),metrics:r.metrics}));
     assert.equal(r.history.length,p.phases.length);
@@ -31,7 +33,8 @@ for(const scene of ['scan','pot'])test(`${scene} complete cooperative cycle uses
     for(const object of scene==='scan'?['tea_box','coffee_box']:['carrot','tomato'])assert.ok(p.phases.at(-1).gates.some(g=>g.type==='inside'&&g.object===object));
     assert.ok(p.phases.at(-1).gates.some(g=>g.type==='home'));
     assert.ok(r.metrics.maxForbiddenPenetration<=.001);
+    if(scene==='pot')assert.ok(r.metrics.maxForbiddenPenetration<1e-6,'loader return must clear the holding wrist, not brush it');
     mkdirSync('artifacts/reports',{recursive:true});
-    writeFileSync(`artifacts/reports/cooperative-${scene}-wasm.json`,JSON.stringify({success:true,engine:mj.mj_versionString(),state:r.state,time:r.time,metrics:r.metrics,history:r.history},null,2)+'\n');
+    writeFileSync(`artifacts/reports/cooperative-${scene}-wasm${settleTicks===500?'':`-settle-${settleTicks}`}.json`,JSON.stringify({success:true,engine:mj.mj_versionString(),settleTicks,state:r.state,time:r.time,metrics:r.metrics,history:r.history},null,2)+'\n');
   }finally{d.delete();m.delete();}
 });
