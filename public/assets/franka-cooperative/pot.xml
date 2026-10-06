@@ -1,0 +1,326 @@
+<mujoco model="Four Panda cooperative pot">
+  <compiler angle="degree" meshdir="assets" texturedir="assets" />
+  <option timestep=".002" integrator="implicitfast" cone="elliptic" iterations="50" noslip_iterations="10">
+    <flag multiccd="enable" />
+  </option>
+  <visual>
+    <headlight diffuse=".75 .75 .75" ambient=".4 .4 .4" specular=".1 .1 .1" />
+  </visual>
+  <asset>
+    <model name="panda_model" file="panda.xml" />
+    <mesh name="pot_v0" file="pot-visual-0.obj" />
+    <texture name="pot_tex0" type="2d" file="pot-texture-0.png" />
+    <material name="pot_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="pot_tex0" />
+    <mesh name="pot_c0" file="pot-collision-0.obj" />
+    <mesh name="pot_c1" file="pot-collision-1.obj" />
+    <mesh name="pot_c2" file="pot-collision-2.obj" />
+    <mesh name="pot_c3" file="pot-collision-3.obj" />
+    <mesh name="pot_c4" file="pot-collision-4.obj" />
+    <mesh name="pot_c5" file="pot-collision-5.obj" />
+    <mesh name="pot_c6" file="pot-collision-6.obj" />
+    <mesh name="pot_c7" file="pot-collision-7.obj" />
+    <mesh name="pot_c8" file="pot-collision-8.obj" />
+    <mesh name="pot_c9" file="pot-collision-9.obj" />
+    <mesh name="pot_c10" file="pot-collision-10.obj" />
+    <mesh name="pot_c11" file="pot-collision-11.obj" />
+    <mesh name="pot_c12" file="pot-collision-12.obj" />
+    <mesh name="pot_c13" file="pot-collision-13.obj" />
+    <mesh name="pot_c14" file="pot-collision-14.obj" />
+    <mesh name="pot_c15" file="pot-collision-15.obj" />
+    <mesh name="pot_c16" file="pot-collision-16.obj" />
+    <mesh name="pot_c17" file="pot-collision-17.obj" />
+    <mesh name="pot_c18" file="pot-collision-18.obj" />
+    <mesh name="pot_c19" file="pot-collision-19.obj" />
+    <mesh name="pot_c20" file="pot-collision-20.obj" />
+    <mesh name="pot_c21" file="pot-collision-21.obj" />
+    <mesh name="pot_c22" file="pot-collision-22.obj" />
+    <mesh name="pot_c23" file="pot-collision-23.obj" />
+    <mesh name="pot_c24" file="pot-collision-24.obj" />
+    <mesh name="pot_c25" file="pot-collision-25.obj" />
+    <mesh name="pot_c26" file="pot-collision-26.obj" />
+    <mesh name="pot_c27" file="pot-collision-27.obj" />
+    <mesh name="pot_c28" file="pot-collision-28.obj" />
+    <mesh name="pot_c29" file="pot-collision-29.obj" />
+    <mesh name="pot_c30" file="pot-collision-30.obj" />
+    <mesh name="pot_c31" file="pot-collision-31.obj" />
+    <mesh name="pot_c32" file="pot-collision-32.obj" />
+    <mesh name="pot_c33" file="pot-collision-33.obj" />
+    <mesh name="pot_c34" file="pot-collision-34.obj" />
+    <mesh name="pot_c35" file="pot-collision-35.obj" />
+    <mesh name="pot_c36" file="pot-collision-36.obj" />
+    <mesh name="pot_c37" file="pot-collision-37.obj" />
+    <mesh name="carrot_v0" file="carrot-visual-0.obj" />
+    <texture name="carrot_tex0" type="2d" file="carrot-texture-0.png" />
+    <material name="carrot_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="carrot_tex0" />
+    <mesh name="carrot_c0" file="carrot-collision-0.obj" />
+    <mesh name="carrot_c1" file="carrot-collision-1.obj" />
+    <mesh name="carrot_c2" file="carrot-collision-2.obj" />
+    <mesh name="carrot_c3" file="carrot-collision-3.obj" />
+    <mesh name="carrot_c4" file="carrot-collision-4.obj" />
+    <mesh name="carrot_c5" file="carrot-collision-5.obj" />
+    <mesh name="carrot_c6" file="carrot-collision-6.obj" />
+    <mesh name="carrot_c7" file="carrot-collision-7.obj" />
+    <mesh name="carrot_c8" file="carrot-collision-8.obj" />
+    <mesh name="carrot_c9" file="carrot-collision-9.obj" />
+    <mesh name="carrot_c10" file="carrot-collision-10.obj" />
+    <mesh name="carrot_c11" file="carrot-collision-11.obj" />
+    <mesh name="carrot_c12" file="carrot-collision-12.obj" />
+    <mesh name="carrot_c13" file="carrot-collision-13.obj" />
+    <mesh name="carrot_c14" file="carrot-collision-14.obj" />
+    <mesh name="carrot_c15" file="carrot-collision-15.obj" />
+    <mesh name="carrot_c16" file="carrot-collision-16.obj" />
+    <mesh name="carrot_c17" file="carrot-collision-17.obj" />
+    <mesh name="carrot_c18" file="carrot-collision-18.obj" />
+    <mesh name="carrot_c19" file="carrot-collision-19.obj" />
+    <mesh name="carrot_c20" file="carrot-collision-20.obj" />
+    <mesh name="carrot_c21" file="carrot-collision-21.obj" />
+    <mesh name="carrot_c22" file="carrot-collision-22.obj" />
+    <mesh name="carrot_c23" file="carrot-collision-23.obj" />
+    <mesh name="carrot_c24" file="carrot-collision-24.obj" />
+    <mesh name="carrot_c25" file="carrot-collision-25.obj" />
+    <mesh name="carrot_c26" file="carrot-collision-26.obj" />
+    <mesh name="carrot_c27" file="carrot-collision-27.obj" />
+    <mesh name="carrot_c28" file="carrot-collision-28.obj" />
+    <mesh name="carrot_c29" file="carrot-collision-29.obj" />
+    <mesh name="carrot_c30" file="carrot-collision-30.obj" />
+    <mesh name="carrot_c31" file="carrot-collision-31.obj" />
+    <mesh name="tomato_v0" file="tomato-visual-0.obj" />
+    <texture name="tomato_tex0" type="2d" file="tomato-texture-0.png" />
+    <material name="tomato_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="tomato_tex0" />
+    <mesh name="tomato_c0" file="tomato-collision-0.obj" />
+    <mesh name="tomato_c1" file="tomato-collision-1.obj" />
+    <mesh name="tomato_c2" file="tomato-collision-2.obj" />
+    <mesh name="tomato_c3" file="tomato-collision-3.obj" />
+    <mesh name="tomato_c4" file="tomato-collision-4.obj" />
+    <mesh name="tomato_c5" file="tomato-collision-5.obj" />
+    <mesh name="tomato_c6" file="tomato-collision-6.obj" />
+    <mesh name="tomato_c7" file="tomato-collision-7.obj" />
+    <mesh name="tomato_c8" file="tomato-collision-8.obj" />
+    <mesh name="tomato_c9" file="tomato-collision-9.obj" />
+    <mesh name="tomato_c10" file="tomato-collision-10.obj" />
+    <mesh name="tomato_c11" file="tomato-collision-11.obj" />
+    <mesh name="tomato_c12" file="tomato-collision-12.obj" />
+    <mesh name="tomato_c13" file="tomato-collision-13.obj" />
+    <mesh name="tomato_c14" file="tomato-collision-14.obj" />
+    <mesh name="tomato_c15" file="tomato-collision-15.obj" />
+    <mesh name="tomato_c16" file="tomato-collision-16.obj" />
+    <mesh name="tomato_c17" file="tomato-collision-17.obj" />
+    <mesh name="tomato_c18" file="tomato-collision-18.obj" />
+    <mesh name="tomato_c19" file="tomato-collision-19.obj" />
+    <mesh name="tomato_c20" file="tomato-collision-20.obj" />
+    <mesh name="tomato_c21" file="tomato-collision-21.obj" />
+    <mesh name="tomato_c22" file="tomato-collision-22.obj" />
+    <mesh name="tomato_c23" file="tomato-collision-23.obj" />
+    <mesh name="tomato_c24" file="tomato-collision-24.obj" />
+    <mesh name="tomato_c25" file="tomato-collision-25.obj" />
+    <mesh name="tomato_c26" file="tomato-collision-26.obj" />
+    <mesh name="tomato_c27" file="tomato-collision-27.obj" />
+    <mesh name="tomato_c28" file="tomato-collision-28.obj" />
+    <mesh name="tomato_c29" file="tomato-collision-29.obj" />
+    <mesh name="tomato_c30" file="tomato-collision-30.obj" />
+    <mesh name="tomato_c31" file="tomato-collision-31.obj" />
+    <mesh name="tray_v0" file="tray-visual-0.obj" />
+    <texture name="tray_tex0" type="2d" file="tray-texture-0.png" />
+    <material name="tray_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="tray_tex0" />
+    <mesh name="tray_c0" file="tray-collision-0.obj" />
+    <mesh name="tray_c1" file="tray-collision-1.obj" />
+    <mesh name="tray_c2" file="tray-collision-2.obj" />
+    <mesh name="tray_c3" file="tray-collision-3.obj" />
+    <mesh name="tray_c4" file="tray-collision-4.obj" />
+    <mesh name="tray_c5" file="tray-collision-5.obj" />
+    <mesh name="tray_c6" file="tray-collision-6.obj" />
+    <mesh name="tray_c7" file="tray-collision-7.obj" />
+    <mesh name="tray_c8" file="tray-collision-8.obj" />
+    <mesh name="tray_c9" file="tray-collision-9.obj" />
+    <mesh name="tray_c10" file="tray-collision-10.obj" />
+    <mesh name="tray_c11" file="tray-collision-11.obj" />
+    <mesh name="tray_c12" file="tray-collision-12.obj" />
+    <mesh name="tray_c13" file="tray-collision-13.obj" />
+    <mesh name="tray_c14" file="tray-collision-14.obj" />
+    <mesh name="tray_c15" file="tray-collision-15.obj" />
+  </asset>
+  <worldbody>
+    <geom name="floor" type="plane" pos="0 0 -.01" size="0 0 .01" rgba=".77 .75 .66 1" />
+    <geom name="table" type="box" pos="0 0 .045" size="1.02 1.02 .055" rgba=".76 .77 .73 1" />
+    <frame pos="0 -0.78 .1" euler="0 0 0">
+      <attach model="panda_model" body="link0" prefix="r0_" />
+    </frame>
+    <frame pos="0.78 0 .1" euler="0 0 90">
+      <attach model="panda_model" body="link0" prefix="r1_" />
+    </frame>
+    <frame pos="0 0.78 .1" euler="0 0 180">
+      <attach model="panda_model" body="link0" prefix="r2_" />
+    </frame>
+    <frame pos="-0.78 0 .1" euler="0 0 -90">
+      <attach model="panda_model" body="link0" prefix="r3_" />
+    </frame>
+    <body name="pot_pad" pos="0 0 0.10800000000000001">
+      <geom name="pot_pad_surface" type="box" size="0.14 0.14 0.008" rgba=".35 .38 .32 1" friction=".8 .01 .001" />
+    </body>
+    <body name="prep_east" pos="0.36 0.02 0.10600000000000001">
+      <geom name="prep_east_surface" type="box" size="0.13 0.18 0.006" rgba=".35 .38 .32 1" friction=".8 .01 .001" />
+    </body>
+    <body name="prep_west" pos="-0.36 0.02 0.10600000000000001">
+      <geom name="prep_west_surface" type="box" size="0.13 0.18 0.006" rgba=".35 .38 .32 1" friction=".8 .01 .001" />
+    </body>
+    <body name="cooking_pot" pos="0 0 0.118" euler="0 0 90">
+      <freejoint name="cooking_pot_free" />
+      <inertial pos="0 0 0.05350085" mass="0.55" diaginertia="0.00198355916 0.00356435369 0.00449838783" />
+      <geom type="mesh" mesh="pot_v0" material="pot_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="cooking_pot_contact_0" type="mesh" mesh="pot_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_1" type="mesh" mesh="pot_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_2" type="mesh" mesh="pot_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_3" type="mesh" mesh="pot_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_4" type="mesh" mesh="pot_c4" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_5" type="mesh" mesh="pot_c5" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_6" type="mesh" mesh="pot_c6" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_7" type="mesh" mesh="pot_c7" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_8" type="mesh" mesh="pot_c8" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_9" type="mesh" mesh="pot_c9" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_10" type="mesh" mesh="pot_c10" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_11" type="mesh" mesh="pot_c11" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_12" type="mesh" mesh="pot_c12" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_13" type="mesh" mesh="pot_c13" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_14" type="mesh" mesh="pot_c14" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_15" type="mesh" mesh="pot_c15" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_16" type="mesh" mesh="pot_c16" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_17" type="mesh" mesh="pot_c17" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_18" type="mesh" mesh="pot_c18" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_19" type="mesh" mesh="pot_c19" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_20" type="mesh" mesh="pot_c20" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_21" type="mesh" mesh="pot_c21" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_22" type="mesh" mesh="pot_c22" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_23" type="mesh" mesh="pot_c23" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_24" type="mesh" mesh="pot_c24" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_25" type="mesh" mesh="pot_c25" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_26" type="mesh" mesh="pot_c26" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_27" type="mesh" mesh="pot_c27" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_28" type="mesh" mesh="pot_c28" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_29" type="mesh" mesh="pot_c29" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_30" type="mesh" mesh="pot_c30" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_31" type="mesh" mesh="pot_c31" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_32" type="mesh" mesh="pot_c32" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_33" type="mesh" mesh="pot_c33" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_34" type="mesh" mesh="pot_c34" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_35" type="mesh" mesh="pot_c35" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_36" type="mesh" mesh="pot_c36" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="cooking_pot_contact_37" type="mesh" mesh="pot_c37" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="east_tray" pos="0.36 0.02 0.114" euler="0 0 90">
+      <freejoint name="east_tray_free" />
+      <inertial pos="0 0 0.0128908002" mass="0.12" diaginertia="0.000345943312 0.000931694303 0.0012643438" />
+      <geom type="mesh" mesh="tray_v0" material="tray_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="east_tray_contact_0" type="mesh" mesh="tray_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_1" type="mesh" mesh="tray_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_2" type="mesh" mesh="tray_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_3" type="mesh" mesh="tray_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_4" type="mesh" mesh="tray_c4" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_5" type="mesh" mesh="tray_c5" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_6" type="mesh" mesh="tray_c6" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_7" type="mesh" mesh="tray_c7" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_8" type="mesh" mesh="tray_c8" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_9" type="mesh" mesh="tray_c9" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_10" type="mesh" mesh="tray_c10" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_11" type="mesh" mesh="tray_c11" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_12" type="mesh" mesh="tray_c12" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_13" type="mesh" mesh="tray_c13" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_14" type="mesh" mesh="tray_c14" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="east_tray_contact_15" type="mesh" mesh="tray_c15" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="west_tray" pos="-0.36 0.02 0.114" euler="0 0 90">
+      <freejoint name="west_tray_free" />
+      <inertial pos="0 0 0.0128908002" mass="0.12" diaginertia="0.000345943312 0.000931694303 0.0012643438" />
+      <geom type="mesh" mesh="tray_v0" material="tray_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="west_tray_contact_0" type="mesh" mesh="tray_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_1" type="mesh" mesh="tray_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_2" type="mesh" mesh="tray_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_3" type="mesh" mesh="tray_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_4" type="mesh" mesh="tray_c4" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_5" type="mesh" mesh="tray_c5" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_6" type="mesh" mesh="tray_c6" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_7" type="mesh" mesh="tray_c7" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_8" type="mesh" mesh="tray_c8" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_9" type="mesh" mesh="tray_c9" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_10" type="mesh" mesh="tray_c10" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_11" type="mesh" mesh="tray_c11" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_12" type="mesh" mesh="tray_c12" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_13" type="mesh" mesh="tray_c13" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_14" type="mesh" mesh="tray_c14" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="west_tray_contact_15" type="mesh" mesh="tray_c15" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="carrot" pos="0.37483 0.018 0.12771" quat=".7019187 .0504383 -.7063373 -.0765095">
+      <freejoint name="carrot_free" />
+      <inertial pos="0 0 0.0184785411" mass="0.055" diaginertia="6.17183688e-05 9.48893485e-06 5.86872327e-05" />
+      <geom type="mesh" mesh="carrot_v0" material="carrot_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="carrot_contact_0" type="mesh" mesh="carrot_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_1" type="mesh" mesh="carrot_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_2" type="mesh" mesh="carrot_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_3" type="mesh" mesh="carrot_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_4" type="mesh" mesh="carrot_c4" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_5" type="mesh" mesh="carrot_c5" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_6" type="mesh" mesh="carrot_c6" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_7" type="mesh" mesh="carrot_c7" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_8" type="mesh" mesh="carrot_c8" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_9" type="mesh" mesh="carrot_c9" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_10" type="mesh" mesh="carrot_c10" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_11" type="mesh" mesh="carrot_c11" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_12" type="mesh" mesh="carrot_c12" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_13" type="mesh" mesh="carrot_c13" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_14" type="mesh" mesh="carrot_c14" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_15" type="mesh" mesh="carrot_c15" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_16" type="mesh" mesh="carrot_c16" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_17" type="mesh" mesh="carrot_c17" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_18" type="mesh" mesh="carrot_c18" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_19" type="mesh" mesh="carrot_c19" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_20" type="mesh" mesh="carrot_c20" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_21" type="mesh" mesh="carrot_c21" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_22" type="mesh" mesh="carrot_c22" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_23" type="mesh" mesh="carrot_c23" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_24" type="mesh" mesh="carrot_c24" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_25" type="mesh" mesh="carrot_c25" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_26" type="mesh" mesh="carrot_c26" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_27" type="mesh" mesh="carrot_c27" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_28" type="mesh" mesh="carrot_c28" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_29" type="mesh" mesh="carrot_c29" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_30" type="mesh" mesh="carrot_c30" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="carrot_contact_31" type="mesh" mesh="carrot_c31" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="tomato" pos="-0.36 0.02 0.125" euler="0 0 0">
+      <freejoint name="tomato_free" />
+      <inertial pos="0 0 0.03" mass="0.07" diaginertia="3.7298419e-05 3.67453663e-05 3.20437852e-05" />
+      <geom type="mesh" mesh="tomato_v0" material="tomato_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="tomato_contact_0" type="mesh" mesh="tomato_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_1" type="mesh" mesh="tomato_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_2" type="mesh" mesh="tomato_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_3" type="mesh" mesh="tomato_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_4" type="mesh" mesh="tomato_c4" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_5" type="mesh" mesh="tomato_c5" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_6" type="mesh" mesh="tomato_c6" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_7" type="mesh" mesh="tomato_c7" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_8" type="mesh" mesh="tomato_c8" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_9" type="mesh" mesh="tomato_c9" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_10" type="mesh" mesh="tomato_c10" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_11" type="mesh" mesh="tomato_c11" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_12" type="mesh" mesh="tomato_c12" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_13" type="mesh" mesh="tomato_c13" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_14" type="mesh" mesh="tomato_c14" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_15" type="mesh" mesh="tomato_c15" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_16" type="mesh" mesh="tomato_c16" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_17" type="mesh" mesh="tomato_c17" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_18" type="mesh" mesh="tomato_c18" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_19" type="mesh" mesh="tomato_c19" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_20" type="mesh" mesh="tomato_c20" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_21" type="mesh" mesh="tomato_c21" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_22" type="mesh" mesh="tomato_c22" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_23" type="mesh" mesh="tomato_c23" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_24" type="mesh" mesh="tomato_c24" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_25" type="mesh" mesh="tomato_c25" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_26" type="mesh" mesh="tomato_c26" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_27" type="mesh" mesh="tomato_c27" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_28" type="mesh" mesh="tomato_c28" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_29" type="mesh" mesh="tomato_c29" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_30" type="mesh" mesh="tomato_c30" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tomato_contact_31" type="mesh" mesh="tomato_c31" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+  </worldbody>
+</mujoco>

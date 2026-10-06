@@ -6,6 +6,10 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 
 ## Verified scenes
 
+### New workcell previews — Franka Demo3 / Demo4
+
+**Franka Demo3** adds product inspection and packing; **Franka Demo4** adds dual-handle pot support and solid ingredient loading. Both independent layouts use sourced RoboTwin/RoboCasa objects and support manual four-arm inspection. Automatic sequences are still under development; the pages do not claim task completion. See [design and progress](docs/progress/2026-10-07-cooperative-workcells.md).
+
 ### Franka Demo2 — four-arm physical egg sorting
 
 Select **Franka Demo2**, then **Run four-arm sorting**. The four arms sort all 16 mixed eggs into their class-owned trays, align them upright, release them and return home. Source-corridor reservations stagger conflicting approaches while safe transport and placement overlap. Reset cancels playback. The workcell reuses RoboDojo eggs/holders and Menagerie UMI long-finger grippers; no object attachment or scripted egg motion is used.

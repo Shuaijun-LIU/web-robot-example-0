@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "assets": {
+    "scanner": {
+      "source": "RoboTwin/024_scanner/visual/base0.glb",
+      "sourceSha256": "7ed11fef3a425119a21acfbc2063dc3a825f1687187d2ee7ef4f12efa90f71b9",
+      "scale": 0.08,
+      "bounds": [
+        [
+          -0.025668599605560304,
+          -0.07588847875595092,
+          0.0
+        ],
+        [
+          0.025668599605560304,
+          0.07588847875595092,
+          0.07740592002868653
+        ]
+      ],
+      "dimensions": [
+        0.05133719921112061,
+        0.15177695751190184,
+        0.07740592002868653
+      ],
+      "offsetAfterTransform": [
+        -9.2029571533217e-07,
+        9.023904800415511e-05,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 4,
+      "transform": "source scene graph, then Y-up to Z-up; XY centered; bottom Z=0"
+    },
+    "tea": {
+      "source": "RoboTwin/112_tea-box/visual/base0.glb",
+      "sourceSha256": "da7d7adeeac72601773c89a0e92439a518aaff039a0ec59a967b3a298bf52e85",
+      "scale": 0.05,
+      "bounds": [
+        [
+          -0.04745859950780869,
+          -0.035285925865173345,
+          0.0
+        ],
+        [
+          0.04745859950780869,
+          0.035285925865173345,
+          0.07045469880104065
+        ]
+      ],
+      "dimensions": [
+        0.09491719901561738,
+        0.07057185173034669,
+        0.07045469880104065
+      ],
+      "offsetAfterTransform": [
+        -1.534968614578386e-05,
+        -0.00016397535800933769,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 7,
+      "transform": "source scene graph, then Y-up to Z-up; XY centered; bottom Z=0"
+    },
+    "coffee": {
+      "source": "RoboTwin/113_coffee-box/visual/base0.glb",
+      "sourceSha256": "87c6572ced3760f8347cc6625b4047b7602d5a5ad45085c1eed5c9f48fd10fc7",
+      "scale": 0.05,
+      "bounds": [
+        [
+          -0.03635005056858063,
+          -0.03220714926719666,
+          0.0
+        ],
+        [
+          0.03635005056858063,
+          0.03220714926719666,
+          0.09507185220718384
+        ]
+      ],
+      "dimensions": [
+        0.07270010113716126,
+        0.06441429853439332,
+        0.09507185220718384
+      ],
+      "offsetAfterTransform": [
+        6.496906280531456e-07,
+        2.503395080573345e-07,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 4,
+      "transform": "source scene graph, then Y-up to Z-up; XY centered; bottom Z=0"
+    },
+    "tray": {
+      "source": "RoboTwin/008_tray/visual/base0.glb",
+      "sourceSha256": "5ec991fae6cad57abbf9d17b262d4ba0b84abd9bdb5f51fa8d7a66ad59e504a2",
+      "scale": 0.16,
+      "bounds": [
+        [
+          -0.15207295894622802,
+          -0.09210000038146973,
+          0.0
+        ],
+        [
+          0.15207295894622802,
+          0.09210000038146973,
+          0.025781600475311278
+        ]
+      ],
+      "dimensions": [
+        0.30414591789245604,
+        0.18420000076293946,
+        0.025781600475311278
+      ],
+      "offsetAfterTransform": [
+        9.922981262205921e-06,
+        4.76837158203125e-07,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 16,
+      "transform": "source scene graph, then Y-up to Z-up; XY centered; bottom Z=0"
+    },
+    "pot": {
+      "source": "RoboCasa/lightwheel/pot/Pot054/model.xml",
+      "sourceSha256": "087ca3016f516793fb2a1e207c65be6571b4934c9b55da14a3179498e093a8c6",
+      "scale": 0.65,
+      "bounds": [
+        [
+          -0.12876175,
+          -0.089202425,
+          0.0
+        ],
+        [
+          0.12876175,
+          0.089202425,
+          0.10700170000000002
+        ]
+      ],
+      "dimensions": [
+        0.2575235,
+        0.17840485,
+        0.10700170000000002
+      ],
+      "offsetAfterTransform": [
+        0.0,
+        -0.0001615249999999957,
+        -3.77e-05
+      ],
+      "visualParts": 1,
+      "collisionParts": 38,
+      "transform": "source mesh scale and inverse refquat; uniform scene scale; XY centered; bottom Z=0",
+      "license": "CC-BY-4.0"
+    },
+    "carrot": {
+      "source": "RoboCasa/aigen_objs/carrot/carrot_0/model.xml",
+      "sourceSha256": "dab76cd33ed58113880c27bdd43e2b2ef1b77c3ba1e423e1680ca8177199fc09",
+      "scale": 1,
+      "bounds": [
+        [
+          -0.013271088272415481,
+          -0.055,
+          0.0
+        ],
+        [
+          0.013271088272415481,
+          0.055,
+          0.03695708216636063
+        ]
+      ],
+      "dimensions": [
+        0.026542176544830962,
+        0.11,
+        0.03695708216636063
+      ],
+      "offsetAfterTransform": [
+        -0.0035357634863450466,
+        0.0,
+        -0.017347873333944244
+      ],
+      "visualParts": 1,
+      "collisionParts": 32,
+      "transform": "source mesh scale and inverse refquat; uniform scene scale; XY centered; bottom Z=0",
+      "license": "CC-BY-4.0"
+    },
+    "tomato": {
+      "source": "RoboCasa/aigen_objs/tomato/tomato_0/model.xml",
+      "sourceSha256": "dec2e9647d1415df2657a3cd71a6a923fccc1a47bbc75930a0352ca11041792b",
+      "scale": 1,
+      "bounds": [
+        [
+          -0.025976940000000007,
+          -0.02642922000000001,
+          0.0
+        ],
+        [
+          0.025976940000000007,
+          0.02642922000000001,
+          0.06000000000000002
+        ]
+      ],
+      "dimensions": [
+        0.051953880000000015,
+        0.05285844000000002,
+        0.06000000000000002
+      ],
+      "offsetAfterTransform": [
+        0.0,
+        0.0,
+        -0.03000000000000001
+      ],
+      "visualParts": 1,
+      "collisionParts": 32,
+      "transform": "source mesh scale and inverse refquat; uniform scene scale; XY centered; bottom Z=0",
+      "license": "CC-BY-4.0"
+    }
+  },
+  "scenes": {
+    "scan": {
+      "arms": 4,
+      "objects": [
+        {
+          "name": "tea_box",
+          "asset": "tea",
+          "mass": 0.09,
+          "position": [
+            -0.28,
+            -0.34,
+            0.116
+          ],
+          "yaw": 0
+        },
+        {
+          "name": "coffee_box",
+          "asset": "coffee",
+          "mass": 0.1,
+          "position": [
+            -0.1,
+            -0.34,
+            0.116
+          ],
+          "yaw": 0
+        },
+        {
+          "name": "scanner",
+          "asset": "scanner",
+          "mass": 0.13,
+          "position": [
+            0.32,
+            -0.16,
+            0.12
+          ],
+          "yaw": -90
+        },
+        {
+          "name": "order_tray",
+          "asset": "tray",
+          "mass": 0.12,
+          "position": [
+            -0.28,
+            0.25,
+            0.116
+          ],
+          "yaw": 0
+        }
+      ],
+      "homeJoints": [
+        1.570796,
+        -0.785398,
+        0,
+        -2.356194,
+        0,
+        1.570796,
+        0.785398
+      ],
+      "tableHeight": 0.1
+    },
+    "pot": {
+      "arms": 4,
+      "objects": [
+        {
+          "name": "cooking_pot",
+          "asset": "pot",
+          "mass": 0.55,
+          "position": [
+            0,
+            0,
+            0.118
+          ],
+          "yaw": 90
+        },
+        {
+          "name": "east_tray",
+          "asset": "tray",
+          "mass": 0.12,
+          "position": [
+            0.36,
+            0.02,
+            0.114
+          ],
+          "yaw": 90
+        },
+        {
+          "name": "west_tray",
+          "asset": "tray",
+          "mass": 0.12,
+          "position": [
+            -0.36,
+            0.02,
+            0.114
+          ],
+          "yaw": 90
+        },
+        {
+          "name": "carrot",
+          "asset": "carrot",
+          "mass": 0.055,
+          "position": [
+            0.37483,
+            0.018,
+            0.12771
+          ],
+          "yaw": 0,
+          "quaternion": [
+            0.7019187,
+            0.0504383,
+            -0.7063373,
+            -0.0765095
+          ]
+        },
+        {
+          "name": "tomato",
+          "asset": "tomato",
+          "mass": 0.07,
+          "position": [
+            -0.36,
+            0.02,
+            0.125
+          ],
+          "yaw": 0
+        }
+      ],
+      "homeJoints": [
+        1.570796,
+        -0.785398,
+        0,
+        -2.356194,
+        0,
+        1.570796,
+        0.785398
+      ],
+      "tableHeight": 0.1
+    }
+  }
+}

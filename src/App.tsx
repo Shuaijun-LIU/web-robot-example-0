@@ -33,6 +33,9 @@ import { AssemblyStep1Controller } from './AssemblyStep1Controller';
 import { EggTransferController } from './EggTransferController';
 import { EggSortingController } from './EggSortingController';
 import { EggSortingPanel } from './EggSortingPanel';
+import { CooperativeWorkcellPanel } from './CooperativeWorkcellPanel';
+import { CooperativePresentation } from './CooperativePresentation';
+import { cooperativeSceneForKey } from './cooperativeWorkcells.js';
 import type { SortingState } from './eggSorting.js';
 import { sortingLocksControls } from './eggSorting.js';
 import type { EggTransferState } from './eggTransfer.js';
@@ -439,10 +442,10 @@ function SceneChildren({
 
       {controlFamily === 'franka' && (
         <FrankaController
-          key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}-${robotKey === 'frankaDemo2' ? resetGeneration : ''}`}
+          key={`franka-${target.key}-${assemblyStep1Status === 'complete' ? 'open' : 'closed'}-${robotKey === 'frankaDemo2' || cooperativeSceneForKey(robotKey) ? resetGeneration : ''}`}
           target={target}
           enabled={!assemblyControlsLocked}
-          initiallyOpen={assemblyStep1Status === 'complete' || robotKey === 'frankaDemo2'}
+          initiallyOpen={assemblyStep1Status === 'complete' || robotKey === 'frankaDemo2' || !!cooperativeSceneForKey(robotKey)}
         />
       )}
       {controlFamily === 'industrialArm' && (
@@ -524,6 +527,8 @@ const replicatedRootPatterns: Record<string, RegExp> = {
   franka: /^r\d+_link0$/,
   frankaDemo1: /^r\d+_link0$/,
   frankaDemo2: /^r\d+_link0$/,
+  frankaDemo3: /^r\d+_link0$/,
+  frankaDemo4: /^r\d+_link0$/,
   frankaAssembly1: /^r\d+_link0$/,
   frankaAssembly2: /^r\d+_link0$/,
   piperAssembly1: /^r\d+_base_link$/,
@@ -864,7 +869,8 @@ export function App() {
   const cameraTiles=useRef(new Map<string,HTMLDivElement>());
   const [cameraSelection,setCameraSelection]=useState('arm2');
   const [cameraStatus,setCameraStatus]=useState('loading');
-  const simulationConfig = useMemo(() => ({ ...entry.config, controlTimestep: isAssembly1Scene ? .01 : robotKey === 'frankaDemo2' ? .002 : undefined }), [entry.config, isAssembly1Scene, robotKey]);
+  const cooperativeScene=cooperativeSceneForKey(robotKey);
+  const simulationConfig = useMemo(() => ({ ...entry.config, controlTimestep: isAssembly1Scene ? .01 : robotKey === 'frankaDemo2' || cooperativeScene ? .002 : undefined }), [entry.config, isAssembly1Scene, robotKey, cooperativeScene]);
 
   return (
     <MujocoProvider>
@@ -899,6 +905,7 @@ export function App() {
 
         {/* Core scene */}
         <LoadingOverlay />
+        {cooperativeScene && <CooperativePresentation />}
         <GravityCompensation enabled={sim.gravityCompensation && robotKey !== 'frankaDemo2'} />
 
         {/* IK + per-robot controllers */}
@@ -970,10 +977,10 @@ export function App() {
         {/* Scene decoration — lights, environment, grid */}
         {isAssembly1Scene && <AssemblyPresentation />}
         {isAssembly1Scene && <AssemblyCameras tiles={cameraTiles} onStatus={setCameraStatus} />}
-        {isAssembly1Scene || robotKey === 'frankaDemo2' ? <color attach="background" args={['#d8d2b5']} /> : robotKey.startsWith('frankaAssembly')
+        {isAssembly1Scene || robotKey === 'frankaDemo2' || cooperativeScene ? <color attach="background" args={['#d8d2b5']} /> : robotKey.startsWith('frankaAssembly')
           ? <color attach="background" args={['#d8d2b5']} />
           : <Environment preset="lobby" background backgroundBlurriness={1} backgroundIntensity={0.6} environmentIntensity={0.5} />}
-        <ambientLight intensity={isAssembly1Scene || robotKey === 'frankaDemo2' ? .65 : .4} />
+        <ambientLight intensity={isAssembly1Scene || robotKey === 'frankaDemo2' || cooperativeScene ? .65 : .4} />
         <directionalLight position={[2, -2, 5]} intensity={1.5} castShadow />
         <directionalLight position={[-1, 1, 3]} intensity={0.3} />
         <gridHelper
@@ -987,6 +994,7 @@ export function App() {
       </MujocoCanvas>
 
       {/* HTML overlay — outside R3F canvas */}
+      {cooperativeScene && <CooperativeWorkcellPanel scene={cooperativeScene} />}
       {robotKey === 'frankaDemo2' && (
         <EggSortingPanel state={sortingState} paused={sim.paused} canRun={sceneReady&&sortingState.phase==='ready'&&eggState.phase==='ready'}
           onRun={()=>{setSortingState(s=>({...s,phase:'running',label:'Starting four-arm sorting'}));setSortingRequestId(id=>id+1);}}>

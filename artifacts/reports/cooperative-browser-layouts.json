@@ -1,0 +1,1357 @@
+{
+  "success": true,
+  "scope": "static scene loading, physical settling, four TCPs, Reset and scene switch",
+  "records": [
+    {
+      "key": "frankaDemo3",
+      "objects": {
+        "tea_box": [
+          -0.28000092425463774,
+          -0.33999969426776006,
+          0.11455842077362355
+        ],
+        "coffee_box": [
+          -0.09999996184667248,
+          -0.33999997018239203,
+          0.11460853323619791
+        ],
+        "scanner": [
+          0.31998244906615303,
+          -0.15998272023442606,
+          0.11574371149501066
+        ],
+        "order_tray": [
+          -0.2799996702690155,
+          0.25000004623136923,
+          0.11669146660422763
+        ]
+      },
+      "sites": {
+        "r0_tcp": [
+          0.000006921740465099382,
+          -0.47402467268289245,
+          0.5839392057980335
+        ],
+        "r1_tcp": [
+          0.47402467268289195,
+          0.0000069217404652263355,
+          0.5839392057980335
+        ],
+        "r2_tcp": [
+          -0.000006921740465110062,
+          0.47402467268289233,
+          0.5839392057980336
+        ],
+        "r3_tcp": [
+          -0.47402467268289206,
+          -0.000006921740465095601,
+          0.5839392057980335
+        ]
+      },
+      "contacts": [
+        {
+          "geom1": 326,
+          "geom2": 337,
+          "geomName1": "incoming_surface",
+          "geomName2": "tea_box_contact_5",
+          "distance": -0.00001722845069178358,
+          "body1": "incoming",
+          "body2": "tea_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 337,
+          "geomName1": "incoming_surface",
+          "geomName2": "tea_box_contact_5",
+          "distance": -0.00001722845069178358,
+          "body1": "incoming",
+          "body2": "tea_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 337,
+          "geomName1": "incoming_surface",
+          "geomName2": "tea_box_contact_5",
+          "distance": -0.00001722845069178358,
+          "body1": "incoming",
+          "body2": "tea_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 338,
+          "geomName1": "incoming_surface",
+          "geomName2": "tea_box_contact_6",
+          "distance": -0.000015707277303628198,
+          "body1": "incoming",
+          "body2": "tea_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 338,
+          "geomName1": "incoming_surface",
+          "geomName2": "tea_box_contact_6",
+          "distance": -0.000015707277303628198,
+          "body1": "incoming",
+          "body2": "tea_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 338,
+          "geomName1": "incoming_surface",
+          "geomName2": "tea_box_contact_6",
+          "distance": -0.000015707277303628198,
+          "body1": "incoming",
+          "body2": "tea_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 340,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_0",
+          "distance": -0.00000975340422862403,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 340,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_0",
+          "distance": -0.00000975340422862403,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 341,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_1",
+          "distance": -0.00000718419861352182,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 341,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_1",
+          "distance": -0.00000718419861352182,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 341,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_1",
+          "distance": -0.00000718419861352182,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 341,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_1",
+          "distance": -0.00000718419861352182,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 342,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_2",
+          "distance": -0.0000025087783447064198,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 342,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_2",
+          "distance": -0.0000025087783447064198,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 343,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_3",
+          "distance": -0.000009090884875384564,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 343,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_3",
+          "distance": -0.000009090884875384564,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 343,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_3",
+          "distance": -0.000009090884875384564,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 326,
+          "geom2": 343,
+          "geomName1": "incoming_surface",
+          "geomName2": "coffee_box_contact_3",
+          "distance": -0.000009090884875384564,
+          "body1": "incoming",
+          "body2": "coffee_box"
+        },
+        {
+          "geom1": 327,
+          "geom2": 347,
+          "geomName1": "scanner_dock_surface",
+          "geomName2": "scanner_contact_2",
+          "distance": -0.00001778855683048919,
+          "body1": "scanner_dock",
+          "body2": "scanner"
+        },
+        {
+          "geom1": 327,
+          "geom2": 347,
+          "geomName1": "scanner_dock_surface",
+          "geomName2": "scanner_contact_2",
+          "distance": -0.00001778855683048919,
+          "body1": "scanner_dock",
+          "body2": "scanner"
+        },
+        {
+          "geom1": 327,
+          "geom2": 348,
+          "geomName1": "scanner_dock_surface",
+          "geomName2": "scanner_contact_3",
+          "distance": -0.00005465279832438108,
+          "body1": "scanner_dock",
+          "body2": "scanner"
+        },
+        {
+          "geom1": 329,
+          "geom2": 350,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_0",
+          "distance": -0.0000061622103952191365,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 350,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_0",
+          "distance": -0.0000061622103952191365,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 351,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_1",
+          "distance": -0.0000011654017113976733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 351,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_1",
+          "distance": -0.0000011654017113976733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 351,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_1",
+          "distance": -0.0000011654017113976733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 351,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_1",
+          "distance": -0.0000011654017113976733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 354,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_4",
+          "distance": -0.000005416201794714026,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 354,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_4",
+          "distance": -0.000005416201794714026,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 354,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_4",
+          "distance": -0.000005416201794714026,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 354,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_4",
+          "distance": -0.000005416201794714026,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 355,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_5",
+          "distance": -0.0000011141931997443733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 355,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_5",
+          "distance": -0.0000011141931997443733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 355,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_5",
+          "distance": -0.0000011141931997443733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 355,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_5",
+          "distance": -0.0000011141931997443733,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 356,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_6",
+          "distance": -0.0000014426020316510304,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 356,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_6",
+          "distance": -0.0000014426020316510304,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 357,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_7",
+          "distance": -0.000009193453312336675,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 357,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_7",
+          "distance": -0.000009193453312336675,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 357,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_7",
+          "distance": -0.000009193453312336675,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 357,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_7",
+          "distance": -0.000009193453312336675,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 358,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_8",
+          "distance": -0.000002288970360683762,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 358,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_8",
+          "distance": -0.000002288970360683762,
+          "body1": "packing",
+          "body2": "order_tray"
+        },
+        {
+          "geom1": 329,
+          "geom2": 358,
+          "geomName1": "packing_surface",
+          "geomName2": "order_tray_contact_8",
+          "distance": -0.000002288970360683762,
+          "body1": "packing",
+          "body2": "order_tray"
+        }
+      ],
+      "physics": {
+        "contacts": 44,
+        "constraints": 140,
+        "arenaBytes": 16777216,
+        "peakArenaBytes": 301552,
+        "warnings": [
+          {
+            "index": 0,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 1,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 2,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 3,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 4,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 5,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 6,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 7,
+            "count": 0,
+            "lastInfo": 0
+          }
+        ]
+      }
+    },
+    {
+      "key": "frankaDemo4",
+      "objects": {
+        "cooking_pot": [
+          4.33925813835228e-8,
+          -3.595627346385954e-7,
+          0.11741363472438111
+        ],
+        "carrot": [
+          0.3748207710328045,
+          0.01800787552258546,
+          0.1276835413857131
+        ],
+        "tomato": [
+          -0.3599959326307826,
+          0.020001288118773136,
+          0.12133489428194119
+        ]
+      },
+      "sites": {
+        "r0_tcp": [
+          0.000006921469129872634,
+          -0.474024653713802,
+          0.5839392621901802
+        ],
+        "r1_tcp": [
+          0.47402465371380176,
+          0.000006921469129854305,
+          0.5839392621901802
+        ],
+        "r2_tcp": [
+          -0.000006921469129873027,
+          0.47402465371380176,
+          0.5839392621901802
+        ],
+        "r3_tcp": [
+          -0.47402465371380176,
+          -0.000006921469129601306,
+          0.5839392621901802
+        ]
+      },
+      "contacts": [
+        {
+          "geom1": 326,
+          "geom2": 353,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_23",
+          "distance": -0.0000031548517261392743,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 353,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_23",
+          "distance": -0.0000031548517261392743,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 354,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_24",
+          "distance": -0.00000315493575056558,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 354,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_24",
+          "distance": -0.00000315493575056558,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 354,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_24",
+          "distance": -0.00000315493575056558,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 354,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_24",
+          "distance": -0.00000315493575056558,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 355,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_25",
+          "distance": -0.000002677579993407009,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 355,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_25",
+          "distance": -0.000002677579993407009,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 355,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_25",
+          "distance": -0.000002677579993407009,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 356,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_26",
+          "distance": -0.0000031709580615990603,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 356,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_26",
+          "distance": -0.0000031709580615990603,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 356,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_26",
+          "distance": -0.0000031709580615990603,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 356,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_26",
+          "distance": -0.0000031709580615990603,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 357,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_27",
+          "distance": -0.0000031709411910385565,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 357,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_27",
+          "distance": -0.0000031709411910385565,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 357,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_27",
+          "distance": -0.0000031709411910385565,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 357,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_27",
+          "distance": -0.0000031709411910385565,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 358,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_28",
+          "distance": -0.000002662991703469842,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 358,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_28",
+          "distance": -0.000002662991703469842,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 358,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_28",
+          "distance": -0.000002662991703469842,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 358,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_28",
+          "distance": -0.000002662991703469842,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 359,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_29",
+          "distance": -0.0000028097272380678277,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 359,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_29",
+          "distance": -0.0000028097272380678277,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 359,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_29",
+          "distance": -0.0000028097272380678277,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 360,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_30",
+          "distance": -0.0000028097196858450912,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 360,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_30",
+          "distance": -0.0000028097196858450912,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 360,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_30",
+          "distance": -0.0000028097196858450912,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 360,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_30",
+          "distance": -0.0000028097196858450912,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 361,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_31",
+          "distance": -0.0000023324815904279816,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 361,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_31",
+          "distance": -0.0000023324815904279816,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 326,
+          "geom2": 361,
+          "geomName1": "pot_pad_surface",
+          "geomName2": "cooking_pot_contact_31",
+          "distance": -0.0000023324815904279816,
+          "body1": "pot_pad",
+          "body2": "cooking_pot"
+        },
+        {
+          "geom1": 327,
+          "geom2": 369,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_0",
+          "distance": -0.000008454104943392273,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 369,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_0",
+          "distance": -0.000008454104943392273,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 370,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_1",
+          "distance": -0.000002361995963193198,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 370,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_1",
+          "distance": -0.000002361995963193198,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 370,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_1",
+          "distance": -0.000002361995963193198,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 370,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_1",
+          "distance": -0.000002361995963193198,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 373,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_4",
+          "distance": -0.000007707700410336527,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 373,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_4",
+          "distance": -0.000007707700410336527,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 373,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_4",
+          "distance": -0.000007707700410336527,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 373,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_4",
+          "distance": -0.000007707700410336527,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 374,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_5",
+          "distance": -0.000002310841939662245,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 374,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_5",
+          "distance": -0.000002310841939662245,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 374,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_5",
+          "distance": -0.000002310841939662245,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 374,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_5",
+          "distance": -0.000002310841939662245,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 375,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_6",
+          "distance": -0.000003774840379819344,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 375,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_6",
+          "distance": -0.000003774840379819344,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 376,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_7",
+          "distance": -0.000011524814620883507,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 376,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_7",
+          "distance": -0.000011524814620883507,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 376,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_7",
+          "distance": -0.000011524814620883507,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 376,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_7",
+          "distance": -0.000011524814620883507,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 377,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_8",
+          "distance": -0.0000035461998587615895,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 377,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_8",
+          "distance": -0.0000035461998587615895,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 327,
+          "geom2": 377,
+          "geomName1": "prep_east_surface",
+          "geomName2": "east_tray_contact_8",
+          "distance": -0.0000035461998587615895,
+          "body1": "prep_east",
+          "body2": "east_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 386,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_0",
+          "distance": -0.000008828472127048181,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 386,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_0",
+          "distance": -0.000008828472127048181,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 387,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_1",
+          "distance": -0.000002468011057313313,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 387,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_1",
+          "distance": -0.000002468011057313313,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 387,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_1",
+          "distance": -0.000002468011057313313,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 387,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_1",
+          "distance": -0.000002468011057313313,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 390,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_4",
+          "distance": -0.000008081845843346813,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 390,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_4",
+          "distance": -0.000008081845843346813,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 390,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_4",
+          "distance": -0.000008081845843346813,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 390,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_4",
+          "distance": -0.000008081845843346813,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 391,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_5",
+          "distance": -0.000002416697687968039,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 391,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_5",
+          "distance": -0.000002416697687968039,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 391,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_5",
+          "distance": -0.000002416697687968039,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 391,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_5",
+          "distance": -0.000002416697687968039,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 392,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_6",
+          "distance": -0.0000047852664230713104,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 392,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_6",
+          "distance": -0.0000047852664230713104,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 393,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_7",
+          "distance": -0.000012534775101671893,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 393,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_7",
+          "distance": -0.000012534775101671893,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 393,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_7",
+          "distance": -0.000012534775101671893,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 393,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_7",
+          "distance": -0.000012534775101671893,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 394,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_8",
+          "distance": -0.000004222952573434969,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 394,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_8",
+          "distance": -0.000004222952573434969,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 328,
+          "geom2": 394,
+          "geomName1": "prep_west_surface",
+          "geomName2": "west_tray_contact_8",
+          "distance": -0.000004222952573434969,
+          "body1": "prep_west",
+          "body2": "west_tray"
+        },
+        {
+          "geom1": 373,
+          "geom2": 403,
+          "geomName1": "east_tray_contact_4",
+          "geomName2": "carrot_contact_0",
+          "distance": -3.2824617953162e-7,
+          "body1": "east_tray",
+          "body2": "carrot"
+        },
+        {
+          "geom1": 374,
+          "geom2": 416,
+          "geomName1": "east_tray_contact_5",
+          "geomName2": "carrot_contact_13",
+          "distance": -0.0000015934886451666333,
+          "body1": "east_tray",
+          "body2": "carrot"
+        },
+        {
+          "geom1": 376,
+          "geom2": 416,
+          "geomName1": "east_tray_contact_7",
+          "geomName2": "carrot_contact_13",
+          "distance": -0.0000017807735437177721,
+          "body1": "east_tray",
+          "body2": "carrot"
+        },
+        {
+          "geom1": 391,
+          "geom2": 450,
+          "geomName1": "west_tray_contact_5",
+          "geomName2": "tomato_contact_14",
+          "distance": -0.0000020992544596198003,
+          "body1": "west_tray",
+          "body2": "tomato"
+        },
+        {
+          "geom1": 393,
+          "geom2": 447,
+          "geomName1": "west_tray_contact_7",
+          "geomName2": "tomato_contact_11",
+          "distance": -3.0080093131608637e-7,
+          "body1": "west_tray",
+          "body2": "tomato"
+        },
+        {
+          "geom1": 393,
+          "geom2": 447,
+          "geomName1": "west_tray_contact_7",
+          "geomName2": "tomato_contact_11",
+          "distance": -3.0080093131608637e-7,
+          "body1": "west_tray",
+          "body2": "tomato"
+        },
+        {
+          "geom1": 393,
+          "geom2": 465,
+          "geomName1": "west_tray_contact_7",
+          "geomName2": "tomato_contact_29",
+          "distance": -6.563607439715778e-7,
+          "body1": "west_tray",
+          "body2": "tomato"
+        },
+        {
+          "geom1": 393,
+          "geom2": 465,
+          "geomName1": "west_tray_contact_7",
+          "geomName2": "tomato_contact_29",
+          "distance": -6.563607439715778e-7,
+          "body1": "west_tray",
+          "body2": "tomato"
+        }
+      ],
+      "physics": {
+        "contacts": 85,
+        "constraints": 263,
+        "arenaBytes": 17825792,
+        "peakArenaBytes": 588240,
+        "warnings": [
+          {
+            "index": 0,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 1,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 2,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 3,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 4,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 5,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 6,
+            "count": 0,
+            "lastInfo": 0
+          },
+          {
+            "index": 7,
+            "count": 0,
+            "lastInfo": 0
+          }
+        ]
+      }
+    }
+  ],
+  "errors": []
+}

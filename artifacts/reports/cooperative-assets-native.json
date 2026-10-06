@@ -1,0 +1,110 @@
+{
+  "success": true,
+  "engine": "3.3.7",
+  "scenes": {
+    "scan": {
+      "actuators": 32,
+      "maxRobotPenetration": 2.6020852139652106e-18,
+      "lastSecondObjectDrift": {
+        "tea_box": 2.3142393985336157e-06,
+        "coffee_box": 1.6211047103168156e-13,
+        "scanner": 3.034227461456219e-08,
+        "order_tray": 0.0
+      },
+      "positions": {
+        "tea_box": [
+          -0.2800012801042391,
+          -0.33999941093667174,
+          0.11456126506614801
+        ],
+        "coffee_box": [
+          -0.0999999618472715,
+          -0.33999997018260986,
+          0.11460853323619791
+        ],
+        "scanner": [
+          0.31998244759473027,
+          -0.15998313101074807,
+          0.1157439118519284
+        ],
+        "order_tray": [
+          -0.2799996702690155,
+          0.25000004623136923,
+          0.11669146660422763
+        ]
+      }
+    },
+    "pot": {
+      "actuators": 32,
+      "maxRobotPenetration": 2.6020852139652106e-18,
+      "lastSecondObjectDrift": {
+        "cooking_pot": 4.6535482696614345e-11,
+        "east_tray": 1.2726397264064399e-06,
+        "west_tray": 5.552203397250809e-08,
+        "carrot": 1.8968855146614105e-06,
+        "tomato": 7.124959653390877e-08
+      },
+      "positions": {
+        "cooking_pot": [
+          4.352825707466575e-08,
+          -3.594344789662383e-07,
+          0.11741363472438159
+        ],
+        "east_tray": [
+          0.35999371780869127,
+          0.02000073721536285,
+          0.11468970752229667
+        ],
+        "west_tray": [
+          -0.35999975185384886,
+          0.020000330347583126,
+          0.11468922900372344
+        ],
+        "carrot": [
+          0.37481778533408083,
+          0.018014869347141884,
+          0.12768350311517837
+        ],
+        "tomato": [
+          -0.3599957062619089,
+          0.020001438760095365,
+          0.1213348942916262
+        ]
+      }
+    }
+  },
+  "alignment": {
+    "scanner": {
+      "maxBoundsDifference": 0.0013789012440490744,
+      "collisionPieces": 4
+    },
+    "tea": {
+      "maxBoundsDifference": 0.0008527311989593583,
+      "collisionPieces": 7
+    },
+    "coffee": {
+      "maxBoundsDifference": 0.0008713994314193743,
+      "collisionPieces": 4
+    },
+    "tray": {
+      "maxBoundsDifference": 0.00272096,
+      "collisionPieces": 16
+    },
+    "pot": {
+      "maxBoundsDifference": 0.00141638,
+      "collisionPieces": 38
+    },
+    "carrot": {
+      "maxBoundsDifference": 0.00191822,
+      "collisionPieces": 32
+    },
+    "tomato": {
+      "maxBoundsDifference": 0.00045455,
+      "collisionPieces": 32
+    }
+  },
+  "cavityProbe": {
+    "heightAbovePotOrigin": 0.02183857927923906,
+    "supportedByPot": true
+  }
+}

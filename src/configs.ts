@@ -1,5 +1,6 @@
 import type { SceneConfig } from 'mujoco-react';
 import { EGG_SORTING_LAYOUT } from './eggSortingLayout.js';
+import { COOPERATIVE_WORKCELLS } from './cooperativeWorkcells.js';
 import { ASSEMBLY_CAMERA_PATCHES } from './assemblyCameras.js';
 
 import {
@@ -182,6 +183,30 @@ export const robots: Record<string, RobotEntry> = {
     controlTargets: createFrankaTargets(),
   },
 
+  frankaDemo3: {
+    label: 'Franka Demo3',
+    controlFamily: 'franka',
+    config: {
+      src: `${import.meta.env.BASE_URL}assets/franka-cooperative/`,
+      sceneFile: COOPERATIVE_WORKCELLS.scan.sceneFile,
+      homeJoints: COOPERATIVE_WORKCELLS.scan.homeJoints,
+    },
+    camera: COOPERATIVE_WORKCELLS.scan.camera,
+    orbitTarget: COOPERATIVE_WORKCELLS.scan.orbitTarget,
+    controlTargets: createFrankaTargets(),
+  },
+  frankaDemo4: {
+    label: 'Franka Demo4',
+    controlFamily: 'franka',
+    config: {
+      src: `${import.meta.env.BASE_URL}assets/franka-cooperative/`,
+      sceneFile: COOPERATIVE_WORKCELLS.pot.sceneFile,
+      homeJoints: COOPERATIVE_WORKCELLS.pot.homeJoints,
+    },
+    camera: COOPERATIVE_WORKCELLS.pot.camera,
+    orbitTarget: COOPERATIVE_WORKCELLS.pot.orbitTarget,
+    controlTargets: createFrankaTargets(),
+  },
   frankaAssembly1: {
     label: 'Franka Assembly1',
     controlFamily: 'franka',
