@@ -189,3 +189,26 @@ The complete new work remains on the local feature branch. The previously
 requested main push is `0c18da6`; its GitHub build passed, but the matching
 [Pages deployment](https://github.com/Shuaijun-LIU/web-robot-example-0/actions/runs/37515102590)
 still reports `waiting` at this check. No deployment protection was bypassed.
+
+## Execution decisions and costs
+
+1. Use a feature branch in the existing checkout, without another setup prompt.
+   Cost: the checkout stays on the new branch until handoff.
+2. Develop the isolated pot solver alongside the scan task, with shared runtime
+   ownership kept separate. Cost: integration still needs the same full gates.
+3. Dispatch by supported outside-wall pushing after rim-lift and rim-slide
+   trials failed. Cost: no unsupported loaded-tray carrying in this version.
+4. Combine the two task implementation commits and overlap the one independent
+   review with rendered capture. Cost: changed paths must be replayed afterward.
+5. The reviewer left rendered completion to the implementer. Actual browser
+   completion was required, not inferred from native/WASM-only results; without
+   this gate UI/physics-loop differences could be missed.
+6. Verify post-review fixes by reproducing tests, full regression and rendering,
+   without a second review. Cost: no second independent assessment of those fixes.
+7. Permit up to 1 s of endpoint holding on pot confirmation phases, without
+   changing contact/position/speed gates. Cost: a persistent failure is reported
+   up to 1 s later; nominal browser waiting was only 2 ms.
+8. Keep the new branch local after the requested earlier optimization push.
+   Cost: the new scenes are not yet available on Pages.
+
+Deferred minor: an explicit pot tilt/world-up gate, as noted above.
