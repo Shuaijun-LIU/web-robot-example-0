@@ -35,6 +35,8 @@ import { EggSortingController } from './EggSortingController';
 import { EggSortingPanel } from './EggSortingPanel';
 import { CooperativeWorkcellPanel } from './CooperativeWorkcellPanel';
 import { CooperativePresentation } from './CooperativePresentation';
+import { CooperativeMotionController } from './CooperativeMotionController';
+import type { CooperativeState } from './cooperativeMotion.js';
 import { cooperativeSceneForKey } from './cooperativeWorkcells.js';
 import type { SortingState } from './eggSorting.js';
 import { sortingLocksControls } from './eggSorting.js';
@@ -544,6 +546,8 @@ const replicatedRootPatterns: Record<string, RegExp> = {
 export function App() {
   const apiRef = useRef<MujocoSimAPI>(null);
   const [resetGeneration, setResetGeneration] = useState(0);
+  const [cooperativeRequestId,setCooperativeRequestId]=useState(0);
+  const [cooperativeState,setCooperativeState]=useState<CooperativeState>({phase:'loading',label:'Loading verified motion',stage:0});
   const [eggRequestId,setEggRequestId]=useState(0);
   const [eggProgram,setEggProgram]=useState<'transfer'|'reseat'>('transfer');
   const [eggReseatReady,setEggReseatReady]=useState(false);
@@ -617,7 +621,8 @@ export function App() {
   const isAssembly1Scene = robotKey === 'frankaAssembly1' || robotKey === 'frankaDemo1';
   const isFrankaDemo1 = robotKey === 'frankaDemo1';
   const sortingLocked=sortingLocksControls(sortingState);
-  const eggLocked = robotKey === 'frankaDemo2' && (eggState.phase === 'running' || eggState.phase === 'error' || sortingLocked);
+  const eggLocked = (robotKey === 'frankaDemo2' && (eggState.phase === 'running' || eggState.phase === 'error' || sortingLocked))
+    || (!!cooperativeSceneForKey(robotKey) && (cooperativeState.phase==='running'||cooperativeState.active===true));
 
   const handleRunAssemblyStep1 = useCallback(() => {
     if (!isAssembly1Scene || assemblyStep1Status !== 'idle') return false;
@@ -854,7 +859,7 @@ export function App() {
   const sim = useControls('Simulation', {
     paused: false,
     speed: { value: 1.0, min: 0.1, max: 3.0, step: 0.1 },
-    gravityCompensation: { value: false, label: 'gravity compensation', disabled: robotKey === 'frankaDemo2' },
+    gravityCompensation: { value: false, label: 'gravity compensation', disabled: robotKey === 'frankaDemo2'||!!cooperativeSceneForKey(robotKey) },
     gizmo: { value: true, label: 'IK gizmo' },
     reset: button(handleResetAssemblySequence),
   });
@@ -906,7 +911,8 @@ export function App() {
         {/* Core scene */}
         <LoadingOverlay />
         {cooperativeScene && <CooperativePresentation />}
-        <GravityCompensation enabled={sim.gravityCompensation && robotKey !== 'frankaDemo2'} />
+        {cooperativeScene && <CooperativeMotionController key={cooperativeScene} scene={cooperativeScene} requestId={cooperativeRequestId} resetGeneration={resetGeneration} onStateChange={setCooperativeState} />}
+        <GravityCompensation enabled={sim.gravityCompensation && robotKey !== 'frankaDemo2' && !cooperativeScene} />
 
         {/* IK + per-robot controllers */}
         <SceneChildren
@@ -994,7 +1000,8 @@ export function App() {
       </MujocoCanvas>
 
       {/* HTML overlay — outside R3F canvas */}
-      {cooperativeScene && <CooperativeWorkcellPanel scene={cooperativeScene} />}
+      {cooperativeScene && <CooperativeWorkcellPanel scene={cooperativeScene} state={cooperativeState} ready={sceneReady} paused={sim.paused}
+        onRun={()=>{setCooperativeState(s=>({...s,phase:'running',label:'Starting task'}));setCooperativeRequestId(id=>id+1);}} />}
       {robotKey === 'frankaDemo2' && (
         <EggSortingPanel state={sortingState} paused={sim.paused} canRun={sceneReady&&sortingState.phase==='ready'&&eggState.phase==='ready'}
           onRun={()=>{setSortingState(s=>({...s,phase:'running',label:'Starting four-arm sorting'}));setSortingRequestId(id=>id+1);}}>

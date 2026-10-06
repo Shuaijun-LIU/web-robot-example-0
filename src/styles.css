@@ -623,3 +623,6 @@
 .cooperative-panel li {display:flex;gap:10px;margin:5px 0;}
 .cooperative-panel li strong {white-space:nowrap;font-size:12px;color:#666b54;}
 .cooperative-panel small {display:block;color:#6c705e;line-height:1.45;}
+.cooperative-panel__play {width:100%;padding:9px;border:1px solid #858773;border-radius:6px;background:#d4d8ba;color:inherit;cursor:pointer;font:inherit;}
+.cooperative-panel__play:disabled {opacity:.55;cursor:default;}
+.cooperative-panel__error {color:#8a3b2c;overflow-wrap:anywhere;}
