@@ -18,6 +18,8 @@ Native, browser-engine and actual-page replay pass for all 16 eggs: 216 simulate
 
 Expand **Single-egg checks** for the original transfer and the physical post-placement regrasp/reseat trial; Reset between programs. Both retain their own checks. Class selection uses known scene metadata, not camera recognition. Demo1 / Assembly1 remain unchanged, and Demo1 remains the default entry.
 
+The Demo2 panel can collapse to expose more of the workcell and shows total/per-arm progress, shared-path waiting and simulation pause status. [October optimization notes and two next-scene proposals](docs/progress/2026-10-07-demo2-polish.md).
+
 | Franka Panda — 4 arms | SO101 — 4 arms | XLeRobot — 2 robots |
 |---|---|---|
 | [![Four Franka Panda arms around graspable cubes](artifacts/screenshots/franka.png)](artifacts/screenshots/franka.png) | [![Four SO101 arms on a shared work table](artifacts/screenshots/so101.png)](artifacts/screenshots/so101.png) | [![Two XLeRobots facing across an arm-height table](artifacts/screenshots/xlerobot.png)](artifacts/screenshots/xlerobot.png) |

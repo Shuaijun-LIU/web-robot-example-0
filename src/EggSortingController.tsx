@@ -9,12 +9,11 @@ declare global {interface Window {eggSorting?:{state:SortingState;time:number;hi
 export function EggSortingController({requestId,resetGeneration,onStateChange}:{requestId:number;resetGeneration:number;onStateChange:(s:SortingState)=>void}) {
   const plan=useRef<SortingPlan|null>(null),runtime=useRef<EggSortingRuntime|null>(null),lastRequest=useRef(requestId);
   const callback=useRef(onStateChange);callback.current=onStateChange;
-  const lastLabel=useRef('');
+  const lastState=useRef<SortingState|null>(null);
   function publish() {
     const r=runtime.current;if(!r)return;
     window.eggSorting={state:r.state,time:r.time,history:r.history,metrics:r.metrics,observations:r.observations};
-    const key=JSON.stringify(r.state);
-    if(key!==lastLabel.current){lastLabel.current=key;callback.current(r.state);}
+    if(r.state!==lastState.current){lastState.current=r.state;callback.current(r.state);}
   }
   useEffect(()=>{
     const abort=new AbortController();let cancelled=false;
@@ -30,7 +29,7 @@ export function EggSortingController({requestId,resetGeneration,onStateChange}:{
     return ()=>{cancelled=true;abort.abort();runtime.current=null;delete window.eggSorting;};
   },[resetGeneration]);
   useEffect(()=>{
-    runtime.current?.reset();lastRequest.current=requestId;lastLabel.current='';
+    runtime.current?.reset();lastRequest.current=requestId;lastState.current=null;
     if(runtime.current)publish();
   },[resetGeneration]);
   useBeforePhysicsStep((m,d)=>{

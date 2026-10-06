@@ -32,6 +32,7 @@ import { GitHubLink } from './GitHubLink';
 import { AssemblyStep1Controller } from './AssemblyStep1Controller';
 import { EggTransferController } from './EggTransferController';
 import { EggSortingController } from './EggSortingController';
+import { EggSortingPanel } from './EggSortingPanel';
 import type { SortingState } from './eggSorting.js';
 import { sortingLocksControls } from './eggSorting.js';
 import type { EggTransferState } from './eggTransfer.js';
@@ -987,14 +988,8 @@ export function App() {
 
       {/* HTML overlay — outside R3F canvas */}
       {robotKey === 'frankaDemo2' && (
-        <aside aria-label="Egg sorting scene review" style={{position:'absolute',left:18,bottom:200,maxWidth:290,maxHeight:'calc(100vh - 230px)',overflowY:'auto',padding:'16px 20px',borderRadius:12,background:'rgba(248,246,236,.94)',color:'#34382f',fontSize:13,lineHeight:1.7}}>
-          <strong style={{fontSize:16}}>Mixed Egg Sorting</strong>
-          <div>Contact grasp review · 16 eggs · 4 arms</div>
-          <div style={{marginTop:8}}>Arm 1: Ivory · Arm 2: Brown<br/>Arm 3: Pale green · Arm 4: Cream</div>
-          <button disabled={sortingState.phase!=='ready'||eggState.phase!=='ready'} onClick={()=>{setSortingState(s=>({...s,phase:'running',label:'Starting four-arm sorting'}));setSortingRequestId(id=>id+1);}} style={{marginTop:12,padding:'10px 14px',borderRadius:7,border:'1px solid #858773',background:'#d4d8ba',color:'#34382f',cursor:sortingState.phase==='ready'&&eggState.phase==='ready'?'pointer':'default'}}>Run four-arm sorting</button>
-          <div role="status" style={{marginTop:8}}>{sortingState.label}</div>
-          {sortingState.arms.map((label,a)=><div key={a}>Arm {a+1}: {sortingState.counts[a]} / 4 · {label}</div>)}
-          {sortingState.reason&&<div style={{color:'#8a3b2c'}}>{sortingState.reason} · Reset to retry</div>}
+        <EggSortingPanel state={sortingState} paused={sim.paused} canRun={sceneReady&&sortingState.phase==='ready'&&eggState.phase==='ready'}
+          onRun={()=>{setSortingState(s=>({...s,phase:'running',label:'Starting four-arm sorting'}));setSortingRequestId(id=>id+1);}}>
           <details style={{marginTop:10}}><summary>Single-egg checks</summary>
           <div style={{marginTop:8,color:'#66695e'}}>First transfer: Arm 1 picks one ivory egg, aligns it and places it in its tray. Arms 2–4 wait.</div>
           <button disabled={eggState.phase!=='ready'||sortingLocked||sortingState.phase==='complete'} onClick={()=>{setEggProgram('transfer');setEggState({phase:'running',label:'Starting first egg',phaseIndex:0});setEggRequestId(id=>id+1);}} style={{marginTop:12,padding:'9px 14px',borderRadius:7,border:'1px solid #858773',background:eggState.phase==='ready'?'#e1dfc9':'#e8e6dc',color:'#34382f',cursor:eggState.phase==='ready'?'pointer':'default'}}>Run first egg</button>
@@ -1003,7 +998,7 @@ export function App() {
           <div role="status" style={{marginTop:8}}>{eggState.label}</div>
           {eggState.reason && <div style={{color:'#8a3b2c'}}>{eggState.reason} · Reset to retry</div>}
           </details>
-        </aside>
+        </EggSortingPanel>
       )}
       {isAssembly1Scene && <AssemblyCameraPanel key={`cameras-${robotKey}`} selection={cameraSelection} onSelection={setCameraSelection} tiles={cameraTiles} status={cameraStatus} />}
       {!isFrankaDemo1 && (

@@ -1,4 +1,4 @@
-import {isValidSortingPlan,sampleSortingTask,sortingEvents,checkSortingGate,isSortingTrayLoadBearing} from './eggSorting.js';
+import {isValidSortingPlan,sampleSortingTask,sortingStageAt,sortingEvents,checkSortingGate,isSortingTrayLoadBearing} from './eggSorting.js';
 import {didEggClockReset} from './eggTransfer.js';
 import {consumeMujocoContacts} from './mujocoContact.js';
 
@@ -55,7 +55,7 @@ export class EggSortingRuntime {
     for(const [i,t] of p.tasks.entries()){
       if(this.done.has(i))supports[t.eggIndex]=new Set([r.trays[t.arm]]);
       else if(t.start<=this.time+1e-9){
-        const sample=sampleSortingTask(t,this.time),stage=sample.stage;
+        const stage=sortingStageAt(t,this.time);
         current.push({taskIndex:i,task:t,stage});
         supports[t.eggIndex]=new Set([...(stage<=3?r.source:stage>=6?[r.trays[t.arm]]:[]),...r.fingers[t.arm]]);
       }
@@ -110,6 +110,7 @@ export class EggSortingRuntime {
         this.loss[a]??=d.time;if(d.time-this.loss[a]>.12){this.fail(`Arm ${a+1}: lost-physical-grasp`);return;}
       }else this.loss[a]=null;
     }
+    let counts=this.state.counts;
     while(this.cursor<this.events.length&&this.events[this.cursor].time<=this.time+1e-9){
       const e=this.events[this.cursor],t=this.plan.tasks[e.taskIndex],o=this.observations[e.taskIndex];
       const reason=checkSortingGate(t.phases[e.stage].gate,o);
@@ -118,13 +119,13 @@ export class EggSortingRuntime {
       // is a safety stop, never a global adaptive wait disguised as scheduling.
       if(reason){this.fail(`Arm ${t.arm+1}: ${reason}`);return;}
       this.holdSince=null;this.history.push({...e,arm:t.arm,egg:t.eggIndex,observation:o});
-      if(e.stage===10){this.done.add(e.taskIndex);this.state.counts[t.arm]++;}
+      if(e.stage===10){this.done.add(e.taskIndex);counts=[...counts];counts[t.arm]++;}
       this.cursor++;
     }
     if(this.state.phase==='error')return;
     if(this.cursor===this.events.length){
       for(const o of this.observations){const reason=checkSortingGate('seated',o);if(reason){this.fail(`Final: ${reason}`);return;}}
-      this.state={...this.state,phase:'complete',label:`Sorted ${this.plan.tasks.length} / ${this.plan.tasks.length} · all arms returned`,arms:Array(4).fill('Complete')};return;
+      this.state={...this.state,counts,phase:'complete',label:`Sorted ${this.plan.tasks.length} / ${this.plan.tasks.length} · all arms returned`,arms:Array(4).fill('Complete')};return;
     }
     this.time=Math.min(this.time+dt,this.events[this.cursor].time);
     let moving=0;const labels=[];
@@ -138,6 +139,10 @@ export class EggSortingRuntime {
     }
     if(moving>=2)this.metrics.parallelSeconds+=dt;
     this.metrics.maxSimultaneousArms=Math.max(this.metrics.maxSimultaneousArms,moving);
-    this.state={...this.state,counts:[...this.state.counts],arms:labels,label:`Sorting ${this.state.counts.reduce((a,b)=>a+b,0)} / ${this.plan.tasks.length}`};
+    const label=`Sorting ${counts.reduce((a,b)=>a+b,0)} / ${this.plan.tasks.length}`;
+    // UI snapshots change only at task/phase transitions. Physics, contact
+    // observations, metrics and safety gates still run on every tick.
+    if(counts!==this.state.counts||label!==this.state.label||labels.some((s,a)=>s!==this.state.arms[a]))
+      this.state={...this.state,counts,arms:labels,label};
   }
 }

@@ -79,6 +79,19 @@ export function isValidSortingPlan(p) {
   return Math.abs(p.duration-end)<1e-6&&counts.every((n,a)=>n===p.counts[a])&&sourceReservationsValid(p.tasks);
 }
 
+/** Contact checks need only the stage, not interpolated joint targets. */
+export function sortingStageAt(task,time) {
+  let local=time-task.start;
+  if(local<-1e-9)return -1;
+  local=Math.max(0,local);
+  for(let stage=0;stage<task.phases.length;stage++){
+    const duration=task.phases[stage].duration;
+    if(local<=duration+1e-9||stage===task.phases.length-1)return stage;
+    local-=duration;
+  }
+  return -1;
+}
+
 export function sampleSortingTask(task,time) {
   let local=time-task.start,startGripper=255;
   if(local<-1e-9)return null;

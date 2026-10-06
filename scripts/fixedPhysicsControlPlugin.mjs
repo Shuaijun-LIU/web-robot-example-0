@@ -30,7 +30,9 @@ export function fixedPhysicsControlPlugin() {
     name: 'assembly-fixed-physics-control',
     enforce: 'pre',
     transform(code, id) {
-      if (!id.replaceAll('\\', '/').endsWith('/mujoco-react/dist/index.js')) return null;
+      // Vite dev imports include cache queries; production IDs usually do not.
+      const pathname = id.replaceAll('\\', '/').split('?')[0];
+      if (!pathname.endsWith('/mujoco-react/dist/index.js')) return null;
       return { code: patchPhysicsControl(code), map: null };
     },
   };

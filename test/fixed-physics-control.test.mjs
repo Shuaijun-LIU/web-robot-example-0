@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { clockDeclaration, patchPhysicsControl } from '../scripts/fixedPhysicsControlPlugin.mjs';
+import { clockDeclaration, patchPhysicsControl, fixedPhysicsControlPlugin } from '../scripts/fixedPhysicsControlPlugin.mjs';
 
 test('physics control ticks are identical across different display-frame groupings', () => {
   function run(groups) {
@@ -22,4 +22,16 @@ test('dependency adaptation is checked and opt-in; no silent version mismatch', 
   assert.match(patched,/configRef.current.controlTimestep/);
   assert.equal((patched.match(/assemblyControlTick\(model, data, controlPeriod/g)??[]).length,2);
   assert.throws(()=>patchPhysicsControl('changed upstream'),/loop changed/);
+});
+
+test('development cache-query imports receive the same physical clock as production',()=>{
+  const code=readFileSync(new URL('../node_modules/mujoco-react/dist/index.js',import.meta.url),'utf8');
+  const plugin=fixedPhysicsControlPlugin();
+  const production=plugin.transform(code,'/repo/node_modules/mujoco-react/dist/index.js');
+  for(const id of ['/repo/node_modules/mujoco-react/dist/index.js?v=bd96c83b','C:\\repo\\node_modules\\mujoco-react\\dist\\index.js?v=123']){
+    const development=plugin.transform(code,id);
+    assert.ok(development,'dev imports must not silently fall back to display-frame control');
+    assert.equal(development.code,production.code);
+  }
+  assert.equal(plugin.transform(code,'/repo/src/index.js?v=123'),null,'unrelated modules remain untouched');
 });

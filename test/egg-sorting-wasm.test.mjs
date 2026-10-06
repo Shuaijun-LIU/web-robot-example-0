@@ -33,8 +33,15 @@ for(const trial of [
     assert.equal(runtime.state.reason,'reset-required-grippers');
     d.qpos[jaw]=open;mj.mj_forward(m,d);
     runtime.start(m,d);
+    let stableTicks=0,changedTicks=0;
     for(let i=0;i<(plan.duration+30)/.002&&runtime.state.phase==='running';i++){
+      const previousState=runtime.state,previousCounts=[...previousState.counts],previousArms=[...previousState.arms];
       runtime.step(m,d);mj.mj_step(m,d);
+      assert.deepEqual(previousState.counts,previousCounts,'published progress must be an immutable snapshot');
+      if(runtime.state.phase===previousState.phase&&runtime.state.label===previousState.label
+        &&runtime.state.arms.every((label,a)=>label===previousArms[a])&&runtime.state.counts.every((n,a)=>n===previousCounts[a])){
+        assert.equal(runtime.state,previousState,'unchanged UI state must not be rebuilt at the physics rate');stableTicks++;
+      }else changedTicks++;
     }
     const warnings=[],handles=d.warning;
     try {for(let i=0;i<handles.size();i++){const w=handles.get(i);try{warnings.push(w.number);}finally{w.delete();}}}finally{handles.delete();}
@@ -47,6 +54,7 @@ for(const trial of [
     assert.ok(runtime.metrics.maxForbiddenPenetration<=.0001);
     assert.ok(runtime.metrics.maxGripPenetration<=.001);
     assert.ok(warnings.every(n=>n===0));
+    assert.ok(stableTicks>changedTicks*10,'UI publishes stage changes, not every physics tick');
     for(let a=0;a<4;a++)for(let j=0;j<7;j++)assert.ok(Math.abs(d.qpos[m.jnt_qposadr[find.joint(`r${a}_joint${j+1}`)]]-plan.initialJoints[j])<.025);
   } finally {d.delete();m.delete();}
 });

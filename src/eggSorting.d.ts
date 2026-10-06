@@ -12,4 +12,5 @@ export function sourceLeaseEnd(task:SortingTask):number;
 export function sourceReservationsValid(tasks:SortingTask[]):boolean;
 export function isValidSortingPlan(value:unknown):value is SortingPlan;
 export function sampleSortingTask(task:SortingTask,time:number):{joints:number[];gripper:number;stage:number}|null;
+export function sortingStageAt(task:SortingTask,time:number):number;
 export function sortingEvents(plan:Pick<SortingPlan,'tasks'>):SortingEvent[];
