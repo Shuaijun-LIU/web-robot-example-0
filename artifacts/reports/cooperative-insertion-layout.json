@@ -1,0 +1,53 @@
+{
+  "success": true,
+  "diagnostics": {
+    "contacts": 7,
+    "constraints": 29,
+    "arenaBytes": 16777216,
+    "peakArenaBytes": 318824,
+    "warnings": [
+      {
+        "index": 0,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 1,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 2,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 3,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 4,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 5,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 6,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 7,
+        "count": 0,
+        "lastInfo": 0
+      }
+    ]
+  },
+  "resetAndSwitch": false,
+  "errors": []
+}

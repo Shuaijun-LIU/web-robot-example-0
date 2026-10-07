@@ -1,8 +1,38 @@
 # Cooperative workcell assets
 
 This self-contained package serves Franka Demo3 (product inspection/packing),
-Franka Demo4 (two-arm pot support with solid ingredient loading), and
-Franka Demo5 (drawer access and order kitting).
+Franka Demo4 (two-arm pot support with solid ingredient loading),
+Franka Demo5 (drawer access and order kitting), and Franka Demo6 (supported
+insertion and dispatch).
+
+## Franka Demo6: source-generated insertion components
+
+`insertion.xml` imports robosuite 1.5.2 `StandWithMount` and `HookFrame`, under
+the [robosuite MIT license](https://github.com/ARISE-Initiative/robosuite/blob/master/LICENSE)
+copied to `licenses/robosuite.txt`. The source constructors and original generated
+MJCF are retained in `insertion-sources/`; `insertion-manifest.json` records
+hashes, all constructor dimensions, initial transforms and density assumptions.
+
+The stand's real hollow square mount and the frame's original box grip are
+retained. The source optional visual-only hole cover and optional cone tip are
+disabled. The narrower 60-mm base provides real Panda grasp clearance; visible
+support pads leave its edges accessible. Stand/frame solids use aluminium-like
+2700 kg/m³ and the grip 1000 kg/m³; these are simulation assumptions, not measured
+hardware. The reference task's 50000 kg/m³ stand density is not inherited.
+
+Visual/collision geometry uses identical source transforms. Each component is
+an independent free body; there is no object attachment, motor or hidden grip.
+The socket/insert penetration guard applies through the whole trajectory.
+Only this scene uses a 0.75 m Panda base ring (other workcells: 0.78 m) for
+horizontal-wrist reach. Arm 1 holds the base while Arm 2 inserts; Arm 4 later
+grasps the existing socket stem from the side to carry the free assembly.
+
+Rebuild with a Python environment containing the recorded robosuite source:
+
+```bash
+python scripts/build-insertion-assets.py
+uv run --with 'mujoco==3.3.7' --with numpy python scripts/solve-insertion-task.py
+```
 
 ## Franka Demo5: source-derived passive drawers
 

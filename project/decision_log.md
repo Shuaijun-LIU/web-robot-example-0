@@ -1,5 +1,14 @@
 # Decision Log
 
+## 2026-10-07 — publish Demo3/4/5, continue supported insertion
+
+- Publish the accepted work first: `main` / `f3bc480`, Pages run `37576485714` succeeds. Develop the next task locally on `feat/franka-supported-insertion`; preserve Demo1 default and every existing scene/motion file.
+- Candidate B becomes English `Franka Demo6`: robosuite 1.5.2 `StandWithMount` + `HookFrame`, using the benchmark's generated geometry, copied constructors, hashes and MIT license. Do not introduce a hidden fixed base or robot-attached peg.
+- Demo6-only Panda ring radius 0.75 m provides the horizontal-wrist insertion corridor. Use the existing grip's short dimension, non-wrapping wrist branches, and side grasp on the existing stand stem for Arm 4 dispatch; no extra grasp fixture.
+- Verify relative tip/mouth depth, lateral offset, axes and settled contact. Continuous pair-penetration guards are optional/backward-compatible runtime fields. WASM qualification also measures every retention tick through dispatch; contact-manifold micro-bounces remain visible in reports.
+- Actual full-cycle failures determine the retreat route: clear the overhanging frame in Cartesian segments before joint-space HOME. No relaxed collision/IK gates and no scripted object motion.
+- [Detailed decisions and evidence](../docs/progress/2026-10-07-supported-insertion.md). Randomization/data collection/training and physical hardware qualification remain distinct future milestones.
+
 ## 2026-10-07 — Demo5 implementation after user approval
 
 - Start candidate A first: drawer access and order kitting. Add a separate English `Franka Demo5`; preserve Demo1 default and all existing task assets/programs. Keep the existing feature branch and local uncommitted delivery; no additional approval round or implicit publication.

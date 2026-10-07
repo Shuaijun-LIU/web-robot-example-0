@@ -1,0 +1,444 @@
+{
+  "success": true,
+  "engine": "3.3.8",
+  "extraSettleTicks": 0,
+  "state": {
+    "phase": "complete",
+    "label": "Task complete · all arms returned",
+    "stage": 45,
+    "active": true
+  },
+  "time": 91.79999999996512,
+  "metrics": {
+    "maxForbiddenPenetration": 0,
+    "maxGripPenetration": 0.00005880695389268269,
+    "maxLimitedContactPenetration": 0.00005035136850258737
+  },
+  "retention": {
+    "samples": 15601,
+    "minDepth": 0.10698104773077101,
+    "maxDepth": 0.10704111255153043,
+    "maxLateral": 0.0003494552253357805,
+    "minAlignment": 0.9999992967209097,
+    "unsupportedTicks": 2,
+    "unsupportedSamples": [
+      {
+        "phase": "Arm 4 release stand",
+        "time": 79.0659999999948,
+        "depth": 0.10698854198968784,
+        "lateral": 0.00022375427296921144,
+        "alignment": 0.9999999755026502,
+        "supported": false,
+        "speed": 0.036317327152939304
+      },
+      {
+        "phase": "Arm 4 release stand",
+        "time": 79.07999999999477,
+        "depth": 0.10698104773077101,
+        "lateral": 0.00030283621494057213,
+        "alignment": 0.9999994937660442,
+        "supported": false,
+        "speed": 0.053511403759439385
+      }
+    ]
+  },
+  "history": [
+    {
+      "phase": "Arm 3 approach insert",
+      "time": 2.4999999999998357,
+      "observations": []
+    },
+    {
+      "phase": "Arm 3 descend insert",
+      "time": 4.499999999999615,
+      "observations": []
+    },
+    {
+      "phase": "Arm 3 grip insert",
+      "time": 5.799999999999472,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.02536526283189041
+        }
+      ]
+    },
+    {
+      "phase": "Arm 3 lift insert",
+      "time": 7.799999999999607,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.02536524068554579
+        }
+      ]
+    },
+    {
+      "phase": "Arm 3 transport insert",
+      "time": 10.80000000000061,
+      "observations": []
+    },
+    {
+      "phase": "Arm 3 lower insert",
+      "time": 12.800000000001278,
+      "observations": []
+    },
+    {
+      "phase": "Settle insert at support",
+      "time": 13.600000000001545,
+      "observations": []
+    },
+    {
+      "phase": "Confirm support for insert",
+      "time": 13.900000000001645,
+      "observations": [
+        {
+          "supported": true,
+          "speed": 0.00004757107590346204
+        }
+      ]
+    },
+    {
+      "phase": "Arm 3 release insert",
+      "time": 15.100000000001955,
+      "observations": [
+        {
+          "fingerContacts": 0
+        },
+        {
+          "supported": true,
+          "speed": 4.139045922480208e-10
+        }
+      ]
+    },
+    {
+      "phase": "Arm 3 clear insert",
+      "time": 17.100000000000847,
+      "observations": []
+    },
+    {
+      "phase": "Arm 3 clear of insertion supply",
+      "time": 20.099999999999184,
+      "observations": []
+    },
+    {
+      "phase": "Arm 1 approach stand base",
+      "time": 23.09999999999752,
+      "observations": []
+    },
+    {
+      "phase": "Arm 1 engage stand base",
+      "time": 25.099999999996413,
+      "observations": []
+    },
+    {
+      "phase": "Arm 1 stabilize stand",
+      "time": 26.399999999995693,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.05994338046822474
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 approach insert",
+      "time": 28.899999999994307,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 descend insert",
+      "time": 30.8999999999932,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 grip insert",
+      "time": 32.19999999999461,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.025365903348222557
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 lift insert",
+      "time": 34.199999999997054,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.025365237293332052
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 orient frame upright",
+      "time": 38.20000000000194,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 align above actual socket",
+      "time": 41.20000000000561,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 insert frame into socket",
+      "time": 45.2000000000105,
+      "observations": []
+    },
+    {
+      "phase": "Confirm supported insertion",
+      "time": 46.000000000011475,
+      "observations": [
+        {
+          "depth": 0.10695057062556777,
+          "lateral": 0.0006157918070010575,
+          "alignment": 0.9999925493736179,
+          "supported": true,
+          "speed": 0.00021932493308072032
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 release seated frame",
+      "time": 47.400000000013186,
+      "observations": [
+        {
+          "depth": 0.10700028486801255,
+          "lateral": 0.0002179011028293096,
+          "alignment": 0.9999999998103316,
+          "supported": true,
+          "speed": 0.0000020541587909321195
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 withdraw from frame",
+      "time": 49.40000000001563,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 return toward its own side",
+      "time": 51.400000000018075,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 clear assembly",
+      "time": 54.40000000002174,
+      "observations": []
+    },
+    {
+      "phase": "Arm 1 release stabilized stand",
+      "time": 55.60000000002321,
+      "observations": [
+        {
+          "depth": 0.10700029047096765,
+          "lateral": 0.00021763897177765512,
+          "alignment": 0.9999999998074056,
+          "supported": true,
+          "speed": 6.734916240309575e-9
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Arm 1 withdraw from base",
+      "time": 57.60000000002565,
+      "observations": []
+    },
+    {
+      "phase": "Arm 1 clear dispatch zone",
+      "time": 60.60000000002932,
+      "observations": []
+    },
+    {
+      "phase": "Verify assembly without robot support",
+      "time": 61.60000000003054,
+      "observations": [
+        {
+          "depth": 0.10700029047084465,
+          "lateral": 0.00021764217066194789,
+          "alignment": 0.9999999998074061,
+          "supported": true,
+          "speed": 4.255189955930802e-9
+        },
+        {
+          "fingerContacts": 0
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 approach stand from side",
+      "time": 64.60000000002852,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 engage socket stem",
+      "time": 67.60000000002152,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 grip assembled stand",
+      "time": 68.9000000000185,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.029985831881319158
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 lift assembled stand",
+      "time": 71.9000000000115,
+      "observations": [
+        {
+          "depth": 0.10700332357861117,
+          "lateral": 0.00023583308438422375,
+          "alignment": 0.9999999807262512,
+          "supported": true,
+          "speed": 0.001032981049789376
+        }
+      ]
+    },
+    {
+      "phase": "Verify seated assembly during lift",
+      "time": 72.5000000000101,
+      "observations": [
+        {
+          "depth": 0.10700361591452708,
+          "lateral": 0.00023766873839330344,
+          "alignment": 0.999999978187362,
+          "supported": true,
+          "speed": 0.000053951833020698366
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 transport stand",
+      "time": 75.50000000000311,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 lower stand",
+      "time": 77.49999999999845,
+      "observations": []
+    },
+    {
+      "phase": "Settle stand at support",
+      "time": 78.29999999999659,
+      "observations": []
+    },
+    {
+      "phase": "Confirm support for stand",
+      "time": 78.59999999999589,
+      "observations": [
+        {
+          "supported": true,
+          "speed": 0.000031858127544040154
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 release stand",
+      "time": 79.79999999999309,
+      "observations": [
+        {
+          "fingerContacts": 0
+        },
+        {
+          "supported": true,
+          "speed": 1.0333415805615515e-10
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 clear stand",
+      "time": 81.79999999998843,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 withdraw below overhang",
+      "time": 83.79999999998377,
+      "observations": [
+        {
+          "depth": 0.10700029014246996,
+          "lateral": 0.00023347908548611423,
+          "alignment": 0.9999999998095129,
+          "supported": true,
+          "speed": 1.0524274816382972e-9
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 clear beside output",
+      "time": 85.79999999997911,
+      "observations": [
+        {
+          "depth": 0.1070002901424586,
+          "lateral": 0.00023347956932613987,
+          "alignment": 0.9999999998095144,
+          "supported": true,
+          "speed": 1.052427575478578e-9
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 rise outside assembly",
+      "time": 87.79999999997445,
+      "observations": [
+        {
+          "depth": 0.1070002901424466,
+          "lateral": 0.00023348005318353304,
+          "alignment": 0.9999999998095133,
+          "supported": true,
+          "speed": 1.0524272539260705e-9
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 clear completed assembly",
+      "time": 90.79999999996745,
+      "observations": []
+    },
+    {
+      "phase": "Assembly complete - all arms home",
+      "time": 91.79999999996512,
+      "observations": [
+        {
+          "depth": 0.10700029014242357,
+          "lateral": 0.00023348102094929537,
+          "alignment": 0.9999999998095144,
+          "supported": true,
+          "speed": 1.0524275824959145e-9
+        },
+        {
+          "supported": true,
+          "speed": 1.0333409717909176e-10
+        },
+        {
+          "fingerContacts": 0
+        },
+        {
+          "fingerContacts": 0
+        },
+        {
+          "error": 1.7308065558731815e-7
+        }
+      ]
+    }
+  ]
+}

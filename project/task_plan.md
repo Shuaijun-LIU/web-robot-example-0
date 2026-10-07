@@ -1,7 +1,7 @@
 # Task Plan
 
 ## Goal
-- Current scope (2026-10-07, subsequent approval): implement the first proposed task as isolated `Franka Demo5`, drawer access and order kitting. Preserve existing demos and the Demo1 default. Keep this increment local until publication is requested.
+- Current scope (2026-10-07, next approval): publish accepted Demo3/4/5, then implement candidate B as isolated `Franka Demo6`, supported insertion and dispatch. Preserve existing demos and the Demo1 default.
 - Preceding scope (completed): consolidate Demo3/4 design/evidence and propose additional tasks suitable for model training.
 - Current records: [Demo3/4 design and interfaces](cooperative-workcells-design-record.md), [three benchmark candidates and training protocol](benchmark-task-proposals-2026-10-07.md).
 - Historical goal (2026-09-08, now completed through four-arm playback): design an isolated four-Panda mixed-egg sorting Demo2; first deliver a reviewable static workcell, then validate physical manipulation incrementally.
@@ -38,14 +38,16 @@
 - [x] Phase 22: Validate one-arm egg grasp, transfer, seating, release and controlled post-placement regrasp/orientation correction.
 - [x] Phase 23: Validate two-arm shared-space conflict handling, then four-arm parallel sorting (`219b4c5`).
 - [x] Phase 24: Integrate continuous Demo2 playback and regression-check existing scenes; optimization pushed as `0c18da6`.
-- [x] Phase 25: Build isolated Demo3 inspection/packing and Demo4 cooperative pot loading; verify native, WASM and rendered complete cycles. New work remains on the local feature branch.
+- [x] Phase 25: Build isolated Demo3 inspection/packing and Demo4 cooperative pot loading; verify native, WASM and rendered complete cycles. Subsequently published with Demo5 at `f3bc480`.
 - [x] Phase 26: Record detailed designs, asset provenance, control/evaluation interfaces and three proposed benchmark tasks, including a separate critic review. No new task implementation or training claimed.
 - [x] Phase 27: Build Demo5 sourced passive drawers, complete physical opening/retrieval/packing/closing, browser acceptance and reproducible records.
+- [x] Publish accepted Demo3/4/5 at `f3bc480`; Pages run `37576485714` succeeds.
+- [x] Phase 28: Demo6 sourced stand/frame, physical supply/stabilization/insertion/dispatch, browser verification and detailed records. Local, uncommitted and not yet published.
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
 - Updated: 2026-10-07.
-- Current phase: Demo5 local delivery complete. Native, WASM, delayed start and browser complete 49 phases / 96.6 s with zero unintended robot penetration; browser Pause/Reset/switch pass. Expanded tests 261/261, TypeScript and production build pass. [Current implementation and evidence](../docs/progress/2026-10-07-drawer-kitting.md). Existing Demo3/4 baseline remains `54ada17` on `feat/franka-scan-and-pot`, not the published main release; [their delivery evidence](../docs/progress/2026-10-07-cooperative-workcells.md) is preserved.
-- Future candidates (not implemented): support-and-insert assembly and obstacle transport/support-switch relay. Articulated access/kitting is now the selected Demo5, not merely a proposal.
+- Current phase: Demo6 complete locally on `feat/franka-supported-insertion`: 46 phases, native/WASM/delayed-start/browser pass, Pause/Reset/switch pass, 268/268 full regression and TypeScript/build pass. [Current record and screenshots](../docs/progress/2026-10-07-supported-insertion.md). Prior Demo3/4/5 release `f3bc480` is published and Pages succeeds. [Demo5 evidence](../docs/progress/2026-10-07-drawer-kitting.md) and [Demo3/4 evidence](../docs/progress/2026-10-07-cooperative-workcells.md) remain intact.
+- Future candidate (not implemented): obstacle transport/support-switch relay. Supported insertion is now the locally verified Demo6.
 - Remaining follow-ups: explicit Demo4 tilt gate; randomized reset/data exporter/training adapter; further candidate feasibility and per-asset rights audit; hardware gripper-mount qualification remains separate from simulation.
 - Historical 2026-09-08 checkpoint: `f6d45ac` first-egg baseline and local correction trial (24.385 → 0.241 degrees, 226 tests); later four-arm work supersedes those pending items. See the preserved [correction report](../docs/progress/2026-09-08-demo2-reseat.md).

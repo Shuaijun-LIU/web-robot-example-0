@@ -398,6 +398,49 @@
         0.785398
       ],
       "tableHeight": 0.1
+    },
+    "insertion": {
+      "arms": 4,
+      "objects": [
+        {
+          "name": "stand",
+          "asset": "StandWithMount",
+          "position": [
+            0,
+            -0.06,
+            0.222
+          ],
+          "euler": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "insert",
+          "asset": "HookFrame",
+          "position": [
+            0,
+            0.32,
+            0.1437
+          ],
+          "euler": [
+            90,
+            0,
+            0
+          ]
+        }
+      ],
+      "homeJoints": [
+        1.570796,
+        -0.785398,
+        0,
+        -2.356194,
+        0,
+        1.570796,
+        0.785398
+      ],
+      "tableHeight": 0.1
     }
   }
 }

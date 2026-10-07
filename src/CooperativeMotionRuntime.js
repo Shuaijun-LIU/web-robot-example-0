@@ -29,12 +29,19 @@ export class CooperativeMotionRuntime {
     for(let i=1;i<m.nbody;i++){let p=i;while(p>0&&!roots.includes(p))p=m.body_parentid[p];if(roots.includes(p))robots.add(i);}
     if(qa.some(row=>row.some((v,j)=>Math.abs(d.qpos[v]-this.plan.initialJoints[j])>.035)))throw new Error('Reset required: arms moved');
     if(this.plan.initialObjects.some(o=>Math.hypot(...vec(d.xpos,body(o.name)).map((v,j)=>v-o.position[j]))>.008))throw new Error('Reset required: objects moved');
+    for(const o of this.plan.initialObjects)if(o.quaternion){
+      const actual=Array.from(d.xquat.slice(body(o.name)*4,body(o.name)*4+4));
+      const angle=2*Math.acos(Math.min(1,Math.abs(actual.reduce((sum,v,i)=>sum+v*o.quaternion[i],0))));
+      if(!Number.isFinite(angle)||angle>o.orientationTolerance)throw new Error(`Reset required: object orientation (${o.name})`);
+    }
     for(const initial of this.plan.initialFixtureJoints??[]){
       const j=joint(initial.joint);
       if(!Number.isFinite(d.qpos[m.jnt_qposadr[j]])||Math.abs(d.qpos[m.jnt_qposadr[j]]-initial.position)>initial.tolerance)throw new Error(`Reset required: fixture moved (${initial.joint})`);
     }
     const allowed=this.plan.phases.map(p=>new Set(p.allowedContacts.map(([a,b])=>pair(body(a),body(b)))));
-    this.refs={qa,da,fingers,jaws,robots,body,joint,allowed};
+    const limits=new Map((this.plan.contactLimits??[]).map(l=>[pair(body(l.a),body(l.b)),l.maxPenetration]));
+    if(limits.size)this.metrics.maxLimitedContactPenetration=0;
+    this.refs={qa,da,fingers,jaws,robots,body,joint,allowed,limits};
     this.previous=d.time;this.command=sampleCooperativePhase(this.plan.phases[0],0);
     this.state={phase:'running',label:this.plan.phases[0].name,stage:0,active:true};
   }
@@ -54,6 +61,12 @@ export class CooperativeMotionRuntime {
     if(g.type==='released')return {fingerContacts:r.fingers.flat().filter(b=>contacts.has(b)).length};
     if(g.type==='height')return {height:d.xpos[id*3+2]};
     const joint=m.body_jntadr[id],dof=m.jnt_dofadr[joint],speed=Math.hypot(...d.qvel.slice(dof,dof+3));
+    if(g.type==='inserted'){
+      const socket=r.body(g.socket),mouth=worldPoint(d,socket,g.mouth),tip=worldPoint(d,id,g.tip);
+      const axis=rotated(d.xmat,socket,g.socketAxis),insertAxis=rotated(d.xmat,id,g.axis),delta=tip.map((v,j)=>v-mouth[j]);
+      const depth=-delta.reduce((s,v,j)=>s+v*axis[j],0);
+      return {depth,lateral:Math.hypot(...delta.map((v,j)=>v+depth*axis[j])),alignment:axis.reduce((s,v,j)=>s+v*insertAxis[j],0),supported:contacts.has(socket),speed};
+    }
     if(g.type==='support')return {supported:contacts.has(r.body(g.body)),speed};
     if(g.type==='inside'){
       const container=r.body(g.container),offset=vec(d.xipos,id).map((v,j)=>v-d.xpos[container*3+j]);
@@ -75,6 +88,11 @@ export class CooperativeMotionRuntime {
       const a=m.geom_bodyid[c.geom1],b=m.geom_bodyid[c.geom2];
       if(!this.touching.has(a))this.touching.set(a,new Set());if(!this.touching.has(b))this.touching.set(b,new Set());
       this.touching.get(a).add(b);this.touching.get(b).add(a);
+      const limit=r.limits.get(pair(a,b));
+      if(limit!==undefined){
+        this.metrics.maxLimitedContactPenetration=Math.max(this.metrics.maxLimitedContactPenetration,-c.distance);
+        if(-c.distance>limit){this.fail(`object-contact ${a}/${b} ${(-c.distance).toFixed(5)} m`);return;}
+      }
       if(!r.robots.has(a)&&!r.robots.has(b))continue;
       if(allowed.has(pair(a,b)))grip=Math.max(grip,-c.distance);
       else if(-c.distance>forbidden){forbidden=-c.distance;worst=[a,b];}

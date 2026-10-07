@@ -17,6 +17,10 @@ export const COOPERATIVE_WORKCELLS={
     description:'Open two drawers, retrieve the requested products, pack one order and close both drawers.',
     roles:['Open & close south drawer','Retrieve & pack tea','Open & close north drawer','Retrieve & pack coffee'],
     note:'Passive drawers move through real handle contact. The shared packing zone is entered in turn.'},
+  insertion:{...common,key:'frankaDemo6',sceneFile:'insertion.xml',title:'Supported insertion & dispatch',
+    description:'Supply a frame, stabilize its socket, insert it and transfer the assembled stand to the output.',
+    roles:['Stabilize the stand','Align & insert the frame','Supply the frame','Transfer assembled stand'],
+    note:'Both parts remain free objects. Insertion and transport rely on real contact.'},
 };
 export function cooperativeSceneForKey(key){
   return Object.entries(COOPERATIVE_WORKCELLS).find(([,scene])=>scene.key===key)?.[0]??null;

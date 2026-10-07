@@ -1,0 +1,15 @@
+<body pos="0 0 0" name="insert_root">
+  <joint type="free" name="insert_joint0" />
+  <site type="sphere" pos="-0.0475 0 0.08625" size="0.002" rgba="1 0 0 1" name="insert_hang_site" />
+  <site type="sphere" pos="0.04375 0 -0.09" size="0.002" rgba="0 1 0 1" name="insert_mount_site" />
+  <site type="sphere" pos="0.04375 0 0.08625" size="0.002" rgba="0 0 1 1" name="insert_intersection_site" />
+  <site type="sphere" group="0" pos="0 0 0" size="0.002 0.002 0.002" rgba="1 0 0 0" name="insert_default_site" />
+  <geom quat="1 0 0 0" rgba="0.5 0 0 1" density="2700" friction="0.8 0.01 0.001" solref="0.005 1" solimp="0.99 0.999 0.0001" type="box" size="0.00375 0.00375 0.08625" pos="0.04375 0.0 -0.00375" group="0" name="insert_vertical_frame" />
+  <geom quat="1 0 0 0" conaffinity="0" contype="0" mass="1e-8" rgba="0.2 0.1 0.0 1.0" type="box" size="0.00375 0.00375 0.08625" pos="0.04375 0.0 -0.00375" group="1" name="insert_vertical_frame_vis" />
+  <geom quat="1 0 0 0" rgba="0.5 0 0 1" density="2700" friction="0.8 0.01 0.001" solref="0.005 1" solimp="0.99 0.999 0.0001" type="box" size="0.0475 0.00375 0.00375" pos="0.0 0.0 0.08625" group="0" name="insert_horizontal_frame" />
+  <geom quat="1 0 0 0" conaffinity="0" contype="0" mass="1e-8" rgba="0.2 0.1 0.0 1.0" type="box" size="0.0475 0.00375 0.00375" pos="0.0 0.0 0.08625" group="1" name="insert_horizontal_frame_vis" />
+  <geom quat="1 0 0 0" rgba="0.5 0 0 1" density="2700" friction="0.8 0.01 0.001" solref="0.005 1" solimp="0.99 0.999 0.0001" type="box" size="0.00375 0.00375 0.006" pos="-0.04375 0.0 0.096" group="0" name="insert_hook_frame" />
+  <geom quat="1 0 0 0" conaffinity="0" contype="0" mass="1e-8" rgba="0.2 0.1 0.0 1.0" type="box" size="0.00375 0.00375 0.006" pos="-0.04375 0.0 0.096" group="1" name="insert_hook_frame_vis" />
+  <geom quat="1 0 0 0" rgba="0.5 0 0 1" density="2700" friction="1.0 0.005 0.0001" solref="0.005 1" solimp="0.99 0.999 0.0001" type="box" size="0.0127 0.0127 0.03175" pos="0.04375 0.0 0.04875" group="0" name="insert_grip_frame" />
+  <geom quat="1 0 0 0" conaffinity="0" contype="0" mass="1e-8" rgba="0.13 0.13 0.13 1.0" type="box" size="0.0127 0.0127 0.03175" pos="0.04375 0.0 0.04875" group="1" name="insert_grip_frame_vis" />
+</body>

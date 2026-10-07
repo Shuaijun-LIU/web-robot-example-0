@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "sourceVersion": "1.5.2",
+  "armRingRadius": 0.75,
+  "sources": [
+    {
+      "source": "robosuite/models/objects/composite/stand_with_mount.py",
+      "sha256": "2787fa587f4f78d141dd316704f5b31b275788c59a7acc48994282c8443615cc",
+      "license": "MIT"
+    },
+    {
+      "source": "robosuite/models/objects/composite/hook_frame.py",
+      "sha256": "0a7a41d109849a63477dbdd33a931e93a772e8707a893b63c745efb224278510",
+      "license": "MIT"
+    },
+    {
+      "source": "robosuite/models/objects/generated_objects.py",
+      "sha256": "07e1fd5d1e8ac5132a110738b07f191694c2021ef2519f884e2c367504779042",
+      "license": "MIT"
+    },
+    {
+      "source": "robosuite/environments/manipulation/tool_hang.py",
+      "sha256": "df2f74499e2882fd10089ddb8ea4eddd6d52f66e5c91e643f7876cb90ca91365",
+      "license": "MIT"
+    }
+  ],
+  "parameters": {
+    "stand": {
+      "name": "stand",
+      "size": [
+        0.06,
+        0.14,
+        0.16
+      ],
+      "mount_location": [
+        0,
+        0.045
+      ],
+      "mount_width": 0.03,
+      "wall_thickness": 0.004,
+      "base_thickness": 0.012,
+      "initialize_on_side": false,
+      "add_hole_vis": false,
+      "density": 2700,
+      "use_texture": false,
+      "solref": [
+        0.005,
+        1
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.0001
+      ],
+      "friction": [
+        0.8,
+        0.01,
+        0.001
+      ]
+    },
+    "insert": {
+      "name": "insert",
+      "frame_length": 0.095,
+      "frame_height": 0.18,
+      "frame_thickness": 0.0075,
+      "hook_height": 0.012,
+      "grip_location": 0.0525,
+      "grip_size": [
+        0.0127,
+        0.03175
+      ],
+      "tip_size": null,
+      "density": 2700,
+      "use_texture": false,
+      "solref": [
+        0.005,
+        1
+      ],
+      "solimp": [
+        0.99,
+        0.999,
+        0.0001
+      ],
+      "friction": [
+        0.8,
+        0.01,
+        0.001
+      ]
+    }
+  },
+  "objects": [
+    {
+      "name": "stand",
+      "asset": "StandWithMount",
+      "position": [
+        0,
+        -0.06,
+        0.222
+      ],
+      "euler": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "insert",
+      "asset": "HookFrame",
+      "position": [
+        0,
+        0.32,
+        0.1437
+      ],
+      "euler": [
+        90,
+        0,
+        0
+      ]
+    }
+  ],
+  "mouth": [
+    0,
+    0.045,
+    0.08
+  ],
+  "tip": [
+    0.04375,
+    0,
+    -0.09
+  ],
+  "grip": [
+    0.04375,
+    0,
+    0.04875
+  ],
+  "densityOverrides": {
+    "insert_grip": 1000
+  },
+  "note": "Source-generated geometry, no remeshing; two independent free objects. Dimensions and densities are simulation assumptions."
+}

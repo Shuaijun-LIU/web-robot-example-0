@@ -3,14 +3,14 @@
 ## Current handoff — 2026-10-07
 
 1. Preserve accepted Demo1/Assembly1/Demo2 and the verified Demo3/4 trajectories. Detailed current state: [workcell design record](cooperative-workcells-design-record.md).
-2. Demo2 optimization `0c18da6` was pushed; Demo3/4 remain on `feat/franka-scan-and-pot` at recorded baseline `54ada17`. Demo5 is a new local increment. Do not describe these new scenes as deployed; no fresh publication instruction is part of this implementation turn.
-3. User inspection of [Demo5 drawer kitting](../docs/progress/2026-10-07-drawer-kitting.md): select Franka Demo5 and Play task. The full browser cycle, Pause/Reset/switch, 261 tests and build pass. Keep this 49-phase real-contact baseline stable; publish only on user instruction.
+2. User requested publication; Demo3/4/5 are pushed at `f3bc480` on main. Pages run `37576485714` succeeded and the deployed Demo5 motion file matches local bytes. Keep this accepted release stable.
+3. The user has now requested publishing [Demo6 supported insertion](../docs/progress/2026-10-07-supported-insertion.md), then completing Demo7. Demo6 has full native/WASM/delayed-start/browser acceptance with 268/268 regression and TypeScript/build green. Follow the isolated [Demo7 panel relay plan](../docs/superpowers/plans/2026-10-07-panel-relay.md) after publishing this release.
 4. Further benchmark work should add seeded task resets and dense synchronized observation/action/recovery export before collecting a training pilot; waypoint JSON is not a dataset. Retain legal single-/two-arm solutions as baselines. Other [task candidates](benchmark-task-proposals-2026-10-07.md) remain planned.
-5. Carry forward the optional explicit Demo4 world-up/tilt gate separately. Do not change successful old motions as part of Demo5.
+5. Carry forward the optional explicit Demo4 world-up/tilt gate separately. Do not change successful old motions as part of the new demos.
 
 ## Current blockers / qualifications
 
-- No implementation blocker; requested local Demo5 implementation and acceptance are complete.
+- No access/setup blocker; Demo6 controlled full-cycle acceptance is complete and publication is authorized. Demo7 is the next active implementation milestone; the prior Demo5 milestone and publication are complete.
 - Demo5 uses RoboCasa drawer, panel and handle assets with source snapshots, hashes and license attribution. The alternative RoboTwin cabinet was not imported. Other candidates' assets still need qualification when selected.
 - Randomized task API, dense episode export and learned-policy evaluation are future work, not existing functionality. Physical hardware mounts are not qualified by simulation.
 

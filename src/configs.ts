@@ -219,6 +219,18 @@ export const robots: Record<string, RobotEntry> = {
     orbitTarget: COOPERATIVE_WORKCELLS.drawer.orbitTarget,
     controlTargets: createFrankaTargets(),
   },
+  frankaDemo6: {
+    label: 'Franka Demo6',
+    controlFamily: 'franka',
+    config: {
+      src: `${import.meta.env.BASE_URL}assets/franka-cooperative/`,
+      sceneFile: COOPERATIVE_WORKCELLS.insertion.sceneFile,
+      homeJoints: COOPERATIVE_WORKCELLS.insertion.homeJoints,
+    },
+    camera: COOPERATIVE_WORKCELLS.insertion.camera,
+    orbitTarget: COOPERATIVE_WORKCELLS.insertion.orbitTarget,
+    controlTargets: createFrankaTargets(),
+  },
   frankaAssembly1: {
     label: 'Franka Assembly1',
     controlFamily: 'franka',

@@ -1,5 +1,13 @@
 # Standup Log
 
+## 2026-10-07 — prior release and Demo6 supported insertion
+
+- Published accepted Demo3/4/5 at `f3bc480` on main. Pages run `37576485714` succeeds and the deployed Demo5 motion file matches local bytes.
+- Built candidate B as isolated English Franka Demo6, using robosuite source stand/frame geometry. Four roles: Arm 3 supplies; Arm 1 stabilizes the free base; Arm 2 inserts/releases; Arm 4 side-grasps the existing stem and dispatches the free assembly. All arms finish HOME.
+- Complete 46-phase, 91.8-second physical task passes native, WASM, +3-second delayed start and rendered browser runs. Final depth 107.0003 mm, lateral offset 0.217–0.233 mm; zero unintended robot penetration. Per-tick geometric retention remains valid through dispatch.
+- Browser Pause/Reset/switch checks pass with zero runtime/physics warnings; 268/268 Node tests, TypeScript and production build pass. Independent review's retention gap and two diagnostic/test gaps were addressed and recorded.
+- [Design, sources, failure diagnoses, reports and three screenshots](../docs/progress/2026-10-07-supported-insertion.md). New Demo6 remains local/uncommitted on `feat/franka-supported-insertion`, not in the preceding published release. Existing scenes and Demo1 default are unchanged.
+
 ## 2026-10-07 — Demo5 drawer access and order kitting
 
 - User approved starting the next demo. Implemented candidate A as a separate Franka Demo5 with four Panda arms, two sourced passive RoboCasa drawers and a shared order tray; old scenes and Demo1 entry remain unchanged.

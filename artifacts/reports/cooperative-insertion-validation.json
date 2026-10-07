@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-07",
+  "baseCommit": "f3bc4804c9c5ffe1d80a4167cde262bca854f2a7",
+  "branch": "feat/franka-supported-insertion",
+  "newDemoPublished": false,
+  "node": "v18.19.1",
+  "tests": {
+    "passed": 268,
+    "failed": 0,
+    "durationMs": 311291.307285
+  },
+  "typecheck": true,
+  "productionBuild": true,
+  "browser": {
+    "complete": true,
+    "phases": 46,
+    "resetAndSwitch": true,
+    "errors": 0,
+    "metrics": {
+      "maxForbiddenPenetration": 0,
+      "maxGripPenetration": 0.000058806953892637194,
+      "maxLimitedContactPenetration": 0.00005554828924313239
+    }
+  },
+  "sha256": {
+    "public/assets/franka-cooperative/insertion.xml": "040fa7766bfd1256871dac26bce78810cb0421846fce2fb61ad768bcbeec93c2",
+    "public/assets/franka-cooperative/insertion-motion.json": "8bbc7f51972071de3146034523a1fa77456ad8939939157d0f72acd8b400e922",
+    "src/CooperativeMotionRuntime.js": "1ab0566aee4dd3023a1642e83064a984b4a427a6d3b9c31b25e3c251d8ffde32",
+    "src/cooperativeMotion.js": "8f8bc60935244812218c1f9cad2ee0a6a978a9c64dced1d8cd99db5653a883c2"
+  },
+  "qualification": "Controlled deterministic scene plus delayed start; no randomization or training claimed. Upstream license whitespace retained byte-for-byte."
+}
