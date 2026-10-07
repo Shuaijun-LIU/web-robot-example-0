@@ -61,6 +61,7 @@ export class CooperativeMotionRuntime {
     if(g.type==='released')return {fingerContacts:r.fingers.flat().filter(b=>contacts.has(b)).length};
     if(g.type==='height')return {height:d.xpos[id*3+2]};
     const joint=m.body_jntadr[id],dof=m.jnt_dofadr[joint],speed=Math.hypot(...d.qvel.slice(dof,dof+3));
+    if(g.type==='upright')return {alignment:rotated(d.xmat,id,g.axis)[2],speed};
     if(g.type==='inserted'){
       const socket=r.body(g.socket),mouth=worldPoint(d,socket,g.mouth),tip=worldPoint(d,id,g.tip);
       const axis=rotated(d.xmat,socket,g.socketAxis),insertAxis=rotated(d.xmat,id,g.axis),delta=tip.map((v,j)=>v-mouth[j]);

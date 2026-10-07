@@ -1,4 +1,4 @@
-export type CooperativeScene='scan'|'pot'|'drawer'|'insertion';
+export type CooperativeScene='scan'|'pot'|'drawer'|'insertion'|'relay';
 export interface CooperativeWorkcell {
   key:string;sceneFile:string;title:string;description:string;roles:string[];note:string;
   homeJoints:number[];camera:{position:[number,number,number];fov:number};orbitTarget:[number,number,number];

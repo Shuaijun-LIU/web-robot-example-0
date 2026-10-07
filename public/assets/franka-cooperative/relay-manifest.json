@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "file": "relay_panel-visual.glb",
+      "source": "RoboTwin/104_board/visual/base3.glb",
+      "sha256": "f9e291d33b120b0f0fde738f3634f636ac887647e3b1ba46decc785bb681439f"
+    },
+    {
+      "file": "relay_panel-collision-reference.glb",
+      "source": "RoboTwin/104_board/collision/base3.glb",
+      "sha256": "38a1cfad4b042cca4a1c651767f557d3f6f699b12f0f9c62a4872546136daf91"
+    },
+    {
+      "file": "relay_panel-metadata.json",
+      "source": "RoboTwin/104_board/model_data3.json",
+      "sha256": "8dc134402c09387bd1591d045c25c33b4e4906e06d0f35ded35aef2fc73f0747"
+    },
+    {
+      "file": "relay_block-visual.glb",
+      "source": "RoboTwin/086_woodenblock/visual/base0.glb",
+      "sha256": "32df275334333911566565bb0d24074c640b71260f7df7ef23a5a77261009c09"
+    },
+    {
+      "file": "relay_block-collision-reference.glb",
+      "source": "RoboTwin/086_woodenblock/collision/base0.glb",
+      "sha256": "bf937aa1461c72b3b19fecddacf6aa9c273600085b8b557a5e2c528c7e51cd6b"
+    },
+    {
+      "file": "relay_block-metadata.json",
+      "source": "RoboTwin/086_woodenblock/model_data0.json",
+      "sha256": "789a57fb2d1e2c1a3ed026ebcdf3f1c84905e86d5a7f23ef2392cdfc40f35c2f"
+    }
+  ],
+  "assets": {
+    "relay_panel": {
+      "source": "RoboTwin/104_board/visual/base3.glb",
+      "sourceSha256": "f9e291d33b120b0f0fde738f3634f636ac887647e3b1ba46decc785bb681439f",
+      "scale": 0.2,
+      "bounds": [
+        [
+          -0.1900367021560669,
+          -0.18125529885292055,
+          0.0
+        ],
+        [
+          0.1900367021560669,
+          0.18125529885292055,
+          0.025881001353263856
+        ]
+      ],
+      "dimensions": [
+        0.3800734043121338,
+        0.3625105977058411,
+        0.025881001353263856
+      ],
+      "offsetAfterTransform": [
+        8.499622344976254e-06,
+        -8.696317672723941e-06,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 1,
+      "license": "MIT",
+      "collisionConversion": "Convex hull of visible mesh; no added margin; source padded collider not used."
+    },
+    "relay_block": {
+      "source": "RoboTwin/086_woodenblock/visual/base0.glb",
+      "sourceSha256": "32df275334333911566565bb0d24074c640b71260f7df7ef23a5a77261009c09",
+      "scale": 0.5,
+      "bounds": [
+        [
+          -0.025190499611198902,
+          -0.025287249125540257,
+          0.0
+        ],
+        [
+          0.025190499611198902,
+          0.025287249125540257,
+          0.05000000074505806
+        ]
+      ],
+      "dimensions": [
+        0.050380999222397804,
+        0.05057449825108051,
+        0.05000000074505806
+      ],
+      "offsetAfterTransform": [
+        5.00120222568512e-07,
+        -0.0003542499616742134,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 1,
+      "license": "MIT",
+      "collisionConversion": "Convex hull of visible mesh; no added margin; source padded collider not used."
+    }
+  },
+  "armRingRadius": 0.85,
+  "panelMass": 0.9,
+  "panelInitial": [
+    0,
+    -0.05,
+    0.222
+  ],
+  "obstacles": [
+    "barrier_0",
+    "barrier_1",
+    "barrier_2"
+  ],
+  "license": "RoboTwin official asset distribution MIT; see licenses/RoboTwin.txt",
+  "licenseSource": "https://huggingface.co/datasets/TianxingChen/RoboTwin2.0/blob/main/README.md",
+  "note": "Source visuals/textures retained; two visible support pads; no custom grip fixture. Mass is a simulation assumption."
+}

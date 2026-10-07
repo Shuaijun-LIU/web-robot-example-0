@@ -626,3 +626,6 @@
 .cooperative-panel__play {width:100%;padding:9px;border:1px solid #858773;border-radius:6px;background:#d4d8ba;color:inherit;cursor:pointer;font:inherit;}
 .cooperative-panel__play:disabled {opacity:.55;cursor:default;}
 .cooperative-panel__error {color:#8a3b2c;overflow-wrap:anywhere;}
+.cooperative-panel--relay {width:min(232px,calc(100vw - 24px));padding:14px 15px;font-size:12px;}
+.cooperative-panel--relay h2 {font-size:15px;}
+.cooperative-panel--relay li {gap:8px;margin:4px 0;}

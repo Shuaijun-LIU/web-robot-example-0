@@ -1,5 +1,22 @@
 # Decision Log
 
+## 2026-10-07 — bounded Demo7 optimization and explicit publication
+
+- The user's optimize-and-push instruction supersedes the prior local-only handoff. Publish the full verified Demo7 on main without history rewriting or changes to existing scene assets/motions/default.
+- Remove serialized empty-arm travel, not safety intervals: receivers approach together and close separately; donors release in order, then withdraw together. Preserve 4→3→2 support, real gates, physical force limits and 1.5-second close/release intervals. Accepted duration is 48.9 rather than 59.9 seconds.
+- Compact and reframe Demo7 only; verify the default camera users actually receive. No extra UI controls or change to other scene panels.
+- Keep every-2-ms material/visual contact audit and delayed-start replay. Independent review's receiver-order/release-duration assertion gap is fixed; all physical and browser checks pass. See [release evidence](../docs/progress/2026-10-07-panel-relay.md).
+
+## 2026-10-07 — publish Demo6, complete sourced panel relay
+
+- Publish accepted Demo6 first (`5045be3`, successful Pages deployment and matching online motion); build candidate C as isolated English Franka Demo7 on `feat/franka-panel-relay`. Keep Demo1 default and old task assets/programs unchanged. New Demo7 remains local for inspection.
+- Use RoboTwin solid `104_board` instance 3 and `086_woodenblock` instance 0, original visible geometry/textures and documented hashes. Do not use the upstream padded collision shell; derive convex hulls from visible vertices and audit actual contacts against source triangles.
+- Use opposing donor Arms 1/3 and receiving Arms 2/4. Both receivers must establish actual bilateral contact before donors release (4→3→2), retaining supported level transport. Seven source cubes form tall outer posts and a low center that preserves north-palm access.
+- Keep the existing Panda force and joint limits. Resolve failed IK/contact trials through scene-specific .85-m spacing, 35° approach, reachable .38-m output and collision-free retreat, not relaxed gates or payload scripting.
+- Independent review exposed the source board's underside groove under Arm 2's lower pad. Move Arm 2's TCP inward 10 mm and adjust end-of-carry height to .30 m; retain other grips and unmodified source geometry. Every 2-ms actual contact point is now checked against the visible triangles.
+- Preserve raw contact-manifold flicker metrics; only established, closed grips may use <=6-ms material witnesses with <=50-µm separation to supplement support auditing. No proximity-only grasp, attachment or force injection. Use conservative transformed-vertex clearance rather than unreliable mesh-distance exact zeros.
+- [Detailed accepted design, failed-path evidence and validation](../docs/progress/2026-10-07-panel-relay.md). Future randomized tasks/data/learning remain separate from this completed controlled demo.
+
 ## 2026-10-07 — publish Demo3/4/5, continue supported insertion
 
 - Publish the accepted work first: `main` / `f3bc480`, Pages run `37576485714` succeeds. Develop the next task locally on `feat/franka-supported-insertion`; preserve Demo1 default and every existing scene/motion file.

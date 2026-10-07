@@ -213,6 +213,68 @@
       "collisionParts": 32,
       "transform": "source mesh scale and inverse refquat; uniform scene scale; XY centered; bottom Z=0",
       "license": "CC-BY-4.0"
+    },
+    "relay_panel": {
+      "source": "RoboTwin/104_board/visual/base3.glb",
+      "sourceSha256": "f9e291d33b120b0f0fde738f3634f636ac887647e3b1ba46decc785bb681439f",
+      "scale": 0.2,
+      "bounds": [
+        [
+          -0.1900367021560669,
+          -0.18125529885292055,
+          0.0
+        ],
+        [
+          0.1900367021560669,
+          0.18125529885292055,
+          0.025881001353263856
+        ]
+      ],
+      "dimensions": [
+        0.3800734043121338,
+        0.3625105977058411,
+        0.025881001353263856
+      ],
+      "offsetAfterTransform": [
+        8.499622344976254e-06,
+        -8.696317672723941e-06,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 1,
+      "license": "MIT",
+      "collisionConversion": "Convex hull of visible mesh; no added margin; source padded collider not used."
+    },
+    "relay_block": {
+      "source": "RoboTwin/086_woodenblock/visual/base0.glb",
+      "sourceSha256": "32df275334333911566565bb0d24074c640b71260f7df7ef23a5a77261009c09",
+      "scale": 0.5,
+      "bounds": [
+        [
+          -0.025190499611198902,
+          -0.025287249125540257,
+          0.0
+        ],
+        [
+          0.025190499611198902,
+          0.025287249125540257,
+          0.05000000074505806
+        ]
+      ],
+      "dimensions": [
+        0.050380999222397804,
+        0.05057449825108051,
+        0.05000000074505806
+      ],
+      "offsetAfterTransform": [
+        5.00120222568512e-07,
+        -0.0003542499616742134,
+        0.0
+      ],
+      "visualParts": 1,
+      "collisionParts": 1,
+      "license": "MIT",
+      "collisionConversion": "Convex hull of visible mesh; no added margin; source padded collider not used."
     }
   },
   "scenes": {
@@ -429,6 +491,32 @@
             0,
             0
           ]
+        }
+      ],
+      "homeJoints": [
+        1.570796,
+        -0.785398,
+        0,
+        -2.356194,
+        0,
+        1.570796,
+        0.785398
+      ],
+      "tableHeight": 0.1
+    },
+    "relay": {
+      "arms": 4,
+      "objects": [
+        {
+          "name": "panel",
+          "asset": "relay_panel",
+          "mass": 0.9,
+          "position": [
+            0,
+            -0.05,
+            0.222
+          ],
+          "yaw": 0
         }
       ],
       "homeJoints": [

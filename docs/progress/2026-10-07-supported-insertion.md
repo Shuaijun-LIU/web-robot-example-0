@@ -1,5 +1,9 @@
 # Franka Demo6 — supported insertion and dispatch
 
+## Subsequent publication
+
+Accepted Demo6 was committed and pushed at `5045be3` on 2026-10-07 after a fresh 268/268-test run, TypeScript and production build. Pages runs `37627829532` and `37627828409` succeeded; deployed `insertion-motion.json` matches local bytes. The earlier local-delivery wording below describes its original handoff, not its current publication status.
+
 ## Authorization and preceding release
 
 The user requested publishing the accepted work, then continuing the next task.

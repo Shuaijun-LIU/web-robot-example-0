@@ -1,0 +1,68 @@
+<mujoco model="Four Panda cooperative relay">
+  <compiler angle="degree" meshdir="assets" texturedir="assets" />
+  <option timestep=".002" integrator="implicitfast" cone="elliptic" iterations="50" noslip_iterations="10">
+    <flag multiccd="enable" />
+  </option>
+  <visual>
+    <headlight diffuse=".75 .75 .75" ambient=".4 .4 .4" specular=".1 .1 .1" />
+  </visual>
+  <asset>
+    <model name="panda_model" file="panda.xml" />
+    <mesh name="relay_panel_v0" file="relay_panel-visual-0.obj" />
+    <texture name="relay_panel_tex0" type="2d" file="relay_panel-texture-0.png" />
+    <material name="relay_panel_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="relay_panel_tex0" />
+    <mesh name="relay_panel_c0" file="relay_panel-collision-0.obj" />
+    <mesh name="relay_block_v0" file="relay_block-visual-0.obj" />
+    <texture name="relay_block_tex0" type="2d" file="relay_block-texture-0.png" />
+    <material name="relay_block_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="relay_block_tex0" />
+    <mesh name="relay_block_c0" file="relay_block-collision-0.obj" />
+  </asset>
+  <worldbody>
+    <geom name="floor" type="plane" pos="0 0 -.01" size="0 0 .01" rgba=".77 .75 .66 1" />
+    <geom name="table" type="box" pos="0 0 .045" size="1.02 1.02 .055" rgba=".76 .77 .73 1" />
+    <frame pos="0 -0.85 0.1" euler="0 0 0">
+      <attach model="panda_model" body="link0" prefix="r0_" />
+    </frame>
+    <frame pos="0.85 0 0.1" euler="0 0 90">
+      <attach model="panda_model" body="link0" prefix="r1_" />
+    </frame>
+    <frame pos="0 0.85 0.1" euler="0 0 180">
+      <attach model="panda_model" body="link0" prefix="r2_" />
+    </frame>
+    <frame pos="-0.85 0 0.1" euler="0 0 -90">
+      <attach model="panda_model" body="link0" prefix="r3_" />
+    </frame>
+    <body name="panel_start" pos="0 -0.05 0.16">
+      <geom name="panel_start_surface" type="box" size="0.12 0.1 0.06" rgba=".35 .38 .32 1" friction=".8 .01 .001" />
+    </body>
+    <body name="panel_output" pos="0 0.38 0.16">
+      <geom name="panel_output_surface" type="box" size="0.12 0.1 0.06" rgba=".35 .38 .32 1" friction=".8 .01 .001" />
+    </body>
+    <body name="panel" pos="0 -0.05 0.222" euler="0 0 0">
+      <freejoint name="panel_free" />
+      <inertial pos="0 0 0.0129405007" mass="0.9" diaginertia="0.00990628198 0.0108844214 0.0206902295" />
+      <geom type="mesh" mesh="relay_panel_v0" material="relay_panel_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="panel_contact_0" type="mesh" mesh="relay_panel_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="barrier_0" pos="-0.1 0.16 0.1" euler="0 0 0">
+      <geom type="mesh" mesh="relay_block_v0" material="relay_block_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="barrier_0_contact_0" type="mesh" mesh="relay_block_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom type="mesh" mesh="relay_block_v0" material="relay_block_mat0" contype="0" conaffinity="0" group="2" mass="0" pos="0 0 0.05" />
+      <geom name="barrier_0_contact_0_level1" type="mesh" mesh="relay_block_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" pos="0 0 0.05" />
+      <geom type="mesh" mesh="relay_block_v0" material="relay_block_mat0" contype="0" conaffinity="0" group="2" mass="0" pos="0 0 0.1" />
+      <geom name="barrier_0_contact_0_level2" type="mesh" mesh="relay_block_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" pos="0 0 0.1" />
+    </body>
+    <body name="barrier_1" pos="0 0.16 0.1" euler="0 0 0">
+      <geom type="mesh" mesh="relay_block_v0" material="relay_block_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="barrier_1_contact_0" type="mesh" mesh="relay_block_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="barrier_2" pos="0.1 0.16 0.1" euler="0 0 0">
+      <geom type="mesh" mesh="relay_block_v0" material="relay_block_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="barrier_2_contact_0" type="mesh" mesh="relay_block_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom type="mesh" mesh="relay_block_v0" material="relay_block_mat0" contype="0" conaffinity="0" group="2" mass="0" pos="0 0 0.05" />
+      <geom name="barrier_2_contact_0_level1" type="mesh" mesh="relay_block_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" pos="0 0 0.05" />
+      <geom type="mesh" mesh="relay_block_v0" material="relay_block_mat0" contype="0" conaffinity="0" group="2" mass="0" pos="0 0 0.1" />
+      <geom name="barrier_2_contact_0_level2" type="mesh" mesh="relay_block_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" pos="0 0 0.1" />
+    </body>
+  </worldbody>
+</mujoco>

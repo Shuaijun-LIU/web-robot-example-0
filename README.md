@@ -6,6 +6,14 @@ An interactive browser simulation built with React, Three.js, `mujoco-react`, an
 
 ## Verified scenes
 
+### Franka Demo7 — panel relay over an obstacle
+
+Select **Franka Demo7**, then **Play task**. Arms 1/3 lift a sourced wooden panel; receiving Arms 2/4 approach together and establish real contact separately before either donor releases. The original pair withdraws together, then the receiving pair carries the panel over stacked source blocks, places it on the output support, releases and returns home. The optimized 22-phase program takes **48.9 simulated seconds** (18% less than the initial 59.9-second version), without speeding up contact motions. A compact panel and closer default view keep the handover visible. No payload attachment or scripted body motion is used; the Demo1 default and existing scenes are preserved.
+
+![Four-arm panel handover](artifacts/screenshots/relay-handover-2026-10-07.png)
+
+[Design, source provenance, physical checks and screenshots](docs/progress/2026-10-07-panel-relay.md).
+
 ### Franka Demo3 / Demo4 — cooperative workcells
 
 Select either scene, then **Play task**. **Franka Demo3** presents and geometrically inspects two products with a physically held scanner, transfers and packs them, then pushes the supported order tray to dispatch (130.5 simulated seconds). **Franka Demo4** has Arms 1/3 hold the pot while Arms 2/4 load sourced carrot/tomato objects, then safely sets it down and returns all arms (71.1 seconds). Both use RoboTwin/RoboCasa assets, independent four-arm manual controls, real contacts and actuator-only motion. No barcode recognition or liquid cooking is claimed. Demo1 remains the default. See [design, verification and progress](docs/progress/2026-10-07-cooperative-workcells.md).

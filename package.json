@@ -43,6 +43,7 @@
     "@types/three": "^0.170.0",
     "@vitejs/plugin-react": "^5.0.4",
     "playwright": "^1.59.1",
+    "three-mesh-bvh": "0.8.3",
     "typescript": "^5.7.2",
     "vite": "^7.1.7"
   }

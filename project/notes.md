@@ -2,11 +2,12 @@
 
 ## Current design index — 2026-10-07
 
-- [Demo6 supported insertion](../docs/progress/2026-10-07-supported-insertion.md): sourced robosuite stand/frame, four-arm supply/stabilize/insert/dispatch, real cavity and continuous retention checks. New local feature after the Demo3/4/5 release.
+- [Demo7 panel relay](../docs/progress/2026-10-07-panel-relay.md): sourced solid panel, source cube-stack obstacle, opposing-pair 4→3→2 contact transfer and physical placement. Optimized release: 22 phases/48.9 seconds, paired approach/retreat and compact UI. Native/WASM/delayed-start, final browser, 277-test regression/build and independent review pass; existing scenes unchanged.
+- [Demo6 supported insertion](../docs/progress/2026-10-07-supported-insertion.md): sourced robosuite stand/frame, four-arm supply/stabilize/insert/dispatch, real cavity and continuous retention checks. Published at `5045be3`, Pages deployment successful.
 - [Demo5 drawer-kitting implementation](../docs/progress/2026-10-07-drawer-kitting.md): two passive RoboCasa drawers, two source product boxes, one shared order tray, real handle manipulation and physical pack/release/close. Includes source/geometry decisions, failed approach diagnoses, verification artifacts and rebuild commands.
 - [Demo3/4 detailed design record](cooperative-workcells-design-record.md): robot layout, arm roles, task dependencies, source assets, contact/release decisions, executable interfaces, prior validation and conversion to training tasks.
 - [Benchmark candidates](benchmark-task-proposals-2026-10-07.md): three proposed task families, asset locations, cooperation shortcuts, randomized variables, data schema, baseline/split/evaluation design and independent agent critique.
-- Demo2 four-arm work supersedes the old single-egg pending list. Demo3/4/5 were published at `f3bc480`, Pages deployment succeeded. Candidate B is now Demo6 locally; candidate C remains planned.
+- Demo2 four-arm work supersedes the old single-egg pending list. Demo3/4/5 were published at `f3bc480`, then Demo6 at `5045be3`. Candidate C is now the complete Demo7 included in this user-authorized release.
 - Source inspection found: RoboCasa drawer damping is not a self-closing mechanism; robosuite TwoArmPegInHole attaches objects to robot bodies; ToolHang uses a deliberately heavy stand configuration. These reference assumptions must not silently enter a real-contact cooperation benchmark.
 - The older context/findings below are historical checkpoints, not current unresolved failure claims. Use the dated progress reports and the current design index for latest status.
 

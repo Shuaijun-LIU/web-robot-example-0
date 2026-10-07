@@ -536,6 +536,7 @@ const replicatedRootPatterns: Record<string, RegExp> = {
   frankaDemo4: /^r\d+_link0$/,
   frankaDemo5: /^r\d+_link0$/,
   frankaDemo6: /^r\d+_link0$/,
+  frankaDemo7: /^r\d+_link0$/,
   frankaAssembly1: /^r\d+_link0$/,
   frankaAssembly2: /^r\d+_link0$/,
   piperAssembly1: /^r\d+_base_link$/,

@@ -10,6 +10,7 @@ function validGate(g){
   if(g.type==='grasp')return Number.isInteger(g.arm)&&g.arm>=0&&g.arm<4;
   if(g.type==='released')return true;
   if(g.type==='height')return Number.isFinite(g.minZ);
+  if(g.type==='upright')return point(g.axis)&&Math.abs(Math.hypot(...g.axis)-1)<.001&&Number.isFinite(g.minAlignment)&&g.minAlignment>0&&g.minAlignment<=1&&Number.isFinite(g.maxSpeed)&&g.maxSpeed>=0;
   if(g.type==='inserted')return name(g.socket)&&[g.tip,g.mouth,g.axis,g.socketAxis].every(point)&&
     [g.axis,g.socketAxis].every(a=>Math.abs(Math.hypot(...a)-1)<.001)&&
     [g.minDepth,g.maxDepth,g.maxLateral,g.minAlignment,g.maxSpeed].every(Number.isFinite)&&
@@ -20,7 +21,7 @@ function validGate(g){
   return false;
 }
 export function validateCooperativePlan(p,scene) {
-  if(!p||p.version!==1||p.scene!==scene||!['scan','pot','drawer','insertion'].includes(scene)||!jointVector(p.initialJoints))return 'Invalid program header';
+  if(!p||p.version!==1||p.scene!==scene||!['scan','pot','drawer','insertion','relay'].includes(scene)||!jointVector(p.initialJoints))return 'Invalid program header';
   if(!Array.isArray(p.initialObjects)||p.initialObjects.some(o=>typeof o.name!=='string'||!point(o.position)))return 'Invalid initial objects';
   if(p.initialObjects.some(o=>(o.quaternion!==undefined||o.orientationTolerance!==undefined)&&
     (!Array.isArray(o.quaternion)||o.quaternion.length!==4||!o.quaternion.every(Number.isFinite)||Math.abs(Math.hypot(...o.quaternion)-1)>.001||!Number.isFinite(o.orientationTolerance)||o.orientationTolerance<=0||o.orientationTolerance>Math.PI)))return 'Invalid initial orientation';
@@ -55,6 +56,7 @@ export function checkCooperativeGate(g,o) {
   if(g.type==='support')return o.supported&&o.speed<.03?null:'object-not-supported';
   if(g.type==='released')return o.fingerContacts===0?null:'fingers-not-clear';
   if(g.type==='height')return o.height>=g.minZ?null:'object-not-lifted';
+  if(g.type==='upright')return Number.isFinite(o.alignment)&&o.alignment>=g.minAlignment&&o.alignment<=1.000001&&Number.isFinite(o.speed)&&o.speed>=0&&o.speed<=g.maxSpeed?null:'object-not-upright';
   if(g.type==='inserted')return [o.depth,o.lateral,o.alignment,o.speed].every(Number.isFinite)&&o.supported===true&&o.depth>=g.minDepth&&o.depth<=g.maxDepth&&o.lateral<=g.maxLateral&&o.lateral>=0&&o.alignment>=g.minAlignment&&o.alignment<=1.000001&&o.speed>=0&&o.speed<=g.maxSpeed?null:'insertion-not-seated';
   if(g.type==='home')return o.error<.025?null:'arms-not-home';
   if(g.type==='inside')return o.supported&&o.speed<.04&&Math.hypot(o.relative[0],o.relative[1])<g.radius&&o.relative[2]>=g.minZ&&o.relative[2]<=g.maxZ&&(g.minX===undefined||(o.relative[0]>=g.minX&&o.relative[0]<=g.maxX))?null:'outside-destination';

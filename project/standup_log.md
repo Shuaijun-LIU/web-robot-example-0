@@ -1,5 +1,22 @@
 # Standup Log
 
+## 2026-10-07 — optimize and publish Demo7
+
+- User explicitly requested optimization followed by publication, superseding the local-only delivery below. Safe opposing-arm travel now overlaps: receivers approach/enter together but close separately; donors still open sequentially, then retreat/home together. 26 phases/59.9 seconds becomes 22 phases/48.9 seconds (11 seconds / 18.36% saved), with unchanged forces, grasp points and contact durations.
+- Demo7-only compact 232-px panel, shorter English copy and closer default camera improve visibility. Browser checks the actual default view instead of substituting an inspection camera. The height regression first failed at 428.16 px and now passes its 365-px limit.
+- Native, nominal/delayed WASM and rendered browser complete; no unintended robot or panel/obstacle penetration. Every-tick visible contact checks cover 278,454 / 285,588 points, max 0.149 / 0.164 mm. Pause/Reset/switch pass with zero page/physics errors.
+- 277/277 full Node tests, TypeScript and production build pass. Independent review approves; its Minor scheduling-test gap was fixed. Generated OBJ trailing blank lines were normalized without changing geometry or original source archives.
+- Publish the complete Demo7 via fast-forward main with updated [design, evidence and screenshots](../docs/progress/2026-10-07-panel-relay.md). Preserve other worktrees, accepted scenes and Demo1 default. No dataset/training result is claimed.
+
+## 2026-10-07 — Demo6 publication and completed Demo7 panel relay
+
+- Published accepted Demo6 at `5045be3` after a fresh 268/268-test suite and build. Both Pages workflows succeed; deployed Demo6 motion bytes match local. This supersedes the publication status in the preceding handoff below.
+- Completed isolated English Franka Demo7 with the original RoboTwin solid board and cube obstacle assets: Arms 1/3 lift and support; Arms 2/4 establish real grips before either donor releases; receivers carry over the barrier, place/release, and all four arms return HOME. Full task is 26 phases / 59.9 simulated seconds.
+- Native MuJoCo 3.3.1, WASM 3.3.8, +3-second delayed replay and final rendered browser all pass. No object attachment, payload pose playback, or force compensation. Per-tick physical supports remain at least two; raw contact flicker and bounded material-witness checks are reported separately.
+- Independent review caught a real 1.15-mm invisible hull/groove contact. Added a failing visible-triangle regression, moved only Arm 2's grasp inward 10 mm and adjusted reachable carry height. Final all-tick nominal/delayed audits inspect 351,589 / 369,511 actual contact points, maximum visible discrepancy 0.149 / 0.151 mm.
+- Final 276/276 Node tests, TypeScript, production build and browser Pause/Reset/switch pass. No page errors or physics warnings; independent reviewer clears all findings. Final screenshots and [detailed design/evidence](../docs/progress/2026-10-07-panel-relay.md) are recorded.
+- New Demo7 remains local/uncommitted on `feat/franka-panel-relay`, not part of the published Demo6 release. Preserve this checkout and other worktrees. Randomization, dense dataset export and learned-policy evaluation remain future milestones.
+
 ## 2026-10-07 — prior release and Demo6 supported insertion
 
 - Published accepted Demo3/4/5 at `f3bc480` on main. Pages run `37576485714` succeeds and the deployed Demo5 motion file matches local bytes.

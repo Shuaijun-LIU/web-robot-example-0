@@ -1,0 +1,408 @@
+{
+  "success": true,
+  "scene": "relay",
+  "state": {
+    "phase": "complete",
+    "label": "Task complete · all arms returned",
+    "stage": 21,
+    "active": true
+  },
+  "time": 48.90000000001655,
+  "phaseTime": 1.000000000022395,
+  "history": [
+    {
+      "phase": "Approach panel edges 1,3",
+      "time": 2.99999999999967,
+      "observations": []
+    },
+    {
+      "phase": "Engage panel edges 1,3",
+      "time": 5.499999999999395,
+      "observations": []
+    },
+    {
+      "phase": "Arms 1 and 3 establish donor grips",
+      "time": 6.999999999999775,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.043472596450820036
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04348827056863046
+        },
+        {
+          "alignment": 0.999998695525332,
+          "speed": 0.0000816464891964747
+        }
+      ]
+    },
+    {
+      "phase": "Arms 1 and 3 lift panel together",
+      "time": 11.000000000001112,
+      "observations": [
+        {
+          "alignment": 0.9999983237044043,
+          "speed": 0.0012607425512842242
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.043257745910704797
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04342099290745318
+        }
+      ]
+    },
+    {
+      "phase": "Move panel to shared relay pose",
+      "time": 14.00000000000191,
+      "observations": [
+        {
+          "alignment": 0.9999999758039833,
+          "speed": 0.0009324373737492278
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04325612542806684
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04341348158112976
+        }
+      ]
+    },
+    {
+      "phase": "Approach panel edges 2,4",
+      "time": 17.00000000000025,
+      "observations": []
+    },
+    {
+      "phase": "Engage panel edges 2,4",
+      "time": 19.499999999998863,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 establish receiver grip",
+      "time": 20.999999999998032,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.043389302983941364
+        },
+        {
+          "alignment": 0.9999986805376255,
+          "speed": 0.000004063338725693486
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 establish receiver grip",
+      "time": 22.4999999999972,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04345173653488785
+        },
+        {
+          "alignment": 0.9999994352508607,
+          "speed": 4.6727113597234175e-7
+        }
+      ]
+    },
+    {
+      "phase": "Arm 1 release to Arm 2",
+      "time": 23.99999999999637,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04333846205630898
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04336435246845029
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04345120245378901
+        },
+        {
+          "alignment": 0.9999916283055713,
+          "speed": 0.0000025297805204805146
+        }
+      ]
+    },
+    {
+      "phase": "Arm 3 release to Arm 4",
+      "time": 25.499999999995538,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04332957296054765
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04326599054844205
+        },
+        {
+          "alignment": 0.9999999843619554,
+          "speed": 0.000005959359220728758
+        }
+      ]
+    },
+    {
+      "phase": "Arms 1 and 3 clear relay",
+      "time": 27.999999999994152,
+      "observations": []
+    },
+    {
+      "phase": "Arms 1 and 3 clear relay - home",
+      "time": 30.99999999999467,
+      "observations": []
+    },
+    {
+      "phase": "Arms 2 and 4 carry panel over barrier",
+      "time": 36.00000000000078,
+      "observations": [
+        {
+          "alignment": 0.9999993299814133,
+          "speed": 0.0014465067023872588
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04339610255782771
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04340858859226267
+        }
+      ]
+    },
+    {
+      "phase": "Arms 2 and 4 lower onto output",
+      "time": 39.00000000000445,
+      "observations": [
+        {
+          "alignment": 0.9999998235570094,
+          "speed": 0.0013438695361854323
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04328756743202972
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04346891298544696
+        }
+      ]
+    },
+    {
+      "phase": "Settle panel at output",
+      "time": 39.800000000005426,
+      "observations": []
+    },
+    {
+      "phase": "Seek panel output support",
+      "time": 40.40000000000616,
+      "observations": [
+        {
+          "alignment": 0.9999993496120267,
+          "speed": 0.0022766469974611903
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04313795386651951
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.04343039055325998
+        }
+      ]
+    },
+    {
+      "phase": "Confirm panel output support",
+      "time": 40.90000000000677,
+      "observations": [
+        {
+          "supported": true,
+          "speed": 0.0013271422259210485
+        },
+        {
+          "alignment": 0.9999994242863272,
+          "speed": 0.0013271422259210485
+        }
+      ]
+    },
+    {
+      "phase": "Arms 2 and 4 release supported panel",
+      "time": 42.4000000000086,
+      "observations": [
+        {
+          "supported": true,
+          "speed": 0.00013217479925558333
+        },
+        {
+          "alignment": 0.9999991521656344,
+          "speed": 0.00013217479925558333
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Arms 2 and 4 clear output",
+      "time": 44.90000000001166,
+      "observations": []
+    },
+    {
+      "phase": "Arms 2 and 4 clear output - home",
+      "time": 47.900000000015325,
+      "observations": []
+    },
+    {
+      "phase": "Panel relay complete - all arms home",
+      "time": 48.90000000001655,
+      "observations": [
+        {
+          "supported": true,
+          "speed": 0.0011427683720330866
+        },
+        {
+          "alignment": 0.9999987858928799,
+          "speed": 0.0011427683720330866
+        },
+        {
+          "fingerContacts": 0
+        },
+        {
+          "error": 2.0393867665641213e-7
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "maxForbiddenPenetration": 0,
+    "maxGripPenetration": 0.00019017738759048977,
+    "maxLimitedContactPenetration": 0
+  },
+  "completedDiagnostics": {
+    "contacts": 4,
+    "constraints": 20,
+    "arenaBytes": 15728640,
+    "peakArenaBytes": 489552,
+    "warnings": [
+      {
+        "index": 0,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 1,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 2,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 3,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 4,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 5,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 6,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 7,
+        "count": 0,
+        "lastInfo": 0
+      }
+    ]
+  },
+  "diagnostics": {
+    "contacts": 4,
+    "constraints": 16,
+    "arenaBytes": 15728640,
+    "peakArenaBytes": 489552,
+    "warnings": [
+      {
+        "index": 0,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 1,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 2,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 3,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 4,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 5,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 6,
+        "count": 0,
+        "lastInfo": 0
+      },
+      {
+        "index": 7,
+        "count": 0,
+        "lastInfo": 0
+      }
+    ]
+  },
+  "resetAndSwitch": true,
+  "errors": []
+}

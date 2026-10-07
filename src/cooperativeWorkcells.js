@@ -21,6 +21,11 @@ export const COOPERATIVE_WORKCELLS={
     description:'Supply a frame, stabilize its socket, insert it and transfer the assembled stand to the output.',
     roles:['Stabilize the stand','Align & insert the frame','Supply the frame','Transfer assembled stand'],
     note:'Both parts remain free objects. Insertion and transport rely on real contact.'},
+  relay:{...common,key:'frankaDemo7',sceneFile:'relay.xml',title:'Panel relay over an obstacle',
+    camera:{position:[1.55,-1.85,1.9],fov:42},orbitTarget:[0,.06,.24],
+    description:'Lift, hand over, clear the barrier and place.',
+    roles:['Lift south edge','Receive & carry east','Lift north edge','Receive & carry west'],
+    note:'Contact first, release second. No attachment.'},
 };
 export function cooperativeSceneForKey(key){
   return Object.entries(COOPERATIVE_WORKCELLS).find(([,scene])=>scene.key===key)?.[0]??null;

@@ -1,7 +1,7 @@
 # Task Plan
 
 ## Goal
-- Current scope (2026-10-07, next approval): publish accepted Demo3/4/5, then implement candidate B as isolated `Franka Demo6`, supported insertion and dispatch. Preserve existing demos and the Demo1 default.
+- Current scope (2026-10-07): optimize and publish the completed isolated `Franka Demo7` panel relay. Demo6 is already published. Preserve existing demos and the Demo1 default.
 - Preceding scope (completed): consolidate Demo3/4 design/evidence and propose additional tasks suitable for model training.
 - Current records: [Demo3/4 design and interfaces](cooperative-workcells-design-record.md), [three benchmark candidates and training protocol](benchmark-task-proposals-2026-10-07.md).
 - Historical goal (2026-09-08, now completed through four-arm playback): design an isolated four-Panda mixed-egg sorting Demo2; first deliver a reviewable static workcell, then validate physical manipulation incrementally.
@@ -42,12 +42,13 @@
 - [x] Phase 26: Record detailed designs, asset provenance, control/evaluation interfaces and three proposed benchmark tasks, including a separate critic review. No new task implementation or training claimed.
 - [x] Phase 27: Build Demo5 sourced passive drawers, complete physical opening/retrieval/packing/closing, browser acceptance and reproducible records.
 - [x] Publish accepted Demo3/4/5 at `f3bc480`; Pages run `37576485714` succeeds.
-- [x] Phase 28: Demo6 sourced stand/frame, physical supply/stabilization/insertion/dispatch, browser verification and detailed records. Local, uncommitted and not yet published.
+- [x] Phase 28: Demo6 sourced stand/frame, physical supply/stabilization/insertion/dispatch, browser verification and detailed records. Published at `5045be3`; Pages succeeds and online motion bytes match.
+- [x] Phase 29: Demo7 sourced panel, obstacle and two-pair physical relay; optimized from 59.9 to 48.9 seconds. Native/WASM/delayed-start, final browser, 277-test regression/build and independent review pass. Included in this user-requested release. [Current record](../docs/progress/2026-10-07-panel-relay.md).
 
 ## Status
 - Initialized: 2026-08-12 18:50 UTC
 - Updated: 2026-10-07.
-- Current phase: Demo6 complete locally on `feat/franka-supported-insertion`: 46 phases, native/WASM/delayed-start/browser pass, Pause/Reset/switch pass, 268/268 full regression and TypeScript/build pass. [Current record and screenshots](../docs/progress/2026-10-07-supported-insertion.md). Prior Demo3/4/5 release `f3bc480` is published and Pages succeeds. [Demo5 evidence](../docs/progress/2026-10-07-drawer-kitting.md) and [Demo3/4 evidence](../docs/progress/2026-10-07-cooperative-workcells.md) remain intact.
-- Future candidate (not implemented): obstacle transport/support-switch relay. Supported insertion is now the locally verified Demo6.
+- Current phase: Demo6 published at `5045be3`. This Demo7 release contains 22 phases/48.9 seconds, paired travel with sequential real-contact handover, a compact panel and improved default view. Native/WASM/delayed-start, browser Pause/Reset/switch, 277/277 tests, TypeScript/build and independent review pass. Earlier [Demo6](../docs/progress/2026-10-07-supported-insertion.md), [Demo5](../docs/progress/2026-10-07-drawer-kitting.md), [Demo3/4](../docs/progress/2026-10-07-cooperative-workcells.md) evidence remains intact.
+- Candidate C is now Demo7, not merely a future proposal. The user's explicit optimize-and-push request supersedes the prior local-only handoff.
 - Remaining follow-ups: explicit Demo4 tilt gate; randomized reset/data exporter/training adapter; further candidate feasibility and per-asset rights audit; hardware gripper-mount qualification remains separate from simulation.
 - Historical 2026-09-08 checkpoint: `f6d45ac` first-egg baseline and local correction trial (24.385 → 0.241 degrees, 226 tests); later four-arm work supersedes those pending items. See the preserved [correction report](../docs/progress/2026-09-08-demo2-reseat.md).

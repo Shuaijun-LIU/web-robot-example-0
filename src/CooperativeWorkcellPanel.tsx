@@ -4,7 +4,7 @@ import type {CooperativeState} from './cooperativeMotion.js';
 
 export function CooperativeWorkcellPanel({scene,state,ready,paused,onRun}:{scene:CooperativeScene;state:CooperativeState;ready:boolean;paused:boolean;onRun:()=>void}) {
   const cell=COOPERATIVE_WORKCELLS[scene];
-  return <aside className="cooperative-panel" aria-label={cell.title}>
+  return <aside className={`cooperative-panel${scene==='relay'?' cooperative-panel--relay':''}`} aria-label={cell.title}>
     <h2>{cell.title}</h2>
     <p>{cell.description}</p>
     <ol>{cell.roles.map((role,i)=><li key={role}><strong>Arm {i+1}</strong><span>{role}</span></li>)}</ol>
