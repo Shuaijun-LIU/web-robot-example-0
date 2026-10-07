@@ -1,5 +1,24 @@
 # Decision Log
 
+## 2026-10-07 — Demo5 implementation after user approval
+
+- Start candidate A first: drawer access and order kitting. Add a separate English `Franka Demo5`; preserve Demo1 default and all existing task assets/programs. Keep the existing feature branch and local uncommitted delivery; no additional approval round or implicit publication.
+- Import RoboCasa drawer topology/dimensions, `CabinetDoorPanel029` and `CabinetHandle001`; preserve source geometry with matching visual/collision transformations and documented provenance. Use passive slides, no fixture actuator, object attachment or scripted object motion.
+- Arms 1/3 physically open and later close the two drawers. Arms 2/4 retrieve tea/coffee and place into separate positions of one tray, entering the shared zone in turn. No artificial continuous-holding requirement is added to the naturally stationary drawer.
+- Contact evidence selected an outward-pitched handle grasp and axial entry/withdrawal. Tea starts turned 90 degrees for cross-width grasp clearance. Closing reuses the verified opening IK branch instead of selecting a new limit-bound branch from HOME. These are deterministic seed-demo decisions, not a general online planner.
+- Extend shared validation only with finite passive-joint observations, stale fixture preconditions and optional tray-local X slot bounds. Retain all existing grasp, support, release and collision gates.
+- Full rationale and observed failed trials: [Demo5 progress](../docs/progress/2026-10-07-drawer-kitting.md). Randomization, dense trajectory collection and learning remain follow-ups.
+
+## 2026-10-07 — Design archive and trainable-task proposals
+
+- User requested detailed records and 2–4 additional tasks suitable for future benchmark/model training. Scope is documentation and recommendations; no new implementation, training or publication was requested in this turn.
+- Recorded the verified Demo3/4 design separately from proposed benchmark functionality. Existing waypoint programs and phase reports are not a dense observation/action dataset.
+- Recommend three complementary families: articulated access/kitting, unfixtured support-and-insert, and obstacle transport with support-switch handoff. Start-order suggestion A → B → C; research emphasis B → C → A. Selection remains the user's decision.
+- Prefer source benchmark assets and real contact. Reject copying robot-attached peg/hole objects; do not force continued drawer holding without actual closing dynamics; do not inherit a heavy stand to create misleading cooperation results.
+- Keep legal single-arm/table-support shortcuts as baselines. Distinguish minimum physical cooperation from four-arm throughput, then select useful task instances using evidence.
+- Proposed data workflow: controlled feasibility → seedable resets and synchronized trajectories → simple learning baseline → scale data and variability → held-out evaluation. No claim of novelty or empirical policy performance.
+- Full rationale, primary sources and non-originating agent review: [task proposal](benchmark-task-proposals-2026-10-07.md). Existing implementation details: [design record](cooperative-workcells-design-record.md).
+
 ## 2026-09-08 — Demo1 closure and Demo2 design start
 
 - User subsequently approved stage A. Added local `Franka Demo2` only: four Pandas, one mixed 16-egg box, four empty destination trays, sourced UMI mesh assembly. No automatic manipulation and no change to the default entry.

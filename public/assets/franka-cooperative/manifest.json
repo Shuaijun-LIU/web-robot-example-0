@@ -350,6 +350,54 @@
         0.785398
       ],
       "tableHeight": 0.1
+    },
+    "drawer": {
+      "arms": 4,
+      "objects": [
+        {
+          "name": "tea_box",
+          "asset": "tea",
+          "position": [
+            0.32,
+            -0.045,
+            0.12599999999999997
+          ],
+          "mass": 0.09,
+          "yaw": 90
+        },
+        {
+          "name": "coffee_box",
+          "asset": "coffee",
+          "position": [
+            -0.32,
+            0.045,
+            0.12599999999999997
+          ],
+          "mass": 0.1,
+          "yaw": 0
+        },
+        {
+          "name": "order_tray",
+          "asset": "tray",
+          "position": [
+            0,
+            0,
+            0.115
+          ],
+          "mass": 0.12,
+          "yaw": 0
+        }
+      ],
+      "homeJoints": [
+        1.570796,
+        -0.785398,
+        0,
+        -2.356194,
+        0,
+        1.570796,
+        0.785398
+      ],
+      "tableHeight": 0.1
     }
   }
 }

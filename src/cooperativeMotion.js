@@ -5,18 +5,20 @@ function validGate(g){
   if(!g||typeof g!=='object')return false;
   const name=n=>typeof n==='string'&&n.length>0;
   if(g.type==='home')return true;
+  if(g.type==='joint-range')return name(g.joint)&&[g.min,g.max,g.maxSpeed].every(Number.isFinite)&&g.min<=g.max&&g.maxSpeed>=0;
   if(!name(g.object))return false;
   if(g.type==='grasp')return Number.isInteger(g.arm)&&g.arm>=0&&g.arm<4;
   if(g.type==='released')return true;
   if(g.type==='height')return Number.isFinite(g.minZ);
   if(g.type==='support')return name(g.body);
-  if(g.type==='inside')return name(g.container)&&Number.isFinite(g.radius)&&g.radius>0&&Number.isFinite(g.minZ)&&Number.isFinite(g.maxZ)&&g.minZ<g.maxZ;
+  if(g.type==='inside')return name(g.container)&&Number.isFinite(g.radius)&&g.radius>0&&Number.isFinite(g.minZ)&&Number.isFinite(g.maxZ)&&g.minZ<g.maxZ&&((g.minX===undefined&&g.maxX===undefined)||([g.minX,g.maxX].every(Number.isFinite)&&g.minX<g.maxX));
   if(g.type==='scan')return name(g.scanner)&&[g.origin,g.axis,g.target,g.normal].every(point)&&Math.abs(Math.hypot(...g.axis)-1)<.001&&Math.abs(Math.hypot(...g.normal)-1)<.001;
   return false;
 }
 export function validateCooperativePlan(p,scene) {
-  if(!p||p.version!==1||p.scene!==scene||!['scan','pot'].includes(scene)||!jointVector(p.initialJoints))return 'Invalid program header';
+  if(!p||p.version!==1||p.scene!==scene||!['scan','pot','drawer'].includes(scene)||!jointVector(p.initialJoints))return 'Invalid program header';
   if(!Array.isArray(p.initialObjects)||p.initialObjects.some(o=>typeof o.name!=='string'||!point(o.position)))return 'Invalid initial objects';
+  if(p.initialFixtureJoints!==undefined&&(!Array.isArray(p.initialFixtureJoints)||p.initialFixtureJoints.some(j=>!j||typeof j.joint!=='string'||!j.joint||!Number.isFinite(j.position)||!Number.isFinite(j.tolerance)||j.tolerance<=0)))return 'Invalid initial fixture joints';
   if(!Array.isArray(p.phases)||!p.phases.length)return 'Empty motion';
   let previous=Array.from({length:4},()=>p.initialJoints),grip=[255,255,255,255];
   for(const phase of p.phases){
@@ -41,12 +43,13 @@ export function sampleCooperativePhase(phase,fraction) {
 }
 export function checkCooperativeGate(g,o) {
   if(!o)return 'missing-observation';
+  if(g.type==='joint-range')return Number.isFinite(o.position)&&Number.isFinite(o.speed)&&o.position>=g.min&&o.position<=g.max&&Math.abs(o.speed)<=g.maxSpeed?null:'fixture-position-mismatch';
   if(g.type==='grasp')return o.bilateral&&o.aperture>.002&&o.aperture<.081?null:'missing-bilateral-contact';
   if(g.type==='support')return o.supported&&o.speed<.03?null:'object-not-supported';
   if(g.type==='released')return o.fingerContacts===0?null:'fingers-not-clear';
   if(g.type==='height')return o.height>=g.minZ?null:'object-not-lifted';
   if(g.type==='home')return o.error<.025?null:'arms-not-home';
-  if(g.type==='inside')return o.supported&&o.speed<.04&&Math.hypot(o.relative[0],o.relative[1])<g.radius&&o.relative[2]>=g.minZ&&o.relative[2]<=g.maxZ?null:'outside-destination';
+  if(g.type==='inside')return o.supported&&o.speed<.04&&Math.hypot(o.relative[0],o.relative[1])<g.radius&&o.relative[2]>=g.minZ&&o.relative[2]<=g.maxZ&&(g.minX===undefined||(o.relative[0]>=g.minX&&o.relative[0]<=g.maxX))?null:'outside-destination';
   if(g.type==='scan')return o.distance>=.025&&o.distance<=.09&&o.offAxis<.02&&o.facing>.9?null:'scan-pose-mismatch';
   return 'unknown-gate';
 }

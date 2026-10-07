@@ -1,5 +1,24 @@
 # Standup Log
 
+## 2026-10-07 — Demo5 drawer access and order kitting
+
+- User approved starting the next demo. Implemented candidate A as a separate Franka Demo5 with four Panda arms, two sourced passive RoboCasa drawers and a shared order tray; old scenes and Demo1 entry remain unchanged.
+- Complete action: Arms 1/3 grasp and pull both drawers, release/clear; Arms 2/4 retrieve tea/coffee and physically pack their assigned slots in turn; Arms 1/3 regrasp/close; all fingers release and four arms return HOME. No drawer motor or object attachment/pose scripting.
+- Verification: native MuJoCo 3.3.7, WASM 3.3.8, additional 3-second settling trial and actual browser all complete 49 phases / 96.6 simulation seconds. Unintended robot penetration is zero in these rollouts. Browser Pause/Reset/switch pass, page errors and MuJoCo warning counts are zero.
+- Regression: 261/261 Node tests, TypeScript, final production build and diff whitespace check pass. Independent source review found no Critical/Important issue; its one Minor per-drawer assertion weakness was fixed and the six-test Demo5 suite/delayed replay rerun successfully.
+- Design, provenance, diagnostic decisions, four screenshots, reports and rebuild commands: [Demo5 record](../docs/progress/2026-10-07-drawer-kitting.md). Earlier failed diagnostic retained locally in the ignored ledger, not erased.
+- Delivery is local on `feat/franka-scan-and-pot`, uncommitted/unpushed. No randomized benchmark, dense dataset or trained policy is claimed; candidates B/C remain planned.
+
+## 2026-10-07 — Documentation and next benchmark candidates
+
+- Completed detailed Demo3/4 records: roles, geometry/asset provenance, motion dependencies, real-contact safeguards, previous test evidence, code/program interfaces and outstanding benchmark infrastructure.
+- Inspected local RoboTwin cabinet/board resources, RoboCasa fixture joints, robosuite insertion/ToolHang models; checked official task/code and MimicGen/DexMimicGen documentation. No model or scene asset was newly downloaded.
+- Proposed three tasks, with randomization, physical success checks, episode schema, baselines, training/test splits and staged data collection. A separate read-only agent critique identified and helped remove artificial cooperation assumptions.
+- Reconciled stale September task/next-action status with completed Demo2 and locally verified Demo3/4. Kept historical records intact.
+- Scope: project documentation only; no scene changes, no new rendering/training, no commit or push. Previous 255-test and browser results are referenced as dated evidence, not reported as rerun.
+- Documentation verification: all 7 changed/new files are Markdown under `project/`; 20 local links resolve; `git diff --check` passes; cited phase counts/timings/contact metrics match the existing browser report JSON. No fresh runtime-test claim is made.
+- Next decision: choose which proposed task should enter implementation; no approval is inferred from asking for recommendations.
+
 - 2026-09-08 — Published static Demo2 as `49f9be7`; Pages run 34175093620 succeeded. Continued with an isolated Arm 1 egg transfer, retaining accepted Demo1 / Assembly1 assets and controllers.
   - Verified: 222 Node tests, TypeScript, production build, native MuJoCo 3.3.7 physical acceptance, WASM 3.3.8 replay and browser playback. Lift 129.6 mm, final tilt about 0.17 degrees, actual tray support after release. Independent controls for all four arms and Demo1 page switching pass.
   - Fixed during acceptance: browser-version tangential slip through Demo2-only no-slip contact solving; tray/finger clearance through source-derived smaller pockets and staged opening; native Reset/React ordering through a clock rollback guard before actuator writes. Carrying-state Reset passes a lossless transition audit.

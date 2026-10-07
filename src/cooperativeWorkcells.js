@@ -13,6 +13,10 @@ export const COOPERATIVE_WORKCELLS={
     description:'Two arms support the pot while the other two load solid ingredients through a shared opening.',
     roles:['Hold first handle','Load first ingredient','Hold opposite handle','Load second ingredient'],
     note:'Solid ingredients only. The source pot retains its open physical cavity.'},
+  drawer:{...common,key:'frankaDemo5',sceneFile:'drawer.xml',title:'Drawer access & order kitting',
+    description:'Open two drawers, retrieve the requested products, pack one order and close both drawers.',
+    roles:['Open & close south drawer','Retrieve & pack tea','Open & close north drawer','Retrieve & pack coffee'],
+    note:'Passive drawers move through real handle contact. The shared packing zone is entered in turn.'},
 };
 export function cooperativeSceneForKey(key){
   return Object.entries(COOPERATIVE_WORKCELLS).find(([,scene])=>scene.key===key)?.[0]??null;

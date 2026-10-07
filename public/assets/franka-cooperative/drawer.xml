@@ -1,0 +1,182 @@
+<mujoco model="Four Panda drawer kitting">
+  <compiler angle="degree" meshdir="assets" texturedir="assets" />
+  <option timestep=".002" integrator="implicitfast" cone="elliptic" iterations="50" noslip_iterations="10">
+    <flag multiccd="enable" />
+  </option>
+  <visual>
+    <headlight diffuse=".75 .75 .75" ambient=".4 .4 .4" specular=".1 .1 .1" />
+  </visual>
+  <asset>
+    <model name="panda_model" file="panda.xml" />
+    <mesh name="scanner_v0" file="scanner-visual-0.obj" />
+    <texture name="scanner_tex0" type="2d" file="scanner-texture-0.png" />
+    <material name="scanner_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="scanner_tex0" />
+    <mesh name="scanner_c0" file="scanner-collision-0.obj" />
+    <mesh name="scanner_c1" file="scanner-collision-1.obj" />
+    <mesh name="scanner_c2" file="scanner-collision-2.obj" />
+    <mesh name="scanner_c3" file="scanner-collision-3.obj" />
+    <mesh name="tea_v0" file="tea-visual-0.obj" />
+    <texture name="tea_tex0" type="2d" file="tea-texture-0.png" />
+    <material name="tea_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="tea_tex0" />
+    <mesh name="tea_c0" file="tea-collision-0.obj" />
+    <mesh name="tea_c1" file="tea-collision-1.obj" />
+    <mesh name="tea_c2" file="tea-collision-2.obj" />
+    <mesh name="tea_c3" file="tea-collision-3.obj" />
+    <mesh name="tea_c4" file="tea-collision-4.obj" />
+    <mesh name="tea_c5" file="tea-collision-5.obj" />
+    <mesh name="tea_c6" file="tea-collision-6.obj" />
+    <mesh name="coffee_v0" file="coffee-visual-0.obj" />
+    <texture name="coffee_tex0" type="2d" file="coffee-texture-0.png" />
+    <material name="coffee_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="coffee_tex0" />
+    <mesh name="coffee_c0" file="coffee-collision-0.obj" />
+    <mesh name="coffee_c1" file="coffee-collision-1.obj" />
+    <mesh name="coffee_c2" file="coffee-collision-2.obj" />
+    <mesh name="coffee_c3" file="coffee-collision-3.obj" />
+    <mesh name="tray_v0" file="tray-visual-0.obj" />
+    <texture name="tray_tex0" type="2d" file="tray-texture-0.png" />
+    <material name="tray_mat0" rgba="1 1 1 1" specular=".18" shininess=".15" texture="tray_tex0" />
+    <mesh name="tray_c0" file="tray-collision-0.obj" />
+    <mesh name="tray_c1" file="tray-collision-1.obj" />
+    <mesh name="tray_c2" file="tray-collision-2.obj" />
+    <mesh name="tray_c3" file="tray-collision-3.obj" />
+    <mesh name="tray_c4" file="tray-collision-4.obj" />
+    <mesh name="tray_c5" file="tray-collision-5.obj" />
+    <mesh name="tray_c6" file="tray-collision-6.obj" />
+    <mesh name="tray_c7" file="tray-collision-7.obj" />
+    <mesh name="tray_c8" file="tray-collision-8.obj" />
+    <mesh name="tray_c9" file="tray-collision-9.obj" />
+    <mesh name="tray_c10" file="tray-collision-10.obj" />
+    <mesh name="tray_c11" file="tray-collision-11.obj" />
+    <mesh name="tray_c12" file="tray-collision-12.obj" />
+    <mesh name="tray_c13" file="tray-collision-13.obj" />
+    <mesh name="tray_c14" file="tray-collision-14.obj" />
+    <mesh name="tray_c15" file="tray-collision-15.obj" />
+    <mesh name="drawer_panel" file="drawer-panel.obj" scale="0.575185222 0.443033301 0.232909726" />
+    <texture name="drawer_panel_tex" type="2d" file="drawer-panel.png" />
+    <material name="drawer_panel_mat" texture="drawer_panel_tex" rgba="1 1 1 1" specular=".25" shininess=".25" />
+    <mesh name="drawer_handle" file="drawer-handle.obj" scale="1 1 1" />
+    <texture name="drawer_handle_tex" type="2d" file="drawer-handle.png" />
+    <material name="drawer_handle_mat" texture="drawer_handle_tex" rgba="1 1 1 1" specular=".25" shininess=".25" />
+  </asset>
+  <worldbody>
+    <geom name="floor" type="plane" pos="0 0 -.01" size="0 0 .01" rgba=".77 .75 .66 1" />
+    <geom name="table" type="box" pos="0 0 .045" size="1.02 1.02 .055" rgba=".76 .77 .73 1" />
+    <frame pos="0 -0.78 .1" euler="0 0 0">
+      <attach model="panda_model" body="link0" prefix="r0_" />
+    </frame>
+    <frame pos="0.78 0 .1" euler="0 0 90">
+      <attach model="panda_model" body="link0" prefix="r1_" />
+    </frame>
+    <frame pos="0 0.78 .1" euler="0 0 180">
+      <attach model="panda_model" body="link0" prefix="r2_" />
+    </frame>
+    <frame pos="-0.78 0 .1" euler="0 0 -90">
+      <attach model="panda_model" body="link0" prefix="r3_" />
+    </frame>
+    <body name="south_housing" pos="0.32 0 0.185" euler="0 0 0">
+      <body name="south_drawer">
+        <joint axis="0 1 0" type="slide" name="south_slide" limited="true" range="-.225 0" damping="10" frictionloss=".25" />
+        <geom pos="0 0 -0.066" size="0.127 0.138 0.006" type="box" mass=".2" name="south_inner_bottom" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <geom pos="0 0.132 0" size="0.115 0.006 0.06" type="box" mass=".2" name="south_inner_back" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <geom pos="0.121 0 0" size="0.006 0.138 0.06" type="box" mass=".2" name="south_inner_right" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <geom pos="-0.121 0 0" size="0.006 0.138 0.06" type="box" mass=".2" name="south_inner_left" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <body name="south_front" pos="0 -0.144 0">
+          <geom mesh="drawer_panel" type="mesh" solimp="0.998 0.998 0.001" solref="0.001 1" friction="0.95 0.3 0.1" material="drawer_panel_mat" contype="0" conaffinity="0" group="2" mass="0" />
+          <geom type="box" pos="0 0 2.49451198e-09" size="0.138500244 0.00599995027 0.083499977" quat="1.0 0.0 0.0 0.0" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+        </body>
+        <body name="south_handle" pos="0 -0.17456 0" euler="0 90 0">
+          <geom mesh="drawer_handle" type="mesh" solimp="0.998 0.998 0.001" solref="0.001 1" friction="0.95 0.3 0.1" material="drawer_handle_mat" contype="0" conaffinity="0" group="2" mass="0" />
+          <geom type="cylinder" pos="-3.47305729e-07 0.0192861352 0.0654749721" size="0.01685909 0.00527317123" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="3.55765224e-07 0.0192246214 -0.0654750243" size="0.01685909 0.00527317123" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 0.00504697254 0.0654749721" size="0.00674363552 0.00994677655" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="3.55765224e-07 0.00509036332 -0.0654750317" size="0.00674363552 0.00961825438" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0177389868 0.000503666699" size="0.00525385514 0.0530595295" quat="1.0 4.930380363757736e-32 -2.220446049250313e-16 2.220445916901415e-16" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0114417104 0.0604173467" size="0.00472054491 0.0121199563" quat="0.36381790041923523 0.9314700961112976 -8.078378211090877e-17 -1.2604412737960525e-16" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0114417104 -0.0600904487" size="0.00472054491 0.0121199582" quat="2.746748606341498e-08 7.032403459561465e-08 0.3638179898262024 -0.9314700365066528" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0177389868 0.000503666699" size="0.00793874916 0.0370634124" quat="1.0 4.930380363757736e-32 -2.220446049250313e-16 2.220445916901415e-16" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <site name="south_grasp" pos="0 -.017739 .000504" size=".002" group="1" rgba=".5 .4 .2 0" />
+        </body>
+      </body>
+      <geom pos="0 0.006 0.079" size="0.14 0.144 0.006" type="box" mass=".2" name="south_top" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="0 0.006 -0.079" size="0.14 0.144 0.006" type="box" mass=".2" name="south_bottom" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="0 0.144 0" size="0.128 0.006 0.073" type="box" mass=".2" name="south_back" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="0.134 0.006 0" size="0.006 0.144 0.073" type="box" mass=".2" name="south_right" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="-0.134 0.006 0" size="0.006 0.144 0.073" type="box" mass=".2" name="south_left" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+    </body>
+    <body name="north_housing" pos="-0.32 0 0.185" euler="0 0 180">
+      <body name="north_drawer">
+        <joint axis="0 1 0" type="slide" name="north_slide" limited="true" range="-.225 0" damping="10" frictionloss=".25" />
+        <geom pos="0 0 -0.066" size="0.127 0.138 0.006" type="box" mass=".2" name="north_inner_bottom" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <geom pos="0 0.132 0" size="0.115 0.006 0.06" type="box" mass=".2" name="north_inner_back" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <geom pos="0.121 0 0" size="0.006 0.138 0.06" type="box" mass=".2" name="north_inner_right" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <geom pos="-0.121 0 0" size="0.006 0.138 0.06" type="box" mass=".2" name="north_inner_left" rgba=".62 .63 .59 1" friction=".65 .01 .001" solref=".005 1" />
+        <body name="north_front" pos="0 -0.144 0">
+          <geom mesh="drawer_panel" type="mesh" solimp="0.998 0.998 0.001" solref="0.001 1" friction="0.95 0.3 0.1" material="drawer_panel_mat" contype="0" conaffinity="0" group="2" mass="0" />
+          <geom type="box" pos="0 0 2.49451198e-09" size="0.138500244 0.00599995027 0.083499977" quat="1.0 0.0 0.0 0.0" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+        </body>
+        <body name="north_handle" pos="0 -0.17456 0" euler="0 90 0">
+          <geom mesh="drawer_handle" type="mesh" solimp="0.998 0.998 0.001" solref="0.001 1" friction="0.95 0.3 0.1" material="drawer_handle_mat" contype="0" conaffinity="0" group="2" mass="0" />
+          <geom type="cylinder" pos="-3.47305729e-07 0.0192861352 0.0654749721" size="0.01685909 0.00527317123" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="3.55765224e-07 0.0192246214 -0.0654750243" size="0.01685909 0.00527317123" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 0.00504697254 0.0654749721" size="0.00674363552 0.00994677655" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="3.55765224e-07 0.00509036332 -0.0654750317" size="0.00674363552 0.00961825438" quat="0.7071068286895752 0.7071067690849304 -1.5700924318127872e-16 -1.2476937649185348e-24" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0177389868 0.000503666699" size="0.00525385514 0.0530595295" quat="1.0 4.930380363757736e-32 -2.220446049250313e-16 2.220445916901415e-16" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0114417104 0.0604173467" size="0.00472054491 0.0121199563" quat="0.36381790041923523 0.9314700961112976 -8.078378211090877e-17 -1.2604412737960525e-16" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0114417104 -0.0600904487" size="0.00472054491 0.0121199582" quat="2.746748606341498e-08 7.032403459561465e-08 0.3638179898262024 -0.9314700365066528" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <geom type="cylinder" pos="-3.47305729e-07 -0.0177389868 0.000503666699" size="0.00793874916 0.0370634124" quat="1.0 4.930380363757736e-32 -2.220446049250313e-16 2.220445916901415e-16" group="3" friction="1 .015 .001" solref=".005 1" solimp=".99 .999 .0001" density="600" />
+          <site name="north_grasp" pos="0 -.017739 .000504" size=".002" group="1" rgba=".5 .4 .2 0" />
+        </body>
+      </body>
+      <geom pos="0 0.006 0.079" size="0.14 0.144 0.006" type="box" mass=".2" name="north_top" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="0 0.006 -0.079" size="0.14 0.144 0.006" type="box" mass=".2" name="north_bottom" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="0 0.144 0" size="0.128 0.006 0.073" type="box" mass=".2" name="north_back" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="0.134 0.006 0" size="0.006 0.144 0.073" type="box" mass=".2" name="north_right" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+      <geom pos="-0.134 0.006 0" size="0.006 0.144 0.073" type="box" mass=".2" name="north_left" rgba=".67 .64 .57 1" friction=".65 .01 .001" solref=".005 1" />
+    </body>
+    <body name="tea_box" pos="0.32 -0.045 0.126" euler="0 0 90">
+      <freejoint name="tea_box_free" />
+      <inertial pos="0 0 0.0352273494" mass="0.09" diaginertia="7.45818813e-05 0.000104798544 0.000104922457" />
+      <geom type="mesh" mesh="tea_v0" material="tea_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="tea_box_contact_0" type="mesh" mesh="tea_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tea_box_contact_1" type="mesh" mesh="tea_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tea_box_contact_2" type="mesh" mesh="tea_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tea_box_contact_3" type="mesh" mesh="tea_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tea_box_contact_4" type="mesh" mesh="tea_c4" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tea_box_contact_5" type="mesh" mesh="tea_c5" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="tea_box_contact_6" type="mesh" mesh="tea_c6" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="coffee_box" pos="-0.32 0.045 0.126" euler="0 0 0">
+      <freejoint name="coffee_box_free" />
+      <inertial pos="0 0 0.0475359261" mass="0.1" diaginertia="0.000109898824 0.000119366348 7.8620888e-05" />
+      <geom type="mesh" mesh="coffee_v0" material="coffee_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="coffee_box_contact_0" type="mesh" mesh="coffee_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="coffee_box_contact_1" type="mesh" mesh="coffee_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="coffee_box_contact_2" type="mesh" mesh="coffee_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="coffee_box_contact_3" type="mesh" mesh="coffee_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="order_tray" pos="0 0 0.115" euler="0 0 0">
+      <freejoint name="order_tray_free" />
+      <inertial pos="0 0 0.0128908002" mass="0.12" diaginertia="0.000345943312 0.000931694303 0.0012643438" />
+      <geom type="mesh" mesh="tray_v0" material="tray_mat0" contype="0" conaffinity="0" group="2" mass="0" />
+      <geom name="order_tray_contact_0" type="mesh" mesh="tray_c0" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_1" type="mesh" mesh="tray_c1" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_2" type="mesh" mesh="tray_c2" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_3" type="mesh" mesh="tray_c3" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_4" type="mesh" mesh="tray_c4" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_5" type="mesh" mesh="tray_c5" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_6" type="mesh" mesh="tray_c6" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_7" type="mesh" mesh="tray_c7" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_8" type="mesh" mesh="tray_c8" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_9" type="mesh" mesh="tray_c9" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_10" type="mesh" mesh="tray_c10" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_11" type="mesh" mesh="tray_c11" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_12" type="mesh" mesh="tray_c12" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_13" type="mesh" mesh="tray_c13" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_14" type="mesh" mesh="tray_c14" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+      <geom name="order_tray_contact_15" type="mesh" mesh="tray_c15" group="3" friction=".85 .015 .001" solref=".005 1" solimp=".99 .999 .0001" />
+    </body>
+    <body name="order_pad" pos="0 0 0.10700000000000001">
+      <geom name="order_pad_surface" type="box" size="0.18 0.125 0.007" rgba=".38 .40 .35 1" friction=".8 .01 .001" />
+    </body>
+  </worldbody>
+</mujoco>

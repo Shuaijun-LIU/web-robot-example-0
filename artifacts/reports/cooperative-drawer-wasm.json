@@ -1,0 +1,453 @@
+{
+  "success": true,
+  "engine": "3.3.8",
+  "extraSettleTicks": 0,
+  "state": {
+    "phase": "complete",
+    "label": "Task complete · all arms returned",
+    "stage": 48,
+    "active": true
+  },
+  "time": 96.59999999995394,
+  "metrics": {
+    "maxForbiddenPenetration": 0,
+    "maxGripPenetration": 0.00036785596403647976
+  },
+  "history": [
+    {
+      "phase": "Open: approach both handles",
+      "time": 2.9999999999997806,
+      "observations": []
+    },
+    {
+      "phase": "Open: enter handle clearance",
+      "time": 5.499999999999505,
+      "observations": []
+    },
+    {
+      "phase": "Open: grasp both handles",
+      "time": 6.99999999999934,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.015543300528228422
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.015543283302793871
+        }
+      ]
+    },
+    {
+      "phase": "Open: slide both drawers through handle contact",
+      "time": 12.00000000000101,
+      "observations": [
+        {
+          "position": -0.20429383556568778,
+          "speed": 0.0008352535932844424
+        },
+        {
+          "position": -0.2042134039888124,
+          "speed": 0.000860618502362631
+        }
+      ]
+    },
+    {
+      "phase": "Open: confirm drawers at rest",
+      "time": 12.600000000001211,
+      "observations": [
+        {
+          "position": -0.20437360493208276,
+          "speed": 0.0000035669883533433815
+        },
+        {
+          "position": -0.20431040413529797,
+          "speed": 0.0000015561401299989132
+        }
+      ]
+    },
+    {
+      "phase": "Open: release both handles",
+      "time": 14.000000000001679,
+      "observations": [
+        {
+          "fingerContacts": 0
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Open: withdraw above handles",
+      "time": 16.50000000000118,
+      "observations": []
+    },
+    {
+      "phase": "Open: drawer operators return home",
+      "time": 19.499999999999517,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 approach tea_box",
+      "time": 21.99999999999813,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 descend tea_box",
+      "time": 23.999999999997023,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 grip tea_box",
+      "time": 25.299999999996302,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.0709473411653458
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 lift tea_box",
+      "time": 27.299999999995194,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.07089257404445909
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 lift clear of cabinet roof",
+      "time": 29.299999999994085,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 enter shared packing zone",
+      "time": 32.29999999999473,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 transport tea_box",
+      "time": 35.2999999999984,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 lower tea_box",
+      "time": 37.30000000000084,
+      "observations": []
+    },
+    {
+      "phase": "Settle tea_box at support",
+      "time": 38.10000000000182,
+      "observations": []
+    },
+    {
+      "phase": "Seek support for tea_box",
+      "time": 38.700000000002554,
+      "observations": []
+    },
+    {
+      "phase": "Seek support for tea_box",
+      "time": 39.30000000000329,
+      "observations": []
+    },
+    {
+      "phase": "Confirm support for tea_box",
+      "time": 39.600000000003654,
+      "observations": [
+        {
+          "supported": true,
+          "speed": 0.00019929053557081109
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 release tea_box",
+      "time": 40.80000000000512,
+      "observations": [
+        {
+          "fingerContacts": 0
+        },
+        {
+          "supported": true,
+          "speed": 0.00004616989987307429
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 clear tea_box",
+      "time": 42.800000000007564,
+      "observations": []
+    },
+    {
+      "phase": "Confirm tea_box in assigned order slot",
+      "time": 43.4000000000083,
+      "observations": [
+        {
+          "relative": [
+            0.07413061489363215,
+            -0.0005943968933447334,
+            0.041937001762613314
+          ],
+          "speed": 0.00007538794721161629,
+          "supported": true
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Arm 2 leave shared packing zone",
+      "time": 45.40000000001074,
+      "observations": []
+    },
+    {
+      "phase": "Arm 2 return home",
+      "time": 48.40000000001441,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 approach coffee_box",
+      "time": 50.900000000017464,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 descend coffee_box",
+      "time": 52.90000000001991,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 grip coffee_box",
+      "time": 54.2000000000215,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.07430585897293361
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 lift coffee_box",
+      "time": 56.20000000002394,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.07430847347664657
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 lift clear of cabinet roof",
+      "time": 58.200000000026385,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 enter shared packing zone",
+      "time": 61.20000000003005,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 transport coffee_box",
+      "time": 64.20000000002945,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 lower coffee_box",
+      "time": 66.20000000002479,
+      "observations": []
+    },
+    {
+      "phase": "Settle coffee_box at support",
+      "time": 67.00000000002292,
+      "observations": []
+    },
+    {
+      "phase": "Confirm support for coffee_box",
+      "time": 67.30000000002222,
+      "observations": [
+        {
+          "supported": true,
+          "speed": 0.00005145330492949202
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 release coffee_box",
+      "time": 68.50000000001943,
+      "observations": [
+        {
+          "fingerContacts": 0
+        },
+        {
+          "supported": true,
+          "speed": 0.0000025617969845325273
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 clear coffee_box",
+      "time": 70.50000000001477,
+      "observations": []
+    },
+    {
+      "phase": "Confirm coffee_box in assigned order slot",
+      "time": 71.10000000001337,
+      "observations": [
+        {
+          "relative": [
+            -0.07371613840145652,
+            -0.00029741120645092746,
+            0.055200211371014093
+          ],
+          "speed": 0.000002254254357694957,
+          "supported": true
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Arm 4 leave shared packing zone",
+      "time": 73.1000000000087,
+      "observations": []
+    },
+    {
+      "phase": "Arm 4 return home",
+      "time": 76.10000000000171,
+      "observations": []
+    },
+    {
+      "phase": "Close: approach both handles",
+      "time": 79.09999999999472,
+      "observations": []
+    },
+    {
+      "phase": "Close: enter handle clearance",
+      "time": 81.5999999999889,
+      "observations": []
+    },
+    {
+      "phase": "Close: grasp both handles",
+      "time": 83.0999999999854,
+      "observations": [
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.015537886095845468
+        },
+        {
+          "bilateral": true,
+          "fingerContacts": 2,
+          "aperture": 0.015542110415467821
+        }
+      ]
+    },
+    {
+      "phase": "Close: slide both drawers through handle contact",
+      "time": 88.09999999997375,
+      "observations": [
+        {
+          "position": -0.0006250811756401652,
+          "speed": 0.0014189963662679967
+        },
+        {
+          "position": -0.0006342086225158517,
+          "speed": 0.0011176306731759298
+        }
+      ]
+    },
+    {
+      "phase": "Close: confirm drawers at rest",
+      "time": 88.69999999997235,
+      "observations": [
+        {
+          "position": -0.000520113884925317,
+          "speed": 0.000002629020307710148
+        },
+        {
+          "position": -0.0005350830410331043,
+          "speed": 0.00000919793063185119
+        }
+      ]
+    },
+    {
+      "phase": "Close: release both handles",
+      "time": 90.09999999996909,
+      "observations": [
+        {
+          "fingerContacts": 0
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    },
+    {
+      "phase": "Close: withdraw above handles",
+      "time": 92.59999999996326,
+      "observations": []
+    },
+    {
+      "phase": "Close: drawer operators return home",
+      "time": 95.59999999995627,
+      "observations": []
+    },
+    {
+      "phase": "Order complete - drawers closed and all arms home",
+      "time": 96.59999999995394,
+      "observations": [
+        {
+          "relative": [
+            0.07413922429975259,
+            -0.0006003746930050404,
+            0.04193685037981375
+          ],
+          "speed": 0.00001138208025214404,
+          "supported": true
+        },
+        {
+          "relative": [
+            -0.07371926316568665,
+            -0.0003230921548205969,
+            0.055192779171730086
+          ],
+          "speed": 0.000003272882780760936,
+          "supported": true
+        },
+        {
+          "position": -0.0005170229790980366,
+          "speed": 1e-323
+        },
+        {
+          "position": -0.0005318693055499785,
+          "speed": 1e-323
+        },
+        {
+          "error": 1.3449370704119114e-7
+        },
+        {
+          "fingerContacts": 0
+        },
+        {
+          "fingerContacts": 0
+        },
+        {
+          "fingerContacts": 0
+        },
+        {
+          "fingerContacts": 0
+        }
+      ]
+    }
+  ]
+}

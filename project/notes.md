@@ -1,5 +1,14 @@
 # Notes
 
+## Current design index — 2026-10-07
+
+- [Demo5 drawer-kitting implementation](../docs/progress/2026-10-07-drawer-kitting.md): two passive RoboCasa drawers, two source product boxes, one shared order tray, real handle manipulation and physical pack/release/close. Includes source/geometry decisions, failed approach diagnoses, verification artifacts and rebuild commands.
+- [Demo3/4 detailed design record](cooperative-workcells-design-record.md): robot layout, arm roles, task dependencies, source assets, contact/release decisions, executable interfaces, prior validation and conversion to training tasks.
+- [Benchmark candidates](benchmark-task-proposals-2026-10-07.md): three proposed task families, asset locations, cooperation shortcuts, randomized variables, data schema, baseline/split/evaluation design and independent agent critique.
+- Demo2 four-arm work supersedes the old single-egg pending list. Demo3/4 are locally verified but not yet published. Following the documentation round, the user approved new-demo implementation; candidate A is now Demo5, with candidate B/C still planned.
+- Source inspection found: RoboCasa drawer damping is not a self-closing mechanism; robosuite TwoArmPegInHole attaches objects to robot bodies; ToolHang uses a deliberately heavy stand configuration. These reference assumptions must not silently enter a real-contact cooperation benchmark.
+- The older context/findings below are historical checkpoints, not current unresolved failure claims. Use the dated progress reports and the current design index for latest status.
+
 ## Context
 - The fourth scene is a separate option cloned from the Franka model configuration, not a replacement for the existing three scenes.
 - It began as a static scene-design iteration and now has a staged physical action sequence.

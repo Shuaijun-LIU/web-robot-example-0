@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "role": "housing",
+      "source": "robocasa/models/assets/fixtures/cabinets/drawer.xml",
+      "sha256": "4472a0e025bde3ad6650129608140a22add1f28c2e5c4d5f0cb8cb6f58565eb6",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "role": "panel",
+      "source": "robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel029/model.xml",
+      "sha256": "2d9e593b6da59e6bc4b7f4e4281674f3d9595a5ff61ff651ceed6ad32cf74d41",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "role": "handle",
+      "source": "robocasa/models/assets/fixtures/handles/CabinetHandle001/model.xml",
+      "sha256": "da6a26a9a63adc34517995c4166a67624a65529f487e0fa09662c53ccb03cdff",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "role": "dimensioning",
+      "source": "robocasa/models/fixtures/cabinets.py",
+      "sha256": "5c49fa3fb08f64263879fae2b51beb47cfe54951ff5ba3259aaff63c0b1d5661",
+      "license": "MIT"
+    },
+    {
+      "role": "panel-obj",
+      "source": "robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel029/visuals/CabinetDoorPanel029.obj",
+      "sha256": "841ebfa792e0b5a9fc13bb9b14976044bf2fe00c2c814a59d12a4717a4680e46",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "role": "panel-png",
+      "source": "robocasa/models/assets/fixtures/cabinets/cabinet_panels/CabinetDoorPanel029/visuals/T_BC001.png",
+      "sha256": "047f4edd24502aeb42601955aea228246286552a2799bbef040a2e378e450b8e",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "role": "handle-obj",
+      "source": "robocasa/models/assets/fixtures/handles/CabinetHandle001/visuals/CabinetHandle001.obj",
+      "sha256": "03e1d14391a490cddf3b01d36caecc976a940e6f5426a74f139351be8039e8c7",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "role": "handle-png",
+      "source": "robocasa/models/assets/fixtures/handles/CabinetHandle001/visuals/T_BC001.png",
+      "sha256": "c305c37511b105e29346d82e9ce4edf1f133fef357cbec9f1cae7024b24ca018",
+      "license": "CC-BY-4.0"
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "south",
+      "joint": "south_slide",
+      "position": [
+        0.32,
+        0,
+        0.185
+      ],
+      "yaw": 0,
+      "size": [
+        0.28,
+        0.3,
+        0.17
+      ],
+      "openPosition": -0.205,
+      "floorHeight": 0.12499999999999999,
+      "handleBody": "south_handle",
+      "drawerBody": "south_drawer"
+    },
+    {
+      "name": "north",
+      "joint": "north_slide",
+      "position": [
+        -0.32,
+        0,
+        0.185
+      ],
+      "yaw": 180,
+      "size": [
+        0.28,
+        0.3,
+        0.17
+      ],
+      "openPosition": -0.205,
+      "floorHeight": 0.12499999999999999,
+      "handleBody": "north_handle",
+      "drawerBody": "north_drawer"
+    }
+  ],
+  "objects": [
+    {
+      "name": "tea_box",
+      "asset": "tea",
+      "position": [
+        0.32,
+        -0.045,
+        0.12599999999999997
+      ],
+      "mass": 0.09,
+      "yaw": 90
+    },
+    {
+      "name": "coffee_box",
+      "asset": "coffee",
+      "position": [
+        -0.32,
+        0.045,
+        0.12599999999999997
+      ],
+      "mass": 0.1,
+      "yaw": 0
+    },
+    {
+      "name": "order_tray",
+      "asset": "tray",
+      "position": [
+        0,
+        0,
+        0.115
+      ],
+      "mass": 0.12,
+      "yaw": 0
+    }
+  ],
+  "transforms": {
+    "panelScale": [
+      0.575185222100402,
+      0.44303330133648383,
+      0.232909725863858
+    ],
+    "handleRotationDegrees": [
+      0,
+      90,
+      0
+    ]
+  },
+  "physics": {
+    "drawerActuators": 0,
+    "damping": 10,
+    "frictionloss": 0.25,
+    "range": [
+      -0.225,
+      0
+    ]
+  },
+  "note": "Source Drawer parametric housing resized to tabletop scale; original panel and handle visual/collision geometry retained."
+}

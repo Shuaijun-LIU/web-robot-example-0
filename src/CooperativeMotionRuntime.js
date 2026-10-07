@@ -29,8 +29,12 @@ export class CooperativeMotionRuntime {
     for(let i=1;i<m.nbody;i++){let p=i;while(p>0&&!roots.includes(p))p=m.body_parentid[p];if(roots.includes(p))robots.add(i);}
     if(qa.some(row=>row.some((v,j)=>Math.abs(d.qpos[v]-this.plan.initialJoints[j])>.035)))throw new Error('Reset required: arms moved');
     if(this.plan.initialObjects.some(o=>Math.hypot(...vec(d.xpos,body(o.name)).map((v,j)=>v-o.position[j]))>.008))throw new Error('Reset required: objects moved');
+    for(const initial of this.plan.initialFixtureJoints??[]){
+      const j=joint(initial.joint);
+      if(!Number.isFinite(d.qpos[m.jnt_qposadr[j]])||Math.abs(d.qpos[m.jnt_qposadr[j]]-initial.position)>initial.tolerance)throw new Error(`Reset required: fixture moved (${initial.joint})`);
+    }
     const allowed=this.plan.phases.map(p=>new Set(p.allowedContacts.map(([a,b])=>pair(body(a),body(b)))));
-    this.refs={qa,da,fingers,jaws,robots,body,allowed};
+    this.refs={qa,da,fingers,jaws,robots,body,joint,allowed};
     this.previous=d.time;this.command=sampleCooperativePhase(this.plan.phases[0],0);
     this.state={phase:'running',label:this.plan.phases[0].name,stage:0,active:true};
   }
@@ -41,6 +45,9 @@ export class CooperativeMotionRuntime {
   }
   observeGate(m,d,g){
     const r=this.refs;
+    if(g.type==='joint-range'){
+      const j=r.joint(g.joint);return {position:d.qpos[m.jnt_qposadr[j]],speed:Math.abs(d.qvel[m.jnt_dofadr[j]])};
+    }
     if(g.type==='home')return {error:Math.max(...r.qa.flatMap(row=>row.map((q,j)=>Math.abs(d.qpos[q]-this.plan.initialJoints[j]))))};
     if(g.type==='grasp')return this.grasp(d,g.object,g.arm);
     const id=r.body(g.object),contacts=this.touching.get(id)??new Set();
